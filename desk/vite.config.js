@@ -2,8 +2,6 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import frappeui from "frappe-ui/vite";
 import path from "path";
-import IconsResolver from "unplugin-icons/resolver";
-import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -30,12 +28,6 @@ export default defineConfig({
 
     vue(),
     vueJsx(),
-    Components({
-      resolvers: IconsResolver({
-        prefix: false,
-        enabledCollections: ["lucide"],
-      }),
-    }),
     VitePWA({
       registerType: "autoUpdate",
       devOptions: {
@@ -99,5 +91,6 @@ export default defineConfig({
       "lowlight",
       "interactjs",
     ],
+    exclude: ["frappe-ui"],
   },
 });
