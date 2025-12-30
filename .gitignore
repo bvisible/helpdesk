@@ -31,8 +31,9 @@ share/python-wheels/
 *.egg
 
 helpdesk/docs/current
-helpdesk/public/desk
+# Pre-built frontend assets are now tracked (for 2GB server compatibility)
+# helpdesk/public/desk
 helpdesk/public/frontend
 helpdesk/public/node_modules
-helpdesk/www/helpdesk/index.html
+# helpdesk/www/helpdesk/index.html
 desk/components.d.ts
