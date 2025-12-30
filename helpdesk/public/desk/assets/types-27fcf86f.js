@@ -1,0 +1,2 @@
+const s=Symbol("ticket"),o=Symbol("assignees"),t=Symbol("customizations"),e=Symbol("ticketContact"),i=Symbol("recentSimilarTickets"),c=Symbol("activities"),l=Symbol("assignmentRuleListResource"),m=Symbol("hdSettings"),S=Symbol("holidayListResource"),a=Symbol("slaPolicyListResource"),y=Symbol("teamListResource");export{c as A,t as C,S as H,i as R,a as S,s as T,e as a,o as b,y as c,l as d,m as e};
+//# sourceMappingURL=types-27fcf86f.js.map

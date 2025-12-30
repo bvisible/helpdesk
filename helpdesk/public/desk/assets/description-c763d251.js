@@ -1,0 +1,2 @@
+import{A as r,a7 as s,c as u}from"./index-b4c863a6.js";let a=Symbol("DescriptionContext");function v({slot:i=r({}),name:l="Description",props:n={}}={}){let e=r([]);function p(t){return e.value.push(t),()=>{let o=e.value.indexOf(t);o!==-1&&e.value.splice(o,1)}}return s(a,{register:p,slot:i,name:l,props:n}),u(()=>e.value.length>0?e.value.join(" "):void 0)}export{v as k};
+//# sourceMappingURL=description-c763d251.js.map

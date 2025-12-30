@@ -1,0 +1,2 @@
+import{b8 as o,Z as u,c}from"./index-b4c863a6.js";const g=o("agent",()=>{const a=u({doctype:"HD Agent",fields:["name","agent_name","user","user.user_image"],filters:{is_active:1},pageLength:99999}),n=c(()=>{var e;return(e=a.data)==null?void 0:e.map(t=>({label:t.agent_name,value:t.name}))});function r(e){return a.data.filter(t=>{var s;return(s=t.user)==null?void 0:s.toLowerCase().includes(e.toLowerCase())})}return{dropdown:n,agents:a,searchAgents:r}});export{g as u};
+//# sourceMappingURL=agent-b7600b38.js.map

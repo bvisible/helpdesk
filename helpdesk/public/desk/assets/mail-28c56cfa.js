@@ -1,0 +1,2 @@
+import{a_ as o,e as r,k as l,l as t}from"./index-b4c863a6.js";const i={class:"lucide lucide-mail",xmlns:"http://www.w3.org/2000/svg",width:"24",height:"24",viewBox:"0 0 24 24",fill:"none",stroke:"currentColor","stroke-width":"1.5","stroke-linecap":"round","stroke-linejoin":"round"};function n(a,e){return r(),l("svg",i,[...e[0]||(e[0]=[t("path",{d:"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"},null,-1),t("rect",{x:"2",y:"4",width:"20",height:"16",rx:"2"},null,-1)])])}const c=o({name:"lucide-mail",render:n});export{c as L};
+//# sourceMappingURL=mail-28c56cfa.js.map

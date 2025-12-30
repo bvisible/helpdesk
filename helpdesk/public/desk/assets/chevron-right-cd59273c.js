@@ -1,0 +1,2 @@
+import{a_ as o,e as n,k as t,l as r}from"./index-b4c863a6.js";const s={class:"lucide lucide-chevron-right",xmlns:"http://www.w3.org/2000/svg",width:"24",height:"24",viewBox:"0 0 24 24",fill:"none",stroke:"currentColor","stroke-width":"1.5","stroke-linecap":"round","stroke-linejoin":"round"};function i(l,e){return n(),t("svg",s,[...e[0]||(e[0]=[r("path",{d:"m9 18 6-6-6-6"},null,-1)])])}const a=o({name:"lucide-chevron-right",render:i});export{a as _};
+//# sourceMappingURL=chevron-right-cd59273c.js.map
