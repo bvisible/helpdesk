@@ -493,8 +493,26 @@ class HDTicket(Document):
         except Exception:
             return None
 
+    def get_last_received_communication(self):
+        """Get the last received communication to determine the email account that received the ticket"""
+        filters = {
+            "reference_doctype": "HD Ticket",
+            "reference_name": ["=", str(self.name)],
+            "sent_or_received": "Received",
+        }
+
+        try:
+            communication = frappe.get_last_doc(
+                "Communication",
+                filters=filters,
+            )
+
+            return communication
+        except Exception:
+            return None
+
     def last_communication_email(self):
-        if not (communication := self.get_last_communication()):
+        if not (communication := self.get_last_received_communication()):
             return
 
         if not communication.email_account:
