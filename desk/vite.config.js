@@ -9,6 +9,11 @@ export default defineConfig({
   build: {
     // Disable sourcemaps in production to reduce memory usage
     sourcemap: process.env.NODE_ENV !== 'production',
+    // Use modern JS target to speed up build (no polyfills)
+    target: 'esnext',
+    commonjsOptions: {
+      include: [/tailwind.config.js/, /node_modules/],
+    },
   },
   plugins: [
     frappeui({
