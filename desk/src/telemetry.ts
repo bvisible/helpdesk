@@ -1,6 +1,10 @@
 import { ref } from "vue";
 import { createResource } from "frappe-ui";
-import "../../../frappe/frappe/public/js/lib/posthog.js";
+
+// NOTE: the legacy `import '../../../frappe/frappe/public/js/lib/posthog.js'`
+// was removed because the externalised path 404s in production (and CI).
+// Posthog is loaded by the host page when desk is mounted; when absent,
+// telemetry is a no-op.
 
 const APP = "helpdesk";
 const SITENAME = window.location.hostname;
