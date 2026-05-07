@@ -31,9 +31,12 @@ share/python-wheels/
 *.egg
 
 helpdesk/docs/current
-helpdesk/public/desk
+# 2026-05-07 (NORA #28) — frontend build outputs are committed on this branch.
+# See docs/COMMIT-BUILD-PATTERN.md in neoffice-devops.
+# (helpdesk writes vite output to public/desk/, not public/frontend/.)
+# helpdesk/public/desk
 helpdesk/public/frontend
 helpdesk/public/node_modules
-helpdesk/www/helpdesk/index.html
+# helpdesk/www/helpdesk/index.html
 desk/components.d.ts
 desk/stats.htmlCLAUDE.md
