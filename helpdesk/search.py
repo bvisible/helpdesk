@@ -121,11 +121,25 @@ class Search:
             else:
                 schema.append(TextField(field.name, **kwargs))
 
-        self.redis.ft(self.index_name).create_index(
-            schema,
-            definition=index_def,
-            stopwords=get_stopwords(),
-        )
+        try:
+            self.redis.ft(self.index_name).create_index(
+                schema,
+                definition=index_def,
+                stopwords=get_stopwords(),
+            )
+        except ResponseError as e:
+            # Make the rebuild idempotent: if the index is still present (a concurrent
+            # rebuild, or drop_index() above swallowed an unrelated ResponseError), drop
+            # it and create it once more instead of failing the whole indexing job.
+            if "already exists" not in str(e).lower():
+                raise
+            with suppress(ResponseError):
+                self.redis.ft(self.index_name).dropindex(delete_documents=True)
+            self.redis.ft(self.index_name).create_index(
+                schema,
+                definition=index_def,
+                stopwords=get_stopwords(),
+            )
         self.add_synonyms()
 
         self._index_exists = True
