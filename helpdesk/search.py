@@ -128,13 +128,11 @@ class Search:
                 stopwords=get_stopwords(),
             )
         except ResponseError as e:
-            # Make the rebuild idempotent: if the index is still present (a concurrent
-            # rebuild, or drop_index() above swallowed an unrelated ResponseError), drop
-            # it and create it once more instead of failing the whole indexing job.
+            # Idempotent rebuild: if the index is still present (e.g. a concurrent rebuild),
+            # drop it via drop_index() — which also handles RediSearch < 2.0 — and retry once.
             if "already exists" not in str(e).lower():
                 raise
-            with suppress(ResponseError):
-                self.redis.ft(self.index_name).dropindex(delete_documents=True)
+            self.drop_index()
             self.redis.ft(self.index_name).create_index(
                 schema,
                 definition=index_def,
@@ -202,8 +200,18 @@ class Search:
         return self.redis.ft(self.index_name).spellcheck(query, **kwargs)
 
     def drop_index(self):
-        with suppress(ResponseError):  # Index may not exist
+        try:
             self.redis.ft(self.index_name).dropindex(delete_documents=True)
+        except ResponseError as e:
+            message = str(e).lower()
+            if "unknown index" in message:
+                return  # nothing to drop
+            if "dropindex" in message or "unknown command" in message:
+                # RediSearch < 2.0 has no FT.DROPINDEX — fall back to the legacy FT.DROP.
+                with suppress(ResponseError):
+                    self.redis.execute_command("FT.DROP", self.redis.make_key(self.index_name))
+                return
+            # Any other ResponseError stays lenient: the index may simply not exist.
 
     def get_count(self, doctype):
         raise NotImplementedError
