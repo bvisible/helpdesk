@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-screen w-screen">
-    <Sidebar />
+    <NeoCockpitHDSidebar />
     <div class="flex-1 flex flex-col h-full overflow-auto">
       <AppHeader />
       <slot />
@@ -12,5 +12,5 @@
 <script setup>
 import { Notifications, CommandPalette } from "@/components";
 import AppHeader from "./AppHeader.vue";
-import Sidebar from "./Sidebar.vue";
+import NeoCockpitHDSidebar from "@/components/NeoCockpitHDSidebar.vue";
 </script>
