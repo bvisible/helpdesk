@@ -3990,3 +3990,10 @@ msgstr ""
 msgid "synonym"
 msgstr ""
 
+
+#. //// Neoffice - subject of the acknowledgement email sent when a ticket is
+#. created from an incoming email. Upstream hardcodes it in English while the
+#. body (HD Settings) is French.
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py
+msgid "Ticket #{0}: We've received your request"
+msgstr "Ticket n° {0} : nous avons bien reçu votre demande"

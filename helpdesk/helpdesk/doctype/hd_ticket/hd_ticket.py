@@ -154,6 +154,15 @@ class HDTicket(Document):
             "HD Settings", "feedback_email_content"
         )
         default_feedback_email_content = get_default_email_content("share_feedback")
+        #//// Neoffice — sender/reply_to forces sur la boite support d'origine.
+        #//// Upstream envoie sans sender : frappe.sendmail retombe alors sur le
+        #//// compte sortant par defaut (chez nous neoservice@neoemail.ch), donc le
+        #//// client qui a ecrit a support@neoffice.ch recoit un mail d'une adresse
+        #//// qui n'est PAS relevee (enable_incoming=0) — sa reponse est perdue en
+        #//// silence. sender_email() reutilise la logique upstream deja employee
+        #//// par reply_via_agent (derniere Communication recue -> compte support).
+        sender_account = self.sender_email()
+        sender_id = sender_account.email_id if sender_account else None
         try:
             frappe.sendmail(
                 recipients=[self.raised_by],
@@ -166,6 +175,8 @@ class HDTicket(Document):
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
                 now=True,
+                sender=sender_id,
+                reply_to=sender_id,
                 in_reply_to=last_communication.name if last_communication else None,
                 email_headers={"X-Auto-Generated": "hd-email-feedback"},
             )
@@ -525,12 +536,44 @@ class HDTicket(Document):
 
         return email_account
 
+    #//// Neoffice — ajout. Un mail client part le plus souvent d'un worker
+    #//// (pull IMAP, scheduler) ou frappe.local.lang n'est PAS positionne : _()
+    #//// retombe alors sur l'anglais et le client recoit un sujet anglais colle
+    #//// a un corps francais (le contenu, lui, vient de HD Settings et est deja
+    #//// traduit a la main). On force donc explicitement la langue du site.
+    def reply_language(self):
+        return frappe.db.get_single_value("System Settings", "language") or "en"
+
+    #//// Neoffice — ajout. La boite qui a RECU le mail est deja connue au moment
+    #//// de after_insert : frappe.email.receive._create_reference_document ecrit
+    #//// self.email_account (recipient_account_field du DocType) AVANT l'insert,
+    #//// alors que la Communication entrante, elle, n'est creee qu'APRES. Sans
+    #//// cette source, last_communication_email() renvoie None sur un ticket tout
+    #//// juste cree par email, et l'accuse de reception repart du compte sortant
+    #//// par defaut — c'est exactement le bug constate sur #25 / #26.
+    def incoming_email_account(self):
+        if not self.get("email_account"):
+            return
+
+        email_account = frappe.get_cached_doc("Email Account", self.email_account)
+
+        if not email_account.enable_outgoing:
+            return
+
+        return email_account
+
     def sender_email(self):
         """
         Find an email to use as sender. Fall back through multiple choices
 
         :return: `Email Account`
         """
+        #//// Neoffice — priorite a la boite d'origine du ticket : un client qui
+        #//// ecrit a support@neoffice.ch doit etre repondu depuis cette adresse,
+        #//// jamais depuis une autre boite de la flotte.
+        if email_account := self.incoming_email_account():
+            return email_account
+
         if email_account := self.last_communication_email():
             return email_account
 
@@ -786,10 +829,22 @@ class HDTicket(Document):
             "acknowledgement"
         )
 
+        #//// Neoffice — meme correctif que send_feedback_email : sans sender,
+        #//// l'accuse de reception part du compte sortant par defaut. Le client
+        #//// ecrit a support@neoffice.ch et recoit une reponse de
+        #//// neoservice@neoemail.ch, boite non relevee : s'il repond a l'accuse,
+        #//// son message n'atteint jamais le ticket. Verifie le 2026-08-12 sur
+        #//// les tickets #25 / #26 (From et Reply-To etaient neoservice@neoemail.ch).
+        #//// Le sujet passe aussi par _() : le corps du mail est traduit (FR dans
+        #//// HD Settings) alors que le sujet restait en anglais en dur.
+        sender_account = self.sender_email()
+        sender_id = sender_account.email_id if sender_account else None
         try:
             frappe.sendmail(
                 recipients=[self.raised_by],
-                subject=f"Ticket #{self.name}: We've received your request",
+                subject=_(
+                    "Ticket #{0}: We've received your request", lang=self.reply_language()
+                ).format(self.name),
                 message=self._get_rendered_template(
                     acknowledgement_email_content,
                     default_acknowledgement_email_content,
@@ -797,6 +852,8 @@ class HDTicket(Document):
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
                 now=True,
+                sender=sender_id,
+                reply_to=sender_id,
                 expose_recipients="header",
                 email_headers={"X-Auto-Generated": "hd-acknowledgement"},
             )
