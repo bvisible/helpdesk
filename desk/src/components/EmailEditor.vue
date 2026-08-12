@@ -130,6 +130,30 @@
                 <SavedReplyIcon class="h-4" />
               </template>
             </Button>
+            <!-- //// Neoffice — ask NORA for a draft based on the actual thread.
+                 Sits next to Saved Replies because it answers the same need
+                 ("I don't want to start from nothing"), except it reads the
+                 conversation instead of pasting a fixed template. Inserts only
+                 after the agent confirms in the dialog. -->
+            <Button
+              variant="ghost"
+              :title="__('Suggest a reply')"
+              @click="showNeoSuggestDialog = true"
+            >
+              <template #icon>
+                <svg
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 3l1.9 4.9L19 9.8l-4.1 2.9L15.6 18 12 15.2 8.4 18l.7-5.3L5 9.8l5.1-1.9z" />
+                </svg>
+              </template>
+            </Button>
           </div>
           <TextEditorFixedMenu class="ml-1" :buttons="textEditorMenuButtons" />
         </div>
@@ -152,6 +176,13 @@
       </div>
     </template>
   </TextEditor>
+  <!-- //// Neoffice — NORA draft dialog, see NeoSuggestReplyDialog.vue. -->
+  <NeoSuggestReplyDialog
+    v-if="showNeoSuggestDialog"
+    v-model="showNeoSuggestDialog"
+    :ticketId="ticketId"
+    @apply="applyNeoSuggestion"
+  />
   <SavedRepliesSelectorModal
     v-if="showSavedRepliesSelectorModal"
     v-model="showSavedRepliesSelectorModal"
@@ -191,9 +222,13 @@ import {
 import { useOnboarding } from "frappe-ui/frappe";
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import SavedReplyIcon from "./icons/SavedReplyIcon.vue";
+//// Neoffice — NORA reply suggestion (added component, no upstream equivalent).
+import NeoSuggestReplyDialog from "./NeoSuggestReplyDialog.vue";
 
 const editorRef = ref(null);
 const showSavedRepliesSelectorModal = ref(false);
+//// Neoffice
+const showNeoSuggestDialog = ref(false);
 
 const props = defineProps({
   ticketId: {
@@ -275,6 +310,17 @@ const bccInput = ref(null);
 function applySavedReplies(template) {
   newEmail.value = template;
   showSavedRepliesSelectorModal.value = false;
+}
+
+//// Neoffice — append rather than overwrite. Saved Replies replaces the body
+//// because the agent picks a template before writing; a suggestion can be
+//// asked for mid-sentence, and silently destroying what they already typed
+//// would be the one unforgivable behaviour here.
+function applyNeoSuggestion(html) {
+  newEmail.value = isContentEmpty(newEmail.value)
+    ? html
+    : `${newEmail.value}${html}`;
+  showNeoSuggestDialog.value = false;
 }
 
 const sendMail = createResource({
