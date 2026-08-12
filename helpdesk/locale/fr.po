@@ -3997,3 +3997,48 @@ msgstr ""
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py
 msgid "Ticket #{0}: We've received your request"
 msgstr "Ticket n° {0} : nous avons bien reçu votre demande"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Suggested reply"
+msgstr "Proposition de réponse"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Draft — reread before sending"
+msgstr "Brouillon — à relire avant envoi"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Instruction (optional)"
+msgstr "Consigne (facultatif)"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "e.g. explain the delay and offer a call"
+msgstr "ex. expliquer le retard et proposer un appel"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "NORA is writing…"
+msgstr "NORA rédige…"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Use this reply"
+msgstr "Utiliser cette réponse"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Regenerate"
+msgstr "Régénérer"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Suggest a reply"
+msgstr "Proposer une réponse"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Could not draft a reply"
+msgstr "Impossible de rédiger une proposition"

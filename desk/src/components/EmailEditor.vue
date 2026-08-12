@@ -317,9 +317,10 @@ function applySavedReplies(template) {
 //// asked for mid-sentence, and silently destroying what they already typed
 //// would be the one unforgivable behaviour here.
 function applyNeoSuggestion(html) {
-  newEmail.value = isContentEmpty(newEmail.value)
-    ? html
-    : `${newEmail.value}${html}`;
+  // Coalesce first: an untouched editor holds null, not "", and template
+  // literals happily stringify that into a literal "null" line above the reply.
+  const current = newEmail.value || "";
+  newEmail.value = isContentEmpty(current) ? html : `${current}${html}`;
   showNeoSuggestDialog.value = false;
 }
 

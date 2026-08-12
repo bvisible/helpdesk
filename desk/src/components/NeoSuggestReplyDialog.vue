@@ -86,7 +86,7 @@ import {
   LoadingIndicator,
   createResource,
 } from "frappe-ui";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const props = defineProps({
   ticketId: {
@@ -144,6 +144,11 @@ function apply() {
 }
 
 // Draft on open, so the agent never faces an empty dialog with a button.
+// onMounted, not only a watcher: the parent mounts this with v-if, so `show`
+// is already true on the first render and a watcher alone never fires.
+onMounted(() => {
+  if (show.value && !draft.value) generate();
+});
 watch(show, (isOpen) => {
   if (isOpen && !draft.value) generate();
 });
