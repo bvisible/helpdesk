@@ -11,7 +11,10 @@
 <template>
   <Dialog v-model="show" :options="{ size: '2xl' }">
     <template #body>
-      <div class="p-5">
+      <!-- .neo-suggest-dialog : CommunicationArea ferme l'éditeur au clic
+           extérieur, et ce dialogue est téléporté au <body>. La classe le fait
+           figurer dans la liste `ignore` de son onClickOutside. -->
+      <div class="p-5 neo-suggest-dialog">
         <div class="flex items-center justify-between mb-4">
           <div class="text-xl font-semibold">
             {{ __("Suggested reply") }}
@@ -58,6 +61,14 @@
           class="w-full"
         />
 
+        <!-- Never overwrite in silence: say it, and offer the other option. -->
+        <div
+          v-if="draft && hasContent"
+          class="mt-3 text-p-sm text-ink-gray-6"
+        >
+          {{ __("Your reply already contains text — it will be replaced.") }}
+        </div>
+
         <div class="flex items-center justify-end gap-2 mt-5">
           <Button :label="__('Close')" @click="show = false" />
           <Button
@@ -66,10 +77,16 @@
             @click="generate"
           />
           <Button
-            variant="solid"
-            :label="__('Use this reply')"
+            v-if="hasContent"
+            :label="__('Append')"
             :disabled="!draft || suggestion.loading"
-            @click="apply"
+            @click="apply('append')"
+          />
+          <Button
+            variant="solid"
+            :label="hasContent ? __('Replace') : __('Use this reply')"
+            :disabled="!draft || suggestion.loading"
+            @click="apply('replace')"
           />
         </div>
       </div>
@@ -92,6 +109,12 @@ const props = defineProps({
   ticketId: {
     type: [String, Number],
     default: null,
+  },
+  // Whether the editor already holds text. Drives "Replace" vs "Append" so the
+  // agent is never surprised by where the draft lands.
+  hasContent: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -132,14 +155,14 @@ function generate() {
   suggestion.fetch();
 }
 
-function apply() {
+function apply(mode = "replace") {
   // Plain text in, HTML out: the editor is a rich-text field, so keep the
   // paragraph breaks the model produced instead of collapsing them.
   const html = draft.value
     .split(/\n{2,}/)
     .map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`)
     .join("");
-  emit("apply", html);
+  emit("apply", { html, mode });
   show.value = false;
 }
 

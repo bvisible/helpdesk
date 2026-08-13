@@ -181,6 +181,7 @@
     v-if="showNeoSuggestDialog"
     v-model="showNeoSuggestDialog"
     :ticketId="ticketId"
+    :hasContent="!isContentEmpty(newEmail || '')"
     @apply="applyNeoSuggestion"
   />
   <SavedRepliesSelectorModal
@@ -316,12 +317,22 @@ function applySavedReplies(template) {
 //// because the agent picks a template before writing; a suggestion can be
 //// asked for mid-sentence, and silently destroying what they already typed
 //// would be the one unforgivable behaviour here.
-function applyNeoSuggestion(html) {
+function applyNeoSuggestion({ html, mode }) {
   // Coalesce first: an untouched editor holds null, not "", and template
   // literals happily stringify that into a literal "null" line above the reply.
   const current = newEmail.value || "";
-  newEmail.value = isContentEmpty(current) ? html : `${current}${html}`;
+  newEmail.value =
+    mode === "append" && !isContentEmpty(current) ? `${current}${html}` : html;
   showNeoSuggestDialog.value = false;
+  // The reply is often longer than the box: bring the agent to it rather than
+  // leaving them in front of what looks like an unchanged editor.
+  nextTick(() => {
+    try {
+      editorRef.value?.editor?.commands?.focus("end");
+    } catch (e) {
+      // focus is a convenience, never a reason to break the insertion
+    }
+  });
 }
 
 const sendMail = createResource({

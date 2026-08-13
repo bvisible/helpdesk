@@ -4042,3 +4042,18 @@ msgstr "Proposer une réponse"
 #: desk/src/components/NeoSuggestReplyDialog.vue
 msgid "Could not draft a reply"
 msgstr "Impossible de rédiger une proposition"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Your reply already contains text — it will be replaced."
+msgstr "Votre réponse contient déjà du texte — il sera remplacé."
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Append"
+msgstr "Ajouter à la suite"
+
+#. //// Neoffice - NORA reply suggestion dialog
+#: desk/src/components/NeoSuggestReplyDialog.vue
+msgid "Replace"
+msgstr "Remplacer"
