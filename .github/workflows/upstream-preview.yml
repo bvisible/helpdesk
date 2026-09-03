@@ -15,7 +15,7 @@ jobs:
     uses: bvisible/neoffice-ci/.github/workflows/frappe-app-ci.yml@main
     with:
       app: helpdesk
-      install_apps: telephony
+      install_apps: erpnext,telephony
       skip_build: true
       upstream_preview: true
     secrets: inherit
