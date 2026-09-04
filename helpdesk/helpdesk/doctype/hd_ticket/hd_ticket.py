@@ -175,6 +175,10 @@ class HDTicket(Document):
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
                 now=True,
+                #//// Neoffice — added kwargs (upstream passes neither). Without a
+                #//// sender, frappe.sendmail falls back to the default outgoing
+                #//// account; reply_to must follow it or the customer's answer
+                #//// lands in an unpolled mailbox. See the block above.
                 sender=sender_id,
                 reply_to=sender_id,
                 in_reply_to=last_communication.name if last_communication else None,
@@ -504,6 +508,13 @@ class HDTicket(Document):
         except Exception:
             return None
 
+    #//// Neoffice — added method (upstream only has get_last_communication above,
+    #//// which returns the last communication of ANY direction). Once a reply had
+    #//// gone out from the wrong account, that Sent communication became the last
+    #//// one, so last_communication_email() read the wrong account back and every
+    #//// subsequent reply repeated the mistake — a loop that only got worse.
+    #//// Filtering on sent_or_received == "Received" pins the answer to what the
+    #//// CUSTOMER wrote to, which is the only thing that can be wrong-proof.
     def get_last_received_communication(self):
         """Get the last received communication to determine the email account that received the ticket"""
         filters = {
@@ -523,6 +534,8 @@ class HDTicket(Document):
             return None
 
     def last_communication_email(self):
+        #//// Neoffice — was upstream's `self.get_last_communication()`. Only the
+        #//// received side may decide which mailbox answers; see the method above.
         if not (communication := self.get_last_received_communication()):
             return
 
@@ -842,6 +855,11 @@ class HDTicket(Document):
         try:
             frappe.sendmail(
                 recipients=[self.raised_by],
+                #//// Neoffice — was an f-string in upstream, hence untranslatable:
+                #//// the body comes from HD Settings (translated by hand, FR) while
+                #//// the subject stayed hard-coded English. Wrapped in _() with an
+                #//// explicit lang= because this runs in a worker where
+                #//// frappe.local.lang is not set — see reply_language().
                 subject=_(
                     "Ticket #{0}: We've received your request", lang=self.reply_language()
                 ).format(self.name),
@@ -852,6 +870,7 @@ class HDTicket(Document):
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
                 now=True,
+                #//// Neoffice — added kwargs, same reason as send_feedback_email.
                 sender=sender_id,
                 reply_to=sender_id,
                 expose_recipients="header",

@@ -31,6 +31,15 @@ def default_ticket_outgoing_email_account():
     r = (
         frappe.qb.from_(QBEmailAccount)
         .select(QBEmailAccount.star)
+        #//// Neoffice — was upstream's `default_outgoing == 1`. This query is
+        #//// already narrowed to the accounts whose IMAP folder appends to
+        #//// HD Ticket, i.e. the support mailboxes; requiring default_outgoing on
+        #//// top of that finds nothing on a Neoffice site, where the single
+        #//// default_outgoing account is the transactional one (neoemail.ch) and
+        #//// support@… is merely enable_outgoing. The function then returned None
+        #//// and every ticket reply left from the transactional mailbox, which is
+        #//// not polled — the customer's answer was lost. One row is still
+        #//// returned (.limit(1)); the caller order in sender_email() decides.
         .where(QBEmailAccount.enable_outgoing == 1)
         .inner_join(QBImapFolder)
         .on(QBImapFolder.parent == QBEmailAccount.name)
