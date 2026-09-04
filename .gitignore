@@ -48,11 +48,12 @@ helpdesk/public/node_modules
 #//// committed alongside public/desk/ for an instance that never runs yarn build.
 # helpdesk/www/helpdesk/index.html
 desk/components.d.ts
-#//// Neoffice — TO REVIEW: this line is a defect, not an intention. Upstream had
-#//// "desk/stats.html" as the LAST line with no trailing newline; commit b713b86fd
-#//// ("chore: add CLAUDE.md to gitignore") appended "CLAUDE.md" straight onto it.
-#//// Result: neither "desk/stats.html" nor "CLAUDE.md" is ignored any more — and
-#//// CLAUDE.md is committed in this repo, exactly what that commit meant to avoid.
-#//// Left as-is here (this pass is comments-only). At the merge: take upstream's
-#//// "desk/stats.html" back and add "CLAUDE.md" on its own line.
-desk/stats.htmlCLAUDE.md
+#//// Neoffice — repaired entry. Upstream had "desk/stats.html" as the LAST line
+#//// with no trailing newline; our commit b713b86fd ("chore: add CLAUDE.md to
+#//// gitignore") appended "CLAUDE.md" straight onto it, so from that day NEITHER
+#//// path was ignored. Upstream's entry is restored below, on its own line.
+#//// "CLAUDE.md" is deliberately NOT re-added: that file carries the branch and
+#//// commit-the-build conventions of this fork, it is listed as ours in
+#//// NEOFFICE_FORK_MARKERS.md, and it stays tracked — ignoring it would only hide
+#//// it from the next clone. At the merge, keep upstream's "desk/stats.html".
+desk/stats.html
