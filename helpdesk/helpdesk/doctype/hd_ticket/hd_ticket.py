@@ -154,13 +154,14 @@ class HDTicket(Document):
             "HD Settings", "feedback_email_content"
         )
         default_feedback_email_content = get_default_email_content("share_feedback")
-        #//// Neoffice — sender/reply_to forces sur la boite support d'origine.
-        #//// Upstream envoie sans sender : frappe.sendmail retombe alors sur le
-        #//// compte sortant par defaut (chez nous neoservice@neoemail.ch), donc le
-        #//// client qui a ecrit a support@neoffice.ch recoit un mail d'une adresse
-        #//// qui n'est PAS relevee (enable_incoming=0) — sa reponse est perdue en
-        #//// silence. sender_email() reutilise la logique upstream deja employee
-        #//// par reply_via_agent (derniere Communication recue -> compte support).
+        #//// Neoffice — sender/reply_to pinned to the support mailbox the
+        #//// ticket came from. Upstream sends with no sender, so frappe.sendmail
+        #//// falls back to the default outgoing account (here
+        #//// neoservice@neoemail.ch): a customer who wrote to
+        #//// support@neoffice.ch got mail from an address that is NOT polled
+        #//// (enable_incoming=0), and their reply was lost in silence.
+        #//// sender_email() reuses the upstream logic reply_via_agent already
+        #//// relies on (last received Communication -> support account).
         sender_account = self.sender_email()
         sender_id = sender_account.email_id if sender_account else None
         try:
@@ -549,21 +550,22 @@ class HDTicket(Document):
 
         return email_account
 
-    #//// Neoffice — ajout. Un mail client part le plus souvent d'un worker
-    #//// (pull IMAP, scheduler) ou frappe.local.lang n'est PAS positionne : _()
-    #//// retombe alors sur l'anglais et le client recoit un sujet anglais colle
-    #//// a un corps francais (le contenu, lui, vient de HD Settings et est deja
-    #//// traduit a la main). On force donc explicitement la langue du site.
+    #//// Neoffice — added method. Customer mail almost always leaves from a
+    #//// worker (IMAP pull, scheduler) where frappe.local.lang is NOT set: _()
+    #//// then falls back to English and the customer receives an English
+    #//// subject glued onto a French body (the body comes from HD Settings and
+    #//// is translated by hand). So the site language is stated explicitly.
     def reply_language(self):
         return frappe.db.get_single_value("System Settings", "language") or "en"
 
-    #//// Neoffice — ajout. La boite qui a RECU le mail est deja connue au moment
-    #//// de after_insert : frappe.email.receive._create_reference_document ecrit
-    #//// self.email_account (recipient_account_field du DocType) AVANT l'insert,
-    #//// alors que la Communication entrante, elle, n'est creee qu'APRES. Sans
-    #//// cette source, last_communication_email() renvoie None sur un ticket tout
-    #//// juste cree par email, et l'accuse de reception repart du compte sortant
-    #//// par defaut — c'est exactement le bug constate sur #25 / #26.
+    #//// Neoffice — added method. The mailbox that RECEIVED the mail is
+    #//// already known at after_insert time: frappe.email.receive
+    #//// ._create_reference_document writes self.email_account (the DocType's
+    #//// recipient_account_field) BEFORE the insert, whereas the incoming
+    #//// Communication is only created AFTER it. Without this source,
+    #//// last_communication_email() returns None on a ticket just created by
+    #//// email, and the acknowledgement leaves from the default outgoing
+    #//// account — exactly the bug observed on #25 / #26.
     def incoming_email_account(self):
         if not self.get("email_account"):
             return
@@ -581,9 +583,9 @@ class HDTicket(Document):
 
         :return: `Email Account`
         """
-        #//// Neoffice — priorite a la boite d'origine du ticket : un client qui
-        #//// ecrit a support@neoffice.ch doit etre repondu depuis cette adresse,
-        #//// jamais depuis une autre boite de la flotte.
+        #//// Neoffice — the ticket's own mailbox comes first: a customer who
+        #//// writes to support@neoffice.ch must be answered from that address,
+        #//// never from another mailbox of the fleet.
         if email_account := self.incoming_email_account():
             return email_account
 
@@ -842,14 +844,15 @@ class HDTicket(Document):
             "acknowledgement"
         )
 
-        #//// Neoffice — meme correctif que send_feedback_email : sans sender,
-        #//// l'accuse de reception part du compte sortant par defaut. Le client
-        #//// ecrit a support@neoffice.ch et recoit une reponse de
-        #//// neoservice@neoemail.ch, boite non relevee : s'il repond a l'accuse,
-        #//// son message n'atteint jamais le ticket. Verifie le 2026-08-12 sur
-        #//// les tickets #25 / #26 (From et Reply-To etaient neoservice@neoemail.ch).
-        #//// Le sujet passe aussi par _() : le corps du mail est traduit (FR dans
-        #//// HD Settings) alors que le sujet restait en anglais en dur.
+        #//// Neoffice — same fix as send_feedback_email: with no sender, the
+        #//// acknowledgement leaves from the default outgoing account. The
+        #//// customer writes to support@neoffice.ch and gets an answer from
+        #//// neoservice@neoemail.ch, an unpolled mailbox: if they reply to that
+        #//// acknowledgement, their message never reaches the ticket. Verified
+        #//// 2026-08-12 on tickets #25 / #26 (From and Reply-To were both
+        #//// neoservice@neoemail.ch). The subject goes through _() as well: the
+        #//// body is translated (FR, from HD Settings) while the subject stayed
+        #//// hard-coded English.
         sender_account = self.sender_email()
         sender_id = sender_account.email_id if sender_account else None
         try:

@@ -11,9 +11,9 @@
 <template>
   <Dialog v-model="show" :options="{ size: '2xl' }">
     <template #body>
-      <!-- .neo-suggest-dialog : CommunicationArea ferme l'éditeur au clic
-           extérieur, et ce dialogue est téléporté au <body>. La classe le fait
-           figurer dans la liste `ignore` de son onClickOutside. -->
+      <!-- .neo-suggest-dialog: CommunicationArea closes the editor on an
+           outside click, and this dialog is teleported to <body>. The class is
+           what puts it in the `ignore` list of that onClickOutside. -->
       <div class="p-5 neo-suggest-dialog">
         <div class="flex items-center justify-between mb-4">
           <div class="text-xl font-semibold">

@@ -222,12 +222,12 @@ onClickOutside(
     }
   },
   {
-    //// Neoffice — ".neo-suggest-dialog" ajouté. Le dialogue de proposition de
-    //// réponse est téléporté au <body>, donc HORS de emailBoxRef : sans cette
-    //// exception, le moindre clic dedans (Régénérer, Utiliser cette réponse,
-    //// le champ Consigne) refermait l'éditeur derrière, et l'agent retrouvait
-    //// sa réponse en rouvrant la boîte, sans savoir pourquoi elle s'était
-    //// fermée. Même raison que .tippy-box juste à côté.
+    //// Neoffice — ".neo-suggest-dialog" added. The reply-suggestion dialog
+    //// is teleported to <body>, so it sits OUTSIDE emailBoxRef: without this
+    //// exception, any click inside it (Regenerate, Use this reply, the
+    //// Instruction field) closed the editor behind it, and the agent found
+    //// their reply again on reopening the box with no idea why it had shut.
+    //// Same reason as .tippy-box right next to it.
     ignore: [".tippy-box", ".tippy-content", ".neo-suggest-dialog"],
   }
 );
