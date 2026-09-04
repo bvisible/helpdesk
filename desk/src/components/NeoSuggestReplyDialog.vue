@@ -11,9 +11,10 @@
 <template>
   <Dialog v-model="show" :options="{ size: '2xl' }">
     <template #body>
-      <!-- .neo-suggest-dialog: CommunicationArea closes the editor on an
-           outside click, and this dialog is teleported to <body>. The class is
-           what puts it in the `ignore` list of that onClickOutside. -->
+      <!-- //// Neoffice — .neo-suggest-dialog: CommunicationArea closes the
+           editor on an outside click, and this dialog is teleported to
+           <body>. The class is what puts it in the `ignore` list of that
+           onClickOutside. -->
       <div class="p-5 neo-suggest-dialog">
         <div class="flex items-center justify-between mb-4">
           <div class="text-xl font-semibold">
@@ -155,12 +156,13 @@ function generate() {
   suggestion.fetch();
 }
 
-// The draft is plain text, and it is drafted FROM the thread: whatever the
-// customer wrote can come back through the model verbatim. An "&", a "<", or a
-// stray "<script" in their message would then be re-emitted as live markup —
-// into the agent's rich-text editor and into the mail that leaves. Escape the
-// text first; the only markup in the result is the <p>/<br> we add ourselves.
-// "&" must be replaced first, or the entities below get double-escaped.
+//// Neoffice — the draft is plain text, and it is drafted FROM the thread:
+//// whatever the customer wrote can come back through the model verbatim. An
+//// "&", a "<", or a stray "<script" in their message would then be re-emitted
+//// as live markup — into the agent's rich-text editor and into the mail that
+//// leaves. Escape the text first; the only markup left in the result is the
+//// <p>/<br> we add ourselves. "&" must go first, or the entities produced by
+//// the rules below would be escaped a second time.
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
@@ -174,6 +176,8 @@ function apply(mode = "replace") {
   // paragraph breaks the model produced instead of collapsing them.
   const html = draft.value
     .split(/\n{2,}/)
+    //// Neoffice — escapeHtml() before the wrap, never after: the paragraph is
+    //// customer-derived text, the <p>/<br> is the only markup we intend.
     .map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`)
     .join("");
   emit("apply", { html, mode });
