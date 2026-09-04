@@ -155,12 +155,26 @@ function generate() {
   suggestion.fetch();
 }
 
+// The draft is plain text, and it is drafted FROM the thread: whatever the
+// customer wrote can come back through the model verbatim. An "&", a "<", or a
+// stray "<script" in their message would then be re-emitted as live markup —
+// into the agent's rich-text editor and into the mail that leaves. Escape the
+// text first; the only markup in the result is the <p>/<br> we add ourselves.
+// "&" must be replaced first, or the entities below get double-escaped.
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function apply(mode = "replace") {
   // Plain text in, HTML out: the editor is a rich-text field, so keep the
   // paragraph breaks the model produced instead of collapsing them.
   const html = draft.value
     .split(/\n{2,}/)
-    .map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`)
+    .map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`)
     .join("");
   emit("apply", { html, mode });
   show.value = false;
