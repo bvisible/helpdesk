@@ -1,3 +1,9 @@
+<!-- //// Neoffice — added file (no upstream equivalent): the branch and build
+     //// conventions of THIS fork for Claude Code sessions. Upstream has no such
+     //// file, so nothing here ever conflicts; at the merge, keep ours whole.
+     //// (Ironically this file was meant to be gitignored — see the defect noted
+     //// on desk/stats.htmlCLAUDE.md in .gitignore.) -->
+
 # Git Configuration
 
 ## Branche de production

@@ -31,12 +31,28 @@ share/python-wheels/
 *.egg
 
 helpdesk/docs/current
+#//// Neoffice — un-ignored (upstream ignores public/desk). Commit-the-build: the
+#//// SPA is compiled by our build-frontend workflow and committed, because
+#//// `bench build` running `yarn build` on a 4 GB tenant gets OOM-killed. An
+#//// instance therefore pulls the compiled assets and never builds anything.
+#//// Artifacts are listed in NEOFFICE_FORK_MARKERS.md — at the merge, drop them
+#//// from the resolution and let the workflow rebuild from the merged sources.
 # 2026-05-07 (NORA #28) — frontend build outputs are committed on this branch.
 # See docs/COMMIT-BUILD-PATTERN.md in neoffice-devops.
 # (helpdesk writes vite output to public/desk/, not public/frontend/.)
 # helpdesk/public/desk
 helpdesk/public/frontend
 helpdesk/public/node_modules
+#//// Neoffice — un-ignored (upstream ignores it). Frappe serves the SPA shell from
+#//// www/helpdesk/index.html; it is generated from the vite build, so it has to be
+#//// committed alongside public/desk/ for an instance that never runs yarn build.
 # helpdesk/www/helpdesk/index.html
 desk/components.d.ts
+#//// Neoffice — TO REVIEW: this line is a defect, not an intention. Upstream had
+#//// "desk/stats.html" as the LAST line with no trailing newline; commit b713b86fd
+#//// ("chore: add CLAUDE.md to gitignore") appended "CLAUDE.md" straight onto it.
+#//// Result: neither "desk/stats.html" nor "CLAUDE.md" is ignored any more — and
+#//// CLAUDE.md is committed in this repo, exactly what that commit meant to avoid.
+#//// Left as-is here (this pass is comments-only). At the merge: take upstream's
+#//// "desk/stats.html" back and add "CLAUDE.md" on its own line.
 desk/stats.htmlCLAUDE.md

@@ -4,6 +4,10 @@ authors = [
     { name = "Frappe Technologies Pvt Ltd", email = "hello@frappe.io"}
 ]
 description = "Open Source Customer Service Software"
+#//// Neoffice — lowered from upstream's ">=3.14". That pin makes `pip install`
+#//// refuse the app on the whole fleet, which runs Python 3.12 — and frappe
+#//// itself requires <3.14, so upstream's own floor cannot be satisfied on a
+#//// v15 bench. Drop this line the day the fleet moves to 3.14.
 requires-python = ">=3.10"
 readme = "README.md"
 dynamic = ["version"]
