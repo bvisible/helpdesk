@@ -9,7 +9,9 @@ declare global {
   interface Window {
     site_name: string;
     //// Neoffice — added: the port is read off the window now, see initSocket().
-    socketio_port?: string;
+    //// Typed `number | string`: get_boot() ships it as the integer bench keeps
+    //// in common_site_config.json, and it is only ever interpolated into a URL.
+    socketio_port?: number | string;
   }
 }
 
@@ -20,11 +22,15 @@ export function initSocket() {
   //// BUILDER's, and on a commit-the-build fork the builder is a GitHub runner
   //// with no bench at all. Kept synchronous on purpose: `export const socket =
   //// initSocket()` runs at module load, so there is no room for an await here.
-  // Default Frappe socketio port (matches the value bench writes to
-  // sites/common_site_config.json in production). The legacy static
-  // import of that file broke production builds — the bundle externalised
-  // the path and 404'd at runtime. We now read window.socketio_port if
-  // injected by the host page, otherwise fall back to 9000.
+  //// Neoffice — window.socketio_port is now genuinely set. The contract was
+  //// dangling: this line has always read the window, but nothing wrote that
+  //// key, so the "9000" literal was the only value the SPA ever used. The
+  //// port is now shipped by helpdesk/www/helpdesk/index.py get_boot(), which
+  //// the served page emits as `window["socketio_port"]` and which
+  //// desk/src/main.js re-reads onto `window` in dev — see the marker there.
+  //// The literal stays as a last resort (an old cached page, a host that does
+  //// not inject it) and matches the value bench writes to
+  //// sites/common_site_config.json.
   const socketio_port = window.socketio_port || "9000";
 
   let host = window.location.hostname;
