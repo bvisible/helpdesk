@@ -69,7 +69,7 @@ nothing here needs to become a Custom Field.
 
 | Path | Ours | Upstream at BASE | Note |
 |---|---|---|---|
-| `frappe-ui` (gitlink, `.gitmodules` → `frappe/frappe-ui`) | `3d0c58a03c342bc64db55684e1c31ddacc9ff017` = **v0.1.232, 2025-12-04** | `a302a61dc32bfe1e868412f67dad6f7ca144254d` = v0.1.259, 2026-01-19 | **This is a rollback, not an upgrade**, and it rode along inside `8fc1e754b8 "fix: use received communications to determine reply email account"` — a commit about email accounts. Almost certainly a stale local submodule checkout committed by accident. **At the merge: take upstream's pointer.** A gitlink cannot carry a comment and `git show HEAD:frappe-ui` is not a blob, so `fork_markers.py check` will always report this hunk. |
+| `frappe-ui` (gitlink, `.gitmodules` → `frappe/frappe-ui`) | `a302a61dc32bfe1e868412f67dad6f7ca144254d` = v0.1.259, 2026-01-19 (**repaired 2026-09-04**, `4bc1b1948`; was `3d0c58a03c342bc64db55684e1c31ddacc9ff017` = v0.1.232, 2025-12-04) | `a302a61dc32bfe1e868412f67dad6f7ca144254d` = v0.1.259, 2026-01-19 | **This WAS a rollback, not an upgrade** — fixed, ours and BASE now agree and there is nothing of ours to preserve on this gitlink. It had ridden along inside `8fc1e754b8 "fix: use received communications to determine reply email account"` — a commit about email accounts. Almost certainly a stale local submodule checkout committed by accident. **At the merge: take upstream's pointer** (nothing is lost, ours is BASE's). A gitlink cannot carry a comment and `git show HEAD:frappe-ui` is not a blob, so `fork_markers.py check` will always report this hunk. |
 
 ### Build artifacts (commit-the-build) — mark the SOURCE, never the artifact
 
@@ -130,57 +130,88 @@ Upstream is **2170 commits** ahead of BASE and has touched **628 files**; we tou
 | `desk/package.json` | 14+/5−, 23 commits | keep our `NODE_OPTIONS` prefixes. |
 | `package.json` | 2+/5−, 4 commits | keep our `[skip-build]` guard + `build:force`. |
 | `pyproject.toml` | 12+/1−, 8 commits | keep `requires-python = ">=3.10"` until the fleet moves to 3.14. |
-| `.gitignore` | 6+/0−, 5 commits | keep our un-ignores; take the chance to fix the `desk/stats.htmlCLAUDE.md` defect. |
+| `.gitignore` | 6+/0−, 5 commits | keep our un-ignores. The `desk/stats.htmlCLAUDE.md` weld is already fixed (`b7eace9e6`), so upstream's `desk/stats.html` line merges clean. |
 | `desk/src/components/layouts/DesktopLayout.vue` | 2+/3−, 2 commits | small conflict on the `<Sidebar />` swap. |
 | `helpdesk/locale/fr.po` | (locale) | merge both sides, ours are additions only. |
-| `frappe-ui` | submodule | **take upstream's pointer** (ours is a rollback, see above). |
+| `frappe-ui` | submodule | **take upstream's pointer** — ours is now the same commit (rollback repaired, `4bc1b1948`). |
 
 `desk/src/socket.ts` and `helpdesk/helpdesk/utils/email.py` are untouched upstream since
 BASE (0 commits): they merge clean.
 
-### Known defects recorded while marking (NOT fixed here)
+### Defects found while marking — status
 
-1. `.gitignore:58` — `desk/stats.htmlCLAUDE.md`. Commit `b713b86fd "chore: add CLAUDE.md to
-   gitignore"` appended `CLAUDE.md` to a file that had no trailing newline, welding it onto
-   the previous entry. Net effect: **neither `desk/stats.html` nor `CLAUDE.md` is ignored**
-   — and `CLAUDE.md` is in fact committed in this repo, which is what the commit meant to
-   prevent.
-2. `frappe-ui` submodule rolled back 27 releases inside an unrelated commit (table above).
-3. `helpdesk/search.py:227` — the RediSearch < 2.0 fallback calls
-   `FT.DROP <make_key(index_name)>`, but the index is created and dropped under the RAW
-   name (`self.redis.ft(self.index_name)`, `index_name = "helpdesk_idx"`). The namespaced
-   name is a different index, so `FT.DROP` answers "Unknown Index name" and the
-   `suppress(ResponseError)` around it turns that into a silent no-op: the legacy path
-   never drops anything.
-4. `helpdesk/search.py:142` — `create_index()` now retries after `drop_index()`. Because
-   `index_name` is NOT namespaced per site while the document `prefix` IS, two sites
-   sharing one Redis (mutualised bench) share one index definition: the second site's
-   rebuild now DROPS the first site's index with `delete_documents=True` instead of just
-   failing as upstream did. Per-instance benches are unaffected; the shared hosts are not.
-5. `helpdesk/helpdesk/utils/email.py:43` — with `enable_outgoing == 1` several support
-   mailboxes can match, and `.limit(1)` has no `ORDER BY`: the account picked is whatever
-   the database returns first. Upstream's `default_outgoing == 1` could only ever match
-   one. Only reached as the third fallback of `sender_email()`, so latent.
-6. `desk/src/components/NeoSuggestReplyDialog.vue:161-163` — the plain-text draft is turned
-   into HTML by string interpolation with no escaping of `& < >`. The thread it is drafted
-   from is customer-supplied, so customer text echoed by the model lands unescaped in the
-   agent's editor and in the outgoing mail.
-7. `desk/src/socket.ts:28` — `window.socketio_port` is set by nothing in this repo (nor by
-   the SPA shell), so the `"9000"` fallback is the only value ever used. Harmless in
-   production (`window.location.port` is empty, so the port is dropped), wrong anywhere the
-   site is served on a port.
-8. `.github/workflows/build-frontend.yml:55` — the artifact commit ends with a bare
-   `git push`, no fetch/rebase and no retry. Any push landing on `version-15` while the
-   build runs (a human, or the `fork-markers` bot pushing its own marker commit) makes it
-   fail `! [rejected] (fetch first)` and leaves `helpdesk/public/desk/` **one build behind
-   the sources**, with nothing but a red run to say so. `concurrency: cancel-in-progress`
-   does not cover it: a push that misses the `paths:` filter queues no run, so it cannot
-   cancel the one already building. Hit for real on 2026-09-04 during this pass.
-9. French comments in code, against the English-only rule: the `//// Neoffice` markers in
-   `hd_ticket.py` (l. 157-163, 552-566, 584-586, 845-852) and `CommunicationArea.vue`
-   (l. 225-230),
-   and the plain comments in `NeoSuggestReplyDialog.vue` (l. 14-16, 27-28, 53-55, 64).
-   Not rewritten here: this pass may only ADD lines.
+Recorded during the marking pass of 2026-09-04 and worked through the same day. Each line
+says what was actually done and which commit did it. **Two of them were wrong diagnoses**;
+they are kept here with the correction rather than deleted, because the wrong version was
+written down first and someone will meet it again.
+
+| # | Where | Status |
+|---|---|---|
+| 1 | `.gitignore` — `desk/stats.htmlCLAUDE.md` welded into one dead entry | **fixed**, `b7eace9e6` |
+| 2 | `frappe-ui` gitlink rolled back 27 releases | **fixed**, `4bc1b1948` |
+| 3 | `helpdesk/search.py:227` — legacy `FT.DROP` said to use the wrong name | **NOT FOUNDED** |
+| 4 | `helpdesk/search.py:142` — index said not to be namespaced per site | **NOT FOUNDED** |
+| 5 | `helpdesk/helpdesk/utils/email.py` — `LIMIT 1` with no `ORDER BY` | **fixed**, `48cd88935` |
+| 6 | `NeoSuggestReplyDialog.vue` — draft interpolated into HTML unescaped | **fixed**, `82093ab0a` |
+| 7 | `desk/src/socket.ts` — `window.socketio_port` read but never written | **fixed**, `8d19ec94a` |
+| 8 | `.github/workflows/build-frontend.yml` — artifact push with no retry | **fixed**, `1e4259efa` |
+| 9 | French `////` markers and comments in three files | **fixed**, `31534ca9f` |
+| 10 | `helpdesk/www/helpdesk/index.py` — `allow_guest` gated only by a flag | **reviewed, kept**, `ac6aa3247` |
+
+1. `.gitignore` — `b713b86fd "chore: add CLAUDE.md to gitignore"` appended `CLAUDE.md` to a
+   file whose last line had no trailing newline, welding it onto the previous entry, so from
+   that day **neither** path was ignored. Upstream's `desk/stats.html` is restored on its own
+   line. `CLAUDE.md` stays **tracked on purpose**: it carries this fork's branch and
+   commit-the-build conventions, and a clone that cannot see it cannot follow them.
+2. `frappe-ui` — pointer restored to `a302a61dc` (v0.1.259), the version `desk/package.json`
+   pins. The build never noticed because it resolves frappe-ui from the npm registry and
+   `build-frontend.yml` checks out without submodules; only a human running `git submodule
+   update` — or the next three-way merge — was misled.
+3. **NOT FOUNDED.** The note claimed the RediSearch < 2.0 fallback drops a namespaced name
+   while the index is created under the raw one. It is the opposite: `HelpdeskSearch.redis`
+   is `frappe.cache()`, and `frappe.cache().ft(name)` returns
+   `RedisearchWrapper(index_name=self.make_key(name))`, where `make_key` prefixes with
+   `frappe.conf.db_name`. So `ft()` and the explicit `make_key` on line 227 speak the **same**
+   name and the fallback drops the right index. `search.py` is untouched.
+4. **NOT FOUNDED**, same root cause as 3: the index name IS namespaced per site, through the
+   very same `make_key` as the document prefix. Two sites sharing one Redis get two distinct
+   index names, and one site rebuilding cannot drop the other's. Verified 2026-09-04 in
+   `frappe/utils/redis_wrapper.py` (`ft()` l. 292, `make_key()` l. 41).
+5. `helpdesk/helpdesk/utils/email.py` — our widening to `enable_outgoing == 1` can match
+   several support mailboxes where upstream's `default_outgoing == 1` matched at most one, and
+   the `LIMIT 1` had no `ORDER BY`: the mailbox a ticket answered from was whatever the engine
+   returned first. Now `ORDER BY default_outgoing DESC, name ASC`. Only the third fallback of
+   `sender_email()`, so it was latent — but it is the one that runs when the two above are
+   silent.
+6. `NeoSuggestReplyDialog.vue` — the draft is written **from the customer's own thread**, so
+   text they typed could come back through the model and reach the agent's editor and the
+   outgoing mail as live markup. `& < > "` are now escaped before the `<p>`/`<br>` are built,
+   `&` first so the other entities are not escaped twice.
+7. `desk/src/socket.ts` — `window.socketio_port` is now emitted by `get_boot()` in
+   `helpdesk/www/helpdesk/index.py`, which covers the rendered page and the dev path through
+   `get_context_for_dev()` alike. **Related finding, deliberately left alone**: the
+   `window.site_name = "{{ site_name }}"` line in `desk/index.html` is dead — `site_name` is
+   not in the website context, so Jinja never substitutes it and the page carries the literal
+   placeholder. It is harmless only because `get_boot()` overwrites the key further down the
+   same page. Upstream's line; take upstream's at the merge.
+8. `.github/workflows/build-frontend.yml` — the artifact step now fetches, resets onto the
+   current tip, replays the built artifacts (emptyOutDir semantics preserved: a chunk this
+   build no longer emits must not survive) and retries up to three times. Rebasing was
+   rejected on purpose — artifacts are derived, never authored, and a rebase would only
+   invite conflicts over vite's hashed chunk names.
+9. French `////` markers and comments rewritten in English in `hd_ticket.py`,
+   `CommunicationArea.vue` and `NeoSuggestReplyDialog.vue`. Wording only, no behaviour
+   change. It matters most in `hd_ticket.py`, which the forecast above calls a hard conflict:
+   a marker exists to tell the resolver our intent, and one they cannot read does not.
+10. `helpdesk/www/helpdesk/index.py` — `get_context_for_dev` is `allow_guest=True` behind
+    nothing but `developer_mode`. **Reviewed and kept.** `desk/src/main.js` awaits it before
+    `app.mount()`, and the router guard that sends a logged-out visitor to `/login` only runs
+    after the mount, so refusing Guest would leave a logged-out developer on a blank page with
+    no way to sign in. What keeps it safe is the shape of the payload: `get_boot()` returns
+    the caller's OWN session (its own `csrf_token`, its own `session_user`) plus site-wide
+    display settings — nothing belonging to another user, no credential. That property is now
+    stated next to the code, because **any key added to `get_boot()` becomes readable by an
+    anonymous visitor of a developer_mode site**.
 
 ## Auto-marked (fork-markers workflow)
 
