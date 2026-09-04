@@ -138,7 +138,7 @@ BASE (0 commits): they merge clean.
 
 ### Known defects recorded while marking (NOT fixed here)
 
-1. `.gitignore:42` — `desk/stats.htmlCLAUDE.md`. Commit `b713b86fd "chore: add CLAUDE.md to
+1. `.gitignore:58` — `desk/stats.htmlCLAUDE.md`. Commit `b713b86fd "chore: add CLAUDE.md to
    gitignore"` appended `CLAUDE.md` to a file that had no trailing newline, welding it onto
    the previous entry. Net effect: **neither `desk/stats.html` nor `CLAUDE.md` is ignored**
    — and `CLAUDE.md` is in fact committed in this repo, which is what the commit meant to
@@ -150,16 +150,16 @@ BASE (0 commits): they merge clean.
    name is a different index, so `FT.DROP` answers "Unknown Index name" and the
    `suppress(ResponseError)` around it turns that into a silent no-op: the legacy path
    never drops anything.
-4. `helpdesk/search.py:135` — `create_index()` now retries after `drop_index()`. Because
+4. `helpdesk/search.py:142` — `create_index()` now retries after `drop_index()`. Because
    `index_name` is NOT namespaced per site while the document `prefix` IS, two sites
    sharing one Redis (mutualised bench) share one index definition: the second site's
    rebuild now DROPS the first site's index with `delete_documents=True` instead of just
    failing as upstream did. Per-instance benches are unaffected; the shared hosts are not.
-5. `helpdesk/helpdesk/utils/email.py:42` — with `enable_outgoing == 1` several support
+5. `helpdesk/helpdesk/utils/email.py:43` — with `enable_outgoing == 1` several support
    mailboxes can match, and `.limit(1)` has no `ORDER BY`: the account picked is whatever
    the database returns first. Upstream's `default_outgoing == 1` could only ever match
    one. Only reached as the third fallback of `sender_email()`, so latent.
-6. `desk/src/components/NeoSuggestReplyDialog.vue:161` — the plain-text draft is turned
+6. `desk/src/components/NeoSuggestReplyDialog.vue:161-163` — the plain-text draft is turned
    into HTML by string interpolation with no escaping of `& < >`. The thread it is drafted
    from is customer-supplied, so customer text echoed by the model lands unescaped in the
    agent's editor and in the outgoing mail.
@@ -168,6 +168,7 @@ BASE (0 commits): they merge clean.
    production (`window.location.port` is empty, so the port is dropped), wrong anywhere the
    site is served on a port.
 8. French comments in code, against the English-only rule: the `//// Neoffice` markers in
-   `hd_ticket.py` (l. 157-163, 543-557, 845-852) and `CommunicationArea.vue` (l. 225-230),
+   `hd_ticket.py` (l. 157-163, 552-566, 584-586, 845-852) and `CommunicationArea.vue`
+   (l. 225-230),
    and the plain comments in `NeoSuggestReplyDialog.vue` (l. 14-16, 27-28, 53-55, 64).
    Not rewritten here: this pass may only ADD lines.
