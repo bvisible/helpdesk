@@ -1,3 +1,11 @@
+<!-- //// Neoffice — added file (no upstream equivalent): the Helpdesk flavour of
+     //// the shared chrome, and the switch that keeps upstream's Sidebar.vue
+     //// reachable. It renders NeoCockpitBridge normally and falls back to
+     //// upstream's <Sidebar /> the moment the cockpit bundle fails to load, so a
+     //// broken/absent neoffice_theme never leaves an agent without navigation.
+     //// The context nav is derived from upstream's own agentPortalSidebarOptions
+     //// / customerPortalSidebarOptions, so upstream's links stay the source of
+     //// truth and a new upstream entry appears here for free. Recipe: ADR-015. -->
 <template>
   <Sidebar v-if="failed" />
   <NeoCockpitBridge

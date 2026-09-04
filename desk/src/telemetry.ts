@@ -1,5 +1,9 @@
 import { ref } from "vue";
 import { createResource } from "frappe-ui";
+//// Neoffice — upstream's static import of frappe's posthog.js was removed here.
+//// It reaches three directories up into a SIBLING app of the bench; on a CI
+//// runner (commit-the-build) that path does not exist, and in production vite
+//// externalises it into a URL that 404s. At the merge, keep our removal.
 
 // NOTE: the legacy `import '../../../frappe/frappe/public/js/lib/posthog.js'`
 // was removed because the externalised path 404s in production (and CI).

@@ -1,3 +1,11 @@
+<!-- //// Neoffice — added file (no upstream equivalent): host element for the
+     //// shared Neoffice chrome. The cockpit is a React IIFE bundle served from
+     //// frappe (/assets/frappe/js/lib/neocockpit.global.js, family "A" of the
+     //// consumers) and mounted imperatively here, so this Vue app gains the
+     //// module switcher, NORA, mail and notifications without taking a React
+     //// dependency. Nothing upstream is replaced; DesktopLayout.vue chooses
+     //// between this and upstream's Sidebar.vue via NeoCockpitHDSidebar.vue.
+     //// Never conflicts at a merge — upstream has no file at this path. -->
 <template>
   <div
     ref="host"

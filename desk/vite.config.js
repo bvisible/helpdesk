@@ -6,6 +6,12 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  //// Neoffice — added `build` block (upstream has none, it takes vite's defaults).
+  //// The build has to fit in a small Node heap: sourcemaps off in production and
+  //// target esnext (no transpilation to older syntax) are what keeps `yarn build`
+  //// from being OOM-killed; commonjsOptions.include lets the CJS interop see
+  //// tailwind.config.js, which vite otherwise leaves out of the pre-bundling.
+  //// Paired with NODE_OPTIONS=--max-old-space-size in desk/package.json.
   build: {
     // Disable sourcemaps in production to reduce memory usage
     sourcemap: process.env.NODE_ENV !== 'production',
