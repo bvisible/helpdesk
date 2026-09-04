@@ -1,3 +1,6 @@
+#//// Neoffice — added file (no upstream equivalent). Commit-the-build pipeline:
+#//// upstream expects every instance to run `yarn build`, which OOM-killed our
+#//// 4 GB tenants, so the SPA is compiled here and its artifacts are committed.
 name: build-frontend
 
 on:
@@ -42,14 +45,65 @@ jobs:
           FORCE_REBUILD: '1'
         run: yarn build
 
+      # The build takes minutes, and the branch does not stand still while it
+      # runs: a human push, or the fork-markers bot pushing its own marker
+      # commit, lands in the meantime. A bare `git push` then fails with
+      # `! [rejected] (fetch first)` and leaves helpdesk/public/desk one build
+      # behind the sources, with nothing but a red run to say so (hit for real
+      # on 2026-09-04). `concurrency: cancel-in-progress` does not cover it
+      # either: a push that misses the `paths:` filter queues no run, so it
+      # cannot cancel the one already building.
+      #
+      # So we replay rather than merge. The artifacts are DERIVED, never
+      # authored: rebasing them would invite conflicts over vite's hashed chunk
+      # names for no gain. Each attempt resets onto the current tip, wipes the
+      # artifact tree (emptyOutDir semantics: a chunk this build no longer
+      # emits must not survive) and lays this build's output back down.
       - name: Commit artifacts
         run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add helpdesk/public/desk helpdesk/www/helpdesk/index.html
-          if git diff --cached --quiet; then
-            echo "No artifact changes to commit"
-            exit 0
-          fi
-          git commit --no-verify -m "[skip-build] frontend artifacts for ${GITHUB_SHA::8}"
-          git push
+
+          branch="${GITHUB_REF_NAME}"
+          artifacts=(helpdesk/public/desk helpdesk/www/helpdesk/index.html)
+
+          # Park the build output outside the work tree, so `git reset --hard`
+          # below cannot take it away.
+          staged="$(mktemp -d)"
+          for path in "${artifacts[@]}"; do
+            if [ -e "$path" ]; then
+              mkdir -p "$staged/$(dirname "$path")"
+              cp -a "$path" "$staged/$path"
+            fi
+          done
+
+          for attempt in 1 2 3; do
+            git fetch origin "$branch"
+            git reset --hard "origin/$branch"
+
+            for path in "${artifacts[@]}"; do
+              rm -rf "$path"
+              if [ -e "$staged/$path" ]; then
+                mkdir -p "$(dirname "$path")"
+                cp -a "$staged/$path" "$path"
+              fi
+            done
+
+            git add "${artifacts[@]}"
+            if git diff --cached --quiet; then
+              echo "No artifact changes to commit"
+              exit 0
+            fi
+            git commit --no-verify -m "[skip-build] frontend artifacts for ${GITHUB_SHA::8}"
+
+            if git push origin "HEAD:$branch"; then
+              exit 0
+            fi
+            echo "push rejected (attempt ${attempt}/3) — refetching and replaying the artifacts"
+            sleep $((attempt * 5))
+          done
+
+          echo "::error::could not push the frontend artifacts after 3 attempts"
+          exit 1
