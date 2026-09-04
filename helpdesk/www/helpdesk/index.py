@@ -17,6 +17,24 @@ def get_context(context):
     return context
 
 
+#//// Neoffice — contract note on upstream's `allow_guest=True`. Reviewed
+#//// 2026-09-04 and deliberately KEPT, neither loosened nor tightened.
+#////
+#//// Guest access is load-bearing for the dev flow, not an oversight.
+#//// desk/src/main.js awaits this call BEFORE app.mount(), and the router's
+#//// beforeEach guard — the thing that sends a logged-out visitor to /login —
+#//// only runs once the app is mounted. There is no login screen inside the
+#//// SPA to fall back on. Refuse Guest here and a logged-out developer on the
+#//// vite dev server gets a blank page with no way to sign in.
+#////
+#//// What it exposes is bounded, and THAT is the property to preserve:
+#//// get_boot() returns the CALLER's own session (its own csrf_token, its own
+#//// session_user) plus site-wide display settings (date/time format,
+#//// setup_complete, is_fc_site, socketio_port, default route). Nothing that
+#//// belongs to another user, no credential. Any key added to get_boot()
+#//// becomes readable by an anonymous visitor of a developer_mode site — weigh
+#//// it against that before adding one. On production the developer_mode gate
+#//// below closes the door entirely (the flag is 0 across the fleet).
 @frappe.whitelist(methods=["POST"], allow_guest=True)
 def get_context_for_dev():
     if not frappe.conf.developer_mode:
