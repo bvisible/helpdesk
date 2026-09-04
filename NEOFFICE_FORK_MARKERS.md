@@ -111,6 +111,31 @@ from the conflict resolution and let the workflow rebuild them from the merged s
 counted as a non-comment addition); the four workflows are ours in full and carry their
 own header comment.
 
+### Merge forecast (measured 2026-09-04 against `upstream/develop` = 9b1023c86)
+
+Upstream is **2170 commits** ahead of BASE and has touched **628 files**; we touched 25
+(artifacts excluded). The intersection is 14 files — those are the whole conflict surface:
+
+| File | upstream churn since BASE | expected at the merge |
+|---|---|---|
+| `desk/src/components/EmailEditor.vue` | 529+/219−, 73 commits | **hard conflict**. Our NORA button + `applyNeoSuggestion` are additions in a heavily rewritten file. Re-apply by hand from the markers. |
+| `helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py` | 486+/261−, 88 commits | **hard conflict**, and one trap: upstream now writes `subject=_("Ticket #{0}: We've received your request").format(self.name)` — the same line as ours **minus `lang=self.reply_language()`**. Taking upstream there silently re-breaks the language in workers. |
+| `desk/vite.config.js` | 138+/81−, 23 commits | conflict on the `build` block; keep ours, it is a memory constraint of our runners. |
+| `desk/src/index.css` | 163+/1−, 25 commits | trivial: ours is appended at the end, re-append after upstream's file. |
+| `desk/src/components/CommunicationArea.vue` | 122+/75−, 17 commits | one-line conflict on the `onClickOutside` `ignore` list. |
+| `desk/src/telemetry.ts` | 4+/88−, 2 commits | **take upstream whole** — it rewrote the file around `useTelemetry` and dropped the posthog import itself. Our change is spent. |
+| `helpdesk/search.py` | 8+/38−, 5 commits | upstream removed HD Ticket from the Redis index (tickets moved to `search_sqlite.py`); the Article index remains, so our idempotent `create_index` / `drop_index` still apply. Keep ours. |
+| `desk/package.json` | 14+/5−, 23 commits | keep our `NODE_OPTIONS` prefixes. |
+| `package.json` | 2+/5−, 4 commits | keep our `[skip-build]` guard + `build:force`. |
+| `pyproject.toml` | 12+/1−, 8 commits | keep `requires-python = ">=3.10"` until the fleet moves to 3.14. |
+| `.gitignore` | 6+/0−, 5 commits | keep our un-ignores; take the chance to fix the `desk/stats.htmlCLAUDE.md` defect. |
+| `desk/src/components/layouts/DesktopLayout.vue` | 2+/3−, 2 commits | small conflict on the `<Sidebar />` swap. |
+| `helpdesk/locale/fr.po` | (locale) | merge both sides, ours are additions only. |
+| `frappe-ui` | submodule | **take upstream's pointer** (ours is a rollback, see above). |
+
+`desk/src/socket.ts` and `helpdesk/helpdesk/utils/email.py` are untouched upstream since
+BASE (0 commits): they merge clean.
+
 ### Known defects recorded while marking (NOT fixed here)
 
 1. `.gitignore:42` — `desk/stats.htmlCLAUDE.md`. Commit `b713b86fd "chore: add CLAUDE.md to
@@ -119,3 +144,30 @@ own header comment.
    — and `CLAUDE.md` is in fact committed in this repo, which is what the commit meant to
    prevent.
 2. `frappe-ui` submodule rolled back 27 releases inside an unrelated commit (table above).
+3. `helpdesk/search.py:227` — the RediSearch < 2.0 fallback calls
+   `FT.DROP <make_key(index_name)>`, but the index is created and dropped under the RAW
+   name (`self.redis.ft(self.index_name)`, `index_name = "helpdesk_idx"`). The namespaced
+   name is a different index, so `FT.DROP` answers "Unknown Index name" and the
+   `suppress(ResponseError)` around it turns that into a silent no-op: the legacy path
+   never drops anything.
+4. `helpdesk/search.py:135` — `create_index()` now retries after `drop_index()`. Because
+   `index_name` is NOT namespaced per site while the document `prefix` IS, two sites
+   sharing one Redis (mutualised bench) share one index definition: the second site's
+   rebuild now DROPS the first site's index with `delete_documents=True` instead of just
+   failing as upstream did. Per-instance benches are unaffected; the shared hosts are not.
+5. `helpdesk/helpdesk/utils/email.py:42` — with `enable_outgoing == 1` several support
+   mailboxes can match, and `.limit(1)` has no `ORDER BY`: the account picked is whatever
+   the database returns first. Upstream's `default_outgoing == 1` could only ever match
+   one. Only reached as the third fallback of `sender_email()`, so latent.
+6. `desk/src/components/NeoSuggestReplyDialog.vue:161` — the plain-text draft is turned
+   into HTML by string interpolation with no escaping of `& < >`. The thread it is drafted
+   from is customer-supplied, so customer text echoed by the model lands unescaped in the
+   agent's editor and in the outgoing mail.
+7. `desk/src/socket.ts:28` — `window.socketio_port` is set by nothing in this repo (nor by
+   the SPA shell), so the `"9000"` fallback is the only value ever used. Harmless in
+   production (`window.location.port` is empty, so the port is dropped), wrong anywhere the
+   site is served on a port.
+8. French comments in code, against the English-only rule: the `//// Neoffice` markers in
+   `hd_ticket.py` (l. 157-163, 543-557, 845-852) and `CommunicationArea.vue` (l. 225-230),
+   and the plain comments in `NeoSuggestReplyDialog.vue` (l. 14-16, 27-28, 53-55, 64).
+   Not rewritten here: this pass may only ADD lines.

@@ -3,7 +3,10 @@ import { createResource } from "frappe-ui";
 //// Neoffice — upstream's static import of frappe's posthog.js was removed here.
 //// It reaches three directories up into a SIBLING app of the bench; on a CI
 //// runner (commit-the-build) that path does not exist, and in production vite
-//// externalises it into a URL that 404s. At the merge, keep our removal.
+//// externalises it into a URL that 404s.
+//// Checked 2026-09-04 against upstream/develop: upstream has since rewritten
+//// this whole file around frappe-ui's useTelemetry and dropped that import on
+//// its own. At the merge, take UPSTREAM's file whole — this fix is spent.
 
 // NOTE: the legacy `import '../../../frappe/frappe/public/js/lib/posthog.js'`
 // was removed because the externalised path 404s in production (and CI).
