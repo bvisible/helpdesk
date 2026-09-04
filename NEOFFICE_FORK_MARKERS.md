@@ -181,3 +181,11 @@ BASE (0 commits): they merge clean.
    (l. 225-230),
    and the plain comments in `NeoSuggestReplyDialog.vue` (l. 14-16, 27-28, 53-55, 64).
    Not rewritten here: this pass may only ADD lines.
+
+## Auto-marked (fork-markers workflow)
+
+- `frappe-ui` — submodule pointer restored from `3d0c58a03` (v0.1.232, 2025-12-04) to
+  `a302a61dc` (v0.1.259, 2026-01-19) — the pointer had been rolled back 27 releases as a
+  stale checkout carried, unqualified, inside `8fc1e754b8` ("fix: use received
+  communications to determine reply email account"), a commit about an unrelated email fix
+  (4bc1b1948 "fix(submodule): frappe-ui pointer back to v0.1.259, it had been rolled back 27 releases")
