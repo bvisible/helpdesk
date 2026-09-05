@@ -121,13 +121,13 @@ class Search:
             else:
                 schema.append(TextField(field.name, **kwargs))
 
-        #//// Neoffice — wrapped in try/except (upstream calls create_index bare).
-        #//// On the fleet this is reached from build_index(), itself called by a
-        #//// scheduler job and by the post-migrate hook: two workers can race, and
-        #//// the loser gets "Index already exists" — an unhandled ResponseError that
-        #//// aborted the whole job. Rebuilding is supposed to be idempotent, so we
-        #//// drop and retry once instead of failing. Anything that is not "already
-        #//// exists" is still re-raised: we hide no other Redis error.
+        # //// Neoffice — wrapped in try/except (upstream calls create_index bare).
+        # //// On the fleet this is reached from build_index(), itself called by a
+        # //// scheduler job and by the post-migrate hook: two workers can race, and
+        # //// the loser gets "Index already exists" — an unhandled ResponseError that
+        # //// aborted the whole job. Rebuilding is supposed to be idempotent, so we
+        # //// drop and retry once instead of failing. Anything that is not "already
+        # //// exists" is still re-raised: we hide no other Redis error.
         try:
             self.redis.ft(self.index_name).create_index(
                 schema,
@@ -207,17 +207,17 @@ class Search:
         return self.redis.ft(self.index_name).spellcheck(query, **kwargs)
 
     def drop_index(self):
-        #//// Neoffice — was upstream's `with suppress(ResponseError)`, which
-        #//// swallowed everything indiscriminately. We now read the error,
-        #//// because one of them is not "the index is absent" but "this Redis
-        #//// has no FT.DROPINDEX at all" (RediSearch < 2.0, still shipped by the
-        #//// distro Redis on the older instances). Suppressed, that turned into a
-        #//// silent no-op: the index was never dropped, create_index above then
-        #//// hit "already exists" again, and the retry looped on itself.
+        # //// Neoffice — was upstream's `with suppress(ResponseError)`, which
+        # //// swallowed everything indiscriminately. We now read the error,
+        # //// because one of them is not "the index is absent" but "this Redis
+        # //// has no FT.DROPINDEX at all" (RediSearch < 2.0, still shipped by the
+        # //// distro Redis on the older instances). Suppressed, that turned into a
+        # //// silent no-op: the index was never dropped, create_index above then
+        # //// hit "already exists" again, and the retry looped on itself.
         try:
             self.redis.ft(self.index_name).dropindex(delete_documents=True)
         except ResponseError as e:
-            #//// Neoffice — added branch: legacy FT.DROP fallback, see above.
+            # //// Neoffice — added branch: legacy FT.DROP fallback, see above.
             message = str(e).lower()
             if "unknown index" in message:
                 return  # nothing to drop

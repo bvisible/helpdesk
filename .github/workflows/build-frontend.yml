@@ -1,6 +1,6 @@
-#//// Neoffice — added file (no upstream equivalent). Commit-the-build pipeline:
-#//// upstream expects every instance to run `yarn build`, which OOM-killed our
-#//// 4 GB tenants, so the SPA is compiled here and its artifacts are committed.
+# //// Neoffice — added file (no upstream equivalent). Commit-the-build pipeline:
+# //// upstream expects every instance to run `yarn build`, which OOM-killed our
+# //// 4 GB tenants, so the SPA is compiled here and its artifacts are committed.
 name: build-frontend
 
 on:

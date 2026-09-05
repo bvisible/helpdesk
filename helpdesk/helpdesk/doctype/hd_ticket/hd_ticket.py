@@ -154,14 +154,14 @@ class HDTicket(Document):
             "HD Settings", "feedback_email_content"
         )
         default_feedback_email_content = get_default_email_content("share_feedback")
-        #//// Neoffice — sender/reply_to pinned to the support mailbox the
-        #//// ticket came from. Upstream sends with no sender, so frappe.sendmail
-        #//// falls back to the default outgoing account (here
-        #//// neoservice@neoemail.ch): a customer who wrote to
-        #//// support@neoffice.ch got mail from an address that is NOT polled
-        #//// (enable_incoming=0), and their reply was lost in silence.
-        #//// sender_email() reuses the upstream logic reply_via_agent already
-        #//// relies on (last received Communication -> support account).
+        # //// Neoffice — sender/reply_to pinned to the support mailbox the
+        # //// ticket came from. Upstream sends with no sender, so frappe.sendmail
+        # //// falls back to the default outgoing account (here
+        # //// neoservice@neoemail.ch): a customer who wrote to
+        # //// support@neoffice.ch got mail from an address that is NOT polled
+        # //// (enable_incoming=0), and their reply was lost in silence.
+        # //// sender_email() reuses the upstream logic reply_via_agent already
+        # //// relies on (last received Communication -> support account).
         sender_account = self.sender_email()
         sender_id = sender_account.email_id if sender_account else None
         try:
@@ -176,10 +176,10 @@ class HDTicket(Document):
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
                 now=True,
-                #//// Neoffice — added kwargs (upstream passes neither). Without a
-                #//// sender, frappe.sendmail falls back to the default outgoing
-                #//// account; reply_to must follow it or the customer's answer
-                #//// lands in an unpolled mailbox. See the block above.
+                # //// Neoffice — added kwargs (upstream passes neither). Without a
+                # //// sender, frappe.sendmail falls back to the default outgoing
+                # //// account; reply_to must follow it or the customer's answer
+                # //// lands in an unpolled mailbox. See the block above.
                 sender=sender_id,
                 reply_to=sender_id,
                 in_reply_to=last_communication.name if last_communication else None,
@@ -509,13 +509,13 @@ class HDTicket(Document):
         except Exception:
             return None
 
-    #//// Neoffice — added method (upstream only has get_last_communication above,
-    #//// which returns the last communication of ANY direction). Once a reply had
-    #//// gone out from the wrong account, that Sent communication became the last
-    #//// one, so last_communication_email() read the wrong account back and every
-    #//// subsequent reply repeated the mistake — a loop that only got worse.
-    #//// Filtering on sent_or_received == "Received" pins the answer to what the
-    #//// CUSTOMER wrote to, which is the only thing that can be wrong-proof.
+    # //// Neoffice — added method (upstream only has get_last_communication above,
+    # //// which returns the last communication of ANY direction). Once a reply had
+    # //// gone out from the wrong account, that Sent communication became the last
+    # //// one, so last_communication_email() read the wrong account back and every
+    # //// subsequent reply repeated the mistake — a loop that only got worse.
+    # //// Filtering on sent_or_received == "Received" pins the answer to what the
+    # //// CUSTOMER wrote to, which is the only thing that can be wrong-proof.
     def get_last_received_communication(self):
         """Get the last received communication to determine the email account that received the ticket"""
         filters = {
@@ -535,8 +535,8 @@ class HDTicket(Document):
             return None
 
     def last_communication_email(self):
-        #//// Neoffice — was upstream's `self.get_last_communication()`. Only the
-        #//// received side may decide which mailbox answers; see the method above.
+        # //// Neoffice — was upstream's `self.get_last_communication()`. Only the
+        # //// received side may decide which mailbox answers; see the method above.
         if not (communication := self.get_last_received_communication()):
             return
 
@@ -550,22 +550,22 @@ class HDTicket(Document):
 
         return email_account
 
-    #//// Neoffice — added method. Customer mail almost always leaves from a
-    #//// worker (IMAP pull, scheduler) where frappe.local.lang is NOT set: _()
-    #//// then falls back to English and the customer receives an English
-    #//// subject glued onto a French body (the body comes from HD Settings and
-    #//// is translated by hand). So the site language is stated explicitly.
+    # //// Neoffice — added method. Customer mail almost always leaves from a
+    # //// worker (IMAP pull, scheduler) where frappe.local.lang is NOT set: _()
+    # //// then falls back to English and the customer receives an English
+    # //// subject glued onto a French body (the body comes from HD Settings and
+    # //// is translated by hand). So the site language is stated explicitly.
     def reply_language(self):
         return frappe.db.get_single_value("System Settings", "language") or "en"
 
-    #//// Neoffice — added method. The mailbox that RECEIVED the mail is
-    #//// already known at after_insert time: frappe.email.receive
-    #//// ._create_reference_document writes self.email_account (the DocType's
-    #//// recipient_account_field) BEFORE the insert, whereas the incoming
-    #//// Communication is only created AFTER it. Without this source,
-    #//// last_communication_email() returns None on a ticket just created by
-    #//// email, and the acknowledgement leaves from the default outgoing
-    #//// account — exactly the bug observed on #25 / #26.
+    # //// Neoffice — added method. The mailbox that RECEIVED the mail is
+    # //// already known at after_insert time: frappe.email.receive
+    # //// ._create_reference_document writes self.email_account (the DocType's
+    # //// recipient_account_field) BEFORE the insert, whereas the incoming
+    # //// Communication is only created AFTER it. Without this source,
+    # //// last_communication_email() returns None on a ticket just created by
+    # //// email, and the acknowledgement leaves from the default outgoing
+    # //// account — exactly the bug observed on #25 / #26.
     def incoming_email_account(self):
         if not self.get("email_account"):
             return
@@ -583,9 +583,9 @@ class HDTicket(Document):
 
         :return: `Email Account`
         """
-        #//// Neoffice — the ticket's own mailbox comes first: a customer who
-        #//// writes to support@neoffice.ch must be answered from that address,
-        #//// never from another mailbox of the fleet.
+        # //// Neoffice — the ticket's own mailbox comes first: a customer who
+        # //// writes to support@neoffice.ch must be answered from that address,
+        # //// never from another mailbox of the fleet.
         if email_account := self.incoming_email_account():
             return email_account
 
@@ -844,25 +844,25 @@ class HDTicket(Document):
             "acknowledgement"
         )
 
-        #//// Neoffice — same fix as send_feedback_email: with no sender, the
-        #//// acknowledgement leaves from the default outgoing account. The
-        #//// customer writes to support@neoffice.ch and gets an answer from
-        #//// neoservice@neoemail.ch, an unpolled mailbox: if they reply to that
-        #//// acknowledgement, their message never reaches the ticket. Verified
-        #//// 2026-08-12 on tickets #25 / #26 (From and Reply-To were both
-        #//// neoservice@neoemail.ch). The subject goes through _() as well: the
-        #//// body is translated (FR, from HD Settings) while the subject stayed
-        #//// hard-coded English.
+        # //// Neoffice — same fix as send_feedback_email: with no sender, the
+        # //// acknowledgement leaves from the default outgoing account. The
+        # //// customer writes to support@neoffice.ch and gets an answer from
+        # //// neoservice@neoemail.ch, an unpolled mailbox: if they reply to that
+        # //// acknowledgement, their message never reaches the ticket. Verified
+        # //// 2026-08-12 on tickets #25 / #26 (From and Reply-To were both
+        # //// neoservice@neoemail.ch). The subject goes through _() as well: the
+        # //// body is translated (FR, from HD Settings) while the subject stayed
+        # //// hard-coded English.
         sender_account = self.sender_email()
         sender_id = sender_account.email_id if sender_account else None
         try:
             frappe.sendmail(
                 recipients=[self.raised_by],
-                #//// Neoffice — was an f-string in upstream, hence untranslatable:
-                #//// the body comes from HD Settings (translated by hand, FR) while
-                #//// the subject stayed hard-coded English. Wrapped in _() with an
-                #//// explicit lang= because this runs in a worker where
-                #//// frappe.local.lang is not set — see reply_language().
+                # //// Neoffice — was an f-string in upstream, hence untranslatable:
+                # //// the body comes from HD Settings (translated by hand, FR) while
+                # //// the subject stayed hard-coded English. Wrapped in _() with an
+                # //// explicit lang= because this runs in a worker where
+                # //// frappe.local.lang is not set — see reply_language().
                 subject=_(
                     "Ticket #{0}: We've received your request", lang=self.reply_language()
                 ).format(self.name),
@@ -873,7 +873,7 @@ class HDTicket(Document):
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
                 now=True,
-                #//// Neoffice — added kwargs, same reason as send_feedback_email.
+                # //// Neoffice — added kwargs, same reason as send_feedback_email.
                 sender=sender_id,
                 reply_to=sender_id,
                 expose_recipients="header",
