@@ -8,13 +8,19 @@
      //// truth and a new upstream entry appears here for free. Recipe: ADR-015. -->
 <template>
   <Sidebar v-if="failed" />
+  <!-- //// Neoffice — no `search-kbd` override here on purpose. It used to say
+       //// "⌘K", a shortcut that does not exist: NeoCockpit binds ⌘G (its search
+       //// effect tests `e.key === 'g'` and calls onSearch), so ⌘G is what opens
+       //// the command palette, exactly as in the desk. The hardcoded label also
+       //// stayed "⌘K" on Windows, where the default renders "Ctrl G". Without the
+       //// override the library prints the key it actually listens to, on the right
+       //// platform. -->
   <NeoCockpitBridge
     v-else
     :surface-app="surfaceApp"
     :context-nav="contextNav"
     :navigate="navigate"
     :on-search="openSearch"
-    search-kbd="⌘K"
     @failed="failed = true"
   />
   <CP
