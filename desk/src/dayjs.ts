@@ -52,7 +52,12 @@ const LOCALES: Record<string, () => Promise<unknown>> = {
 
 function readLanguage(): string {
   const w = window as any;
-  const lang = w?.frappe?.boot?.lang || document.documentElement.lang || "en";
+  // `window.lang` is injected by the page itself (www/helpdesk/index.py get_boot),
+  // which is the only source available this early: `window.frappe` is created later
+  // by the bundle, and the built index.html hardcodes lang="en" because it is a
+  // build artefact. Measured: reading frappe.boot.lang here returned undefined and
+  // the locale was never loaded.
+  const lang = w?.lang || w?.frappe?.boot?.lang || document.documentElement.lang || "en";
   return String(lang).toLowerCase().split("-")[0];
 }
 

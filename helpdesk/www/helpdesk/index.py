@@ -71,6 +71,17 @@ def get_boot():
             # //// down. Not sensitive: frappe's own desk boot ships the same
             # //// port to every logged-in and guest page.
             "socketio_port": frappe.conf.socketio_port or 9000,
+            # //// Neoffice — added key. The SPA needs the reader's language
+            # //// SYNCHRONOUSLY and early: desk/src/dayjs.ts configures dayjs at
+            # //// import time, which is long before the auth store's user resource
+            # //// resolves, and without a locale dayjs prints "2 months ago" in the
+            # //// middle of an otherwise French list. Nothing on the page carried it
+            # //// — `window.frappe` does not exist yet at that point (it is created
+            # //// later by the bundle), and the built index.html hardcodes
+            # //// `<html lang="en">` because it is a build artefact.
+            # //// Not sensitive: a display language, the same frappe's own boot ships
+            # //// to every page. See the note above on what this dict exposes.
+            "lang": frappe.local.lang or frappe.get_system_settings("language") or "en",
         }
     )
 

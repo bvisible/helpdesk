@@ -66,7 +66,7 @@ setConfig("fallbackErrorHandler", (error) => {
 //// announcing itself as English to screen readers, to the browser's translate
 //// prompt and to anything reading the document language. Corrected here, as early
 //// as the app can run.
-const bootLang = window.frappe?.boot?.lang;
+const bootLang = window.lang || window.frappe?.boot?.lang;
 if (bootLang) {
   document.documentElement.lang = bootLang;
 }
