@@ -61,6 +61,16 @@ setConfig("fallbackErrorHandler", (error) => {
   toast.error(msg);
 });
 
+//// Neoffice — the served index.html hardcodes `<html lang="en">` (it is a build
+//// artefact, so it cannot carry the reader's language), which leaves a French desk
+//// announcing itself as English to screen readers, to the browser's translate
+//// prompt and to anything reading the document language. Corrected here, as early
+//// as the app can run.
+const bootLang = window.frappe?.boot?.lang;
+if (bootLang) {
+  document.documentElement.lang = bootLang;
+}
+
 const pinia = createPinia();
 const app = createApp(App);
 

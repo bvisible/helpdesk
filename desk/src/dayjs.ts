@@ -29,4 +29,40 @@ d.extend(utc);
 d.extend(timezone);
 d.tz.setDefault(authStore.timezone);
 
+//// Neoffice — load the reader's dayjs locale. Upstream leaves dayjs in English, so
+//// a French desk read "19 hours ago" and "2 months ago" in the middle of an
+//// otherwise translated list — and those two strings can never be fixed by a PO
+//// file, they are dayjs's own relative-time table.
+////
+//// The language has to be read SYNCHRONOUSLY: this module runs at import, long
+//// before the auth store's user resource resolves, so authStore.language is still
+//// empty here. frappe.boot.lang is present on the page the SPA is served from;
+//// document.documentElement.lang is the fallback (it reads "en" on a French site,
+//// which is a separate defect, hence the order).
+////
+//// The import is dynamic and per-language so Vite emits one small chunk each
+//// instead of bundling every locale dayjs ships. A failure is swallowed on
+//// purpose: an unknown language must leave the dates in English, never break the
+//// module every screen imports.
+const LOCALES: Record<string, () => Promise<unknown>> = {
+  fr: () => import("dayjs/locale/fr"),
+  de: () => import("dayjs/locale/de"),
+  it: () => import("dayjs/locale/it"),
+};
+
+function readLanguage(): string {
+  const w = window as any;
+  const lang = w?.frappe?.boot?.lang || document.documentElement.lang || "en";
+  return String(lang).toLowerCase().split("-")[0];
+}
+
+const language = readLanguage();
+if (LOCALES[language]) {
+  LOCALES[language]()
+    .then(() => d.locale(language))
+    .catch(() => {
+      /* unknown or unbundled locale: dates stay English, nothing else breaks */
+    });
+}
+
 export const dayjs = d;
