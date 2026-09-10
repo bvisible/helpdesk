@@ -20,7 +20,7 @@
         <FormControl
           type="select"
           v-model="callMedium"
-          :label="'Calling Medium'"
+          :label="__('Calling Medium')"
           :options="['Twilio', 'Exotel']"
         />
         <div class="flex flex-col gap-1">

@@ -38,7 +38,7 @@
         <Dropdown :options="dropdownOptions" placement="right">
           <template #default="{ open }">
             <Button
-              :label="activeFilter"
+              :label="activeFilterLabel"
               class="flex items-center justify-between w-fit p-4"
             >
               <template #suffix>
@@ -59,7 +59,7 @@
                   {{ item.label }}
                 </span>
                 <FeatherIcon
-                  v-if="activeFilter === item.label"
+                  v-if="activeFilter === item.value"
                   name="check"
                   class="size-4 text-ink-gray-7"
                 />
@@ -320,29 +320,42 @@ function getOptions(agent) {
   ];
 }
 
+//// Neoffice — `label` was both what the button showed and what activeFilter
+//// stored, and agents.ts watches that value ("Active" / "Inactive") to build the
+//// query. So the label could not be translated without breaking the filter, and
+//// the button printed an English identifier. Split: `value` is the identity,
+//// `label` is what the reader sees.
 const dropdownOptions = [
   {
-    label: "All",
+    value: "All",
+    label: __("All"),
     onClick: () => {
       agentStore.filters["is_active"] = ["in", [0, 1]];
       activeFilter.value = "All";
     },
   },
   {
-    label: "Active",
+    value: "Active",
+    label: __("Active"),
     onClick: () => {
       agentStore.filters["is_active"] = ["=", 1];
       activeFilter.value = "Active";
     },
   },
   {
-    label: "Inactive",
+    value: "Inactive",
+    label: __("Inactive"),
     onClick: () => {
       agentStore.filters["is_active"] = ["=", 0];
       activeFilter.value = "Inactive";
     },
   },
 ];
+
+//// Neoffice — the button showed the stored identifier; show the option's label.
+const activeFilterLabel = computed(
+  () => dropdownOptions.find((o) => o.value === activeFilter.value)?.label ?? activeFilter.value
+);
 
 onUnmounted(() => {
   agents.filters = {};

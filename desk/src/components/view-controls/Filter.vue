@@ -3,7 +3,7 @@
     <template #target="{ togglePopover, close }">
       <div class="flex items-center w-fit">
         <Button
-          :label="'Filter'"
+          :label="__('Filter')"
           :class="filters?.size ? 'rounded-r-none' : ''"
           @click="togglePopover"
         >
@@ -16,7 +16,7 @@
             </span>
           </template>
         </Button>
-        <Tooltip v-if="filters?.size" :text="'Clear all Filter'">
+        <Tooltip v-if="filters?.size" :text="__('Clear all Filter')">
           <div>
             <Button
               class="rounded-l-none border-l"
@@ -54,7 +54,7 @@
                   v-model="f.field.fieldname"
                   :options="filterableFields.data"
                   @update:modelValue="(e) => updateFilter(e, i)"
-                  :placeholder="'First Name'"
+                  :placeholder="__('First Name')"
                 />
               </div>
               <div id="operator">
@@ -63,7 +63,7 @@
                   v-model="f.operator"
                   @change="(e) => updateOperator(e, f)"
                   :options="getOperators(f.field.fieldtype, f.field.fieldname)"
-                  :placeholder="'Equals'"
+                  :placeholder="__('Equals')"
                 />
               </div>
               <div id="value" class="w-full">
@@ -71,7 +71,7 @@
                   :is="getValueControl(f)"
                   v-model="f.value"
                   @change="(v) => updateValue(v, f)"
-                  :placeholder="'John Doe'"
+                  :placeholder="__('John Doe')"
                 />
               </div>
             </div>
@@ -85,7 +85,7 @@
                     v-model="f.field.fieldname"
                     :options="filterableFields.data"
                     @update:modelValue="(e) => updateFilter(e, i)"
-                    :placeholder="'First Name'"
+                    :placeholder="__('First Name')"
                   />
                 </div>
                 <div id="operator">
@@ -96,7 +96,7 @@
                     :options="
                       getOperators(f.field.fieldtype, f.field.fieldname)
                     "
-                    :placeholder="'Equals'"
+                    :placeholder="__('Equals')"
                   />
                 </div>
                 <div id="value" class="!min-w-[140px] flex-1">
@@ -104,7 +104,7 @@
                     :is="getValueControl(f)"
                     v-model="f.value"
                     @change="(v) => updateValue(v, f)"
-                    :placeholder="'John Doe'"
+                    :placeholder="__('John Doe')"
                   />
                 </div>
               </div>
@@ -126,14 +126,14 @@
             <Autocomplete
               :options="filterableFields.data"
               @update:modelValue="(e) => setfilter(e)"
-              :placeholder="'First name'"
+              :placeholder="__('First name')"
             >
               <template #target="{ togglePopover }">
                 <Button
                   class="!text-gray-600"
                   variant="ghost"
                   @click="togglePopover()"
-                  :label="'Add Filter'"
+                  :label="__('Add Filter')"
                 >
                   <template #prefix>
                     <FeatherIcon name="plus" class="h-4" />
@@ -145,7 +145,7 @@
               v-if="filters?.size"
               class="!text-gray-600"
               variant="ghost"
-              :label="'Clear all Filter'"
+              :label="__('Clear all Filter')"
               @click="clearfilter(close)"
             />
           </div>

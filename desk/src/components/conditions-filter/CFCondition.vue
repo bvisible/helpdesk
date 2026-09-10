@@ -35,7 +35,7 @@
           <Autocomplete
             :options="filterableFields.data"
             v-model="props.condition[0]"
-            :placeholder="'Field'"
+            :placeholder="__('Field')"
             @update:modelValue="updateField"
           />
         </div>
