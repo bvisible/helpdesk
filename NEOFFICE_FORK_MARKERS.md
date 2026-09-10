@@ -62,8 +62,10 @@ divergence, nothing of upstream's is attributed to us.
 | `helpdesk/public/desk/sw.js.map` | added (build artifact) | see "Build artifacts" below | take upstream / rebuild |
 | `helpdesk/locale/fr.po` | 13 `msgid` added (FR) | strings of our own additions: the acknowledgement subject `Ticket #{0}: We've received your request` and the NORA reply-suggestion dialog (`Suggested reply`, `Draft — reread before sending`, `NORA is writing…`, `Use this reply`, `Regenerate`, `Suggest a reply`, `Could not draft a reply`, `Your reply already contains text — it will be replaced.`, `Append`, `Replace`, `Instruction (optional)`, `e.g. explain the delay and offer a call`) | merge both sides; ours are additions only, no upstream `msgid` was retranslated |
 
-**No JSON DocType is modified.** The fork adds no field and changes no DocType schema —
-nothing here needs to become a Custom Field.
+| `helpdesk/helpdesk/doctype/hd_customer/hd_customer.json` | added the field `erpnext_customer` (Link → Customer, read-only, unique, standard filter) after `domain` | `HD Customer` is a doctype PARALLEL to ERPNext's `Customer` with no link between them, so the Customers screen is empty on an instance that runs both (0 mirrors against 234 customers, measured) — and the portal's permission query filters tickets by customer, so a contact saw only the tickets they raised themselves, never their company's. The field is the identity of the mirror kept by `overrides/customer.py`; a Custom Field would have put half the mechanism in another app. | keep ours — upstream has no such field, the row is a pure addition to `fields` / `field_order` |
+
+**One JSON DocType is modified** (the row above). Nothing else in the fork changes a
+DocType schema.
 
 ### Submodule pointer (unreachable — no comment syntax at all)
 
@@ -108,6 +110,8 @@ from the conflict resolution and let the workflow rebuild them from the merged s
 | `.github/workflows/tests.yml` | fleet CI caller (`bvisible/neoffice-ci`) |
 | `.github/workflows/upstream-preview.yml` | weekly bench on upstream `frappe`/`erpnext` (tracker #138) |
 | `.github/workflows/fork-markers.yml` | this discipline, enforced on every push |
+| `helpdesk/overrides/customer.py` | keeps `HD Customer` a mirror of ERPNext's `Customer`, and attaches a Contact to its support customer by following the ERP link instead of guessing an email domain |
+| `helpdesk/patches/mirror_erpnext_customers.py` | one-off catch-up of that mirror for the customers and contacts that already exist |
 
 `.github/**` is skipped by `fork_markers.py` by design (a marker added there would be
 counted as a non-comment addition); the four workflows are ours in full and carry their

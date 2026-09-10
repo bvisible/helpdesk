@@ -58,6 +58,18 @@ user_invitation = {
 doc_events = {
     "Contact": {
         "before_insert": "helpdesk.overrides.contact.before_insert",
+        # //// Neoffice — on_update too: a contact is nearly always attached to its
+        # //// customer AFTER being created, and upstream's before_insert-only hook
+        # //// meant the link was never made for those.
+        "on_update": "helpdesk.overrides.customer.link_contact_to_hd_customer",
+    },
+    # //// Neoffice — HD Customer mirrors ERPNext's Customer; without this the
+    # //// helpdesk Customers screen is empty on an instance that runs both, and the
+    # //// portal shows a contact only the tickets they raised themselves (the
+    # //// permission query filters on customer). See overrides/customer.py.
+    "Customer": {
+        "after_insert": "helpdesk.overrides.customer.sync_to_hd_customer",
+        "on_update": "helpdesk.overrides.customer.sync_to_hd_customer",
     },
     "Assignment Rule": {
         "on_trash": "helpdesk.extends.assignment_rule.on_assignment_rule_trash",
