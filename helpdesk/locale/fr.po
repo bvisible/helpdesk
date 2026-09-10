@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: frappe\n"
 "Report-Msgid-Bugs-To: hello@frappe.io\n"
-"POT-Creation-Date: 2026-09-10 11:03+0000\n"
+"POT-Creation-Date: 2026-09-10 11:40+0000\n"
 "PO-Revision-Date: 2026-01-21 11:39+0000\n"
 "Last-Translator: hello@frappe.io\n"
 "Language-Team: French\n"
@@ -109,6 +109,10 @@ msgstr "Secret API"
 msgid "API Token"
 msgstr "Jeton API"
 
+#: desk/src/components/telephony/TwilioCallUI.vue:79
+msgid "Accept"
+msgstr "Accepter"
+
 #: desk/src/components/Settings/Teams/TeamEdit.vue:338
 msgid "Access all team tickets"
 msgstr "Accéder à tous les tickets de l'équipe"
@@ -157,19 +161,20 @@ msgstr ""
 "Action à exécuter lors du clic sur le bouton. Le document sera disponible "
 "sous le nom `this`"
 
-#: Rules/AssignmentSchedule.vue:42 desk/src/components/Settings/Assignment
+#: Rules/AssignmentSchedule.vue:42 desk/src/components/Settings/Agents.vue:339
+#: desk/src/components/Settings/Assignment
 msgid "Active"
 msgstr "Actif"
 
 #: desk/src/components/ticket-agent/TicketActivityPanel.vue:91
-#: desk/src/pages/ticket/MobileTicketAgent.vue:360
+#: desk/src/pages/ticket/MobileTicketAgent.vue:367
 #: desk/src/pages/ticket/TicketConversation.vue:5
-#: helpdesk/public/desk/assets/TicketConversation.vue_vue_type_script_setup_true_lang-52c177cd.js:1
+#: helpdesk/public/desk/assets/TicketConversation.vue_vue_type_script_setup_true_lang-a00fc6a4.js:1
 msgid "Activity"
 msgstr "Activité"
 
 #: desk/src/components/desk/global/NewCustomerDialog.vue:27
-#: helpdesk/public/desk/assets/Customers-a887a564.js:1
+#: helpdesk/public/desk/assets/Customers-30064000.js:1
 msgid "Add"
 msgstr "Ajouter"
 
@@ -178,9 +183,13 @@ msgid "Add Assignee"
 msgstr "Ajouter un cessionnaire"
 
 #: desk/src/components/view-controls/ColumnSettings.vue:65
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Add Column"
 msgstr "Ajouter une colonne"
+
+#: desk/src/components/view-controls/Filter.vue:136
+msgid "Add Filter"
+msgstr "Ajouter un filtre"
 
 #: desk/src/components/Settings/Holiday/HolidayView.vue:179
 #: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:53
@@ -203,6 +212,10 @@ msgstr "Ajouter un jour férié récurrent"
 #: desk/src/components/Settings/SavedReplies/SavedRepliesList.vue:102
 msgid "Add Saved reply"
 msgstr "Ajouter une réponse enregistrée"
+
+#: desk/src/components/view-controls/SortBy.vue:146
+msgid "Add Sort"
+msgstr "Ajouter un tri"
 
 #. Label of a Section Break field in DocType 'HD Service Holiday List'
 #: helpdesk/helpdesk/doctype/hd_service_holiday_list/hd_service_holiday_list.json
@@ -380,6 +393,7 @@ msgstr ""
 
 #. Name of a role
 #: desk/src/components/SavedRepliesSelectorModal.vue:158
+#: desk/src/components/Settings/Agents.vue:331
 #: desk/src/components/Settings/SavedReplies/SavedRepliesList.vue:325
 #: helpdesk/helpdesk/doctype/hd_agent/hd_agent.json
 #: helpdesk/helpdesk/doctype/hd_article/hd_article.json
@@ -509,7 +523,7 @@ msgid "Archived"
 msgstr "Archivé"
 
 #: desk/src/components/Settings/SettingsModal.vue:56
-#: helpdesk/public/desk/assets/DesktopLayout-92592926.js:1
+#: helpdesk/public/desk/assets/DesktopLayout-f7e18cb6.js:1
 msgid "Are you sure you want to change tabs? Unsaved changes will be lost."
 msgstr ""
 "Voulez-vous vraiment changer d'onglet ? Les modifications non enregistrées "
@@ -538,7 +552,7 @@ msgstr ""
 "Voulez-vous vraiment supprimer cette équipe ? Cette action est irréversible "
 "!"
 
-#: desk/src/pages/ticket/Tickets.vue:431
+#: desk/src/pages/ticket/Tickets.vue:439
 msgid "Are you sure you want to delete this view?"
 msgstr "Voulez-vous vraiment supprimer cette vue ?"
 
@@ -637,12 +651,12 @@ msgstr "Attribuer le ticket"
 #. Label of a Section Break field in DocType 'HD Escalation Rule'
 #: desk/src/components/ticket-agent/AssignToBody.vue:5
 #: helpdesk/helpdesk/doctype/hd_escalation_rule/hd_escalation_rule.json
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "Assign to"
 msgstr "Attribuer à"
 
 #: desk/src/components/ticket-agent/AssignToBody.vue:65
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "Assign to me"
 msgstr "Attribuer à moi"
 
@@ -658,7 +672,7 @@ msgid "Assigned to"
 msgstr "Attribué à"
 
 #: desk/src/components/ticket-agent/AssignTo.vue:5
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "Assignee"
 msgstr "Personne attribuée"
 
@@ -870,6 +884,10 @@ msgstr "Temps moyen pour la première réponse à un ticket"
 msgid "Avg. time taken to resolve a ticket"
 msgstr "Temps moyen pour résoudre un ticket"
 
+#: desk/src/components/EmailEditor.vue:33
+msgid "BCC"
+msgstr "Cci"
+
 #: desk/src/components/Settings/EmailAdd.vue:87
 #: desk/src/components/Settings/EmailEdit.vue:72
 msgid "Back"
@@ -947,7 +965,7 @@ msgid "CSV"
 msgstr "CSV"
 
 #: desk/src/pages/call-logs/CallLogDetailModal.vue:8
-#: helpdesk/public/desk/assets/CallLogModal.vue_vue_type_script_setup_true_lang-09d0eac1.js:1
+#: helpdesk/public/desk/assets/CallLogModal.vue_vue_type_script_setup_true_lang-b1baae71.js:1
 msgid "Call Details"
 msgstr "Détails de l'appel"
 
@@ -969,7 +987,11 @@ msgstr "Durée de l'appel en secondes"
 msgid "Caller"
 msgstr "Appelant"
 
-#: desk/src/pages/ticket/MobileTicketAgent.vue:378
+#: desk/src/components/telephony/CallUI.vue:23
+msgid "Calling Medium"
+msgstr "Moyen d'appel"
+
+#: desk/src/pages/ticket/MobileTicketAgent.vue:385
 msgid "Calls"
 msgstr "Appels"
 
@@ -999,8 +1021,9 @@ msgstr ""
 #: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:47
 #: desk/src/components/Settings/Sla/Modals/EditResponseResolutionModal.vue:90
 #: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:104
+#: desk/src/components/telephony/TwilioCallUI.vue:65
 #: desk/src/components/view-controls/ColumnSettings.vue:124
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1185,6 +1208,7 @@ msgstr "Choisissez qui peut consulter et utiliser cette réponse"
 msgid "Choose who receives the tickets."
 msgstr "Choisissez qui reçoit les tickets."
 
+#: desk/src/components/frappe-ui/Link.vue:65
 #: desk/src/components/frappe-ui/MultiSelectCombobox.vue:190
 msgid "Clear"
 msgstr "Effacer"
@@ -1193,10 +1217,19 @@ msgstr "Effacer"
 msgid "Clear All"
 msgstr "Tout effacer"
 
+#: desk/src/components/view-controls/SortBy.vue:158
+msgid "Clear Sort"
+msgstr "Effacer le tri"
+
 #. Label of a Button field in DocType 'HD Service Holiday List'
 #: helpdesk/helpdesk/doctype/hd_service_holiday_list/hd_service_holiday_list.json
 msgid "Clear Table"
 msgstr "Effacer le tableau"
+
+#: desk/src/components/view-controls/Filter.vue:19
+#: desk/src/components/view-controls/Filter.vue:148
+msgid "Clear all Filter"
+msgstr "Effacer tous les filtres"
 
 #: desk/src/pages/SearchAgent.vue:86
 msgid "Clear all filters"
@@ -1252,7 +1285,7 @@ msgstr "Couleur"
 #. Label of a Code field in DocType 'HD View'
 #: desk/src/components/view-controls/ColumnSettings.vue:4
 #: helpdesk/helpdesk/doctype/hd_view/hd_view.json
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Columns"
 msgstr "Colonnes"
 
@@ -1265,8 +1298,8 @@ msgstr "E-mails à inviter, séparés par des virgules"
 #: desk/src/components/ticket/ActivityHeader.vue:101
 #: desk/src/components/ticket/TicketFeedback.vue:19
 #: helpdesk/helpdesk/doctype/hd_notification/hd_notification.json
-#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-e8cb9e8e.js:1
-#: helpdesk/public/desk/assets/TypingIndicator-56cd41a0.js:1
+#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-7f0a65b7.js:1
+#: helpdesk/public/desk/assets/TypingIndicator-05b26d00.js:1
 msgid "Comment"
 msgstr "Commentaire"
 
@@ -1282,7 +1315,7 @@ msgstr "Commenté par"
 
 #. Label of a Section Break field in DocType 'HD Settings'
 #: desk/src/pages/SearchAgent.vue:353
-#: desk/src/pages/ticket/MobileTicketAgent.vue:370
+#: desk/src/pages/ticket/MobileTicketAgent.vue:377
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
 msgid "Comments"
 msgstr "Commentaires"
@@ -1333,7 +1366,7 @@ msgstr "Configurez vos paramètres de téléphonie."
 #: desk/src/pages/knowledge-base/NewArticle.vue:149
 #: desk/src/pages/ticket/MobileTicketAgent.vue:181
 #: desk/src/pages/ticket/TicketCustomer.vue:298
-#: desk/src/pages/ticket/Tickets.vue:405 desk/src/pages/ticket/Tickets.vue:440
+#: desk/src/pages/ticket/Tickets.vue:413 desk/src/pages/ticket/Tickets.vue:448
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -1423,7 +1456,7 @@ msgstr "Impossible d'envoyer un e-mail en raison de : {0}"
 
 #: desk/src/components/NeoSuggestReplyDialog.vue:144
 #: desk/src/components/NeoSuggestReplyDialog.vue:150
-#: helpdesk/public/desk/assets/TypingIndicator-56cd41a0.js:1
+#: helpdesk/public/desk/assets/TypingIndicator-05b26d00.js:1
 msgid "Could not draft a reply"
 msgstr "Impossible de rédiger une proposition"
 
@@ -1456,11 +1489,15 @@ msgstr "Créer"
 msgid "Create & invite a contact"
 msgstr "Créer et inviter un contact"
 
+#: desk/src/components/frappe-ui/Link.vue:53
+msgid "Create New"
+msgstr "Créer"
+
 #: desk/src/components/desk/global/NewContactDialog.vue:3
 msgid "Create New Contact"
 msgstr "Créer un nouveau contact"
 
-#: desk/src/pages/ticket/Tickets.vue:317 desk/src/pages/ticket/Tickets.vue:321
+#: desk/src/pages/ticket/Tickets.vue:325 desk/src/pages/ticket/Tickets.vue:329
 msgid "Create View"
 msgstr "Créer une vue"
 
@@ -1506,6 +1543,13 @@ msgstr "Établi par"
 msgid "Created On"
 msgstr "Créé le"
 
+#. Description of the 'Knowledge Base Wiki Space' (Link) field in DocType 'HD
+#. Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
+msgid "Created on first use. The mirror writes here and nowhere else."
+msgstr ""
+"Créé à la première utilisation. Le miroir écrit ici et nulle part ailleurs."
+
 #: desk/src/components/layouts/Sidebar.vue:544
 msgid "Creating a ticket"
 msgstr "Création d'un ticket"
@@ -1545,7 +1589,7 @@ msgstr "Client"
 #. Label of a Data field in DocType 'HD Customer'
 #: desk/src/components/desk/global/NewCustomerDialog.vue:12
 #: helpdesk/helpdesk/doctype/hd_customer/hd_customer.json
-#: helpdesk/public/desk/assets/Customers-a887a564.js:1
+#: helpdesk/public/desk/assets/Customers-30064000.js:1
 msgid "Customer Name"
 msgstr "Nom du client"
 
@@ -1653,11 +1697,11 @@ msgstr "Boîte d’Envois et de Réception par Défaut"
 msgid "Default Ticket Status"
 msgstr "Statut de ticket par défaut"
 
-#: desk/src/pages/ticket/Tickets.vue:282 desk/src/pages/ticket/Tickets.vue:341
+#: desk/src/pages/ticket/Tickets.vue:290 desk/src/pages/ticket/Tickets.vue:349
 msgid "Default Views"
 msgstr "Vues par défaut"
 
-#: desk/src/components/ticket-agent/TicketHeader.vue:212
+#: desk/src/components/ticket-agent/TicketHeader.vue:219
 msgid "Default actions"
 msgstr "Actions par défaut"
 
@@ -1703,7 +1747,7 @@ msgstr ""
 #: desk/src/pages/knowledge-base/Article.vue:417
 #: desk/src/pages/knowledge-base/KnowledgeBaseAgent.vue:176
 #: desk/src/pages/knowledge-base/KnowledgeBaseAgent.vue:195
-#: desk/src/pages/ticket/Tickets.vue:425
+#: desk/src/pages/ticket/Tickets.vue:433
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -1715,7 +1759,7 @@ msgstr "Supprimer l'article"
 msgid "Delete Comment"
 msgstr "Supprimer le commentaire"
 
-#: desk/src/pages/ticket/Tickets.vue:421
+#: desk/src/pages/ticket/Tickets.vue:429
 msgid "Delete View"
 msgstr "Supprimer la vue"
 
@@ -1731,7 +1775,7 @@ msgstr "Supprimer la catégorie ?"
 msgid "Delete team"
 msgstr "Supprimer l'équipe"
 
-#: desk/src/pages/ticket/Tickets.vue:429
+#: desk/src/pages/ticket/Tickets.vue:437
 msgid "Delete {0}?"
 msgstr "Supprimer {0} ?"
 
@@ -1786,14 +1830,14 @@ msgstr "Explication détaillée"
 #. Label of a Section Break field in DocType 'HD Ticket'
 #: desk/src/components/ticket-agent/TicketSidebar.vue:26
 #: desk/src/pages/ticket/MobileTicketAgent.vue:92
-#: desk/src/pages/ticket/MobileTicketAgent.vue:354
+#: desk/src/pages/ticket/MobileTicketAgent.vue:361
 #: helpdesk/helpdesk/doctype/hd_notification/hd_notification.json
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json
 msgid "Details"
 msgstr "Détails"
 
 #: desk/src/components/knowledge-base/ArticleFeedback.vue:8
-#: helpdesk/public/desk/assets/Article-1832a479.js:1
+#: helpdesk/public/desk/assets/Article-e20e82bc.js:1
 msgid "Did this article solve your issue?"
 msgstr "Cet article a-t-il résolu votre problème ?"
 
@@ -1836,8 +1880,8 @@ msgstr ""
 #: desk/src/components/EmailEditor.vue:163
 #: desk/src/components/TextEditor.vue:41
 #: desk/src/pages/knowledge-base/NewArticle.vue:29
-#: helpdesk/public/desk/assets/TicketTextEditor-f313c7f0.js:1
-#: helpdesk/public/desk/assets/TypingIndicator-56cd41a0.js:1
+#: helpdesk/public/desk/assets/TicketTextEditor-a4818e51.js:1
+#: helpdesk/public/desk/assets/TypingIndicator-05b26d00.js:1
 msgid "Discard"
 msgstr "Abandonner"
 
@@ -1889,7 +1933,7 @@ msgstr "Documentation"
 #: desk/src/pages/desk/customer/CustomerDialog.vue:31
 #: helpdesk/helpdesk/doctype/hd_customer/hd_customer.json
 #: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:21
-#: helpdesk/public/desk/assets/Customers-a887a564.js:1
+#: helpdesk/public/desk/assets/Customers-30064000.js:1
 msgid "Domain"
 msgstr "Domaine"
 
@@ -1915,7 +1959,7 @@ msgstr "Brouillon — à relire avant envoi"
 #: desk/src/components/Settings/SavedReplies/SavedRepliesList.vue:263
 #: desk/src/components/Settings/Sla/SlaPolicyListItem.vue:61
 #: desk/src/components/Settings/Sla/SlaPolicyListItem.vue:100
-#: desk/src/pages/ticket/Tickets.vue:345
+#: desk/src/pages/ticket/Tickets.vue:353
 msgid "Duplicate"
 msgstr "Dupliquer"
 
@@ -1960,7 +2004,7 @@ msgstr ""
 #: desk/src/components/Settings/Sla/SlaPriorityListItem.vue:107
 #: desk/src/components/Settings/Sla/SlaWorkDaysListItem.vue:95
 #: desk/src/pages/knowledge-base/Article.vue:390
-#: desk/src/pages/ticket/Tickets.vue:361
+#: desk/src/pages/ticket/Tickets.vue:369
 msgid "Edit"
 msgstr "Modifier"
 
@@ -1985,7 +2029,7 @@ msgstr "Modifiez votre compte e-mail"
 #: desk/src/components/ticket/ActivityHeader.vue:95
 #: desk/src/pages/SearchAgent.vue:184
 #: helpdesk/helpdesk/doctype/hd_desk_account_request/hd_desk_account_request.json
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1 helpdesk/utils.py:277
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1 helpdesk/utils.py:277
 msgid "Email"
 msgstr "Courriel"
 
@@ -2034,7 +2078,7 @@ msgstr "L'e-mail ne doit pas être vide"
 
 #: desk/src/pages/SearchAgent.vue:352
 #: desk/src/pages/desk/contact/ContactDialog.vue:43
-#: desk/src/pages/ticket/MobileTicketAgent.vue:365
+#: desk/src/pages/ticket/MobileTicketAgent.vue:372
 msgid "Emails"
 msgstr "E-mails"
 
@@ -2065,6 +2109,10 @@ msgstr "Activer les réactions aux commentaires"
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
 msgid "Enable feedback for Customer Portal"
 msgstr "Activer l'évaluation pour le portail client"
+
+#: helpdesk/kb_wiki_mirror.py:272
+msgid "Enable the wiki mirror in HD Settings first"
+msgstr "Activez d'abord le miroir wiki dans les paramètres du helpdesk"
 
 #. Label of a Check field in DocType 'HD Action'
 #. Label of a Check field in DocType 'HD Escalation Rule'
@@ -2140,6 +2188,8 @@ msgstr "Saisissez le nouveau nom de l'équipe"
 #: desk/src/components/conditions-filter/CFCondition.vue:397
 #: desk/src/components/conditions-filter/CFCondition.vue:413
 #: desk/src/components/conditions-filter/CFCondition.vue:427
+#: desk/src/components/view-controls/Filter.vue:66
+#: desk/src/components/view-controls/Filter.vue:99
 #: desk/src/components/view-controls/Filter.vue:235
 #: desk/src/components/view-controls/Filter.vue:256
 #: desk/src/components/view-controls/Filter.vue:273
@@ -2244,8 +2294,8 @@ msgstr "Lien externe"
 #: desk/src/components/ticket/TicketCustomerSidebar.vue:168
 #: desk/src/components/ticket/TicketCustomerSidebar.vue:196
 #: desk/src/pages/call-logs/CallLogModal.vue:211
-#: desk/src/pages/ticket/Tickets.vue:169 desk/src/pages/ticket/Tickets.vue:182
-#: desk/src/pages/ticket/Tickets.vue:213
+#: desk/src/pages/ticket/Tickets.vue:177 desk/src/pages/ticket/Tickets.vue:190
+#: desk/src/pages/ticket/Tickets.vue:221
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json
 msgid "Failed"
 msgstr "Échoué"
@@ -2287,7 +2337,7 @@ msgstr "Favicon"
 #: helpdesk/helpdesk/doctype/hd_article_feedback/hd_article_feedback.json
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json
-#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-e8cb9e8e.js:1
+#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-7f0a65b7.js:1
 msgid "Feedback"
 msgstr "Évaluation"
 
@@ -2326,6 +2376,10 @@ msgstr "Tendance des évaluations"
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:188
 msgid "Feedback email has been sent to the customer"
 msgstr "L'e-mail d'évaluation a été envoyé au client"
+
+#: desk/src/components/conditions-filter/CFCondition.vue:38
+msgid "Field"
+msgstr "Champ"
 
 #. Label of a Data field in DocType 'HD Ticket Template Field'
 #: helpdesk/helpdesk/doctype/hd_ticket_template_field/hd_ticket_template_field.json
@@ -2369,6 +2423,10 @@ msgstr "Dépendance de champ mise à jour avec succès."
 msgid "Fields"
 msgstr "Champ"
 
+#: desk/src/components/view-controls/Filter.vue:6
+msgid "Filter"
+msgstr "Filtre"
+
 #. Label of a Tab Break field in DocType 'HD View'
 #. Label of a Code field in DocType 'HD View'
 #: helpdesk/helpdesk/doctype/hd_view/hd_view.json
@@ -2380,10 +2438,27 @@ msgstr "Filtres"
 msgid "Find out all of the variables that can be used in the content"
 msgstr "Découvrez toutes les variables utilisables dans le contenu"
 
+#. Description of the 'Wiki Sync Fingerprints' (Small Text) field in DocType
+#. 'HD Article'
+#: helpdesk/helpdesk/doctype/hd_article/hd_article.json
+msgid ""
+"Fingerprint of each side's content at the last sync. The two sides hold the "
+"same text in different formats (HTML here, Markdown there), so they can only"
+" be compared to themselves."
+msgstr ""
+"Empreinte du contenu de chaque côté lors de la dernière synchronisation. Les"
+" deux côtés portent le même texte dans deux formats (HTML ici, Markdown là),"
+" ils ne peuvent donc être comparés qu'à eux-mêmes."
+
 #: desk/src/components/Settings/Profile/Profile.vue:101
 #: desk/src/components/desk/global/NewContactDialog.vue:118
 #: desk/src/components/view-controls/ColumnSettings.vue:108
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: desk/src/components/view-controls/Filter.vue:57
+#: desk/src/components/view-controls/Filter.vue:88
+#: desk/src/components/view-controls/SortBy.vue:6
+#: desk/src/components/view-controls/SortBy.vue:104
+#: desk/src/components/view-controls/SortBy.vue:138
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "First Name"
 msgstr "Prénom"
 
@@ -2395,7 +2470,7 @@ msgstr "Première Réponse Le"
 #: desk/src/components/ticket-agent/TicketSLA.vue:40
 #: desk/src/components/ticket/TicketAgentDetails.vue:156
 #: desk/src/components/ticket/TicketCustomerSidebar.vue:125
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1 helpdesk/utils.py:208
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1 helpdesk/utils.py:208
 msgid "First Response"
 msgstr "Première réponse"
 
@@ -2415,6 +2490,10 @@ msgstr "Temps de première réponse"
 #: helpdesk/helpdesk/report/first_response_time_for_tickets/first_response_time_for_tickets.json
 msgid "First Response Time for Tickets"
 msgstr "Délai de première réponse pour les tickets"
+
+#: desk/src/components/view-controls/Filter.vue:129
+msgid "First name"
+msgstr "Prénom"
 
 #: desk/src/components/desk/global/NewContactDialog.vue:246
 msgid "First name should not be empty"
@@ -2481,7 +2560,7 @@ msgid "From is required"
 msgstr "« De » est obligatoire"
 
 #. Option for the 'SLA Status' (Select) field in DocType 'HD Ticket'
-#: desk/src/pages/ticket/Tickets.vue:176 desk/src/pages/ticket/Tickets.vue:207
+#: desk/src/pages/ticket/Tickets.vue:184 desk/src/pages/ticket/Tickets.vue:215
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json
 msgid "Fulfilled"
 msgstr "Complété"
@@ -2489,6 +2568,7 @@ msgstr "Complété"
 #: desk/src/components/Settings/General/General.vue:6
 #: desk/src/components/layouts/Sidebar.vue:489
 #: desk/src/components/modals/ShortcutsModal.vue:79
+#: helpdesk/kb_wiki_mirror.py:256
 msgid "General"
 msgstr "Général"
 
@@ -2800,7 +2880,7 @@ msgstr ""
 "également des jours fériés publics et nationaux individuellement."
 
 #: desk/src/components/CommunicationArea.vue:44
-#: helpdesk/public/desk/assets/TypingIndicator-56cd41a0.js:1
+#: helpdesk/public/desk/assets/TypingIndicator-05b26d00.js:1
 msgid "Hi John, we are looking into this issue."
 msgstr "Bonjour John, nous examinons ce problème."
 
@@ -2964,12 +3044,14 @@ msgstr ""
 msgid "In Progress"
 msgstr "En cours"
 
+#: desk/src/components/Settings/AgentCard.vue:12
 #: desk/src/components/Settings/Agents.vue:140
+#: desk/src/components/Settings/Agents.vue:347
 msgid "Inactive"
 msgstr "Inactif"
 
 #: desk/src/components/CallArea.vue:36
-#: helpdesk/public/desk/assets/useActiveTabManager-f4fc1c2c.js:3
+#: helpdesk/public/desk/assets/useActiveTabManager-962e2f8b.js:3
 msgid "Inbound Call"
 msgstr "Appel entrant"
 
@@ -3031,7 +3113,7 @@ msgid "Invalid notification"
 msgstr "Notification invalide"
 
 #: desk/src/pages/InvalidPage.vue:6
-#: helpdesk/public/desk/assets/InvalidPage-c16d0333.js:1
+#: helpdesk/public/desk/assets/InvalidPage-59388f60.js:1
 msgid "Invalid page or not permitted to access"
 msgstr "Page invalide ou accès non autorisé"
 
@@ -3100,13 +3182,27 @@ msgid "Item(s) deleted successfully"
 msgstr "Élément(s) supprimé(s) avec succès"
 
 #: desk/src/components/ticket-agent/AssignToBody.vue:11
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: desk/src/components/view-controls/Filter.vue:74
+#: desk/src/components/view-controls/Filter.vue:107
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "John Doe"
 msgstr "John Doe"
 
 #: desk/src/components/command-palette/CP.vue:115
 msgid "Jump to"
 msgstr "Aller à"
+
+#. Description of the 'Mirror the knowledge base into the wiki' (Check) field
+#. in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
+msgid ""
+"Keeps HD Article and the wiki in step, in ONE dedicated space. Every other "
+"wiki space stays out of the helpdesk — company knowledge is not published to"
+" the customer portal."
+msgstr ""
+"Maintient les articles et le wiki en phase, dans UN espace dédié. Tous les "
+"autres espaces du wiki restent hors du helpdesk — le savoir de l'entreprise "
+"n'est pas publié sur le portail client."
 
 #. Label of a Data field in DocType 'HD Email Feedback'
 #. Label of a Data field in DocType 'HD Ticket'
@@ -3133,8 +3229,19 @@ msgstr "Raccourcis clavier"
 #: desk/src/pages/knowledge-base/KnowledgeBaseCustomer.vue:48
 #: desk/src/pages/knowledge-base/NewArticle.vue:171
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
+#: helpdesk/kb_wiki_mirror.py:100
 msgid "Knowledge Base"
 msgstr "Base de Connaissances"
+
+#. Label of a Section Break field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
+msgid "Knowledge Base Mirror"
+msgstr "Miroir de la base de connaissances"
+
+#. Label of a Link field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
+msgid "Knowledge Base Wiki Space"
+msgstr "Espace wiki de la base de connaissances"
 
 #. Label of a Data field in DocType 'HD Action'
 #. Label of a Data field in DocType 'HD Ticket Feedback Option'
@@ -3145,7 +3252,7 @@ msgstr "Base de Connaissances"
 #: helpdesk/helpdesk/doctype/hd_ticket_feedback_option/hd_ticket_feedback_option.json
 #: helpdesk/helpdesk/doctype/hd_ticket_status/hd_ticket_status.json
 #: helpdesk/helpdesk/doctype/hd_view/hd_view.json
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Label"
 msgstr "Étiquette"
 
@@ -3295,19 +3402,19 @@ msgstr "Lier à une fiche client"
 #. Label of a Tab Break field in DocType 'HD View'
 #: desk/src/components/ListViewBuilder.vue:668
 #: desk/src/components/ListViewBuilder.vue:702
-#: desk/src/pages/ticket/Tickets.vue:511 desk/src/pages/ticket/Tickets.vue:525
-#: desk/src/pages/ticket/Tickets.vue:555
+#: desk/src/pages/ticket/Tickets.vue:519 desk/src/pages/ticket/Tickets.vue:533
+#: desk/src/pages/ticket/Tickets.vue:563
 #: helpdesk/helpdesk/doctype/hd_form_script/hd_form_script.json
 #: helpdesk/helpdesk/doctype/hd_view/hd_view.json
 msgid "List"
 msgstr "Liste"
 
-#: desk/src/pages/ticket/Tickets.vue:285
+#: desk/src/pages/ticket/Tickets.vue:293
 msgid "List View"
 msgstr "Vue liste"
 
 #: desk/src/components/CallArea.vue:72
-#: helpdesk/public/desk/assets/useActiveTabManager-f4fc1c2c.js:3
+#: helpdesk/public/desk/assets/useActiveTabManager-962e2f8b.js:3
 msgid "Listen"
 msgstr "Écouter"
 
@@ -3363,11 +3470,11 @@ msgid "Lower the Integer value, higher is the priority of the issue"
 msgstr ""
 "Plus la valeur entière est basse, plus la priorité du problème est élevée"
 
-#: desk/src/pages/ticket/Tickets.vue:386
+#: desk/src/pages/ticket/Tickets.vue:394
 msgid "Make Private"
 msgstr "Rendre privé"
 
-#: desk/src/pages/ticket/Tickets.vue:386
+#: desk/src/pages/ticket/Tickets.vue:394
 msgid "Make Public"
 msgstr "Rendre public"
 
@@ -3380,7 +3487,7 @@ msgstr "Passer un appel"
 msgid "Make feedback mandatory"
 msgstr "Rendre l'évaluation obligatoire"
 
-#: desk/src/pages/ticket/Tickets.vue:399
+#: desk/src/pages/ticket/Tickets.vue:407
 msgid "Make {0} private?"
 msgstr "Rendre {0} privé ?"
 
@@ -3457,7 +3564,7 @@ msgstr "Mentionner"
 msgid "Merge"
 msgstr "Fusionner"
 
-#: desk/src/components/ticket-agent/TicketHeader.vue:204
+#: desk/src/components/ticket-agent/TicketHeader.vue:211
 #: desk/src/components/ticket/TicketAgentSidebar.vue:18
 msgid "Merge Ticket"
 msgstr "Fusionner le ticket"
@@ -3482,6 +3589,11 @@ msgstr "Fusionné avec"
 msgid "Message"
 msgstr "Message"
 
+#. Label of a Check field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
+msgid "Mirror the knowledge base into the wiki"
+msgstr "Refléter la base de connaissances dans le wiki"
+
 #. Label of a Tab Break field in DocType 'HD Settings'
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
 msgid "Misc"
@@ -3492,7 +3604,7 @@ msgid "Mobile App Installation"
 msgstr "Installation de l'application mobile"
 
 #: desk/src/components/telephony/CallUI.vue:19
-#: helpdesk/public/desk/assets/CallUI.vue_vue_type_script_setup_true_lang-97d6dad5.js:15
+#: helpdesk/public/desk/assets/CallUI.vue_vue_type_script_setup_true_lang-d417d2c4.js:15
 msgid "Mobile Number"
 msgstr "Numéro de mobile"
 
@@ -3524,7 +3636,7 @@ msgid "Move To"
 msgstr "Déplacer vers"
 
 #: desk/src/components/ViewModal.vue:23
-#: helpdesk/public/desk/assets/Tickets-d4afd641.js:1
+#: helpdesk/public/desk/assets/Tickets-d54f2f65.js:1
 msgid "My Open Tickets"
 msgstr "Mes tickets ouverts"
 
@@ -3781,7 +3893,7 @@ msgstr "Aucune réponse enregistrée trouvée"
 msgid "No Team"
 msgstr "Aucune équipe"
 
-#: desk/src/pages/ticket/Tickets.vue:154
+#: desk/src/pages/ticket/Tickets.vue:162
 msgid "No Tickets Found"
 msgstr "Aucun ticket trouvé"
 
@@ -3790,12 +3902,12 @@ msgid "No agent found"
 msgstr "Aucun agent trouvé"
 
 #: desk/src/components/SearchArticles.vue:57
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-28481933.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-c3028957.js:1
 msgid "No answers found"
 msgstr "Aucune réponse trouvée"
 
 #: desk/src/components/ticket-agent/AssignTo.vue:13
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "No assignees"
 msgstr "Aucune personne attribuée"
 
@@ -3845,7 +3957,7 @@ msgstr "Aucune priorité dans la liste"
 #: desk/src/components/Settings/Assignment
 #: desk/src/components/frappe-ui/Autocomplete.vue:112
 #: desk/src/components/frappe-ui/MultiSelectCombobox.vue:170
-#: helpdesk/public/desk/assets/Autocomplete-ff01fe6f.js:1
+#: helpdesk/public/desk/assets/Autocomplete-3498d4bf.js:1
 msgid "No results found"
 msgstr "Aucun résultat trouvé"
 
@@ -3921,6 +4033,10 @@ msgstr "Non défini"
 msgid "Not Specified"
 msgstr "Non précisé"
 
+#: helpdesk/kb_wiki_mirror.py:270
+msgid "Not permitted"
+msgstr "Non autorisé"
+
 #. Label of a Link in the Helpdesk Workspace
 #: helpdesk/helpdesk/workspace/helpdesk/helpdesk.json
 msgid "Notification Settings"
@@ -3930,7 +4046,7 @@ msgstr "Paramètres de notification"
 #: desk/src/components/layouts/Sidebar.vue:43
 #: desk/src/components/notifications/Notifications.vue:16
 #: desk/src/pages/MobileNotifications.vue:6
-#: helpdesk/public/desk/assets/DesktopLayout-92592926.js:1
+#: helpdesk/public/desk/assets/DesktopLayout-f7e18cb6.js:1
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -4044,7 +4160,7 @@ msgid "Other"
 msgstr "Autre"
 
 #: desk/src/components/CallArea.vue:37
-#: helpdesk/public/desk/assets/useActiveTabManager-f4fc1c2c.js:3
+#: helpdesk/public/desk/assets/useActiveTabManager-962e2f8b.js:3
 msgid "Outbound Call"
 msgstr "Appel sortant"
 
@@ -4099,7 +4215,7 @@ msgstr "Les mots de passe correspondent"
 
 #. Option for the 'SLA Status' (Select) field in DocType 'HD Ticket'
 #. Option for the 'Category' (Select) field in DocType 'HD Ticket Status'
-#: desk/src/pages/ticket/Tickets.vue:201
+#: desk/src/pages/ticket/Tickets.vue:209
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json
 #: helpdesk/helpdesk/doctype/hd_ticket_status/hd_ticket_status.json
 msgid "Paused"
@@ -4154,7 +4270,7 @@ msgstr "Numéros de téléphone"
 msgid "Pick an option"
 msgstr "Choisissez une option"
 
-#: desk/src/pages/ticket/Tickets.vue:373
+#: desk/src/pages/ticket/Tickets.vue:381
 msgid "Pin View"
 msgstr "Épingler la vue"
 
@@ -4241,7 +4357,7 @@ msgid "Please select weekly off day"
 msgstr "Veuillez sélectionnez les jours de congé hebdomadaires"
 
 #: desk/src/components/SearchArticles.vue:71
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-28481933.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-c3028957.js:1
 msgid "Please wait while we search for the answers"
 msgstr "Veuillez patienter pendant que nous recherchons les réponses"
 
@@ -4250,7 +4366,7 @@ msgid "Policy Name"
 msgstr "Nom de la politique"
 
 #: desk/src/components/ticket-agent/TicketSLA.vue:33
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "Portal"
 msgstr "Portail"
 
@@ -4337,7 +4453,7 @@ msgstr "La priorité {0} a été répétée."
 
 #: desk/src/components/layouts/MobileSidebar.vue:180
 #: desk/src/components/layouts/Sidebar.vue:280
-#: desk/src/pages/ticket/Tickets.vue:305
+#: desk/src/pages/ticket/Tickets.vue:313
 msgid "Private Views"
 msgstr "Vues privées"
 
@@ -4366,7 +4482,7 @@ msgstr "Publique"
 
 #: desk/src/components/layouts/MobileSidebar.vue:172
 #: desk/src/components/layouts/Sidebar.vue:272
-#: desk/src/pages/ticket/Tickets.vue:311
+#: desk/src/pages/ticket/Tickets.vue:319
 msgid "Public Views"
 msgstr "Vues publiques"
 
@@ -4422,7 +4538,7 @@ msgid "Raised By (Email)"
 msgstr "Créé par (Email)"
 
 #: desk/src/components/IconPicker.vue:45
-#: helpdesk/public/desk/assets/Tickets-d4afd641.js:1
+#: helpdesk/public/desk/assets/Tickets-d54f2f65.js:1
 msgid "Random"
 msgstr "Aléatoire"
 
@@ -4450,7 +4566,7 @@ msgstr "Tickets évalués"
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:1136
 #: helpdesk/helpdesk/doctype/hd_ticket_feedback_option/hd_ticket_feedback_option.json
-#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-e8cb9e8e.js:1
+#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-7f0a65b7.js:1
 msgid "Rating"
 msgstr "Évaluation"
 
@@ -4520,7 +4636,7 @@ msgid "References"
 msgstr "Références"
 
 #: desk/src/components/view-controls/Reload.vue:2
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Refresh"
 msgstr "Actualiser"
 
@@ -4535,6 +4651,10 @@ msgstr "Régénérer"
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.js:6
 msgid "Regenerate Search Index"
 msgstr "Régénérer l'index de recherche"
+
+#: desk/src/components/telephony/TwilioCallUI.vue:91
+msgid "Reject"
+msgstr "Refuser"
 
 #: desk/src/components/Settings/General/components/LogoUpload.vue:48
 #: desk/src/components/conditions-filter/CFCondition.vue:190
@@ -4562,7 +4682,7 @@ msgstr "Supprimer la photo"
 #: desk/src/components/Settings/Teams/TeamsList.vue:172
 #: desk/src/components/ticket-agent/TicketSubjectModal.vue:15
 #: desk/src/pages/ticket/MobileTicketAgent.vue:157
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "Rename"
 msgstr "Renommer"
 
@@ -4577,7 +4697,7 @@ msgid "Repetition"
 msgstr "Répétition"
 
 #: desk/src/components/SearchArticles.vue:59
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-28481933.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-c3028957.js:1
 msgid "Rephrase the question and try again with some keywords"
 msgstr "Reformulez la question et réessayez avec quelques mots-clés"
 
@@ -4591,7 +4711,7 @@ msgid "Replied"
 msgstr "Répondu"
 
 #: desk/src/components/CommunicationArea.vue:10
-#: helpdesk/public/desk/assets/TypingIndicator-56cd41a0.js:1
+#: helpdesk/public/desk/assets/TypingIndicator-05b26d00.js:1
 msgid "Reply"
 msgstr "Réponse"
 
@@ -4651,7 +4771,7 @@ msgid "Reset content"
 msgstr "Réinitialiser le contenu"
 
 #: desk/src/components/view-controls/ColumnSettings.vue:89
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Reset to Default"
 msgstr "Réinitialiser aux valeurs par défaut"
 
@@ -4662,7 +4782,7 @@ msgstr "Réinitialiser aux valeurs par défaut"
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:1089
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:1182
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "Resolution"
 msgstr "Résolution"
 
@@ -4909,7 +5029,7 @@ msgstr "Enregistrer les modifications"
 msgid "Saved Replies"
 msgstr "Réponses enregistrées"
 
-#: desk/src/pages/ticket/Tickets.vue:299
+#: desk/src/pages/ticket/Tickets.vue:307
 msgid "Saved Views"
 msgstr "Vues enregistrées"
 
@@ -4960,7 +5080,7 @@ msgstr "Script"
 #: desk/src/components/frappe-ui/MultiSelectCombobox.vue:86
 #: desk/src/components/layouts/Sidebar.vue:12 desk/src/pages/SearchAgent.vue:7
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
-#: helpdesk/public/desk/assets/Autocomplete-ff01fe6f.js:1
+#: helpdesk/public/desk/assets/Autocomplete-3498d4bf.js:1
 msgid "Search"
 msgstr "Rechercher"
 
@@ -4978,12 +5098,12 @@ msgid "Search Term Param Name"
 msgstr "Nom du paramètre de recherche"
 
 #: desk/src/components/AssignmentModal.vue:12
-#: helpdesk/public/desk/assets/MobileTicketAgent-56fd84e6.js:1
+#: helpdesk/public/desk/assets/MobileTicketAgent-35f3b748.js:1
 msgid "Search agents"
 msgstr "Rechercher des agents"
 
 #: desk/src/components/IconPicker.vue:40
-#: helpdesk/public/desk/assets/Tickets-d4afd641.js:1
+#: helpdesk/public/desk/assets/Tickets-d54f2f65.js:1
 msgid "Search by keyword"
 msgstr "Rechercher par mot-clé"
 
@@ -5023,7 +5143,7 @@ msgstr "Recherché :"
 
 #: desk/src/components/SearchArticles.vue:69
 #: desk/src/pages/SearchAgent.vue:111
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-28481933.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-c3028957.js:1
 msgid "Searching..."
 msgstr "Recherche en cours..."
 
@@ -5075,7 +5195,7 @@ msgid "Select a rating"
 msgstr "Sélectionner une note"
 
 #: desk/src/components/SearchComplete.vue:3
-#: helpdesk/public/desk/assets/MobileTicketAgent-56fd84e6.js:1
+#: helpdesk/public/desk/assets/MobileTicketAgent-35f3b748.js:1
 msgid "Select an option"
 msgstr "Sélectionner une option"
 
@@ -5233,7 +5353,7 @@ msgstr "Configuration"
 #: desk/src/components/layouts/Sidebar.vue:350
 #: desk/src/components/layouts/Sidebar.vue:593
 #: helpdesk/helpdesk/doctype/hd_team/hd_team.json
-#: helpdesk/public/desk/assets/DesktopLayout-92592926.js:1
+#: helpdesk/public/desk/assets/DesktopLayout-f7e18cb6.js:1
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -5320,6 +5440,11 @@ msgstr "Une erreur s'est produite lors du renommage de la réponse enregistrée"
 msgid "Some error occurred while updating assignment rule"
 msgstr ""
 "Une erreur s'est produite lors de la mise à jour de la règle d'attribution"
+
+#: desk/src/components/view-controls/SortBy.vue:10
+#: desk/src/components/view-controls/SortBy.vue:22
+msgid "Sort"
+msgstr "Trier"
 
 #: desk/src/components/ticket/TicketAgentDetails.vue:168
 msgid "Source"
@@ -5687,7 +5812,7 @@ msgid "Template Name"
 msgstr "Nom du modèle"
 
 #: desk/src/components/desk/global/NewCustomerDialog.vue:14
-#: helpdesk/public/desk/assets/Customers-a887a564.js:1
+#: helpdesk/public/desk/assets/Customers-30064000.js:1
 msgid "Tesla Inc."
 msgstr "Tesla Inc."
 
@@ -5753,12 +5878,20 @@ msgstr ""
 "Le statut du ticket change automatiquement chaque fois qu'un agent répond à "
 "un ticket."
 
+#. Description of the 'Wiki Document' (Link) field in DocType 'HD Article'
+#: helpdesk/helpdesk/doctype/hd_article/hd_article.json
+msgid ""
+"The wiki document this article mirrors. Written by the mirror, not by hand."
+msgstr ""
+"Le document wiki que cet article reflète. Écrit par le miroir, pas à la "
+"main."
+
 #: desk/src/components/Settings/Holiday/HolidayView.vue:40
 msgid "There are in total"
 msgstr "Il y a au total"
 
 #: desk/src/components/SearchArticles.vue:7
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-28481933.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-c3028957.js:1
 msgid "These articles may already cover what you are looking for"
 msgstr "Ces articles couvrent peut-être déjà ce que vous recherchez"
 
@@ -5843,7 +5976,7 @@ msgstr ""
 "Ce ticket a été divisé en un nouveau ticket. Veuillez suivre le ticket <a "
 "href={0}>#{1}</a>."
 
-#: desk/src/pages/ticket/Tickets.vue:400
+#: desk/src/pages/ticket/Tickets.vue:408
 msgid ""
 "This view is currently public. Changing it to private will hide it for all "
 "the users."
@@ -5851,7 +5984,7 @@ msgstr ""
 "Cette vue est actuellement publique. La rendre privée la masquera pour tous "
 "les utilisateurs."
 
-#: desk/src/pages/ticket/Tickets.vue:434
+#: desk/src/pages/ticket/Tickets.vue:442
 msgid "This view is public, and will be removed for all users."
 msgstr "Cette vue est publique et sera supprimée pour tous les utilisateurs."
 
@@ -6026,9 +6159,9 @@ msgstr "Le ticket avec lequel fusionner est obligatoire"
 msgid "Ticket type"
 msgstr "Type de ticket"
 
-#: desk/src/pages/ticket/MobileTicketAgent.vue:499
+#: desk/src/pages/ticket/MobileTicketAgent.vue:506
 #: desk/src/pages/ticket/TicketCustomer.vue:279
-#: helpdesk/public/desk/assets/TicketAgent-a7d751bb.js:1
+#: helpdesk/public/desk/assets/TicketAgent-d6fbf0e9.js:1
 msgid "Ticket updated"
 msgstr "Ticket mis à jour"
 
@@ -6038,14 +6171,14 @@ msgid "Ticket-Search Analysis"
 msgstr "Analyse de recherche de tickets"
 
 #: desk/src/components/command-palette/CP.vue:99
-#: desk/src/components/ticket-agent/TicketHeader.vue:164
+#: desk/src/components/ticket-agent/TicketHeader.vue:171
 #: desk/src/pages/InvalidPage.vue:9 desk/src/pages/SearchAgent.vue:351
-#: desk/src/pages/ticket/MobileTicketAgent.vue:330
+#: desk/src/pages/ticket/MobileTicketAgent.vue:331
 #: desk/src/pages/ticket/TicketCustomer.vue:335
 #: desk/src/pages/ticket/TicketNew.vue:307 desk/src/pages/ticket/Tickets.vue:6
-#: desk/src/pages/ticket/Tickets.vue:574 helpdesk/api/dashboard.py:154
+#: desk/src/pages/ticket/Tickets.vue:582 helpdesk/api/dashboard.py:154
 #: helpdesk/api/dashboard.py:295
-#: helpdesk/public/desk/assets/InvalidPage-c16d0333.js:1
+#: helpdesk/public/desk/assets/InvalidPage-59388f60.js:1
 msgid "Tickets"
 msgstr "Tickets"
 
@@ -6268,7 +6401,7 @@ msgstr "Dégrouper les conditions"
 msgid "Unknown"
 msgstr "Inconnu"
 
-#: desk/src/pages/ticket/Tickets.vue:373
+#: desk/src/pages/ticket/Tickets.vue:381
 msgid "Unpin View"
 msgstr "Désépingler la vue"
 
@@ -6298,7 +6431,7 @@ msgstr "Non enregistré"
 #: desk/src/components/Settings/SettingsModal.vue:54
 #: desk/src/components/Settings/Sla/SlaPolicyView.vue:367
 #: desk/src/components/Settings/Teams/NewTeam.vue:107
-#: helpdesk/public/desk/assets/DesktopLayout-92592926.js:1
+#: helpdesk/public/desk/assets/DesktopLayout-f7e18cb6.js:1
 msgid "Unsaved changes"
 msgstr "Modifications non enregistrées"
 
@@ -6308,7 +6441,7 @@ msgstr "Sans titre"
 
 #: desk/src/components/Settings/Profile/components/ChangePasswordModal.vue:47
 #: desk/src/components/view-controls/ColumnSettings.vue:130
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Update"
 msgstr "Mettre à jour"
 
@@ -6404,7 +6537,7 @@ msgid "View Assignment rule"
 msgstr "Voir la règle d'attribution"
 
 #: desk/src/components/ViewModal.vue:9
-#: helpdesk/public/desk/assets/Tickets-d4afd641.js:1
+#: helpdesk/public/desk/assets/Tickets-d54f2f65.js:1
 msgid "View Name"
 msgstr "Nom de la vue"
 
@@ -6412,7 +6545,7 @@ msgstr "Nom de la vue"
 msgid "View documentation"
 msgstr "Voir la documentation"
 
-#: desk/src/pages/ticket/Tickets.vue:540
+#: desk/src/pages/ticket/Tickets.vue:548
 msgid "View {0}"
 msgstr "Voir {0}"
 
@@ -6468,9 +6601,24 @@ msgid "Where"
 msgstr "Où"
 
 #: desk/src/components/view-controls/ColumnSettings.vue:113
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-b362030b.js:2
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-d05863c7.js:2
 msgid "Width"
 msgstr "Largeur"
+
+#: desk/src/components/view-controls/ColumnSettings.vue:117
+msgid "Width can be in number, pixel or rem (eg. 3, 30px, 10rem)"
+msgstr ""
+"La largeur peut être un nombre, des pixels ou des rem (ex. 3, 30px, 10rem)"
+
+#. Label of a Link field in DocType 'HD Article'
+#: helpdesk/helpdesk/doctype/hd_article/hd_article.json
+msgid "Wiki Document"
+msgstr "Document wiki"
+
+#. Label of a Small Text field in DocType 'HD Article'
+#: helpdesk/helpdesk/doctype/hd_article/hd_article.json
+msgid "Wiki Sync Fingerprints"
+msgstr "Empreintes de synchronisation wiki"
 
 #. Label of a Data field in DocType 'HD Stopword'
 #. Label of a Data field in DocType 'HD Synonyms'
@@ -6527,7 +6675,7 @@ msgid "Yesterday"
 msgstr "Hier"
 
 #: desk/src/components/notifications/Notifications.vue:89
-#: helpdesk/public/desk/assets/DesktopLayout-92592926.js:1
+#: helpdesk/public/desk/assets/DesktopLayout-f7e18cb6.js:1
 msgid "You are all caught up!"
 msgstr "Vous êtes à jour !"
 
@@ -6553,7 +6701,7 @@ msgid "You are now online"
 msgstr "Vous êtes maintenant en ligne"
 
 #: desk/src/components/telephony/CallUI.vue:35
-#: helpdesk/public/desk/assets/CallUI.vue_vue_type_script_setup_true_lang-97d6dad5.js:15
+#: helpdesk/public/desk/assets/CallUI.vue_vue_type_script_setup_true_lang-d417d2c4.js:15
 msgid "You can change the default calling medium from the settings"
 msgstr "Vous pouvez modifier le mode d'appel par défaut depuis les paramètres"
 
@@ -6598,7 +6746,7 @@ msgstr "vous a attribué un ticket"
 msgid "back to email event list"
 msgstr "retour à la liste des événements e-mail"
 
-#: desk/src/pages/ticket/Tickets.vue:539
+#: desk/src/pages/ticket/Tickets.vue:547
 msgid "created"
 msgstr "créé"
 
@@ -6610,7 +6758,7 @@ msgstr "personnaliser {0}"
 msgid "days"
 msgstr "jours"
 
-#: desk/src/pages/ticket/Tickets.vue:451
+#: desk/src/pages/ticket/Tickets.vue:459
 msgid "deleted"
 msgstr "supprimé"
 
@@ -6624,12 +6772,12 @@ msgid "group_by"
 msgstr "group_by"
 
 #: desk/src/components/CallArea.vue:16
-#: helpdesk/public/desk/assets/useActiveTabManager-f4fc1c2c.js:3
+#: helpdesk/public/desk/assets/useActiveTabManager-962e2f8b.js:3
 msgid "has made a call"
 msgstr "a passé un appel"
 
 #: desk/src/components/CallArea.vue:15
-#: helpdesk/public/desk/assets/useActiveTabManager-f4fc1c2c.js:3
+#: helpdesk/public/desk/assets/useActiveTabManager-962e2f8b.js:3
 msgid "has reached out"
 msgstr "a pris contact"
 
@@ -6682,26 +6830,6 @@ msgstr "étoiles"
 msgid "synonym"
 msgstr "synonyme"
 
-#: desk/src/pages/ticket/MobileTicketAgent.vue:424
+#: desk/src/pages/ticket/MobileTicketAgent.vue:431
 msgid "viewed this"
 msgstr "a consulté ceci"
-
-#: desk/src/stores/ticketStatus.ts:0
-msgid "Ticket status: Open"
-msgstr "Ouvert"
-
-#: desk/src/stores/ticketStatus.ts:0
-msgid "Ticket status: Replied"
-msgstr "Répondu"
-
-#: desk/src/stores/ticketStatus.ts:0
-msgid "Ticket status: Paused"
-msgstr "En pause"
-
-#: desk/src/stores/ticketStatus.ts:0
-msgid "Ticket status: Resolved"
-msgstr "Résolu"
-
-#: desk/src/stores/ticketStatus.ts:0
-msgid "Ticket status: Closed"
-msgstr "Fermé"
