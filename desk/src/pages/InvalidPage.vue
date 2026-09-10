@@ -6,7 +6,7 @@
       <div>{{ __("Invalid page or not permitted to access") }}</div>
       <Button :route="{ name: 'TicketsAgent' }">
         <template #prefix><TicketIcon class="w-4" /></template>
-        Tickets
+        {{ __("Tickets") }}
       </Button>
     </div>
   </div>

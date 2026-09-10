@@ -20,7 +20,7 @@
       <Dropdown v-slot="{ open }" :options="dropdownOptions">
         <Button
           :disabled="props.disableAddCondition"
-          label="Add condition"
+          :label="__('Add condition')"
           icon-left="plus"
           :icon-right="open ? 'chevron-up' : 'chevron-down'"
         />

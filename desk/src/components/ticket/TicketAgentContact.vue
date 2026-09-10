@@ -37,7 +37,7 @@
               }
             "
           >
-            <Tooltip text="Show Contact Tickets">
+            <Tooltip :text="__('Show Contact Tickets')">
               <TicketIcon class="h-4 w-4" />
             </Tooltip>
           </Button>

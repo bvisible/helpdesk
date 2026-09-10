@@ -17,7 +17,7 @@
         </Button>
         <Button
           variant="ghost"
-          label="Comment"
+          :label="__('Comment')"
           :class="[showCommentBox ? '!bg-gray-300 hover:!bg-gray-200' : '']"
           @click="toggleCommentBox()"
         >
@@ -41,7 +41,7 @@
           isMobileView ? 'Send' : isMac ? 'Send (⌘ + ⏎)' : 'Send (Ctrl + ⏎)'
         "
         v-model:content="content"
-        placeholder="Hi John, we are looking into this issue."
+        :placeholder="__('Hi John, we are looking into this issue.')"
         :ticketId="ticketId"
         :to-emails="toEmails"
         :cc-emails="ccEmails"

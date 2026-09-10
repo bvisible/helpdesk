@@ -120,7 +120,7 @@
                 v-if="!useNewUI"
               >
                 <span class="text-p-sm">
-                  Conditions for this SLA were created from
+                  {{ __("Conditions for this SLA were created from") }}
                   <a :href="deskUrl" target="_blank" class="underline">desk</a>
                   which are not compatible with this UI, you will need to
                   recreate the conditions here if you want to manage and add new
@@ -213,7 +213,7 @@
               type="radio"
             />
             <div class="select-none text-ink-gray-6 text-sm font-medium">
-              Apply SLA for response time
+              {{ __("Apply SLA for response time") }}
             </div>
           </div>
           <div
@@ -226,7 +226,7 @@
               type="radio"
             />
             <div class="select-none text-ink-gray-6 text-sm font-medium">
-              Apply SLA for response time and resolution time
+              {{ __("Apply SLA for response time and resolution time") }}
             </div>
           </div>
         </div> -->

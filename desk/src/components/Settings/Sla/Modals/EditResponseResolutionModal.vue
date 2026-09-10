@@ -42,7 +42,7 @@
           </Popover>
         </div>
         <div>
-          <FormLabel label="Resolution time" required />
+          <FormLabel :label="__('Resolution time')" required />
           <Popover class="mt-2">
             <template #target="{ togglePopover }" class="w-max">
               <div
@@ -52,7 +52,7 @@
                 <div v-if="priorityData.resolution_time">
                   {{ formatTimeHMS(priorityData.resolution_time) }}
                 </div>
-                <div v-else class="text-gray-500">Select time</div>
+                <div v-else class="text-gray-500">{{ __("Select time") }}</div>
               </div>
             </template>
             <template #body>
@@ -67,7 +67,7 @@
         </div>
         <Checkbox
           v-model="priorityData.default_priority"
-          label="Set default priority"
+          :label="__('Set default priority')"
         />
       </div>
     </template>
@@ -87,9 +87,9 @@
             variant="subtle"
             theme="gray"
             @click="dialog = false"
-            label="Cancel"
+            :label="__('Cancel')"
           />
-          <Button variant="solid" @click="onSave" label="Save" />
+          <Button variant="solid" @click="onSave" :label="__('Save')" />
         </div>
       </div>
     </template>

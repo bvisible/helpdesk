@@ -44,13 +44,13 @@
         <Button
           variant="subtle"
           theme="gray"
-          label="Cancel"
+          :label="__('Cancel')"
           @click="dialog.show = false"
         />
         <Button
           variant="solid"
           icon-left="plus"
-          label="Add Holiday"
+          :label="__('Add Holiday')"
           @click="onSave"
         />
       </div>

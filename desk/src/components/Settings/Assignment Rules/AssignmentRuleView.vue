@@ -182,14 +182,14 @@
               "
             >
               <span class="text-p-sm">
-                Conditions for this rule were created from
+                {{ __("Conditions for this rule were created from") }}
                 <a :href="deskUrl" target="_blank" class="underline">desk</a>
                 which are not compatible with this UI, you will need to recreate
                 the conditions here if you want to manage and add new conditions
                 from this UI.
               </span>
               <Button
-                label="I understand, add conditions"
+                :label="__('I understand, add conditions')"
                 variant="subtle"
                 theme="gray"
                 @click="useNewUIForAssignCondition = true"
@@ -263,14 +263,14 @@
               "
             >
               <span class="text-p-sm">
-                Conditions for this rule were created from
+                {{ __("Conditions for this rule were created from") }}
                 <a :href="deskUrl" target="_blank" class="underline">desk</a>
                 which are not compatible with this UI, you will need to recreate
                 the conditions here if you want to manage and add new conditions
                 from this UI.
               </span>
               <Button
-                label="I understand, add conditions"
+                :label="__('I understand, add conditions')"
                 variant="subtle"
                 theme="gray"
                 @click="useNewUIForUnassignCondition = true"

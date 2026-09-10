@@ -30,7 +30,7 @@
       <Button
         class="w-full"
         variant="solid"
-        label="Split into new ticket"
+        :label="__('Split into new ticket')"
         :loading="splitTicket.loading"
         :icon-left="LucideSplit"
         @click="handleTicketSplit"
