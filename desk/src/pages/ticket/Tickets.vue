@@ -117,9 +117,17 @@ const options = {
     status: {
       custom: ({ item }) => {
         const status = getStatus(item);
-        const label = isCustomerPortal.value
-          ? status?.["label_customer"]
-          : status?.["label_agent"];
+        //// Neoffice — the STATUS LABEL is displayed, so it goes through __(); the
+        //// VALUE stays raw because it is what HD Ticket.status stores and what the
+        //// filters send back. A default label ('Open', 'Replied') is in the merged
+        //// catalogue and turns French; a label an instance renamed is absent from it
+        //// and __() returns it unchanged, which is right — it is already in their
+        //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
+        const label = __(
+          isCustomerPortal.value
+            ? status?.["label_customer"]
+            : status?.["label_agent"]
+        );
         return h(
           "div",
           { class: "flex items-center space-x-2 justify-start w-full" },

@@ -337,7 +337,13 @@ const breadcrumbs = computed(() => {
 
 const dropdownOptions = computed(() =>
   ticketStatusStore.statuses.data?.map((o: HDTicketStatus) => ({
-    label: o.label_agent,
+    //// Neoffice — the STATUS LABEL is displayed, so it goes through __(); the
+    //// VALUE stays raw because it is what HD Ticket.status stores and what the
+    //// filters send back. A default label ('Open', 'Replied') is in the merged
+    //// catalogue and turns French; a label an instance renamed is absent from it
+    //// and __() returns it unchanged, which is right — it is already in their
+    //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
+    label: __(o.label_agent),
     value: o.label_agent,
     onClick: () => updateTicket("status", o.label_agent),
     icon: () =>
