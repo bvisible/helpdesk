@@ -189,91 +189,174 @@ def get_agents_team():
     return teams
 
 
-contact_default_columns = [
-    {
-        "label": "Name",
-        "type": "Data",
-        "key": "full_name",
-        "width": "17rem",
-    },
-    {
-        "label": "Email",
-        "type": "Data",
-        "key": "email_id",
-        "width": "24rem",
-    },
-    {
-        "label": "Created On",
-        "type": "Datetime",
-        "key": "creation",
-        "width": "8rem",
-    },
-]
+# //// Neoffice — added function (no upstream equivalent), never called at runtime.
+# //// It exists so `bench generate-pot-file` sees these msgid and a translator can
+# //// reach them. They are the labels of the paths where _() must NOT be written:
+# //// `_get_filterable_fields` is wrapped in @redis_cache(), whose value is shared
+# //// across users for an hour, so a translation computed inside it would hand the
+# //// first caller's language to everyone. `translate_labels()` looks them up at
+# //// request time instead — but a dynamic `_(label)` extracts nothing, hence this
+# //// declaration. Keep it in sync when a standard_fields label is added there.
+def _pot_declarations():
+    return [
+        _("ID"),
+        _("Created By"),
+        _("Created On"),
+        _("Last Updated By"),
+        _("Last Updated On"),
+        _("Assigned to"),
+        _("First Response"),
+    ]
 
-call_log_default_columns = [
-    {
-        "label": "Name",
-        "type": "Data",
-        "key": "name",
-        "width": "9rem",
-    },
-    {
-        "label": "Caller",
-        "type": "Link",
-        "key": "caller",
-        "options": "User",
-        "width": "12rem",
-    },
-    {
-        "label": "Receiver",
-        "type": "Link",
-        "key": "receiver",
-        "options": "User",
-        "width": "12rem",
-    },
-    {
-        "label": "Type",
-        "type": "Select",
-        "key": "type",
-        "width": "9rem",
-    },
-    {
-        "label": "Medium",
-        "type": "Select",
-        "key": "telephony_medium",
-        "width": "9rem",
-    },
-    {
-        "label": "Status",
-        "type": "Select",
-        "key": "status",
-        "width": "9rem",
-    },
-    {
-        "label": "Duration",
-        "type": "Duration",
-        "key": "duration",
-        "width": "6rem",
-    },
-    {
-        "label": "From (number)",
-        "type": "Data",
-        "key": "from",
-        "width": "9rem",
-    },
-    {
-        "label": "To (number)",
-        "type": "Data",
-        "key": "to",
-        "width": "9rem",
-    },
-    {
-        "label": "Created On",
-        "type": "Datetime",
-        "key": "creation",
-        "width": "8rem",
-    },
-]
+
+# //// Neoffice — added function (no upstream equivalent). Upstream ships every list
+# //// column, sort option and filterable field with a BARE English label: the
+# //// module-level constants below, `default_list_data()` on each doctype, and the
+# //// `standard_fields` blocks of api/doc.py. So the whole SPA showed "Subject",
+# //// "Status", "Assigned To", "Last Modified" in English on a French site, and no
+# //// PO file could ever fix it — those literals are not even extracted into the POT.
+# ////
+# //// Wrapping them in `_()` where they are WRITTEN is not an option, and that is the
+# //// whole reason this helper exists:
+# ////   * the constants are evaluated at IMPORT time, so `_()` there would freeze the
+# ////     language of whichever request first loaded the worker, for every user;
+# ////   * saved views (HD View) PERSIST their columns, labels included — a translated
+# ////     label would be written into the database as data;
+# ////   * `get_filterable_fields` is wrapped in `@redis_cache()`, whose key is
+# ////     `module.qualname::hash(args)` with no language and no user, so a translation
+# ////     computed inside it would be served to everyone for an hour.
+# ////
+# //// Translating on the way OUT keeps the stored/cached value English and stable while
+# //// the screen follows the reader's language. It is also upstream's own pattern —
+# //// `get_quick_filters()` already does `_(field.label)`; it was simply never applied
+# //// to the columns. Never mutates its input: the constants are shared globals.
+def translate_labels(entries):
+    """Copy `entries`, translating each `label` (and Select option labels).
+
+    `options` is a doctype name for Link fields (left alone) and a list of
+    ``{label, value}`` for Select fields, where only the label is translated —
+    the value is what the filter sends back to the server.
+    """
+    if not entries:
+        return entries
+
+    translated = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            translated.append(entry)
+            continue
+        copy = dict(entry)
+        if copy.get("label"):
+            copy["label"] = _(copy["label"])
+        options = copy.get("options")
+        if isinstance(options, list):
+            copy["options"] = [
+                {**option, "label": _(option["label"])}
+                if isinstance(option, dict) and option.get("label")
+                else option
+                for option in options
+            ]
+        translated.append(copy)
+    return translated
+
+
+# //// Neoffice — was a module-level LIST, now a function. The labels have to go
+# //// through _(), and a constant is evaluated at import: the first request to load
+# //// the worker would have frozen its language for every later caller. A function
+# //// is evaluated per call, so each reader gets their own language — and the
+# //// literals now reach the POT extractor, which a bare "Name" never did.
+def contact_default_columns():
+    return [
+        {
+            "label": _("Name"),
+            "type": "Data",
+            "key": "full_name",
+            "width": "17rem",
+        },
+        {
+            "label": _("Email"),
+            "type": "Data",
+            "key": "email_id",
+            "width": "24rem",
+        },
+        {
+            "label": _("Created On"),
+            "type": "Datetime",
+            "key": "creation",
+            "width": "8rem",
+        },
+    ]
+
+# //// Neoffice — was a module-level LIST, now a function, for the same two
+# //// reasons as contact_default_columns above: _() must not run at import
+# //// (it would pin one language per worker) and a bare literal never reaches
+# //// the POT. The call-log list showed "Caller", "Receiver", "Duration",
+# //// "From (number)" in English on a French desk.
+def call_log_default_columns():
+    return [
+        {
+            "label": _("Name"),
+            "type": "Data",
+            "key": "name",
+            "width": "9rem",
+        },
+        {
+            "label": _("Caller"),
+            "type": "Link",
+            "key": "caller",
+            "options": "User",
+            "width": "12rem",
+        },
+        {
+            "label": _("Receiver"),
+            "type": "Link",
+            "key": "receiver",
+            "options": "User",
+            "width": "12rem",
+        },
+        {
+            "label": _("Type"),
+            "type": "Select",
+            "key": "type",
+            "width": "9rem",
+        },
+        {
+            "label": _("Medium"),
+            "type": "Select",
+            "key": "telephony_medium",
+            "width": "9rem",
+        },
+        {
+            "label": _("Status"),
+            "type": "Select",
+            "key": "status",
+            "width": "9rem",
+        },
+        {
+            "label": _("Duration"),
+            "type": "Duration",
+            "key": "duration",
+            "width": "6rem",
+        },
+        {
+            "label": _("From (number)"),
+            "type": "Data",
+            "key": "from",
+            "width": "9rem",
+        },
+        {
+            "label": _("To (number)"),
+            "type": "Data",
+            "key": "to",
+            "width": "9rem",
+        },
+        {
+            "label": _("Created On"),
+            "type": "Datetime",
+            "key": "creation",
+            "width": "8rem",
+        },
+    ]
 
 
 def seconds_to_duration(seconds):
@@ -380,6 +463,9 @@ def get_contact_by_phone_number(phone_number):
 def parse_call_log(call):
     call["show_recording"] = False
     call["_duration"] = seconds_to_duration(call.get("duration"))
+    # //// Neoffice — "Unknown" reached the call list in English, and the dict
+    # //// default only fired on a MISSING key: a contact with a blank full_name
+    # //// printed an empty cell. `or _("Unknown")` covers both.
     if call.get("type") == "Incoming":
         call["activity_type"] = "incoming_call"
         contact = get_contact_by_phone_number(call.get("from"))
@@ -391,11 +477,11 @@ def parse_call_log(call):
             else [None, None]
         )
         call["_caller"] = {
-            "label": contact.get("full_name", "Unknown"),
+            "label": contact.get("full_name") or _("Unknown"),
             "image": contact.get("image"),
         }
         call["_receiver"] = {
-            "label": receiver[0] or "Unknown",
+            "label": receiver[0] or _("Unknown"),
             "image": receiver[1] or "",
         }
     elif call.get("type") == "Outgoing":
@@ -409,11 +495,11 @@ def parse_call_log(call):
             else [None, None]
         )
         call["_caller"] = {
-            "label": caller[0] or "Unknown",
+            "label": caller[0] or _("Unknown"),
             "image": caller[1] or "",
         }
         call["_receiver"] = {
-            "label": contact.get("full_name", "Unknown"),
+            "label": contact.get("full_name") or _("Unknown"),
             "image": contact.get("image"),
         }
 

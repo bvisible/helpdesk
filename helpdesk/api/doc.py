@@ -12,6 +12,7 @@ from helpdesk.utils import (
     check_permissions,
     contact_default_columns,
     parse_call_logs,
+    translate_labels,  # //// Neoffice — see utils.translate_labels
 )
 
 
@@ -57,9 +58,9 @@ def get_list_data(
 
     if not columns:
         columns = [
-            {"label": "Name", "type": "Data", "key": "name", "width": "16rem"},
+            {"label": _("Name"), "type": "Data", "key": "name", "width": "16rem"},
             {
-                "label": "Last Modified",
+                "label": _("Last Modified"),
                 "type": "Datetime",
                 "key": "modified",
                 "width": "8rem",
@@ -74,9 +75,9 @@ def get_list_data(
         default_view = default_view_exists(doctype)
         if not default_view:
             if doctype == "Contact":
-                columns = contact_default_columns
+                columns = contact_default_columns()
             elif doctype == "TP Call Log":
-                columns = call_log_default_columns
+                columns = call_log_default_columns()
             elif hasattr(_list, "default_list_data"):
                 columns = (
                     _list.default_list_data(show_customer_portal_fields).get("columns")
@@ -131,17 +132,17 @@ def get_list_data(
     ]
 
     std_fields = [
-        {"label": "Name", "type": "Data", "value": "name"},
-        {"label": "Created On", "type": "Datetime", "value": "creation"},
-        {"label": "Last Modified", "type": "Datetime", "value": "modified"},
+        {"label": _("Name"), "type": "Data", "value": "name"},
+        {"label": _("Created On"), "type": "Datetime", "value": "creation"},
+        {"label": _("Last Modified"), "type": "Datetime", "value": "modified"},
         {
-            "label": "Modified By",
+            "label": _("Modified By"),
             "type": "Link",
             "value": "modified_by",
             "options": "User",
         },
-        {"label": "Assigned To", "type": "Text", "value": "_assign"},
-        {"label": "Owner", "type": "Link", "value": "owner", "options": "User"},
+        {"label": _("Assigned To"), "type": "Text", "value": "_assign"},
+        {"label": _("Owner"), "type": "Link", "value": "owner", "options": "User"},
     ]
 
     for field in std_fields:
@@ -208,17 +209,27 @@ def get_list_data(
             if field.get("value") == group_by_field:
                 options = get_options(field.get("type"), field.get("options"))
                 group_by_field = {
-                    "label": field.get("label"),
+                    # //// Neoffice — the group-by header showed the raw meta label.
+                    # //// Only the LABEL: `options` below carry category names read
+                    # //// from the database, which are data and never translated.
+                    "label": _(field.get("label")) if field.get("label") else field.get("label"),
                     "name": field.get("value"),
                     "type": field.get("type"),
                     "options": options,
                 }
 
+    # //// Neoffice — labels translated HERE, at the single exit of this endpoint,
+    # //// and nowhere upstream of it. `columns` reaches this point from three
+    # //// sources that must all stay English: the module-level constants of
+    # //// utils.py (import-time evaluation would freeze one language per worker),
+    # //// each doctype's default_list_data(), and handle_default_view(), which
+    # //// reads the columns a user SAVED in an HD View — persisted data. See
+    # //// translate_labels() for the full reasoning.
     return {
         "data": data,
-        "columns": columns,
+        "columns": translate_labels(columns),
         "rows": rows,
-        "fields": fields if doctype == "HD Ticket" else [],
+        "fields": translate_labels(fields) if doctype == "HD Ticket" else [],
         "total_count": frappe.get_list(doctype, fields=[COUNT_NAME], filters=filters)[
             0
         ].get("count", 0),
@@ -228,9 +239,23 @@ def get_list_data(
     }
 
 
+# //// Neoffice — split in two: the cached body stays English, the whitelisted
+# //// wrapper translates. @redis_cache() keys on `module.qualname::hash(args)`
+# //// only — no language, no user — so translating INSIDE it would serve the
+# //// first caller's language to every user of the site for a full hour.
 @frappe.whitelist()
-@redis_cache()
 def get_filterable_fields(
+    doctype: str, show_customer_portal_fields=False, ignore_team_restrictions=False
+):
+    return translate_labels(
+        _get_filterable_fields(
+            doctype, show_customer_portal_fields, ignore_team_restrictions
+        )
+    )
+
+
+@redis_cache()
+def _get_filterable_fields(
     doctype: str, show_customer_portal_fields=False, ignore_team_restrictions=False
 ):
     check_permissions(doctype, None)
@@ -376,16 +401,20 @@ def sort_options(doctype: str, show_customer_portal_fields=False):
         fields = get_customer_portal_fields(doctype, fields)
 
     standard_fields = [
-        {"label": "Name", "value": "name"},
-        {"label": "Created On", "value": "creation"},
-        {"label": "Last Modified", "value": "modified"},
-        {"label": "Modified By", "value": "modified_by"},
-        {"label": "Owner", "value": "owner"},
+        {"label": _("Name"), "value": "name"},
+        {"label": _("Created On"), "value": "creation"},
+        {"label": _("Last Modified"), "value": "modified"},
+        {"label": _("Modified By"), "value": "modified_by"},
+        {"label": _("Owner"), "value": "owner"},
     ]
 
     fields.extend(standard_fields)
 
-    return fields
+    # //// Neoffice — the sort menu showed "Created On", "Last Modified", "Owner"
+    # //// in English: `field.label` comes off the meta untranslated, and the
+    # //// standard_fields above are bare literals. `value` is the fieldname the
+    # //// server sorts on and stays untouched.
+    return translate_labels(fields)
 
 
 @frappe.whitelist()
@@ -393,7 +422,7 @@ def get_quick_filters(doctype: str, show_customer_portal_fields=False):
     meta = frappe.get_meta(doctype)
     fields = [field for field in meta.fields if field.in_standard_filter]
     quick_filters = []
-    name_filter = {"label": "ID", "name": "name", "type": "Data"}
+    name_filter = {"label": _("ID"), "name": "name", "type": "Data"}
     if doctype == "Contact":
         quick_filters.append(name_filter)
         return quick_filters
@@ -408,7 +437,11 @@ def get_quick_filters(doctype: str, show_customer_portal_fields=False):
         options = []
         if field.fieldtype == "Select":
             options = field.options.split("\n")
-            options = [{"label": option, "value": option} for option in options]
+            # //// Neoffice — upstream reused the raw option as its own label, so the
+            # //// Status filter offered "Open", "Replied", "Resolved" in English next
+            # //// to a translated field name. The VALUE stays raw: it is what the
+            # //// filter sends back and what the column stores.
+            options = [{"label": _(option), "value": option} for option in options]
             options.insert(0, {"label": "", "value": ""})
 
         if field.fieldtype == "Link":
@@ -484,10 +517,10 @@ def handle_default_view(doctype, _list, show_customer_portal_fields):
 
     if not columns:
         if doctype == "Contact":
-            columns = contact_default_columns
+            columns = contact_default_columns()
             rows = ["name", "email_id", "creation"]
         elif doctype == "TP Call Log":
-            columns = call_log_default_columns
+            columns = call_log_default_columns()
             rows = ["name", "caller", "receiver", "creation"]
         else:
             columns = (
