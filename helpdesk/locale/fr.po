@@ -6685,3 +6685,23 @@ msgstr "synonyme"
 #: desk/src/pages/ticket/MobileTicketAgent.vue:424
 msgid "viewed this"
 msgstr "a consulté ceci"
+
+#: desk/src/stores/ticketStatus.ts:0
+msgid "Ticket status: Open"
+msgstr "Ouvert"
+
+#: desk/src/stores/ticketStatus.ts:0
+msgid "Ticket status: Replied"
+msgstr "Répondu"
+
+#: desk/src/stores/ticketStatus.ts:0
+msgid "Ticket status: Paused"
+msgstr "En pause"
+
+#: desk/src/stores/ticketStatus.ts:0
+msgid "Ticket status: Resolved"
+msgstr "Résolu"
+
+#: desk/src/stores/ticketStatus.ts:0
+msgid "Ticket status: Closed"
+msgstr "Fermé"

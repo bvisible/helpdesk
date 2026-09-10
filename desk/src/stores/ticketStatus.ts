@@ -2,6 +2,7 @@ import { HDTicketStatus } from "@/types/doctypes";
 import { parseColor } from "@/utils";
 import { createListResource } from "frappe-ui";
 import { defineStore } from "pinia";
+import { __ } from "@/translation";
 
 export const useTicketStatusStore = defineStore("ticketStatus", () => {
   const statuses = createListResource({
@@ -30,6 +31,31 @@ export const useTicketStatusStore = defineStore("ticketStatus", () => {
     },
   });
 
+  //// Neoffice — a ticket STATUS must not be translated through the bare msgid
+  //// "Open". Measured on the dev instance: 14 installed apps translate that msgid,
+  //// 9 as "Ouvert" (the state) and 5 as "Ouvrir" (the verb) — and
+  //// get_translations_from_apps merges them in installed-apps order, so the LAST
+  //// app installed decides for the whole site. On this instance `letters` won and
+  //// the ticket list read "Ouvrir", which is not a state, it is an instruction.
+  //// Worse, it varies from instance to instance with the install order.
+  ////
+  //// So the four default labels get msgid of their own, qualified with their
+  //// domain, that no other app can overwrite. Any other label is a name the
+  //// instance chose: returned as-is, because it is already in their words.
+  const DEFAULT_STATUS_LABELS: Record<string, string> = {
+    Open: "Ticket status: Open",
+    Replied: "Ticket status: Replied",
+    Paused: "Ticket status: Paused",
+    Resolved: "Ticket status: Resolved",
+    Closed: "Ticket status: Closed",
+  };
+
+  function statusLabel(label: string | undefined): string {
+    if (!label) return "";
+    const msgid = DEFAULT_STATUS_LABELS[label];
+    return msgid ? __(msgid) : label;
+  }
+
   function getStatus(label: string): HDTicketStatus | undefined {
     return statuses.data?.find(
       (s: HDTicketStatus) =>
@@ -57,6 +83,7 @@ export const useTicketStatusStore = defineStore("ticketStatus", () => {
     statuses,
     colorMap,
     getStatus,
+    statusLabel,
   };
 });
 function parseColor(color: string): string {

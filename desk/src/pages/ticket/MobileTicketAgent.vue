@@ -250,6 +250,7 @@ const telephonyStore = useTelephonyStore();
 const { isCallingEnabled } = storeToRefs(telephonyStore);
 
 const ticketStatusStore = useTicketStatusStore();
+const { statusLabel } = ticketStatusStore;
 const { getUser } = useUserStore();
 
 const router = useRouter();
@@ -343,7 +344,7 @@ const dropdownOptions = computed(() =>
     //// catalogue and turns French; a label an instance renamed is absent from it
     //// and __() returns it unchanged, which is right — it is already in their
     //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
-    label: __(o.label_agent),
+    label: statusLabel(o.label_agent),
     value: o.label_agent,
     onClick: () => updateTicket("status", o.label_agent),
     icon: () =>

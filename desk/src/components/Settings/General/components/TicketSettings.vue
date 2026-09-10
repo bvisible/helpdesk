@@ -276,7 +276,7 @@ import { computed, inject } from "vue";
 import { __ } from "@/translation";
 
 const settingsData = inject(HDSettingsSymbol);
-const { statuses } = useTicketStatusStore();
+const { statuses, statusLabel } = useTicketStatusStore();
 
 const bannerMsg = createResource({
   url: "helpdesk.helpdesk.doctype.hd_settings.helpers.get_banner_msg",
@@ -330,7 +330,7 @@ const autoUpdateTicketStatusList = computed(() => {
         //// catalogue and turns French; a label an instance renamed is absent from it
         //// and __() returns it unchanged, which is right — it is already in their
         //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
-        label: __(s.label_agent),
+        label: statusLabel(s.label_agent),
         value: s.label_agent,
       };
     }) || []
@@ -346,7 +346,7 @@ const autoCloseTicketStatusList = computed(() => {
       )
       ?.map((s: HDTicketStatus) => {
         return {
-          label: __(s.label_agent),
+          label: statusLabel(s.label_agent),
           value: s.label_agent,
         };
       }) || []

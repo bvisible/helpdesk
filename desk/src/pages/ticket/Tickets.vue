@@ -97,7 +97,7 @@ const { isManager } = useAuthStore();
 const listViewRef = ref(null);
 const showExportModal = ref(false);
 
-const { getStatus } = useTicketStatusStore();
+const { getStatus, statusLabel } = useTicketStatusStore();
 
 const listSelections = ref(new Set());
 const selectBannerActions = [
@@ -123,7 +123,7 @@ const options = {
         //// catalogue and turns French; a label an instance renamed is absent from it
         //// and __() returns it unchanged, which is right — it is already in their
         //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
-        const label = __(
+        const label = statusLabel(
           isCustomerPortal.value
             ? status?.["label_customer"]
             : status?.["label_agent"]

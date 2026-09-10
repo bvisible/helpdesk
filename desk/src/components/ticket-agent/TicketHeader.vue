@@ -128,6 +128,7 @@ const route = useRoute();
 const router = useRouter();
 const { findView } = useView("HD Ticket");
 const ticketStatusStore = useTicketStatusStore();
+const { statusLabel } = ticketStatusStore;
 
 const ticket = inject(TicketSymbol);
 const customizations = inject(CustomizationSymbol);
@@ -146,7 +147,7 @@ const statusDropdown = computed(() => {
     //// catalogue and turns French; a label an instance renamed is absent from it
     //// and __() returns it unchanged, which is right — it is already in their
     //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
-    label: __(o.label_agent),
+    label: statusLabel(o.label_agent),
     value: o.label_agent,
     onClick: () => {
       notifyTicketUpdate("Status", o.label_agent);
