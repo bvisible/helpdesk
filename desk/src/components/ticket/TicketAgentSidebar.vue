@@ -54,11 +54,11 @@ import { Ticket } from "@/types";
 import { copyToClipboard } from "@/utils";
 import { computed, ref } from "vue";
 import LucideMerge from "~icons/lucide/merge";
-import { __ } from "@/translation";
 import TicketAgentContact from "./TicketAgentContact.vue";
 import TicketAgentDetails from "./TicketAgentDetails.vue";
 import TicketAgentFields from "./TicketAgentFields.vue";
 import TicketMergeModal from "./TicketMergeModal.vue";
+import { __ } from "@/translation";
 
 interface Props {
   ticket: Ticket;

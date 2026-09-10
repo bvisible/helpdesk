@@ -147,9 +147,9 @@ import NewTeamModal from "../NewTeamModal.vue";
 import { ConfirmDelete } from "@/utils";
 import EditIcon from "@/components/icons/EditIcon.vue";
 import RenameTeamModal from "./RenameTeamModal.vue";
-import { __ } from "@/translation";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import { TeamListResourceSymbol } from "@/types";
+import { __ } from "@/translation";
 
 interface E {
   (event: "update:step", step: string, team: string): void;

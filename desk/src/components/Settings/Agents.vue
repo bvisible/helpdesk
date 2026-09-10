@@ -6,7 +6,7 @@
     <template #header-actions>
       <Button
         @click="() => setActiveSettingsTab('Invite Agents')"
-        label="New"
+        :label="__('New')"
         variant="solid"
       >
         <template #prefix>
@@ -205,6 +205,7 @@ import { activeFilter, useAgents } from "./agents";
 import AgentIcon from "../icons/AgentIcon.vue";
 import { setActiveSettingsTab } from "./settingsModal";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import { __ } from "@/translation";
 
 const { getUserRole, updateUserRoleCache } = useUserStore();
 const { isManager } = useAuthStore();
@@ -299,7 +300,7 @@ function getOptions(agent) {
   let filters = agentStore.filters;
   return [
     {
-      label: "Disable Agent",
+      label: __('Disable Agent'),
       icon: "x-circle",
       onClick: async () => {
         await agentStore.updateAgent(agent.name, 0);
@@ -308,7 +309,7 @@ function getOptions(agent) {
       condition: () => agent.is_active,
     },
     {
-      label: "Enable Agent",
+      label: __('Enable Agent'),
       icon: "check-circle",
       onClick: async () => {
         await agentStore.updateAgent(agent.name, 1);

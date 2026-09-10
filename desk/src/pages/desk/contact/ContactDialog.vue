@@ -85,12 +85,12 @@ import { useOnboarding } from "frappe-ui/frappe";
 import type { Ref } from "vue";
 import { computed, ref } from "vue";
 import zod from "zod";
-import { __ } from "@/translation";
 
 import Link from "@/components/frappe-ui/Link.vue";
 import MultiSelect from "@/components/MultiSelect.vue";
 import { useAuthStore } from "@/stores/auth";
 import { AutoCompleteItem, File } from "@/types";
+import { __ } from "@/translation";
 
 interface Props {
   name: {

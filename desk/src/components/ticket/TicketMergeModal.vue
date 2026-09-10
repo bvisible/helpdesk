@@ -1,23 +1,28 @@
 <template>
   <Dialog
-    :options="{ title: `Merge with another ticket` }"
+    :options="{ title: __('Merge with another ticket') }"
     v-model="showDialog"
   >
     <template #body-content>
       <div class="flex flex-col gap-4">
+        <!-- //// Neoffice — was one English sentence cut in three by the
+             //// interpolation. A fragment cannot be translated: French says
+             //// "Tous les commentaires ... du ticket #12 seront déplacés", so the
+             //// ticket number sits somewhere else in the sentence. One {0} message
+             //// now, split back on the TRANSLATED text so the bold number survives
+             //// without a v-html. -->
         <p class="text-p-base text-ink-gray-8">
-          All comments and emails of the ticket
-          <span class="whitespace-nowrap font-semibold"
+          {{ warning.before
+          }}<span class="whitespace-nowrap font-semibold"
             >#{{ ticket.name }}</span
-          >
-          will be moved to the selected ticket.
+          >{{ warning.after }}
         </p>
         <Link
           class="form-control"
           doctype="HD Ticket"
-          placeholder="Select Ticket"
+          :placeholder="__('Select Ticket')"
           :filters="getDefaultFilters()"
-          label="Ticket"
+          :label="__('Ticket')"
           :page-length="10"
           :value="targetTicket"
           :show-description="true"
@@ -25,7 +30,7 @@
         />
         <FormControl
           v-if="targetTicket"
-          label="Ticket Subject"
+          :label="__('Ticket Subject')"
           type="text"
           v-model="subject"
           :disabled="true"
@@ -39,7 +44,7 @@
           />
 
           <div class="text-wrap text-sm text-gray-700">
-            This action is irreversible.
+            {{ __("This action is irreversible.") }}
           </div>
         </div>
       </div>
@@ -63,9 +68,10 @@
 import { Link } from "@/components";
 import { HDTicket } from "@/types/doctypes";
 import { Dialog, createListResource, createResource, toast } from "frappe-ui";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import LucideMerge from "~icons/lucide/merge";
 import TriangleAlert from "~icons/lucide/triangle-alert";
+import { __ } from "@/translation";
 // interface P
 interface Props {
   ticket: HDTicket;
@@ -77,6 +83,15 @@ interface E {
 }
 
 const props = defineProps<Props>();
+
+//// Neoffice — one message, {0} where the ticket number goes; the halves come back
+//// from the translation so each language keeps its own word order.
+const warning = computed(() => {
+  const [before, after] = __(
+    "All comments and emails of the ticket {0} will be moved to the selected ticket."
+  ).split("{0}");
+  return { before, after: after ?? "" };
+});
 const emit = defineEmits<E>();
 const showDialog = defineModel<boolean>();
 
@@ -117,8 +132,8 @@ const mergeTicket = createResource({
     };
   },
   validate({ source, target }) {
-    if (!source) throw { message: "Category is required" };
-    if (!target) throw { message: "Ticket to merged with is required" };
+    if (!source) throw { message: __('Category is required') };
+    if (!target) throw { message: __('Ticket to merged with is required') };
   },
   onSuccess: () => {
     toast.success("Ticket merged successfully");

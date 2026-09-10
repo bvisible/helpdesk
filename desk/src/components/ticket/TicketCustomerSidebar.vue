@@ -2,7 +2,7 @@
   <div class="flex w-[382px] flex-col border-l gap-4">
     <!-- Ticket ID -->
     <div class="flex items-center justify-between border-b px-5 py-3">
-      <span class="cursor-copy text-lg font-semibold">Ticket details</span>
+      <span class="cursor-copy text-lg font-semibold">{{ __("Ticket details") }}</span>
     </div>
     <!-- user info and sla info -->
     <div class="flex flex-col gap-4 pt-0 px-5 py-3 border-b">
@@ -62,7 +62,7 @@
           <Tooltip
             v-if="
               dayjs(data.value).diff(dayjs(), 'day', true) > 4 &&
-              data.title === 'Resolution'
+              data.key === 'resolution'
             "
             :text="
               __(
@@ -107,6 +107,7 @@ import { Field } from "@/types";
 import { formatTime } from "@/utils";
 import { Avatar, Tooltip } from "frappe-ui";
 import { computed, inject } from "vue";
+import { __ } from "@/translation";
 
 const emit = defineEmits(["open"]);
 
@@ -115,15 +116,20 @@ const ticket = inject(ITicket);
 const slaData = computed(() => {
   const firstResponse = firstResponseData();
   const resolution = resolutionData();
+  //// Neoffice — `title` is displayed AND the template branches on it, so it cannot
+  //// be translated in place. Split: `key` is the identity the template tests,
+  //// `title` is what the reader sees.
   return [
     {
-      title: "First Response",
+      key: "first_response",
+      title: __("First Response"),
       value: ticket.data.first_responded_on || ticket.data.response_by,
       label: firstResponse.label,
       theme: firstResponse.color,
     },
     {
-      title: "Resolution",
+      key: "resolution",
+      title: __("Resolution"),
       value: ticket.data.resolution_date || ticket.data.resolution_by,
       label: resolution.label,
       theme: resolution.color,
@@ -159,7 +165,7 @@ function firstResponseData() {
     };
   } else {
     firstResponse = {
-      label: "Failed",
+      label: __('Failed'),
       color: "red",
     };
   }
@@ -187,7 +193,7 @@ function resolutionData() {
     };
   } else {
     resolution = {
-      label: "Failed",
+      label: __('Failed'),
       color: "red",
     };
   }
@@ -196,7 +202,7 @@ function resolutionData() {
 
 const ticketBasicInfo = computed(() => [
   {
-    label: "Ticket ID",
+    label: __('Ticket ID'),
     value: ticket.data.name,
   },
   {
@@ -209,7 +215,7 @@ const ticketBasicInfo = computed(() => [
 const ticketAdditionalInfo = computed(() => {
   const fields = [
     {
-      label: "Subject",
+      label: __('Subject'),
       value: ticket.data.subject,
     },
     {
@@ -217,7 +223,7 @@ const ticketAdditionalInfo = computed(() => {
       value: ticket.data.agent_group || "-",
     },
     {
-      label: "Priority",
+      label: __('Priority'),
       value: ticket.data.priority,
     },
   ];

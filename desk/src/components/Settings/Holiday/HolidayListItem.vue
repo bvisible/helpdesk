@@ -54,8 +54,8 @@ import { Button, createResource, Dropdown, toast } from "frappe-ui";
 import { inject, ref } from "vue";
 import { holidayListActiveScreen } from "@/stores/holidayList";
 import { ConfirmDelete } from "@/utils";
-import { __ } from "@/translation";
 import { HolidayListResourceSymbol } from "@/types";
+import { __ } from "@/translation";
 
 const props = defineProps({
   data: {

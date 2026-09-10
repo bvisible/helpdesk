@@ -44,14 +44,14 @@
       <hr class="my-0.5" v-if="index !== holidays.length - 1" />
     </div>
     <div v-if="holidays?.length === 0" class="text-center p-4 text-gray-600">
-      No items in the list
+      {{ __("No items in the list") }}
     </div>
   </div>
   <Button
     variant="subtle"
     @click="addHoliday"
     class="mt-2.5"
-    label="Add Recurring Holiday"
+    :label="__('Add Recurring Holiday')"
     icon-left="plus"
   />
   <Dialog
@@ -66,12 +66,12 @@
     <template #body-content>
       <div v-if="!props.holidayData.from_date || !props.holidayData.to_date">
         <div class="text-center p-4 text-gray-600">
-          Please select start and end date first
+          {{ __("Please select start and end date first") }}
         </div>
       </div>
       <div v-else class="flex flex-col gap-4">
         <div class="flex flex-col gap-1.5">
-          <FormLabel label="Day" required />
+          <FormLabel :label="__('Day')" required />
           <Select
             :options="availableWorkDays"
             v-model="recurringHolidayData.day"
@@ -79,11 +79,11 @@
           />
         </div>
         <div class="flex flex-col gap-1.5">
-          <FormLabel label="Repetition" required />
+          <FormLabel :label="__('Repetition')" required />
           <div class="grid grid-cols-2 gap-2 mt-2">
             <Checkbox
               v-model="recurringHolidayData.repetition.all"
-              label="Every week"
+              :label="__('Every week')"
               :disabled="
                 recurringHolidayData.repetition.first ||
                 recurringHolidayData.repetition.second ||
@@ -93,27 +93,27 @@
             />
             <Checkbox
               v-model="recurringHolidayData.repetition.first"
-              label="Every first week"
+              :label="__('Every first week')"
               :disabled="recurringHolidayData.repetition.all"
             />
             <Checkbox
               v-model="recurringHolidayData.repetition.second"
-              label="Every second week"
+              :label="__('Every second week')"
               :disabled="recurringHolidayData.repetition.all"
             />
             <Checkbox
               v-model="recurringHolidayData.repetition.third"
-              label="Every third week"
+              :label="__('Every third week')"
               :disabled="recurringHolidayData.repetition.all"
             />
             <Checkbox
               v-model="recurringHolidayData.repetition.fourth"
-              label="Every fourth week"
+              :label="__('Every fourth week')"
               :disabled="recurringHolidayData.repetition.all"
             />
             <Checkbox
               v-model="recurringHolidayData.repetition.fifth"
-              label="Every fifth week"
+              :label="__('Every fifth week')"
               :disabled="recurringHolidayData.repetition.all"
             />
           </div>
@@ -144,6 +144,7 @@ import weekday from "dayjs/plugin/weekday";
 import { Checkbox, Dropdown, FormLabel, Select, toast } from "frappe-ui";
 import { computed, ref } from "vue";
 import { getRepetitionText } from "./utils";
+import { __ } from "@/translation";
 
 dayjs.extend(weekday);
 dayjs.extend(isSameOrBefore);
@@ -178,49 +179,49 @@ const props = defineProps({
 
 const columns = [
   {
-    label: "Day",
+    label: __('Day'),
     key: "day",
   },
   {
-    label: "Repetition",
+    label: __('Repetition'),
     key: "repetition",
   },
 ];
 
 const workDays = ref([
   {
-    label: "Monday",
+    label: __('Monday'),
     value: "Monday",
   },
   {
-    label: "Tuesday",
+    label: __('Tuesday'),
     value: "Tuesday",
   },
   {
-    label: "Wednesday",
+    label: __('Wednesday'),
     value: "Wednesday",
   },
   {
-    label: "Thursday",
+    label: __('Thursday'),
     value: "Thursday",
   },
   {
-    label: "Friday",
+    label: __('Friday'),
     value: "Friday",
   },
   {
-    label: "Saturday",
+    label: __('Saturday'),
     value: "Saturday",
   },
   {
-    label: "Sunday",
+    label: __('Sunday'),
     value: "Sunday",
   },
 ]);
 
 const dropdownOptions = (holiday: any) => [
   {
-    label: "Edit",
+    label: __('Edit'),
     onClick: () => editHoliday(holiday),
     icon: "edit",
   },

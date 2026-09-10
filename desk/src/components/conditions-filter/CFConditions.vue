@@ -34,6 +34,7 @@ import { Button, Dropdown } from "frappe-ui";
 import { computed, onMounted } from "vue";
 import CFCondition from "./CFCondition.vue";
 import { filterableFields } from "./filterableFields";
+import { __ } from "@/translation";
 
 const props = defineProps({
   conditions: {
@@ -75,7 +76,7 @@ const isGroupCondition = (condition) => {
 const dropdownOptions = computed(() => {
   const options = [
     {
-      label: "Add condition",
+      label: __('Add condition'),
       onClick: () => {
         const conjunction = getConjunction();
         props.conditions.push(conjunction, ["", "", ""]);
@@ -84,7 +85,7 @@ const dropdownOptions = computed(() => {
   ];
   if (props.level < 3) {
     options.push({
-      label: "Add condition group",
+      label: __('Add condition group'),
       onClick: () => {
         const conjunction = getConjunction();
         props.conditions.push(conjunction, [[]]);

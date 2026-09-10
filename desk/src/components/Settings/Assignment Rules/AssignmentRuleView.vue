@@ -354,8 +354,8 @@ import AssignmentRulesSection from "./AssignmentRulesSection.vue";
 import AssignmentSchedule from "./AssignmentSchedule.vue";
 import { convertToConditions } from "@/utils";
 import { disableSettingModalOutsideClick } from "../settingsModal";
-import { __ } from "@/translation";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import { __ } from "@/translation";
 
 const isDirty = ref(false);
 const initialData = ref(null);
@@ -513,9 +513,9 @@ const saveAssignmentRule = () => {
 const showOverwriteConfirm = () => {
   showConfirmDialog.value = {
     show: true,
-    title: "Confirm overwrite",
+    title: __('Confirm overwrite'),
     message:
-      "Your old condition will be overwritten. Are you sure you want to save?",
+      __('Your old condition will be overwritten. Are you sure you want to save?'),
     onConfirm: () => {
       updateAssignmentRule();
       showConfirmDialog.value.show = false;
@@ -570,11 +570,11 @@ const createAssignmentRuleResource = createResource({
 });
 
 const priorityOptions = [
-  { label: "Low", value: "0" },
-  { label: "Low-Medium", value: "1" },
-  { label: "Medium", value: "2" },
-  { label: "Medium-High", value: "3" },
-  { label: "High", value: "4" },
+  { label: __('Low'), value: "0" },
+  { label: __('Low-Medium'), value: "1" },
+  { label: __('Medium'), value: "2" },
+  { label: __('Medium-High'), value: "3" },
+  { label: __('High'), value: "4" },
 ];
 
 const updateAssignmentRule = async () => {

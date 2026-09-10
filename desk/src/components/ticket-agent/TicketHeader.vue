@@ -98,7 +98,6 @@ import {
 import { HDTicketStatus } from "@/types/doctypes";
 import { getIcon } from "@/utils";
 import { Breadcrumbs, call, Dropdown, toast } from "frappe-ui";
-import { __ } from "@/translation";
 import {
   computed,
   ComputedRef,
@@ -116,6 +115,7 @@ import { IndicatorIcon } from "../icons";
 import TicketNavigation from "./TicketNavigation.vue";
 import TicketSLA from "./TicketSLA.vue";
 import TicketSubjectModal from "./TicketSubjectModal.vue";
+import { __ } from "@/translation";
 
 defineProps({
   viewers: {

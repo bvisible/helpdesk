@@ -1,5 +1,5 @@
-import { __ } from "@/translation";
 import { ref } from "vue";
+import { __ } from "@/translation";
 
 export const menuButtons = [
   [

@@ -22,7 +22,7 @@
             <div class="mb-3 flex flex-col gap-1">
               <SidebarLink
                 class="relative"
-                label="Notifications"
+                :label="__('Notifications')"
                 :icon="LucideBell"
                 :on-click="() => (sidebarOpened = false)"
                 :is-expanded="true"
@@ -136,6 +136,7 @@ import {
 } from "./layoutSettings";
 import { useTelephonyStore } from "@/stores/telephony";
 import { storeToRefs } from "pinia";
+import { __ } from "@/translation";
 const { pinnedViews, publicViews } = useView();
 
 const notificationStore = useNotificationStore();
@@ -151,12 +152,16 @@ const allViews = computed(() => {
     : agentPortalSidebarOptions;
 
   if (!isCallingEnabled.value) {
-    items = items.filter((item) => item.label !== "Call Logs");
+    //// Neoffice — was a comparison on the LABEL. `to` is the route name and never
+    //// moves; the label is translated, so the two files disagreed: Sidebar compared
+    //// against __("Call Logs") and MobileSidebar against the raw English, meaning
+    //// the mobile sidebar kept showing Call Logs on a French site with telephony off.
+    items = items.filter((item) => item.to !== "CallLogs");
   }
 
   const options = [
     {
-      label: "All Views",
+      label: __('All Views'),
       hideLabel: true,
       opened: true,
       views: items,
@@ -164,7 +169,7 @@ const allViews = computed(() => {
   ];
   if (publicViews.value?.length && !isCustomerPortal.value) {
     options.push({
-      label: "Public Views",
+      label: __('Public Views'),
       opened: true,
       hideLabel: false,
       views: parseViews(publicViews.value),
@@ -172,7 +177,7 @@ const allViews = computed(() => {
   }
   if (pinnedViews.value?.length) {
     options.push({
-      label: "Private Views",
+      label: __('Private Views'),
       opened: true,
       hideLabel: false,
       views: parseViews(pinnedViews.value),
@@ -201,7 +206,7 @@ function parseViews(views) {
 
 const customerPortalDropdown = computed(() => [
   {
-    label: "Log out",
+    label: __('Log out'),
     icon: "log-out",
     onClick: () => authStore.logout(),
   },
@@ -212,7 +217,7 @@ const agentPortalDropdown = computed(() => [
     component: markRaw(Apps),
   },
   {
-    label: "Customer portal",
+    label: __('Customer portal'),
     icon: "users",
     onClick: () => {
       const path = router.resolve({ name: "TicketsCustomer" });
@@ -221,16 +226,16 @@ const agentPortalDropdown = computed(() => [
   },
   {
     icon: "life-buoy",
-    label: "Support",
+    label: __('Support'),
     onClick: () => window.open("https://t.me/frappedesk"),
   },
   {
     icon: "book-open",
-    label: "Docs",
+    label: __('Docs'),
     onClick: () => window.open("https://docs.frappe.io/helpdesk"),
   },
   {
-    label: "Log out",
+    label: __('Log out'),
     icon: "log-out",
     onClick: () => authStore.logout(),
   },

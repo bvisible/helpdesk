@@ -8,10 +8,10 @@
           from this email onwards will be moved to new ticket.
         </p>
         <FormControl
-          label="New Ticket Subject"
+          :label="__('New Ticket Subject')"
           type="text"
           v-model="subject"
-          placeholder="Add a subject for the new ticket"
+          :placeholder="__('Add a subject for the new ticket')"
         />
         <div
           class="flex items-center gap-2 rounded-md p-2 ring-1 ring-gray-200"
@@ -21,7 +21,7 @@
           />
 
           <div class="text-wrap text-sm text-gray-700">
-            This action is irreversible.
+            {{ __("This action is irreversible.") }}
           </div>
         </div>
       </div>
@@ -44,6 +44,7 @@ import { Dialog, createResource, toast } from "frappe-ui";
 import { ref } from "vue";
 import LucideSplit from "~icons/lucide/split";
 import TriangleAlert from "~icons/lucide/triangle-alert";
+import { __ } from "@/translation";
 
 interface Props {
   ticket_id: string;
@@ -70,8 +71,8 @@ const splitTicket = createResource({
     };
   },
   validate({ subject, communication_id }) {
-    if (!subject) throw { message: "Subject is required" };
-    if (!communication_id) throw { message: "Communication ID is required" };
+    if (!subject) throw { message: __('Subject is required') };
+    if (!communication_id) throw { message: __('Communication ID is required') };
   },
   onSuccess: (newTicket: string) => {
     toast.success("Ticket split successfully");

@@ -62,8 +62,8 @@
 import LockKeyhole from "~icons/lucide/lock-keyhole";
 import { Dialog, toast, createResource } from "frappe-ui";
 import { ref, watch } from "vue";
-import { __ } from "@/translation";
 import { useAuthStore } from "@/stores/auth";
+import { __ } from "@/translation";
 
 const show = defineModel<boolean>();
 

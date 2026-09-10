@@ -104,6 +104,7 @@
                 ref="ticketAgentActivitiesRef"
                 :activities="filterActivities(tab.name)"
                 :title="tab.label"
+                :tab="tab.name"
                 :ticket-status="ticket.data?.status"
                 @update="
                   () => {
@@ -203,7 +204,6 @@ import {
   createResource,
   toast,
 } from "frappe-ui";
-import { __ } from "@/translation";
 import {
   computed,
   ComputedRef,
@@ -244,6 +244,7 @@ import { useTelephonyStore } from "@/stores/telephony";
 import { storeToRefs } from "pinia";
 import { HDTicketStatus } from "@/types/doctypes";
 import SetContactPhoneModal from "@/components/ticket/SetContactPhoneModal.vue";
+import { __ } from "@/translation";
 
 const telephonyStore = useTelephonyStore();
 const { isCallingEnabled } = storeToRefs(telephonyStore);

@@ -27,7 +27,7 @@
           :model-value="fieldCriteriaState.display.value"
           @update:model-value="handleCriteriaSelection($event, 'display')"
           :multiple="true"
-          placeholder="Select Child Field values"
+          :placeholder="__('Select Child Field values')"
           placement="top"
         />
       </div>
@@ -53,7 +53,7 @@
           :model-value="fieldCriteriaState.mandatory.value"
           @update:model-value="handleCriteriaSelection($event, 'mandatory')"
           :multiple="true"
-          placeholder="Select Child Field values"
+          :placeholder="__('Select Child Field values')"
           placement="top"
         />
       </div>

@@ -44,6 +44,7 @@ import {
   toast,
 } from "frappe-ui";
 import { computed } from "vue";
+import { __ } from "@/translation";
 
 const props = defineProps({
   name: {
@@ -81,7 +82,7 @@ const options = computed(() => ({
   title: customer.doc?.name,
   actions: [
     {
-      label: "Save",
+      label: __('Save'),
       theme: "gray",
       variant: "solid",
       onClick: () => update(),

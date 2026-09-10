@@ -66,9 +66,9 @@ import {
   usePageMeta,
 } from "frappe-ui";
 import { computed, h, onMounted, reactive, ref } from "vue";
-import { __ } from "@/translation";
 import { useRouter } from "vue-router";
 import LucideMerge from "~icons/lucide/merge";
+import { __ } from "@/translation";
 
 const router = useRouter();
 const { $dialog } = globalStore();
@@ -122,6 +122,9 @@ const headerOptions = [
 
 const groupByActions = [
   {
+    //// Neoffice — `name` added: ListRows filters this action by identity, and a
+    //// translated label is not an identity.
+    name: "add-new-article",
     label: __("Add New Article"),
     icon: "plus",
     onClick: (groupedRow) => {

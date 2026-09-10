@@ -49,9 +49,9 @@
 import { inject, ref, watch } from "vue";
 import LogoUpload from "./LogoUpload.vue";
 import { createResource, toast } from "frappe-ui";
-import { __ } from "@/translation";
 import { useConfigStore } from "@/stores/config";
 import { HDSettingsSymbol } from "@/types";
+import { __ } from "@/translation";
 
 const configStore = useConfigStore();
 const settingsData = inject(HDSettingsSymbol);

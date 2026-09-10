@@ -163,7 +163,6 @@ import {
 } from "frappe-ui";
 import { computed, inject, onUnmounted, ref, watch } from "vue";
 import { disableSettingModalOutsideClick } from "../settingsModal";
-import { __ } from "@/translation";
 import PreviewDialog from "./components/PreviewDialog.vue";
 import { menuButtons } from "./savedReplies";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
@@ -177,6 +176,7 @@ import UserIcon from "~icons/lucide/user";
 import UsersIcon from "~icons/lucide/users";
 import GlobeIcon from "~icons/lucide/globe";
 import { SavedReply, SavedReplyListResourceSymbol, Team } from "../../../types";
+import { __ } from "@/translation";
 
 const showConfirmDialog = ref({
   show: false,

@@ -42,6 +42,7 @@ import {
 import { isCustomerPortal } from "@/utils";
 import { useRouter, useRoute } from "vue-router";
 import { ref, computed } from "vue";
+import { __ } from "@/translation";
 
 const router = useRouter();
 const route = useRoute();
@@ -50,17 +51,22 @@ const showCommandPalette = ref(false);
 
 const surfaceApp = {
   name: "helpdesk",
-  title: "Helpdesk",
+  title: __('Helpdesk'),
   logo: "/assets/helpdesk/desk/favicon.svg",
 };
 
 // fixed links carry icon COMPONENTS — map labels to lucide strings instead
+//// Neoffice — keyed on the ROUTE name, not the label: the labels are translated
+//// (layoutSettings wraps them in __()), so a French desk looked every icon up under
+//// "Clients" / "Base de Connaissances" and fell back to the generic circle.
 const ICONS: Record<string, string> = {
-  Tickets: "lucide-ticket",
-  "Knowledge Base": "lucide-book-open",
-  Customers: "lucide-building",
-  Contacts: "lucide-contact",
-  "Call Logs": "lucide-phone",
+  TicketsAgent: "lucide-ticket",
+  TicketsCustomer: "lucide-ticket",
+  AgentKnowledgeBase: "lucide-book-open",
+  CustomerKnowledgeBase: "lucide-book-open",
+  CustomerList: "lucide-building",
+  ContactList: "lucide-contact",
+  CallLogs: "lucide-phone",
 };
 
 function navigate(r: string) {
@@ -78,7 +84,7 @@ const contextNav = computed(() => {
     {
       items: links.map((item: { label: string; to: string }) => ({
         label: item.label,
-        icon: ICONS[item.label] || "lucide-circle",
+        icon: ICONS[item.to] || "lucide-circle",
         active:
           currentName === item.to ||
           String(currentName || "").startsWith(item.to),

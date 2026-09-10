@@ -220,7 +220,6 @@ import {
   toast,
 } from "frappe-ui";
 import { computed, inject, ref, Ref, watch } from "vue";
-import { __ } from "@/translation";
 import { ConfirmDelete } from "@/utils";
 import SettingsLayoutBase from "../../layouts/SettingsLayoutBase.vue";
 import { activeFilter } from "./savedReplies";
@@ -232,6 +231,7 @@ import { SavedReply, SavedReplyListResourceSymbol } from "../../../types";
 import SavedReplyIcon from "../../icons/SavedReplyIcon.vue";
 import { storeToRefs } from "pinia";
 import { useConfigStore } from "@/stores/config";
+import { __ } from "@/translation";
 
 const { getUser } = useUserStore();
 const { disableGlobalScopeForSavedReplies, teamRestrictionApplied } =
@@ -366,23 +366,17 @@ const applyFilter = (scope: string) => {
   savedRepliesListResource.list.reload();
 };
 
-const getScopeIcon = (scope: string) => {
-  const icons = [
-    {
-      label: __("Personal"),
-      icon: UserIcon,
-    },
-    {
-      label: __("Team"),
-      icon: UsersIcon,
-    },
-    {
-      label: __("Global"),
-      icon: GlobeIcon,
-    },
-  ];
-  return icons.find((x) => x.label === scope)?.icon;
+//// Neoffice — was a list of TRANSLATED labels matched against `scope`, which is
+//// the raw Select value stored on the document ("Personal" / "Team" / "Global").
+//// On a French site nothing matched and every saved reply lost its scope icon.
+//// Keyed on the stored value now, which is the only thing that is stable.
+const SCOPE_ICONS: Record<string, unknown> = {
+  Personal: UserIcon,
+  Team: UsersIcon,
+  Global: GlobeIcon,
 };
+
+const getScopeIcon = (scope: string) => SCOPE_ICONS[scope];
 
 watch(
   () => savedRepliesSearchQuery?.value,

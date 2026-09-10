@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-gray-900">Contacts</div>
+        <div class="text-lg font-medium text-gray-900">{{ __("Contacts") }}</div>
       </template>
       <template #right-header>
         <Button
@@ -44,6 +44,7 @@ import { Avatar, toast, usePageMeta } from "frappe-ui";
 import { computed, h, ref } from "vue";
 import ContactDialog from "./ContactDialog.vue";
 import { showNewContactModal } from "./dialogState";
+import { __ } from "@/translation";
 
 const isContactDialogVisible = ref(false);
 const selectedContact = ref(null);
@@ -70,7 +71,7 @@ const options = computed(() => {
       },
     },
     emptyState: {
-      title: "No Contacts Found",
+      title: __('No Contacts Found'),
     },
   };
 });
@@ -92,7 +93,7 @@ function handleContactUpdated(): void {
 }
 usePageMeta(() => {
   return {
-    title: "Contacts",
+    title: __('Contacts'),
   };
 });
 </script>

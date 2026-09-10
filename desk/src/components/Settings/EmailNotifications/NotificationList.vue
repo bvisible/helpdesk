@@ -50,9 +50,9 @@
 </template>
 
 <script setup lang="ts">
-import { __ } from "@/translation";
 import type { AtLeastOneNotifcation, Notification } from "./types";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import { __ } from "@/translation";
 
 const props = defineProps<{
   onSelect: (notification: Notification) => void;

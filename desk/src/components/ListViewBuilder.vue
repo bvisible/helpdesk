@@ -152,7 +152,6 @@ import {
   LoadingIndicator,
   toast,
 } from "frappe-ui";
-import { __ } from "@/translation";
 import {
   computed,
   h,
@@ -167,6 +166,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import EmptyState from "./EmptyState.vue";
 import ListRows from "./ListRows.vue";
+import { __ } from "@/translation";
 
 interface P {
   options: {
@@ -439,7 +439,7 @@ const quickFilters = createResource({
   },
   transform: (data) => {
     if (Boolean(data.length)) return;
-    data = [{ name: "name", label: "Name", fieldtype: "Data" }];
+    data = [{ name: "name", label: __('Name'), fieldtype: "Data" }];
     return data;
   },
 });
@@ -492,7 +492,11 @@ function handleFieldClick(e: MouseEvent, column, row, item) {
   e.stopPropagation();
   e.preventDefault();
 
-  if (column.label == "Status" && options.value.doctype === "HD Ticket") {
+  //// Neoffice — was `column.label == "Status"`. The label is what the screen
+  //// shows, so it is "Statut" on a French site and the branch never ran: the
+  //// click filtered on the raw status instead of the agent label. `key` is the
+  //// fieldname and never moves.
+  if (column.key === "status" && options.value.doctype === "HD Ticket") {
     item = getStatus(item)?.label_agent;
   }
 

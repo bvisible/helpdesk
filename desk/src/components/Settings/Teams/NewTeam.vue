@@ -66,11 +66,11 @@
 import { computed, inject, onMounted, ref } from "vue";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import { Badge, ErrorMessage, FormControl, FormLabel, toast } from "frappe-ui";
-import { __ } from "@/translation";
 import AgentSelector from "./components/AgentSelector.vue";
 import { useAgentStore } from "@/stores/agent";
 import { TeamListResourceSymbol } from "@/types";
 import ConfirmDialog from "../../ConfirmDialog.vue";
+import { __ } from "@/translation";
 
 interface E {
   (event: "update:step", step: string, team?: string): void;

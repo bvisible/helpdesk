@@ -159,8 +159,8 @@ import { onMounted, ref } from "vue";
 import { fieldDependenciesList } from "./fieldDependency";
 import DocumentationButton from "@/components/DocumentationButton.vue";
 import FieldDependencyIcon from "@/components/icons/FieldDependencyIcon.vue";
-import { __ } from "@/translation";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import { __ } from "@/translation";
 
 onMounted(() => {
   fieldDependenciesList.reload();

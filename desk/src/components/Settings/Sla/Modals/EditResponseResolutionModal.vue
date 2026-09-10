@@ -11,14 +11,14 @@
           :type="'select'"
           size="sm"
           variant="subtle"
-          placeholder="Select Priority"
-          label="Priority"
+          :placeholder="__('Select Priority')"
+          :label="__('Priority')"
           v-model="priorityData.priority"
           :options="priorityOptions"
           required
         />
         <div>
-          <FormLabel label="Response time" required />
+          <FormLabel :label="__('Response time')" required />
           <Popover class="mt-2">
             <template #target="{ togglePopover }" class="w-max">
               <div
@@ -28,7 +28,7 @@
                 <div v-if="priorityData.response_time">
                   {{ formatTimeHMS(priorityData.response_time) }}
                 </div>
-                <div v-else class="text-gray-500">Select time</div>
+                <div v-else class="text-gray-500">{{ __("Select time") }}</div>
               </div>
             </template>
             <template #body>

@@ -62,9 +62,9 @@ import {
   toast,
 } from "frappe-ui";
 import zod from "zod";
-import { __ } from "@/translation";
 
 import { AutoCompleteItem } from "@/types";
+import { __ } from "@/translation";
 
 interface Props {
   modelValue: boolean;

@@ -75,10 +75,10 @@ import Branding from "./components/Branding.vue";
 import TicketSettings from "./components/TicketSettings.vue";
 import WorkflowKnowledgebaseSettings from "./components/WorkflowKnowledgebaseSettings.vue";
 import { computed, provide, ref, watch } from "vue";
-import { __ } from "@/translation";
 import { disableSettingModalOutsideClick } from "../settingsModal";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import { HDSettings, HDSettingsSymbol } from "@/types";
+import { __ } from "@/translation";
 
 const isDirty = ref(false);
 const initialData = ref<null | string>(null);

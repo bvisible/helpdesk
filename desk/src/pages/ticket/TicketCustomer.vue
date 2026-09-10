@@ -90,7 +90,6 @@ import { socket } from "@/socket";
 import { useConfigStore } from "@/stores/config";
 import { globalStore } from "@/stores/globalStore";
 import { useTicketStatusStore } from "@/stores/ticketStatus";
-import { __ } from "@/translation";
 import { isContentEmpty, isCustomerPortal, uploadFunction } from "@/utils";
 import LucideWarning from "~icons/lucide/triangle-alert";
 import {
@@ -114,6 +113,7 @@ import { ITicket } from "./symbols";
 import TicketConversation from "./TicketConversation.vue";
 import TicketCustomerTemplateFields from "./TicketCustomerTemplateFields.vue";
 import TicketFeedback from "./TicketFeedback.vue";
+import { __ } from "@/translation";
 const TicketTextEditor = defineAsyncComponent(
   () => import("./TicketTextEditor.vue")
 );

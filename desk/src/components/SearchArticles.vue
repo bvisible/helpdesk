@@ -4,7 +4,7 @@
     class="rounded border p-4 text-base"
   >
     <div class="mb-2 font-medium pl-2" v-if="!hideViewAll">
-      These articles may already cover what you are looking for
+      {{ __("These articles may already cover what you are looking for") }}
       <RouterLink
         class="group cursor-pointer space-x-1 hover:text-gray-900"
         :to="{
@@ -54,9 +54,9 @@
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
-      <p class="font-base">No answers found</p>
+      <p class="font-base">{{ __("No answers found") }}</p>
       <span class="font-base text-p-sm text-gray-600 text-center"
-        >Rephrase the question and try again with some keywords</span
+        >{{ __("Rephrase the question and try again with some keywords") }}</span
       >
     </div>
   </div>
@@ -66,9 +66,9 @@
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
-      <p class="font-base">Searching...</p>
+      <p class="font-base">{{ __("Searching...") }}</p>
       <span class="font-base text-p-sm text-gray-600 text-center"
-        >Please wait while we search for the answers</span
+        >{{ __("Please wait while we search for the answers") }}</span
       >
     </div>
   </div>

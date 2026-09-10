@@ -6,7 +6,7 @@
     }"
   >
     <template #body-content>
-      <div class="mb-1.5 block text-base text-ink-gray-5">View Name</div>
+      <div class="mb-1.5 block text-base text-ink-gray-5">{{ __("View Name") }}</div>
       <div class="flex gap-2">
         <IconPicker v-model="view.icon" v-slot="{ togglePopover }">
           <Button
@@ -20,7 +20,7 @@
           class="flex-1"
           size="md"
           type="text"
-          placeholder="My Open Tickets"
+          :placeholder="__('My Open Tickets')"
           v-model="view.label"
         />
       </div>

@@ -112,8 +112,8 @@ import {
   services,
   validateInputs,
 } from "./emailConfig";
-import { __ } from "@/translation";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import { __ } from "@/translation";
 
 interface P {
   accountData: EmailAccount;

@@ -79,7 +79,6 @@ import {
 } from "frappe-ui";
 import { useOnboarding } from "frappe-ui/frappe";
 import { computed, ref } from "vue";
-import { __ } from "@/translation";
 
 import { LayoutHeader, UserAvatar } from "@/components";
 import { useAuthStore } from "@/stores/auth";
@@ -89,6 +88,7 @@ import { useUserStore } from "@/stores/user";
 import { Article } from "@/types";
 import { textEditorMenuButtons } from "@/utils";
 import { useRoute, useRouter } from "vue-router";
+import { __ } from "@/translation";
 
 const userStore = useUserStore();
 const user = userStore.getUser();

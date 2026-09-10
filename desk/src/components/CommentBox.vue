@@ -67,8 +67,8 @@
       >
         <template #bottom v-if="editable">
           <div class="flex flex-row-reverse gap-2">
-            <Button label="Save" @click="handleSaveComment" variant="solid" />
-            <Button label="Discard" @click="handleDiscard" />
+            <Button :label="__('Save')" @click="handleSaveComment" variant="solid" />
+            <Button :label="__('Discard')" @click="handleDiscard" />
           </div>
         </template>
       </TextEditor>
@@ -146,12 +146,12 @@
   <Dialog
     v-model="showDialog"
     :options="{
-      title: 'Delete Comment',
-      message: 'Are you sure you want to confirm this action?',
+      title: __('Delete Comment'),
+      message: __('Are you sure you want to confirm this action?'),
       actions: [
-        { label: 'Cancel', onClick: () => (showDialog = false) },
+        { label: __('Cancel'), onClick: () => (showDialog = false) },
         {
-          label: 'Delete',
+          label: __('Delete'),
           onClick: () => deleteComment.submit(),
           variant: 'solid',
         },
@@ -187,6 +187,7 @@ import {
   toast,
 } from "frappe-ui";
 import { PropType, computed, onMounted, ref } from "vue";
+import { __ } from "@/translation";
 
 const authStore = useAuthStore();
 const props = defineProps({

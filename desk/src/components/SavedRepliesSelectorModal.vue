@@ -40,7 +40,7 @@
               />
             </div>
             <Dropdown :options="filters" placement="right">
-              <Button :label="activeFilter" icon-left="filter" class="p-4">
+              <Button :label="activeFilterLabel" icon-left="filter" class="p-4">
                 <template #suffix>
                   <p
                     class="flex h-5 w-5 items-center justify-center rounded-[5px] bg-surface-white pt-px text-xs font-medium text-ink-gray-8 shadow-sm"
@@ -115,7 +115,6 @@
 
 <script setup lang="ts">
 import { useConfigStore } from "@/stores/config";
-import { __ } from "@/translation";
 import { SavedReply } from "@/types";
 import { useStorage } from "@vueuse/core";
 import {
@@ -135,6 +134,7 @@ import {
   setActiveSettingsTab,
   showSettingsModal,
 } from "./Settings/settingsModal";
+import { __ } from "@/translation";
 
 const props = defineProps({
   doctype: {
@@ -167,7 +167,7 @@ const filters = computed(() => {
     {
       label: __("My Team"),
       value: "Team",
-      onClick: () => (activeFilter.value = "My Team"),
+      onClick: () => (activeFilter.value = "Team"),
     },
     {
       label: __("Global"),
@@ -190,6 +190,13 @@ if (
   activeFilter.value = "Personal";
 }
 
+//// Neoffice — the button showed the STORED value ("Personal", "Team"), which is
+//// an identifier, not a label. Reads the translated label of the active filter.
+const activeFilterLabel = computed(() => {
+  const wanted = activeFilter.value === "My Team" ? "Team" : activeFilter.value;
+  return filters.value.find((f) => f.value === wanted)?.label ?? wanted;
+});
+
 const emit = defineEmits(["apply"]);
 
 const search = ref("");
@@ -199,8 +206,13 @@ const selectedTemplate = ref({
   isLoading: false,
 });
 
+//// Neoffice — was `f.label === activeFilter.value`: the label is translated while
+//// activeFilter holds an English value, so on a French site the scope resolved to
+//// undefined and the filter silently listed every scope. Matches on `value` now.
+//// "My Team" is tolerated because an older build wrote it into localStorage.
 const scope = computed(() => {
-  return filters.value.find((f) => f.label === activeFilter.value)?.value;
+  const wanted = activeFilter.value === "My Team" ? "Team" : activeFilter.value;
+  return filters.value.find((f) => f.value === wanted)?.value;
 });
 
 const savedReplyListResource = createListResource({

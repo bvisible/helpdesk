@@ -11,6 +11,7 @@
         ref="ticketAgentActivitiesRef"
         :activities="filterActivities(tab.name as TicketTab)"
         :title="tab.label"
+        :tab="tab.name"
         :ticket-status="ticket.doc.status"
         @email:reply="
           (e) => {
@@ -27,7 +28,7 @@
       <div v-else class="flex items-center justify-center flex-col mt-20">
         <LoadingIndicator :scale="8" class="text-ink-gray-5" />
         <p class="text-xl font-medium text-ink-gray-5 absolute top-[50%]">
-          Loading...
+          {{ __("Loading...") }}
         </p>
       </div>
     </template>
@@ -69,6 +70,7 @@ import { LoadingIndicator, Tabs } from "frappe-ui";
 import { storeToRefs } from "pinia";
 import { computed, ComputedRef, defineAsyncComponent, inject, ref } from "vue";
 import TicketAgentActivities from "../ticket/TicketAgentActivities.vue";
+import { __ } from "@/translation";
 
 const CommunicationArea = defineAsyncComponent(
   () => import("@/components/CommunicationArea.vue")
@@ -86,7 +88,7 @@ const tabs: ComputedRef<TabObject[]> = computed(() => {
   const _tabs: TabObject[] = [
     {
       name: "activity",
-      label: "Activity",
+      label: __('Activity'),
       icon: ActivityIcon,
     },
     {

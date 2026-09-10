@@ -100,7 +100,7 @@
       </div>
     </template>
   </SettingsLayoutBase>
-  <Dialog v-model="showDelete" :options="{ title: 'Delete team' }">
+  <Dialog v-model="showDelete" :options="{ title: __('Delete team') }">
     <template #body-content>
       <p class="text-p-base text-ink-gray-7">
         {{
@@ -142,7 +142,6 @@ import { useAgentStore } from "@/stores/agent";
 import { assignmentRulesActiveScreen } from "@/stores/assignmentRules";
 import { useConfigStore } from "@/stores/config";
 import { useUserStore } from "@/stores/user";
-import { __ } from "@/translation";
 import { TeamListResourceSymbol } from "@/types";
 import { ConfirmDelete } from "@/utils";
 import {
@@ -162,6 +161,7 @@ import UserIcon from "~icons/lucide/user";
 import AgentCard from "../AgentCard.vue";
 import { setActiveSettingsTab } from "../settingsModal";
 import AgentSelector from "./components/AgentSelector.vue";
+import { __ } from "@/translation";
 
 const props = defineProps<{
   teamName: string;

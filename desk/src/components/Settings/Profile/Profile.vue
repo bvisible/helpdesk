@@ -161,13 +161,13 @@ import {
   LoadingIndicator,
   toast,
 } from "frappe-ui";
-import { __ } from "@/translation";
 import { useAuthStore } from "@/stores/auth";
 import CameraIcon from "~icons/lucide/camera";
 import ChangePasswordModal from "./components/ChangePasswordModal.vue";
 import { disableSettingModalOutsideClick } from "../settingsModal";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import Link from "@/components/frappe-ui/Link.vue";
+import { __ } from "@/translation";
 
 const auth = useAuthStore();
 const profile = ref({

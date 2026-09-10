@@ -153,12 +153,12 @@ import {
   FormControl,
   usePageMeta,
 } from "frappe-ui";
-import { __ } from "@/translation";
 import { useOnboarding } from "frappe-ui/frappe";
 import sanitizeHtml from "sanitize-html";
 import { computed, defineAsyncComponent, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SearchArticles from "../../components/SearchArticles.vue";
+import { __ } from "@/translation";
 
 const TicketTextEditor = defineAsyncComponent(
   () => import("./TicketTextEditor.vue")

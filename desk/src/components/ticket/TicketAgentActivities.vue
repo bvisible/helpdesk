@@ -84,17 +84,17 @@
       <span>{{ emptyText }}</span>
       <Button
         v-if="title == 'Emails'"
-        label="New Email"
+        :label="__('New Email')"
         @click="communicationAreaRef?.toggleEmailBox() ?? toggleEmailBox()"
       />
       <Button
         v-else-if="title == 'Comments'"
-        label="New Comment"
+        :label="__('New Comment')"
         @click="communicationAreaRef?.toggleCommentBox() ?? toggleCommentBox()"
       />
       <Button
         v-else-if="title == 'Calls'"
-        label="Make a Call"
+        :label="__('Make a Call')"
         @click="makeCall()"
       />
     </div>
@@ -127,6 +127,7 @@ import {
 } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import FeedbackBox from "../ticket-agent/FeedbackBox.vue";
+import { __ } from "@/translation";
 
 const props = defineProps({
   activities: {
@@ -136,6 +137,14 @@ const props = defineProps({
   title: {
     type: String,
     required: true,
+  },
+  //// Neoffice — added prop. `title` is the tab's DISPLAY label, and the two
+  //// computeds below branched on it ("Emails", "Comments", "Calls"): translated,
+  //// none of them ever matched and the empty state fell back to the generic one.
+  //// `tab` is the TicketTab identity the parent already has.
+  tab: {
+    type: String,
+    default: "",
   },
   ticketStatus: {
     type: String,
@@ -162,26 +171,24 @@ const { getUser } = useUserStore();
 const communicationAreaRef: Ref = inject("communicationArea");
 const makeCall = inject<() => void>("makeCall");
 
+//// Neoffice — branches on `tab`, not on the translated title. Also returns in
+//// every case: upstream assigned `text` for Emails and then fell off the end of
+//// the function, so the email tab and the activity tab showed NO empty message.
 const emptyText = computed(() => {
-  let text = "No Activities";
-  if (props.title == "Emails") {
-    text = "No Email Communications";
-  } else if (props.title == "Comments") {
-    text = "No Comments";
-    return text;
-  } else if (props.title == "Calls") {
-    text = "No Calls";
-    return text;
-  }
+  if (props.tab === "email") return __("No Email Communications");
+  if (props.tab === "comment") return __("No Comments");
+  if (props.tab === "call") return __("No Calls");
+  return __("No Activities");
 });
 
 const emptyTextIcon = computed(() => {
+  //// Neoffice — same reason as emptyText: identity, not display label.
   let icon = ActivityIcon;
-  if (props.title == "Emails") {
+  if (props.tab === "email") {
     icon = EmailIcon;
-  } else if (props.title == "Comments") {
+  } else if (props.tab === "comment") {
     icon = CommentIcon;
-  } else if (props.title == "Calls") {
+  } else if (props.tab === "call") {
     icon = PhoneIcon;
   }
   return h(icon, { class: "text-gray-500" });

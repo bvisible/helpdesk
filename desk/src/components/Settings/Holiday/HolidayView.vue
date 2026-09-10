@@ -244,9 +244,9 @@ import {
 } from "../settingsModal";
 import HolidaysCalendarView from "./HolidaysCalendarView.vue";
 import AddHolidayModal from "./Modals/AddHolidayModal.vue";
-import { __ } from "@/translation";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import { HolidayListResourceSymbol } from "@/types";
+import { __ } from "@/translation";
 
 const dialog = ref({
   show: false,

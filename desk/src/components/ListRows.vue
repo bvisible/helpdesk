@@ -89,7 +89,11 @@ const actions = (group) => {
     };
   });
   if (group.group.label == "General") {
-    _actions = _actions.filter((action) => action.label === "Add New Article");
+    //// Neoffice — was `action.label === "Add New Article"`, while the action is
+    //// declared as `label: __("Add New Article")`. On a French site the label reads
+    //// "Ajouter un nouvel article", the filter matched NOTHING, and the General
+    //// category lost its only action. Actions now carry a stable `name`.
+    _actions = _actions.filter((action) => action.name === "add-new-article");
   }
   return _actions;
 };

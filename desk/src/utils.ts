@@ -7,6 +7,7 @@ import { h, markRaw, ref } from "vue";
 import zod from "zod";
 import TicketIcon from "./components/icons/TicketIcon.vue";
 import { getMeta } from "./stores/meta";
+import { __ } from "@/translation";
 /**
  * Wrapper to create toasts, supplied with default options.
  * https://frappeui.com/components/toast.html
@@ -510,7 +511,7 @@ export function getFieldDependencyLabel(name: string) {
 export function ConfirmDelete({ isConfirmingDelete, onConfirmDelete }) {
   return [
     {
-      label: "Delete",
+      label: __('Delete'),
       component: (props) =>
         TemplateOption({
           option: "Delete",
@@ -526,7 +527,7 @@ export function ConfirmDelete({ isConfirmingDelete, onConfirmDelete }) {
       condition: () => !isConfirmingDelete.value,
     },
     {
-      label: "Confirm Delete",
+      label: __('Confirm Delete'),
       component: (props) =>
         TemplateOption({
           option: "Confirm Delete",

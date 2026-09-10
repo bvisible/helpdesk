@@ -5,7 +5,7 @@
       <!-- was this article helpful? -->
       <div class="flex items-center gap-2">
         <span class="text-gray-800 text-sm"
-          >Did this article solve your issue?</span
+          >{{ __("Did this article solve your issue?") }}</span
         >
         <div class="flex items-center gap-1">
           <component

@@ -110,8 +110,8 @@ import { computed, inject, Ref, ref } from "vue";
 import { setActiveSettingsTab } from "../settingsModal";
 import { useAgentStore } from "@/stores/agent";
 import { onMounted } from "vue";
-import { __ } from "@/translation";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import { __ } from "@/translation";
 
 const emit = defineEmits(["addAssignee"]);
 const query = ref("");

@@ -21,9 +21,9 @@
 </template>
 
 <script setup lang="ts">
-import { __ } from "@/translation";
 import { createResource, Dialog, toast } from "frappe-ui";
 import { computed, ref, watch } from "vue";
+import { __ } from "@/translation";
 
 const emit = defineEmits(["onRename"]);
 

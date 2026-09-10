@@ -4,6 +4,7 @@ import { getIcon, isCustomerPortal } from "@/utils";
 import { call, createListResource, createResource } from "frappe-ui";
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { __ } from "@/translation";
 
 export const views = createListResource({
   doctype: "HD View",
@@ -19,7 +20,7 @@ export const views = createListResource({
 });
 
 export const currentView = ref({
-  label: "List",
+  label: __('List'),
   icon: LucideAlignJustify,
 });
 
