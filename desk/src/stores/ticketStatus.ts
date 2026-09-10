@@ -42,18 +42,25 @@ export const useTicketStatusStore = defineStore("ticketStatus", () => {
   //// So the four default labels get msgid of their own, qualified with their
   //// domain, that no other app can overwrite. Any other label is a name the
   //// instance chose: returned as-is, because it is already in their words.
-  const DEFAULT_STATUS_LABELS: Record<string, string> = {
-    Open: "Ticket status: Open",
-    Replied: "Ticket status: Replied",
-    Paused: "Ticket status: Paused",
-    Resolved: "Ticket status: Resolved",
-    Closed: "Ticket status: Closed",
+  //// The msgid are written as LITERAL __() calls, not as strings looked up
+  //// through a variable: `bench generate-pot-file` extracts literals only, so a
+  //// first version that stored "Ticket status: Open" as an object VALUE never
+  //// reached the POT — and the next `update-po-files` then deleted the entries I
+  //// had added by hand, as obsolete. The screen printed the raw msgid.
+  //// Functions, not strings, so each call is evaluated when the label is shown
+  //// and picks up the reader's language.
+  const DEFAULT_STATUS_LABELS: Record<string, () => string> = {
+    Open: () => __("Ticket status: Open"),
+    Replied: () => __("Ticket status: Replied"),
+    Paused: () => __("Ticket status: Paused"),
+    Resolved: () => __("Ticket status: Resolved"),
+    Closed: () => __("Ticket status: Closed"),
   };
 
   function statusLabel(label: string | undefined): string {
     if (!label) return "";
-    const msgid = DEFAULT_STATUS_LABELS[label];
-    return msgid ? __(msgid) : label;
+    const translate = DEFAULT_STATUS_LABELS[label];
+    return translate ? translate() : label;
   }
 
   function getStatus(label: string): HDTicketStatus | undefined {
