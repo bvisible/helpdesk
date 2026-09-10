@@ -21,10 +21,49 @@
 # //// (Text Editor), Wiki Document holds Markdown. Markdown accepts raw HTML, so
 # //// article -> wiki passes the HTML through untouched; wiki -> article runs
 # //// frappe.utils.md_to_html. No round trip loses content.
+# ////
+# //// Which is exactly why the two sides CANNOT be compared to each other to decide
+# //// whether something changed. After one wiki edit the article holds
+# //// `<p>Open <strong>Settings</strong></p>` while the wiki holds
+# //// `Open **Settings**` — the same text in two formats. A first version compared the
+# //// raw contents, concluded "they differ", and overwrote the author's Markdown with
+# //// generated HTML on the next save of the article. Caught by the test that saves an
+# //// UNCHANGED article and asserts the wiki document was not touched.
+# ////
+# //// So each side is compared to ITSELF as of the last sync: `wiki_sync_hashes` on the
+# //// article keeps a fingerprint of both contents at that moment. Unchanged on a side
+# //// means nothing to push from it.
+
+import hashlib
+import json
 
 import frappe
 from frappe import _
 from frappe.utils import md_to_html
+
+
+def _fingerprint(text):
+    return hashlib.sha1((text or "").encode("utf-8")).hexdigest()
+
+
+def _sync_state(article_name):
+    raw = frappe.db.get_value("HD Article", article_name, "wiki_sync_hashes")
+    if not raw:
+        return {}
+    try:
+        return json.loads(raw)
+    except ValueError:
+        return {}
+
+
+def _remember(article_name, html, markdown):
+    frappe.db.set_value(
+        "HD Article",
+        article_name,
+        "wiki_sync_hashes",
+        json.dumps({"hd": _fingerprint(html), "wiki": _fingerprint(markdown)}),
+        update_modified=False,
+    )
 
 # route of the dedicated space; the DISPLAYED name is translated at creation
 KB_SPACE_ROUTE = "knowledge-base"
@@ -133,11 +172,16 @@ def article_to_wiki(doc, method=None):
         current = frappe.db.get_value(
             "Wiki Document", target, ["title", "content", "is_published"], as_dict=True
         )
-        # nothing to write means nothing to write: an unconditional save would bounce
-        # straight back through the wiki hook
+        state = _sync_state(doc.name)
+        # The article is compared to ITSELF as of the last sync, never to the wiki
+        # side: the two hold the same text in different formats, so comparing them
+        # always says "changed" and would overwrite the author's Markdown with
+        # generated HTML. Title and published flag are the same on both sides, so
+        # those can be compared directly.
+        unchanged_here = state.get("hd") == _fingerprint(content)
         if (
-            current.title == doc.title
-            and (current.content or "") == content
+            unchanged_here
+            and current.title == doc.title
             and int(current.is_published or 0) == published
         ):
             return
@@ -157,6 +201,8 @@ def article_to_wiki(doc, method=None):
     if doc.get("wiki_document") != wiki_doc.name:
         frappe.db.set_value("HD Article", doc.name, "wiki_document", wiki_doc.name, update_modified=False)
 
+    # both sides are identical right now: remember it, so neither hook sees a change
+    _remember(doc.name, content, content)
     _refresh_revision(space)
 
 
@@ -178,7 +224,9 @@ def wiki_to_article(doc, method=None):
 
     if article:
         current = frappe.db.get_value("HD Article", article, ["title", "content", "status"], as_dict=True)
-        if current.title == doc.title and (current.content or "") == html and current.status == status:
+        state = _sync_state(article)
+        unchanged_here = state.get("wiki") == _fingerprint(doc.content or "")
+        if unchanged_here and current.title == doc.title and current.status == status:
             return
         hd = frappe.get_doc("HD Article", article)
     else:
@@ -193,6 +241,10 @@ def wiki_to_article(doc, method=None):
     hd.flags.from_wiki_mirror = True
     hd.flags.ignore_permissions = True
     hd.save(ignore_permissions=True)
+
+    # the article now holds the HTML rendering of this Markdown: record both, so a
+    # later save of either side knows nothing moved
+    _remember(hd.name, html, doc.content or "")
 
 
 def _default_category():

@@ -11,6 +11,7 @@
   "published_on",
   "views",
   "wiki_document",
+  "wiki_sync_hashes",
   "column_break_7",
   "category",
   "author",
@@ -94,6 +95,14 @@
    "label": "Wiki Document",
    "read_only": 1,
    "description": "The wiki document this article mirrors. Written by the mirror, not by hand."
+  },
+  {
+   "fieldname": "wiki_sync_hashes",
+   "fieldtype": "Small Text",
+   "label": "Wiki Sync Fingerprints",
+   "read_only": 1,
+   "hidden": 1,
+   "description": "Fingerprint of each side's content at the last sync. The two sides hold the same text in different formats (HTML here, Markdown there), so they can only be compared to themselves."
   }
  ],
  "links": [],
