@@ -1,5 +1,8 @@
 import frappe
 
+# //// Neoffice — mirror_erpnext_customers: use the ERP Customer link as the
+# //// primary signal for HD Customer, ahead of the domain-match fallback below
+# //// (3890d1177 "feat(customers): HD Customer mirrors the ERP customer, instead of ignoring it")
 from helpdesk.overrides.customer import link_contact_to_hd_customer
 
 

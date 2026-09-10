@@ -35,4 +35,7 @@ helpdesk.patches.add_fulltext_index #v2
 helpdesk.patches.add_telephony_app
 helpdesk.patches.add_website_settings_permission
 helpdesk.patches.set_last_customer_agent_response
+# //// Neoffice — backfill HD Customer from existing ERPNext Customer/Contact data;
+# //// skips per-record errors and no-ops if the erpnext_customer column is absent
+# //// (3890d1177 "feat(customers): HD Customer mirrors the ERP customer, instead of ignoring it")
 helpdesk.patches.mirror_erpnext_customers
