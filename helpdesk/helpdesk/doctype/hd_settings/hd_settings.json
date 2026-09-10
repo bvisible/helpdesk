@@ -77,7 +77,10 @@
   "reply_email_to_agent_content",
   "reply_from_agent_section",
   "enable_reply_email_via_agent",
-  "reply_via_agent_email_content"
+  "reply_via_agent_email_content",
+  "wiki_mirror_section",
+  "mirror_kb_to_wiki",
+  "kb_wiki_space"
  ],
  "fields": [
   {
@@ -490,7 +493,7 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Thanks for reaching out \ud83d\udc4b. This ticket was created outside our working hours. You can expect the next response by {{ next_working_day }}.",
+   "default": "Thanks for reaching out 👋. This ticket was created outside our working hours. You can expect the next response by {{ next_working_day }}.",
    "depends_on": "enable_outside_hours_banner",
    "fieldname": "outside_working_hours_message",
    "fieldtype": "Small Text",
@@ -504,6 +507,27 @@
    "fieldname": "enable_outside_hours_banner",
    "fieldtype": "Check",
    "label": "Apply outside working hours"
+  },
+  {
+   "fieldname": "wiki_mirror_section",
+   "fieldtype": "Section Break",
+   "label": "Knowledge Base Mirror"
+  },
+  {
+   "fieldname": "mirror_kb_to_wiki",
+   "fieldtype": "Check",
+   "label": "Mirror the knowledge base into the wiki",
+   "default": "0",
+   "description": "Keeps HD Article and the wiki in step, in ONE dedicated space. Every other wiki space stays out of the helpdesk — company knowledge is not published to the customer portal."
+  },
+  {
+   "fieldname": "kb_wiki_space",
+   "fieldtype": "Link",
+   "options": "Wiki Space",
+   "label": "Knowledge Base Wiki Space",
+   "read_only": 1,
+   "depends_on": "mirror_kb_to_wiki",
+   "description": "Created on first use. The mirror writes here and nowhere else."
   }
  ],
  "grid_page_length": 50,

@@ -63,6 +63,18 @@ doc_events = {
         # //// meant the link was never made for those.
         "on_update": "helpdesk.overrides.customer.link_contact_to_hd_customer",
     },
+    # //// Neoffice — the knowledge base and the wiki used to ignore each other
+    # //// entirely (grep -ri wiki over this repo returned nothing), so the same
+    # //// answer got written twice or lost. Mirrored both ways, but inside ONE
+    # //// dedicated wiki space: the wiki also holds company knowledge, and a
+    # //// helpdesk article is public on the customer portal. Off by default.
+    # //// See kb_wiki_mirror.py.
+    "HD Article": {
+        "on_update": "helpdesk.kb_wiki_mirror.article_to_wiki",
+    },
+    "Wiki Document": {
+        "on_update": "helpdesk.kb_wiki_mirror.wiki_to_article",
+    },
     # //// Neoffice — HD Customer mirrors ERPNext's Customer; without this the
     # //// helpdesk Customers screen is empty on an instance that runs both, and the
     # //// portal shows a contact only the tickets they raised themselves (the

@@ -10,6 +10,7 @@
   "status",
   "published_on",
   "views",
+  "wiki_document",
   "column_break_7",
   "category",
   "author",
@@ -85,6 +86,14 @@
    "fieldtype": "Int",
    "label": "Views",
    "read_only": 1
+  },
+  {
+   "fieldname": "wiki_document",
+   "fieldtype": "Link",
+   "options": "Wiki Document",
+   "label": "Wiki Document",
+   "read_only": 1,
+   "description": "The wiki document this article mirrors. Written by the mirror, not by hand."
   }
  ],
  "links": [],
