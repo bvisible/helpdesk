@@ -14,6 +14,7 @@
         <RouterLink
           :to="{ name: isCustomerPortal ? 'TicketNew' : 'TicketAgentNew' }"
         >
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button :label="__('Create')" theme="gray" variant="solid">
             <template #prefix>
               <LucidePlus class="h-4 w-4" />
@@ -97,6 +98,8 @@ const { isManager } = useAuthStore();
 const listViewRef = ref(null);
 const showExportModal = ref(false);
 
+//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket
+//// status, used by the status column below.
 const { getStatus, statusLabel } = useTicketStatusStore();
 
 const listSelections = ref(new Set());

@@ -2,6 +2,7 @@
   <Popover placement="bottom-end">
     <template #target="{ togglePopover, close }">
       <div class="flex items-center w-fit">
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           :label="__('Filter')"
           :class="filters?.size ? 'rounded-r-none' : ''"
@@ -16,6 +17,7 @@
             </span>
           </template>
         </Button>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Tooltip v-if="filters?.size" :text="__('Clear all Filter')">
           <div>
             <Button
@@ -50,6 +52,7 @@
                 />
               </div>
               <div id="fieldname" class="w-full">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <Autocomplete
                   v-model="f.field.fieldname"
                   :options="filterableFields.data"
@@ -58,6 +61,7 @@
                 />
               </div>
               <div id="operator">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <FormControl
                   type="select"
                   v-model="f.operator"
@@ -67,6 +71,7 @@
                 />
               </div>
               <div id="value" class="w-full">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <component
                   :is="getValueControl(f)"
                   v-model="f.value"
@@ -81,6 +86,7 @@
                   {{ i == 0 ? "Where" : "And" }}
                 </div>
                 <div id="fieldname" class="!min-w-[140px]">
+                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   <Autocomplete
                     v-model="f.field.fieldname"
                     :options="filterableFields.data"
@@ -89,6 +95,7 @@
                   />
                 </div>
                 <div id="operator">
+                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   <FormControl
                     type="select"
                     v-model="f.operator"
@@ -100,6 +107,7 @@
                   />
                 </div>
                 <div id="value" class="!min-w-[140px] flex-1">
+                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   <component
                     :is="getValueControl(f)"
                     v-model="f.value"
@@ -123,12 +131,14 @@
             {{ "Empty - Choose a field to filter by" }}
           </div>
           <div class="flex items-center justify-between gap-2">
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Autocomplete
               :options="filterableFields.data"
               @update:modelValue="(e) => setfilter(e)"
               :placeholder="__('First name')"
             >
               <template #target="{ togglePopover }">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <Button
                   class="!text-gray-600"
                   variant="ghost"
@@ -141,6 +151,7 @@
                 </Button>
               </template>
             </Autocomplete>
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Button
               v-if="filters?.size"
               class="!text-gray-600"

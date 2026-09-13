@@ -120,6 +120,7 @@
                 v-if="!useNewUI"
               >
                 <span class="text-p-sm">
+                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   {{ __("Conditions for this SLA were created from") }}
                   <a :href="deskUrl" target="_blank" class="underline">desk</a>
                   which are not compatible with this UI, you will need to
@@ -213,6 +214,8 @@
               type="radio"
             />
             <div class="select-none text-ink-gray-6 text-sm font-medium">
+              //// Neoffice — wrapped in __() by the i18n pass inside this block, which upstream
+              //// keeps commented out; delete this marker if the block is ever restored
               {{ __("Apply SLA for response time") }}
             </div>
           </div>
@@ -226,6 +229,8 @@
               type="radio"
             />
             <div class="select-none text-ink-gray-6 text-sm font-medium">
+              //// Neoffice — wrapped in __() by the i18n pass inside this block, which upstream
+              //// keeps commented out; delete this marker if the block is ever restored
               {{ __("Apply SLA for response time and resolution time") }}
             </div>
           </div>

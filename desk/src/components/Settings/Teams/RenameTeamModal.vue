@@ -14,6 +14,7 @@
         :loading="renameTeamResource.loading"
         :disabled="teamName == dialog.teamName || teamName.trim() == ''"
       >
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         {{ __("Confirm") }}
       </Button>
     </template>

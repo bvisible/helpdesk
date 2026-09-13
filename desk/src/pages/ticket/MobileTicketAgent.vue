@@ -250,6 +250,8 @@ const telephonyStore = useTelephonyStore();
 const { isCallingEnabled } = storeToRefs(telephonyStore);
 
 const ticketStatusStore = useTicketStatusStore();
+//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket
+//// status, used by the status dropdown below.
 const { statusLabel } = ticketStatusStore;
 const { getUser } = useUserStore();
 

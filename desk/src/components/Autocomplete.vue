@@ -38,6 +38,7 @@
         <div v-show="isOpen">
           <div class="mt-1 rounded-lg bg-white py-1 text-base shadow-2xl">
             <div class="relative px-1.5 pt-0.5">
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <ComboboxInput
                 ref="search"
                 class="form-input w-full"
@@ -104,6 +105,7 @@
                 v-if="groups.length == 0"
                 class="mt-1.5 rounded-md px-2.5 py-1.5 text-base text-gray-600"
               >
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 {{ __("No results found") }}
               </li>
             </ComboboxOptions>

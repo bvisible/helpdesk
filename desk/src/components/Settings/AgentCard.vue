@@ -7,6 +7,7 @@
           <p class="text-base">
             {{ agent.agent_name }}
           </p>
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Badge
             v-if="showStatus"
             :label="__('Inactive')"
@@ -29,6 +30,7 @@
 
 <script setup lang="ts">
 import { Avatar } from "frappe-ui";
+//// Neoffice — __ for the Inactive badge label, which upstream hardcoded in English.
 import { __ } from "@/translation";
 
 defineProps({

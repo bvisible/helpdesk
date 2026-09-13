@@ -47,6 +47,7 @@
           :disabled="visibleMonths === 'first-half'"
           @click="visibleMonths = 'first-half'"
         />
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button variant="ghost" :label="__('Today')" @click="goToToday()" />
         <Button
           variant="ghost"

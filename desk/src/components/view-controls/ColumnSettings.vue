@@ -58,6 +58,7 @@
               @change="(e) => addColumn(e)"
             >
               <template #target="{ togglePopover }">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <Button
                   class="w-full !justify-start !text-ink-gray-5"
                   variant="ghost"
@@ -75,12 +76,15 @@
               class="w-full !justify-start !text-ink-gray-5"
               variant="ghost"
               @click="reset(close)"
+              //// Neoffice — wrapped in __() by the i18n pass inside this block, which upstream
+              //// keeps commented out; delete this marker if the block is ever restored
               :label="__('Reset Changes')"
             >
               <template #prefix>
                 <ReloadIcon class="h-4" />
               </template>
             </Button> -->
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Button
               v-if="!is_default"
               class="w-full !justify-start !text-ink-gray-5"
@@ -99,6 +103,7 @@
             class="flex flex-col items-center justify-between gap-2 rounded px-2 py-1.5 text-base text-ink-gray-8"
           >
             <div class="flex flex-col items-center gap-3">
+              <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
               <FormControl
                 type="text"
                 size="md"
@@ -107,6 +112,7 @@
                 class="sm:w-full w-52"
                 :placeholder="__('First Name')"
               />
+              <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
               <FormControl
                 type="text"
                 size="md"
@@ -119,12 +125,14 @@
               />
             </div>
             <div class="flex w-full gap-2 border-t pt-2">
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
                 variant="subtle"
                 :label="__('Cancel')"
                 class="w-full flex-1"
                 @click="cancelUpdate"
               />
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
                 variant="solid"
                 :label="__('Update')"

@@ -37,6 +37,7 @@
       <div v-if="!holidayData.loading" class="h-full">
         <div class="flex items-center gap-2 mt-2">
           <span class="text-sm">
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             {{ __("There are in total") }} <b>{{ holidayData.holidays.length }}</b> holidays
             in this list</span
           >

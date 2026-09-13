@@ -97,12 +97,14 @@
           />
         </div>
         <div class="flex gap-2">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             variant="subtle"
             theme="gray"
             @click="dialog.show = false"
             :label="__('Cancel')"
           />
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button variant="solid" @click="onSave" :label="__('Save')" />
         </div>
       </div>

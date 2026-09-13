@@ -58,6 +58,7 @@
           </Button>
         </div>
         <div v-else-if="calling || callStatus == 'initiating'">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             size="md"
             variant="solid"
@@ -72,6 +73,7 @@
           </Button>
         </div>
         <div v-else class="flex gap-2">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             size="md"
             variant="solid"
@@ -84,6 +86,7 @@
               <LucidePhone class="h-4 w-4" />
             </template>
           </Button>
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             size="md"
             variant="solid"

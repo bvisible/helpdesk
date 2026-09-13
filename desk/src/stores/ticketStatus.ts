@@ -2,6 +2,7 @@ import { HDTicketStatus } from "@/types/doctypes";
 import { parseColor } from "@/utils";
 import { createListResource } from "frappe-ui";
 import { defineStore } from "pinia";
+//// Neoffice — __ for the qualified status msgid of statusLabel() below.
 import { __ } from "@/translation";
 
 export const useTicketStatusStore = defineStore("ticketStatus", () => {
@@ -90,6 +91,8 @@ export const useTicketStatusStore = defineStore("ticketStatus", () => {
     statuses,
     colorMap,
     getStatus,
+    //// Neoffice — exported so every screen that displays a ticket status applies the same rule
+    //// (statusLabel() above).
     statusLabel,
   };
 });

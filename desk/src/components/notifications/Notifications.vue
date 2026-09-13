@@ -86,6 +86,7 @@
       v-else
     >
       <LucideBell class="size-6" />
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <p class="text-base text-ink-gray-8">{{ __("You are all caught up!") }}</p>
     </div>
   </span>

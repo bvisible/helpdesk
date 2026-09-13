@@ -37,6 +37,7 @@
               <slot name="bottom-left" />
             </div>
             <div class="flex items-center gap-2">
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
                 :label="__('Discard')"
                 theme="gray"

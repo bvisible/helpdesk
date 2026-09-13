@@ -22,6 +22,9 @@ import { computed, ComputedRef } from "vue";
 import { slaData } from "@/stores/sla";
 import { useTicketStatusStore } from "@/stores/ticketStatus";
 import { HDTicketStatus } from "@/types/doctypes";
+//// Neoffice — ticket-status translation: the statuses below are displayed through
+//// statusLabel() (stores/ticketStatus.ts). __ came with it; the template's __() calls bind to
+//// it, the same function as the global __.
 import { __ } from "@/translation";
 
 const { statuses, statusLabel } = useTicketStatusStore();

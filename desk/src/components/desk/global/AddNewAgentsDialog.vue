@@ -60,6 +60,7 @@
     </template>
     <template #actions v-if="inviteQueue.length">
       <div class="flex justify-end items-center">
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           :disabled="inviteQueue.length == 0"
           appearance="primary"
@@ -69,6 +70,7 @@
           :loading="sentInvitesResource.loading"
           >{{ __("Send Invites") }}
         </Button>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button @click="removeAllEmailFromQueue"> {{ __("Clear All") }} </Button>
       </div>
     </template>

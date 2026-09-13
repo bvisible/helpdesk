@@ -76,6 +76,7 @@
                 v-if="!hideSearch"
                 class="relative mb-1 w-full flex-shrink-0"
               >
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <ComboboxInput
                   ref="searchInput"
                   class="form-input w-full"
@@ -167,6 +168,7 @@
                 v-if="groups.length == 0"
                 class="rounded-md px-2.5 py-1.5 text-base text-gray-600"
               >
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 {{ __("No results found") }}
               </li>
             </ComboboxOptions>
@@ -180,6 +182,7 @@
                   v-if="multiple"
                   class="flex items-center justify-end gap-1"
                 >
+                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   <Button
                     v-if="!areAllOptionsSelected"
                     :label="__('Select All')"
@@ -187,6 +190,7 @@
                   />
                 </div>
                 <div v-else class="flex items-center justify-end">
+                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   <Button :label="__('Clear')" @click.stop="selectedValue = null" />
                 </div>
               </slot>

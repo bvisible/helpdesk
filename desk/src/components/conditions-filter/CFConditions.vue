@@ -18,6 +18,7 @@
     </template>
     <div v-if="props.isChild" class="flex">
       <Dropdown v-slot="{ open }" :options="dropdownOptions">
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           :disabled="props.disableAddCondition"
           :label="__('Add condition')"

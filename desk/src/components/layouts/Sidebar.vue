@@ -141,6 +141,7 @@
     />
     <SettingsModal v-model="showSettingsModal" />
     <ShortcutsModal v-model="showShortcutsModal" />
+    <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
     <HelpModal
       v-if="showHelpModal"
       v-model="showHelpModal"

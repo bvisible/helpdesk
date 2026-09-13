@@ -32,6 +32,7 @@
       </div>
       <div v-if="!props.isGroup" class="flex items-center gap-2 w-full">
         <div id="fieldname" class="w-full">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Autocomplete
             :options="filterableFields.data"
             v-model="props.condition[0]"

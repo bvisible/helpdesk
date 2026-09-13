@@ -42,6 +42,7 @@
           </Popover>
         </div>
         <div>
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormLabel :label="__('Resolution time')" required />
           <Popover class="mt-2">
             <template #target="{ togglePopover }" class="w-max">
@@ -52,6 +53,7 @@
                 <div v-if="priorityData.resolution_time">
                   {{ formatTimeHMS(priorityData.resolution_time) }}
                 </div>
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <div v-else class="text-gray-500">{{ __("Select time") }}</div>
               </div>
             </template>
@@ -65,6 +67,7 @@
             </template>
           </Popover>
         </div>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Checkbox
           v-model="priorityData.default_priority"
           :label="__('Set default priority')"
@@ -83,12 +86,14 @@
           />
         </div>
         <div class="flex gap-2">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             variant="subtle"
             theme="gray"
             @click="dialog = false"
             :label="__('Cancel')"
           />
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button variant="solid" @click="onSave" :label="__('Save')" />
         </div>
       </div>

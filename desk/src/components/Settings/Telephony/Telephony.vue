@@ -43,6 +43,7 @@
         </div>
         <div class="grid grid-cols-2 gap-4 mt-4">
           <div class="flex flex-col gap-1.5">
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <FormLabel :label="__('Default medium')" />
             <Select
               v-if="telephonyAgent.doc"
@@ -60,6 +61,7 @@
             class="flex flex-col gap-1.5"
             v-if="telephonyAgent.doc && twilio.doc?.enabled"
           >
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <FormControl
               :label="__('Twilio number')"
               type="text"
@@ -72,6 +74,7 @@
             class="flex flex-col gap-1.5"
             v-if="telephonyAgent.doc && exotel.doc?.enabled"
           >
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <FormControl
               :label="__('Exotel number')"
               type="text"
@@ -95,6 +98,7 @@
           </div>
         </div>
         <div class="mt-6" v-if="twilio?.doc">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <div class="text-base font-semibold text-ink-gray-8">{{ __("Twilio") }}</div>
           <div class="mt-4">
             <div class="grid grid-cols-2 gap-4">
@@ -112,6 +116,7 @@
             </div>
             <div class="grid grid-cols-2 gap-4 mt-4" v-if="twilio.doc.enabled">
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
                 <FormControl
                   :label="__('Account SID')"
                   required
@@ -121,6 +126,7 @@
                 <ErrorMessage :message="twilioErrors.accountSid" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
                 <Password
                   :label="__('Auth Token')"
                   required
@@ -129,18 +135,21 @@
                 />
                 <ErrorMessage :message="twilioErrors.authToken" />
               </div>
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <FormControl
                 v-if="twilio.doc.api_key"
                 :label="__('API Key')"
                 v-model="twilio.doc.api_key"
                 disabled
               />
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Password
                 v-if="twilio.doc.api_secret"
                 :label="__('API Secret')"
                 v-model="twilio.doc.api_secret"
                 disabled
               />
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Autocomplete
                 v-if="twilio.originalDoc?.account_sid && twilioApps.length > 0"
                 :label="__('TwiML App Name')"
@@ -160,6 +169,7 @@
                   />
                 </template>
               </Autocomplete>
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <FormControl
                 v-if="twilio.doc.twiml_sid"
                 :label="__('TwiML App SID')"
@@ -170,6 +180,7 @@
           </div>
         </div>
         <div class="mt-6" v-if="exotel?.doc">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <div class="text-base font-semibold text-ink-gray-8">{{ __("Exotel") }}</div>
           <div class="mt-4">
             <div class="grid grid-cols-2 gap-4">
@@ -187,6 +198,7 @@
             </div>
             <div class="grid grid-cols-2 gap-4 mt-4" v-if="exotel.doc.enabled">
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
                 <FormControl
                   :label="__('Account SID')"
                   required
@@ -196,6 +208,7 @@
                 <ErrorMessage :message="exotelErrors.accountSid" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
                 <FormControl
                   :label="__('Webhook Verify Token')"
                   required
@@ -206,6 +219,7 @@
               </div>
 
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
                 <FormControl
                   :label="__('API Key')"
                   required
@@ -215,6 +229,7 @@
                 <ErrorMessage :message="exotelErrors.apiKey" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
                 <Password
                   :label="__('API Token')"
                   required
@@ -224,6 +239,7 @@
                 <ErrorMessage :message="exotelErrors.apiToken" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
                 <FormControl
                   :label="__('Subdomain')"
                   required

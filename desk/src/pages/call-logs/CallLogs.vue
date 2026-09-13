@@ -5,6 +5,7 @@
         <div class="text-lg font-medium text-gray-900">{{ __("Call Logs") }}</div>
       </template>
       <template #right-header>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           :label="__('New Call Log')"
           theme="gray"

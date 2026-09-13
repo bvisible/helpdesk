@@ -182,12 +182,14 @@
               "
             >
               <span class="text-p-sm">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 {{ __("Conditions for this rule were created from") }}
                 <a :href="deskUrl" target="_blank" class="underline">desk</a>
                 which are not compatible with this UI, you will need to recreate
                 the conditions here if you want to manage and add new conditions
                 from this UI.
               </span>
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
                 :label="__('I understand, add conditions')"
                 variant="subtle"
@@ -263,12 +265,14 @@
               "
             >
               <span class="text-p-sm">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 {{ __("Conditions for this rule were created from") }}
                 <a :href="deskUrl" target="_blank" class="underline">desk</a>
                 which are not compatible with this UI, you will need to recreate
                 the conditions here if you want to manage and add new conditions
                 from this UI.
               </span>
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
                 :label="__('I understand, add conditions')"
                 variant="subtle"

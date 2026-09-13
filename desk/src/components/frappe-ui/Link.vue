@@ -47,6 +47,7 @@
 
       <template #footer="{ value, close }" v-if="!hideClearButton">
         <div v-if="attrs.onCreate">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             variant="ghost"
             class="w-full !justify-start"
@@ -59,6 +60,7 @@
           </Button>
         </div>
         <div>
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             variant="ghost"
             class="w-full !justify-start"

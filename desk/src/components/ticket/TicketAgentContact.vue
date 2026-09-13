@@ -37,6 +37,8 @@
               }
             "
           >
+            //// Neoffice — wrapped in __() by the i18n pass inside this block, which upstream
+            //// keeps commented out; delete this marker if the block is ever restored
             <Tooltip :text="__('Show Contact Tickets')">
               <TicketIcon class="h-4 w-4" />
             </Tooltip>

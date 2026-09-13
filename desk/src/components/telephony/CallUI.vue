@@ -17,6 +17,7 @@
     <template #body-content>
       <div class="flex flex-col gap-4">
         <FormControl type="text" v-model="mobileNumber" :label="__('Mobile Number')" />
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <FormControl
           type="select"
           v-model="callMedium"

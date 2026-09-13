@@ -8,6 +8,7 @@
     <div
       class="max-w-4xl 2xl:max-w-5xl pt-4 sm:px-5 w-full flex flex-col gap-4"
     >
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <SearchPopover
         :popoverClass="[
           'max-w-[310px] md:max-w-[856px] !top-1 md:min-w-[856px]',
@@ -21,6 +22,7 @@
       <!-- Categories Folder -->
       <section class="flex flex-col gap-3">
         <!-- Heading -->
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <p class="text-lg text-gray-900">{{ __("Categories") }}</p>
         <CategoryFolderContainer />
       </section>

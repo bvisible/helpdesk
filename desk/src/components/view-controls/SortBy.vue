@@ -1,4 +1,5 @@
 <template>
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
   <Autocomplete
     v-if="!sortValues?.size"
     :options="options"
@@ -7,6 +8,7 @@
     @change="(e) => setSort(e)"
   >
     <template #target="{ togglePopover }">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <Button :label="__('Sort')" @click="togglePopover()">
         <template v-if="hideLabel">
           <SortIcon class="h-4" />
@@ -19,6 +21,7 @@
   </Autocomplete>
   <NestedPopover v-else>
     <template #target="{ open }">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <Button v-if="sortValues.size > 1" :label="__('Sort')">
         <template v-if="hideLabel">
           <SortIcon class="h-4" />
@@ -96,6 +99,7 @@
                   <AscendingIcon v-if="sort.direction == 'asc'" class="h-4" />
                   <DescendingIcon v-else class="h-4" />
                 </Button>
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <Autocomplete
                   class="!w-32"
                   :value="sort.fieldname"
@@ -132,6 +136,7 @@
             {{ "Empty - Choose a field to sort by" }}
           </div>
           <div class="flex items-center justify-between gap-2">
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Autocomplete
               :options="options"
               value=""
@@ -139,6 +144,7 @@
               @change="(e) => setSort(e)"
             >
               <template #target="{ togglePopover }">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <Button
                   class="!text-gray-600"
                   variant="ghost"
@@ -151,6 +157,7 @@
                 </Button>
               </template>
             </Autocomplete>
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Button
               v-if="sortValues?.size"
               class="!text-gray-600"

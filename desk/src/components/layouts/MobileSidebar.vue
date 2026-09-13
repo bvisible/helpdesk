@@ -37,6 +37,7 @@
                   />
                 </template>
               </SidebarLink>
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <SidebarLink
                 v-if="!isCustomerPortal"
                 class="relative"

@@ -30,6 +30,7 @@
         <ComboboxAnchor
           class="flex h-7 w-full items-center gap-2 rounded px-2 py-1 border border-transparent bg-surface-gray-2 hover:bg-surface-gray-2"
         >
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <ComboboxInput
             ref="search"
             :value="query"
@@ -55,6 +56,7 @@
               <ComboboxEmpty
                 class="flex gap-2 rounded px-2 py-1 text-base text-ink-gray-5"
               >
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 {{ __("Agent not found") }}
               </ComboboxEmpty>
               <ComboboxItem

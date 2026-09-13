@@ -273,9 +273,13 @@ import {
   Textarea,
 } from "frappe-ui";
 import { computed, inject } from "vue";
+//// Neoffice — __ imported with the ticket-status translation below; the template's __() calls
+//// bind to it, the same function as the global __.
 import { __ } from "@/translation";
 
 const settingsData = inject(HDSettingsSymbol);
+//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket
+//// status.
 const { statuses, statusLabel } = useTicketStatusStore();
 
 const bannerMsg = createResource({
@@ -346,6 +350,8 @@ const autoCloseTicketStatusList = computed(() => {
       )
       ?.map((s: HDTicketStatus) => {
         return {
+          //// Neoffice — statusLabel() for the displayed label, value kept raw: same rule as
+          //// autoUpdateTicketStatusList above.
           label: statusLabel(s.label_agent),
           value: s.label_agent,
         };

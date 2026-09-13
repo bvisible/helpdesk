@@ -49,11 +49,16 @@ const content = ref("");
 const defaultContent = ref("");
 const enabled = ref(false);
 const compRef = ref<InstanceType<typeof Notification>>();
+//// Neoffice — statusLabel(): see the note on the label below, and stores/ticketStatus.ts.
 const { statuses, statusLabel } = useTicketStatusStore();
 const statusOptions = computed<Record<"label" | "value", string>[]>(() =>
   statuses.data
     .filter((s) => s.category === "Resolved")
     .map((s) => ({
+      //// Neoffice — was upstream's __(s.label_agent): the bare msgid ("Open") is translated by
+      //// several apps, as a state or as a verb, and the last one installed wins for the whole
+      //// site. statusLabel() uses a qualified msgid no other app overrides; a label the
+      //// instance renamed comes back untouched.
       label: statusLabel(s.label_agent),
       value: s.label_agent,
     }))

@@ -69,6 +69,7 @@
             />
           </div>
           <div class="flex items-center justify-end space-x-2 w-[40%]">
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Button
               :label="__('Discard')"
               @click="

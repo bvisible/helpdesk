@@ -173,6 +173,7 @@
           v-if="filteredOptions.length === 0"
           class="px-2 py-4 text-center text-sm text-ink-gray-5"
         >
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           {{ __("No options found") }}
         </div>
       </div>

@@ -15,6 +15,7 @@
             <EmailIcon class="h-4" />
           </template>
         </Button>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           variant="ghost"
           :label="__('Comment')"
@@ -35,6 +36,7 @@
       @keydown.ctrl.enter.capture.stop="submitEmail"
       @keydown.meta.enter.capture.stop="submitEmail"
     >
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <EmailEditor
         ref="emailEditorRef"
         :label="

@@ -35,6 +35,7 @@
                 :existing-agents="teamMembers.map((m) => m.name)"
               />
             </div>
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Button
               :label="__('Add Member')"
               variant="solid"

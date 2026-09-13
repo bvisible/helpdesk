@@ -27,6 +27,7 @@
       </div>
     </template>
     <template #actions>
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <Button
         class="w-full"
         variant="solid"

@@ -93,6 +93,7 @@
                         );
                       "
                     >
+                      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                       <Button
                         class="w-full flex !justify-start"
                         icon-left="edit"

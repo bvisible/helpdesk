@@ -5,6 +5,7 @@
         <div class="text-lg font-medium text-gray-900">{{ __("Customers") }}</div>
       </template>
       <template #right-header>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           :label="__('Create')"
           theme="gray"

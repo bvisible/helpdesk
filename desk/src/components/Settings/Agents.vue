@@ -37,6 +37,8 @@
         </div>
         <Dropdown :options="dropdownOptions" placement="right">
           <template #default="{ open }">
+            <!-- //// Neoffice — shows the selected option's translated label; activeFilter keeps the
+                 //// untranslated value agents.ts watches (see dropdownOptions) -->
             <Button
               :label="activeFilterLabel"
               class="flex items-center justify-between w-fit p-4"
@@ -58,6 +60,7 @@
                 <span class="whitespace-nowrap">
                   {{ item.label }}
                 </span>
+                <!-- //// Neoffice — matched on the option's value, not its label: the label is translated now (see dropdownOptions) -->
                 <FeatherIcon
                   v-if="activeFilter === item.value"
                   name="check"
@@ -335,6 +338,8 @@ const dropdownOptions = [
     },
   },
   {
+    //// Neoffice — value/label split (see the note above dropdownOptions): `value` is what
+    //// activeFilter stores and agents.ts watches, `label` is translated for display.
     value: "Active",
     label: __("Active"),
     onClick: () => {
@@ -343,6 +348,8 @@ const dropdownOptions = [
     },
   },
   {
+    //// Neoffice — value/label split (see the note above dropdownOptions): `value` is what
+    //// activeFilter stores and agents.ts watches, `label` is translated for display.
     value: "Inactive",
     label: __("Inactive"),
     onClick: () => {

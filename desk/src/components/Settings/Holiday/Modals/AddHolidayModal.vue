@@ -41,12 +41,14 @@
     </template>
     <template #actions>
       <div class="flex justify-end gap-2">
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           variant="subtle"
           theme="gray"
           :label="__('Cancel')"
           @click="dialog.show = false"
         />
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           variant="solid"
           icon-left="plus"

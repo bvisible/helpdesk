@@ -21,6 +21,7 @@
               />
             </template>
           </FileUploader>
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             v-if="customer.doc?.image"
             :label="__('Remove photo')"
@@ -28,6 +29,7 @@
           />
         </div>
         <form class="w-full" @submit.prevent="update">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Input v-model="domain" :label="__('Domain')" placeholder="example.com" />
         </form>
       </div>

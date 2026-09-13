@@ -35,6 +35,7 @@
         >
           <div class="flex gap-2 px-3 pb-1 pt-3">
             <div class="flex-1">
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <FormControl
                 type="text"
                 :placeholder="__('Search by keyword')"
@@ -42,6 +43,7 @@
                 :debounce="300"
               />
             </div>
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Button @click="setRandom">{{ __("Random") }}</Button>
           </div>
           <div class="w-96"></div>

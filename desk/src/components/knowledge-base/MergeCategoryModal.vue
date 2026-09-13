@@ -22,6 +22,7 @@
         }}<span class="whitespace-nowrap font-semibold">{{ categoryTitle }}</span
         >{{ warning.after }}
       </p>
+      <!-- //// Neoffice — wrapped in __(): upstream showed these strings in English on every non-English site -->
       <Link
         class="form-control"
         doctype="HD Article Category"
@@ -32,6 +33,7 @@
       />
     </template>
     <template #actions>
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <Button
         class="w-full"
         variant="solid"
