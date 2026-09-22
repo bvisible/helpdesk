@@ -39,3 +39,4 @@ helpdesk.patches.set_last_customer_agent_response
 # //// skips per-record errors and no-ops if the erpnext_customer column is absent
 # //// (3890d1177 "feat(customers): HD Customer mirrors the ERP customer, instead of ignoring it")
 helpdesk.patches.mirror_erpnext_customers
+helpdesk.patches.agents_are_not_a_public_directory
