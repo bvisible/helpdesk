@@ -228,3 +228,4 @@ written down first and someone will meet it again.
   stale checkout carried, unqualified, inside `8fc1e754b8` ("fix: use received
   communications to determine reply email account"), a commit about an unrelated email fix
   (4bc1b1948 "fix(submodule): frappe-ui pointer back to v0.1.259, it had been rolled back 27 releases")
+- `helpdesk/helpdesk/doctype/hd_agent/hd_agent.json` — removed `"select": 1` from the `All` role permission block — `select` let any portal account enumerate every agent's e-mail address (an agent's `name` IS their e-mail) via the collection endpoint, even though `read` on the document itself was correctly refused; a companion patch (`helpdesk/patches/agents_are_not_a_public_directory.py`) clears the same flag from existing sites' Custom DocPerm rows, since the JSON alone doesn't affect sites that already exist (cfa160f5a "fix(agents): the agent list was enumerable by any portal account")
