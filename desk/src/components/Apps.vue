@@ -16,6 +16,7 @@
       >
         <div class="flex gap-2">
           <AppsIcon />
+          <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
           <span class="whitespace-nowrap">{{ __("Apps") }}</span>
         </div>
         <ChevronRight class="h-4 w-4 stroke-1.5" />

@@ -97,26 +97,31 @@
                 recurringHolidayData.repetition.fourth
               "
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.first"
               :label="__('Every first week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.second"
               :label="__('Every second week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.third"
               :label="__('Every third week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.fourth"
               :label="__('Every fourth week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.fifth"
               :label="__('Every fifth week')"
@@ -192,6 +197,7 @@ const columns = [
     key: "day",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Repetition'),
     key: "repetition",
   },
@@ -204,26 +210,32 @@ const workDays = ref([
     value: "Monday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Tuesday'),
     value: "Tuesday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Wednesday'),
     value: "Wednesday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Thursday'),
     value: "Thursday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Friday'),
     value: "Friday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Saturday'),
     value: "Saturday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Sunday'),
     value: "Sunday",
   },

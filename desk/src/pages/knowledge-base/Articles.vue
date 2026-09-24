@@ -68,6 +68,7 @@ const categoryTitle = computed(() => {
 const breadcrumbs = computed(() => {
   return [
     {
+      //// Neoffice — see the block marker above: __() i18n wrap
       label: __('Knowledge Base'),
       route: {
         name: "CustomerKnowledgeBase",

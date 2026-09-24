@@ -1117,36 +1117,42 @@ class HDTicket(Document):
                 "width": "auto",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Subject"),
                 "type": "Data",
                 "key": "subject",
                 "width": "25rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Status"),
                 "type": "Select",
                 "key": "status",
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("First Response"),
                 "type": "Datetime",
                 "key": "response_by",
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Resolution"),
                 "type": "Datetime",
                 "key": "resolution_by",
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Assigned To"),
                 "type": "MultipleAvatar",
                 "key": "_assign",
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Customer"),
                 "type": "Link",
                 "key": "customer",
@@ -1154,6 +1160,7 @@ class HDTicket(Document):
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Priority"),
                 "type": "Link",
                 "options": "HD Ticket Priority",
@@ -1161,6 +1168,7 @@ class HDTicket(Document):
                 "width": "10rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Type"),
                 "type": "Link",
                 "options": "HD Ticket Type",
@@ -1168,6 +1176,7 @@ class HDTicket(Document):
                 "width": "11rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Team"),
                 "type": "Link",
                 "options": "HD Team",
@@ -1175,6 +1184,7 @@ class HDTicket(Document):
                 "width": "10rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Contact"),
                 "type": "Link",
                 "key": "contact",
@@ -1182,12 +1192,14 @@ class HDTicket(Document):
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Rating"),
                 "type": "Rating",
                 "key": "feedback_rating",
                 "width": "10rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Created"),
                 "type": "Datetime",
                 "key": "creation",
@@ -1197,24 +1209,28 @@ class HDTicket(Document):
         ]
         customer_portal_columns = [
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("ID"),
                 "type": "Int",
                 "key": "name",
                 "width": "5rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Subject"),
                 "type": "Data",
                 "key": "subject",
                 "width": "22rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Status"),
                 "type": "Select",
                 "key": "status",
                 "width": "11rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Priority"),
                 "type": "Link",
                 "options": "HD Ticket Priority",
@@ -1222,18 +1238,21 @@ class HDTicket(Document):
                 "width": "10rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("First response"),
                 "type": "Datetime",
                 "key": "response_by",
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Resolution"),
                 "type": "Datetime",
                 "key": "resolution_by",
                 "width": "8rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Team"),
                 "type": "Link",
                 "options": "HD Team",
@@ -1241,6 +1260,7 @@ class HDTicket(Document):
                 "width": "10rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Created"),
                 "type": "Datetime",
                 "key": "creation",

@@ -70,6 +70,7 @@ const slaData = computed(() => {
   if (ticket.data.priority === "Unclassified") {
     return [
       {
+        //// Neoffice — see the block marker above: __() i18n wrap
         title: __('Expected First Response'),
         showSla: ticket.data.first_responded_on,
         label: responseSla,
@@ -87,6 +88,7 @@ const slaData = computed(() => {
 
   return [
     {
+      //// Neoffice — see the block marker above: __() i18n wrap
       title: __('Expected First Response'),
       showSla: ticket.data.first_responded_on,
       label: responseSla,
@@ -94,6 +96,7 @@ const slaData = computed(() => {
       value: ticket.data.response_by,
     },
     {
+      //// Neoffice — see the block marker above: __() i18n wrap
       title: __('Expected Resolution'),
       showSla: ticket.data.resolution_date,
       label: resolutionSla,

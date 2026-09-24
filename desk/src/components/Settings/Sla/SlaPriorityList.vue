@@ -35,6 +35,7 @@
       v-if="slaData.priorities?.length === 0"
       class="text-center p-4 text-ink-gray-5"
     >
+      <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
       {{ __("No priorities in the list") }}
     </div>
   </div>
@@ -143,16 +144,19 @@ const columns = computed(() => [
     isRequired: true,
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Default priority'),
     key: "default_priority",
     isRequired: true,
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('First response time'),
     key: "response_time",
     isRequired: true,
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Resolution time'),
     key: "resolution_time",
     isRequired: true,

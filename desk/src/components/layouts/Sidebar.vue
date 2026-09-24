@@ -173,6 +173,10 @@
 </template>
 
 <script setup lang="ts">
+// //// Neoffice — removed import { __ } from "@/translation" from upstream's
+// //// position here (34afea6c1 "Merge upstream develop up to 2026-06-02"):
+// //// repositioned below, next to this file's label translations — see the
+// //// marker there.
 import HDLogo from "@/assets/logos/HDLogo.vue";
 import { Section, SidebarLink } from "@/components";
 import Apps from "@/components/Apps.vue";

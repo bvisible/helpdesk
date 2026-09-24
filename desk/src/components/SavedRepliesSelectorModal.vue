@@ -170,6 +170,7 @@ const filters = computed(() => {
     {
       label: __("My Team"),
       value: "Team",
+      //// Neoffice — see the block marker above: value, not label
       onClick: () => (activeFilter.value = "Team"),
     },
     {

@@ -3,6 +3,7 @@
   <div
     class="mx-6 md:mx-10 md:my-2 flex items-center justify-between text-lg font-medium mb-4 !mt-6 md:h-8 md:text-xl md:font-semibold md:text-ink-gray-8"
   >
+    <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
     {{ __("Activity") }}
   </div>
   <div class="overflow-auto px-6 md:px-10 grow">

@@ -72,6 +72,10 @@
 </template>
 
 <script setup lang="ts">
+//// Neoffice — removed import { __ } from "@/translation" from upstream's
+//// position here (34afea6c1 "Merge upstream develop up to 2026-06-02"):
+//// upstream had added its own __ import for this file's i18n work too; the
+//// merge kept ours below rather than importing __ twice.
 import {
   Avatar,
   call,

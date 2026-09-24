@@ -79,18 +79,21 @@ class HDArticle(Document):
                 "width": "20rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Status"),
                 "type": "status",
                 "key": "status",
                 "width": "10rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Author"),
                 "type": "Link",
                 "key": "author",
                 "width": "17rem",
             },
             {
+                # //// Neoffice — see the block marker above: __() i18n wrap
                 "label": _("Last Modified"),
                 "type": "Datetime",
                 "key": "modified",

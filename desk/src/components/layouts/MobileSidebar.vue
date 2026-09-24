@@ -176,6 +176,7 @@ const allViews = computed(() => {
   ];
   if (publicViews.value?.length && !isCustomerPortal.value) {
     options.push({
+      //// Neoffice — see the block marker above: __() i18n wrap
       label: __('Public Views'),
       opened: true,
       hideLabel: false,
@@ -184,6 +185,7 @@ const allViews = computed(() => {
   }
   if (pinnedViews.value?.length) {
     options.push({
+      //// Neoffice — see the block marker above: __() i18n wrap
       label: __('Private Views'),
       opened: true,
       hideLabel: false,
@@ -216,6 +218,7 @@ function parseViews(views) {
 const customerPortalDropdown = computed(() => [
   themeMenuItem.value,
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Log out'),
     icon: "log-out",
     onClick: () => authStore.logout(),
@@ -228,6 +231,7 @@ const agentPortalDropdown = computed(() => [
     component: markRaw(Apps),
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Customer portal'),
     icon: "users",
     onClick: () => {
@@ -237,16 +241,19 @@ const agentPortalDropdown = computed(() => [
   },
   {
     icon: "life-buoy",
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Support'),
     onClick: () => window.open("https://t.me/frappedesk"),
   },
   {
     icon: "book-open",
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Docs'),
     onClick: () => window.open("https://docs.frappe.io/helpdesk"),
   },
   themeMenuItem.value,
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Log out'),
     icon: "log-out",
     onClick: () => authStore.logout(),

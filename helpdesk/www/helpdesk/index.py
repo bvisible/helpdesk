@@ -89,6 +89,9 @@ def get_boot():
             # //// both keys sets" — where both sides defined "lang" we kept ours
             # //// above (with its fallback chain) instead of carrying two keys of
             # //// the same name.
+            # //// Neoffice — removed upstream's "lang": frappe.local.lang here
+            # //// (34afea6c1 "Merge upstream develop up to 2026-06-02"): see the
+            # //// note directly above.
             "lang": frappe.local.lang or frappe.get_system_settings("language") or "en",
             "timezone": {
                 "system": get_system_timezone(),

@@ -76,6 +76,10 @@
 </template>
 
 <script setup lang="ts">
+// //// Neoffice — removed import { __ } from "@/translation" from upstream's
+// //// position here (34afea6c1 "Merge upstream develop up to 2026-06-02"):
+// //// repositioned below, next to the settings labels it serves — see the
+// //// marker there.
 import { assignmentRulesActiveScreen } from "@/stores/assignmentRules";
 import { AssignmentRuleListResourceSymbol } from "@/types";
 import { AssignmentRule } from "@/types/doctypes";
