@@ -3,6 +3,7 @@
     class="flex w-full flex-1 justify-between h-full h-[420px] max-h-[420px] min-h-[420px]"
   >
     <!-- left box -->
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <div class="flex-1 flex flex-col gap-1.5">
       <span class="block text-xs text-ink-gray-5">
         {{ __("Select parent field value") }}

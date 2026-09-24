@@ -211,6 +211,7 @@
               @update:model-value="handleShowBannerToggle"
             />
           </div>
+          <!-- //// Neoffice — placeholder wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
           <Textarea
             v-if="settingsData.enableOutsideHoursBanner"
             variant="subtle"

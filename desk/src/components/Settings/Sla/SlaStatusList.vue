@@ -1,5 +1,6 @@
 <template>
   <div class="flex gap-5 w-full">
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <FormControl
       type="autocomplete"
       :label="__('Default ticket status')"
@@ -7,6 +8,7 @@
       class="flex-1"
       v-model="slaData.default_ticket_status"
     />
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <FormControl
       type="autocomplete"
       :label="__('Ticket reopen status')"

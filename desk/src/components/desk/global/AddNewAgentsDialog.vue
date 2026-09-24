@@ -11,6 +11,7 @@
           @submit.prevent="onSubmit"
           class="flex flex-row items-center gap-x-2"
         >
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <Input
             id="searchInput"
             class="w-full"

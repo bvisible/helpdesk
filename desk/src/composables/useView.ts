@@ -5,6 +5,8 @@ import { useDebounceFn } from "@vueuse/core";
 import { call, createListResource, createResource } from "frappe-ui";
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+// //// Neoffice — import added for the label below (79c105405 "feat(i18n):
+// //// the TypeScript strings enter the catalogue — 1311 / 1311").
 import { __ } from "@/translation";
 
 const debouncedSetValue = useDebounceFn(
@@ -30,6 +32,8 @@ export const views = createListResource({
   pageLength: 1000,
 });
 
+// //// Neoffice — label wrapped in __() (79c105405 "feat(i18n): the
+// //// TypeScript strings enter the catalogue — 1311 / 1311").
 export const currentView = ref({
   label: __('List'),
   icon: LucideAlignJustify,

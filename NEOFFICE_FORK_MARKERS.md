@@ -62,6 +62,17 @@ Decisions taken in this merge:
   which now wrap their strings themselves; only the Notifications label was re-wrapped.
 - `AssignmentModal.vue`, `ticket-agent/TicketContactTab.vue`: deleted upstream (replaced by
   new components); our changes to them were i18n only, so the deletion is taken.
+- Upstream's ERPNext integration defines `HD Customer.erpnext_customer` too: its definition is
+  kept (the auto-merge had kept BOTH, and two fields with one fieldname abort the migrate), and
+  its `Customer` class override is left out of `override_doctype_class` because
+  `neoffice_theme` overrides that class as well (frappe keeps one per doctype, the last app
+  installed winning in silence). The class's behaviour runs as `doc_events` instead
+  (`integrations/erpnext/customer.py`, block marker), as upstream itself did later in `main`.
+- `hd_ticket/api.py`: two `except A, B:` clauses (Python 3.14 syntax, PEP 758) parenthesized;
+  the fleet runs Python 3.12, and a local `py_compile` under 3.14 does not see it. Check with
+  `python3.12 -m compileall helpdesk` before pushing an upstream merge.
+- `test_hd_team.test_weighted_users_synced` skips itself when Assignment Rule has no
+  `weighted_users` (frappe 15.89 has no Weighted Distribution rule).
 - `helpdesk/locale/fr.po`: our catalogue wins where it has a translation (1 227 entries),
   upstream's Crowdin fills the rest (39); 20 upstream identity translations were dropped
   (an identity translation is a veto in the merged catalogue, see 1b49f5458).

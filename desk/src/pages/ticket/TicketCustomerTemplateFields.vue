@@ -1,11 +1,13 @@
 <template>
   <div class="grid grid-cols-3 md:grid-cols-1 gap-4 border-b px-5 py-2.5">
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <div class="space-y-1.5">
       <span class="block text-sm text-ink-gray-7"> {{ __("Status") }} </span>
       <span class="block break-words text-base font-medium text-ink-gray-9">
         {{ ticket.data.status }}
       </span>
     </div>
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <div class="space-y-1.5">
       <span class="block text-sm text-ink-gray-7"> {{ __("Priority") }} </span>
       <span class="block break-words text-base font-medium text-ink-gray-9">
@@ -51,6 +53,7 @@ import { dayjs } from "@/dayjs";
 import { Field } from "@/types";
 import { computed, inject } from "vue";
 import { ITicket } from "./symbols";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const ticket = inject(ITicket);
@@ -63,6 +66,7 @@ const slaData = computed(() => {
       : "Failed";
 
   //TODO: no resolution date for unclassified tickets, configurable?
+  //// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these SLA titles; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
   if (ticket.data.priority === "Unclassified") {
     return [
       {
@@ -97,6 +101,7 @@ const slaData = computed(() => {
       value: ticket.data.resolution_by,
     },
   ];
+  //// Neoffice ▲▲▲
 });
 
 const customFields = computed(() => {

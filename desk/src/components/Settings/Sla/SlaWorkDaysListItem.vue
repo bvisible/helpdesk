@@ -51,6 +51,8 @@ import { Button, Dropdown } from "frappe-ui";
 import WorkDayModal from "./Modals/WorkDayModal.vue";
 import { ConfirmDelete, getGridTemplateColumnsForTable } from "@/utils";
 import { slaData } from "@/stores/sla";
+// //// Neoffice — import added for the label translations below (41fb04e59
+// //// "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 interface Column {
@@ -72,6 +74,8 @@ const props = defineProps<{
   isLast?: boolean;
 }>();
 
+// //// Neoffice — every label below wrapped in __() (41fb04e59 "fix(i18n):
+// //// finish the SPA pass").
 const workDayOptions = [
   { label: __('Monday'), value: "Monday" },
   { label: __('Tuesday'), value: "Tuesday" },
@@ -91,6 +95,8 @@ const dialog = ref({
 const isConfirmingDelete = ref(false);
 
 const dropdownOptions = [
+  // //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish the
+  // //// SPA pass").
   {
     label: __('Edit'),
     onClick: () => editWorkDay(),

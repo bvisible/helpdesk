@@ -4,6 +4,7 @@
     class="rounded border p-4 text-base"
   >
     <div class="mb-2 font-medium ps-2" v-if="!hideViewAll">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       {{ __("These articles may already cover what you are looking for") }}
       <RouterLink
         class="group cursor-pointer space-x-1 hover:text-ink-gray-9"
@@ -54,7 +55,9 @@
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <p class="font-base">{{ __("No answers found") }}</p>
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <span class="font-base text-p-sm text-ink-gray-5 text-center"
         >{{ __("Rephrase the question and try again with some keywords") }}</span
       >
@@ -66,7 +69,9 @@
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <p class="font-base">{{ __("Searching...") }}</p>
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <span class="font-base text-p-sm text-ink-gray-5 text-center"
         >{{ __("Please wait while we search for the answers") }}</span
       >

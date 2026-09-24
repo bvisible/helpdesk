@@ -197,6 +197,8 @@ import {
 } from "vue";
 import LucideChevronDown from "~icons/lucide/chevron-down";
 import LucideX from "~icons/lucide/x";
+// //// Neoffice — import added for the label translations below (71a5669d9
+// //// "fix(i18n): 341 visible strings of the SPA never went through __()").
 import { __ } from "@/translation";
 
 // Type Definitions
@@ -225,6 +227,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  // //// Neoffice — labels wrapped in __() (71a5669d9 "fix(i18n): 341
+  // //// visible strings of the SPA never went through __()").
   placeholder: __('Select options...'),
   label: __('Options'),
   selectionText: "items",

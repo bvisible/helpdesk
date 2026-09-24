@@ -20,6 +20,7 @@
             />
           </div>
         </div>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <MultiSelectCombobox
           :disabled="!fieldCriteriaState.display.enabled"
           class="min-w-[120px] max-w-[120px]"
@@ -46,6 +47,7 @@
             />
           </div>
         </div>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <MultiSelectCombobox
           :disabled="!fieldCriteriaState.mandatory.enabled"
           class="min-w-[120px] max-w-[120px]"

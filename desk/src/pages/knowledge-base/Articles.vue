@@ -29,6 +29,7 @@ import { Breadcrumbs, createResource, usePageMeta } from "frappe-ui";
 import LayoutHeader from "@/components/LayoutHeader.vue";
 import ArticleCard from "@/components/knowledge-base/ArticleCard.vue";
 import { capture } from "@/telemetry";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -63,6 +64,7 @@ const categoryTitle = computed(() => {
   return categoryName.data;
 });
 
+//// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const breadcrumbs = computed(() => {
   return [
     {

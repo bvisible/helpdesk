@@ -4,6 +4,7 @@
     :description="__('Add, manage agents and assign roles to them.')"
   >
     <template #header-actions>
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <Button
         @click="() => setActiveSettingsTab('Invite Agents')"
         :label="__('New')"
@@ -286,6 +287,7 @@ function updateRole(agent: string, newRole: string) {
 function getOptions(agent) {
   let filters = agentStore.filters;
   return [
+    //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     {
       label: __('Disable Agent'),
       icon: "x-circle",
@@ -295,6 +297,7 @@ function getOptions(agent) {
       },
       condition: () => agent.is_active,
     },
+    //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     {
       label: __('Enable Agent'),
       icon: "check-circle",

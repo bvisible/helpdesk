@@ -83,6 +83,12 @@ def get_boot():
             # //// `<html lang="en">` because it is a build artefact.
             # //// Not sensitive: a display language, the same frappe's own boot ships
             # //// to every page. See the note above on what this dict exposes.
+            # //// Neoffice — removed upstream's own simpler "lang": frappe.local.lang
+            # //// key at the merge (34afea6c1 "Merge upstream develop up to
+            # //// 2026-06-02"): the merge summary notes "www/helpdesk boot merges
+            # //// both keys sets" — where both sides defined "lang" we kept ours
+            # //// above (with its fallback chain) instead of carrying two keys of
+            # //// the same name.
             "lang": frappe.local.lang or frappe.get_system_settings("language") or "en",
             "timezone": {
                 "system": get_system_timezone(),

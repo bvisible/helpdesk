@@ -1,4 +1,5 @@
 import { createResource } from "frappe-ui";
+//// Neoffice — added: __() import so this store's strings can enter the French catalogue; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
 import { __ } from "@/translation";
 
 // Title
@@ -68,6 +69,7 @@ export const moveToCategory = createResource({
       articles,
     };
   },
+  //// Neoffice — wrapped in __() so the French catalogue can translate it; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
   validate({ category, articles }) {
     if (!category) throw { message: __('Category is required') };
     if (!articles) throw { message: __('Articles are required') };
@@ -82,6 +84,7 @@ export const mergeCategory = createResource({
       target,
     };
   },
+  //// Neoffice — wrapped in __() so the French catalogue can translate it; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
   validate({ source, target }) {
     if (!source) throw { message: __('Category is required') };
     if (!target) throw { message: __('Target is required') };

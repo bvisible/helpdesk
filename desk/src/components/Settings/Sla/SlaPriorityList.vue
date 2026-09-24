@@ -30,6 +30,7 @@
       :columns="columns"
       :isLast="index === slaData.priorities.length - 1"
     />
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <div
       v-if="slaData.priorities?.length === 0"
       class="text-center p-4 text-ink-gray-5"
@@ -46,6 +47,7 @@
     "
   >
     <div>
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <Button
         v-if="slaData.priorities.length !== priorityOptions.length"
         variant="subtle"
@@ -72,6 +74,7 @@ import { watchDebounced } from "@vueuse/core";
 import { Button, createResource, toast } from "frappe-ui";
 import { computed, provide, reactive } from "vue";
 import SlaPriorityListItem from "./SlaPriorityListItem.vue";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 createResource({
@@ -132,6 +135,7 @@ const addRow = () => {
   });
 };
 
+//// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these SLA column labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const columns = computed(() => [
   {
     label: __('Priority'),
@@ -153,6 +157,7 @@ const columns = computed(() => [
     key: "resolution_time",
     isRequired: true,
   },
+  //// Neoffice ▲▲▲
   //   slaData.value.apply_sla_for_resolution && {
   //     label: __('Resolution time'),
   //     key: "resolution_time",

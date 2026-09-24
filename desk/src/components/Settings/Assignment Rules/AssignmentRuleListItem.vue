@@ -90,6 +90,9 @@ import {
   toast,
 } from "frappe-ui";
 import { inject, ref } from "vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for the settings
+// //// labels translated below (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const assignmentRulesListData = inject(AssignmentRuleListResourceSymbol);
@@ -101,6 +104,8 @@ const props = defineProps({
   },
 });
 
+// //// Neoffice — every label below wrapped in __() (41fb04e59 "fix(i18n):
+// //// finish the SPA pass").
 const priorityOptions = [
   { label: __('Low'), value: "0" },
   { label: __('Low-Medium'), value: "1" },

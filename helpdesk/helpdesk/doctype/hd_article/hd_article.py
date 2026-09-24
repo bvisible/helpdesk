@@ -66,6 +66,11 @@ class HDArticle(Document):
 
     @staticmethod
     def default_list_data():
+        # //// Neoffice ▼▼▼ — every column label below wrapped in _() so the
+        # //// French catalogue can translate it: default_list_data() is called
+        # //// per request, so _() resolves in the caller's own language
+        # //// (97629bb44 "fix(i18n): the list columns, sort options and
+        # //// filters could not be translated at all").
         columns = [
             {
                 "label": _("Title"),
@@ -92,6 +97,7 @@ class HDArticle(Document):
                 "width": "8rem",
             },
         ]
+        # //// Neoffice ▲▲▲
         return {"columns": columns}
 
     @frappe.whitelist()

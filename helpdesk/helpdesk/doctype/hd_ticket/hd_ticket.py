@@ -1103,6 +1103,12 @@ class HDTicket(Document):
 
     @staticmethod
     def default_list_data(show_customer_portal_fields=False):
+        # //// Neoffice ▼▼▼ — every column label below wrapped in _() so the
+        # //// French catalogue can translate it: default_list_data() is called
+        # //// per request, so _() resolves in the caller's own language, where
+        # //// upstream showed bare English column headers on every non-English
+        # //// site (97629bb44 "fix(i18n): the list columns, sort options and
+        # //// filters could not be translated at all").
         columns = [
             {
                 "label": _("ID"),
@@ -1242,6 +1248,7 @@ class HDTicket(Document):
                 "width": "8rem",
             },
         ]
+        # //// Neoffice ▲▲▲
         rows = [
             "name",
             "subject",

@@ -119,16 +119,19 @@ import {
 import AssigneeSearch from "./AssigneeSearch.vue";
 import { computed } from "vue";
 import { useUserStore } from "@/stores/user";
+//// Neoffice — added import: __() used by the i18n wraps below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const { getUser } = useUserStore();
 
 const ticketRoutingOptions = [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Auto-rotate'),
     value: "Round Robin",
   },
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Assign by workload'),
     value: "Load Balancing",
   },

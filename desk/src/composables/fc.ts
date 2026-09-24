@@ -1,6 +1,7 @@
 import { globalStore } from "@/stores/globalStore";
 import { createResource } from "frappe-ui";
 import { ref } from "vue";
+//// Neoffice — added: __() import so this composable's strings can enter the French catalogue; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
 import { __ } from "@/translation";
 
 const baseEndpoint = ref("https://frappecloud.com");
@@ -20,10 +21,12 @@ export const confirmLoginToFrappeCloud = () => {
 
   const { $dialog } = globalStore();
 
+  //// Neoffice — wrapped in __() so the French catalogue can translate it; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
   $dialog({
     title: __('Login to Frappe Cloud?'),
     message: __('Are you sure you want to login to your Frappe Cloud dashboard?'),
     actions: [
+      //// Neoffice — wrapped in __() so the French catalogue can translate it; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
       {
         label: __('Confirm'),
         variant: "solid",

@@ -83,6 +83,8 @@ const customer = createDocumentResource({
 const options = computed(() => ({
   title: customer.doc?.name,
   actions: [
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     {
       label: __('Save'),
       theme: "gray",

@@ -114,6 +114,7 @@ import { setActiveSettingsTab } from "../settingsModal";
 import { useAgentStore } from "@/stores/agent";
 import { onMounted } from "vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const emit = defineEmits(["addAssignee"]);

@@ -28,6 +28,8 @@ export const agentPortalSidebarOptions = [
     icon: LucideBookOpen,
     to: "AgentKnowledgeBase",
   },
+  // //// Neoffice — label wrapped in __() (79c105405 "feat(i18n): the
+  // //// TypeScript strings enter the catalogue — 1311 / 1311").
   {
     label: __('Customers'),
     icon: OrganizationsIcon,

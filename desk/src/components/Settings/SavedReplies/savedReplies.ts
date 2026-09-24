@@ -1,4 +1,8 @@
 import { ref } from "vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// __() calls (79c105405 "feat(i18n): the TypeScript strings enter the
+// //// catalogue — 1311 / 1311").
 import { __ } from "@/translation";
 
 export const menuButtons = [

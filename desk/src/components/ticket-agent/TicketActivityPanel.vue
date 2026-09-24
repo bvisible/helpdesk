@@ -6,6 +6,7 @@
     class="[&_[role='tab']]:px-0 [&_[role='tablist']]:px-5 [&_[role='tablist']]:gap-7.5 [&_[role='tablist']]:flex-shrink-0 [&_[role='tabpanel'][data-state='active']]:flex-1"
   >
     <template #tab-panel="{ tab }">
+      <!-- //// Neoffice — :tab passes the TicketTab identity as a prop: TicketAgentActivities used to choose its empty state from the translated tab title, so no branch ever matched on a non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <TicketAgentActivities
         v-if="Boolean(activities.data)"
         ref="ticketAgentActivitiesRef"
@@ -69,6 +70,8 @@ import { Button, Tabs } from "frappe-ui";
 import { storeToRefs } from "pinia";
 import { computed, ComputedRef, inject, ref } from "vue";
 import { TicketAgentActivities } from "../ticket";
+// //// Neoffice — import added for the label translation below (71a5669d9
+// //// "fix(i18n): 341 visible strings of the SPA never went through __()").
 import { __ } from "@/translation";
 
 const ticket = inject(TicketSymbol)!;
@@ -85,6 +88,8 @@ const { isCallingEnabled } = storeToRefs(telephonyStore);
 
 const tabs: ComputedRef<TabObject[]> = computed(() => {
   const _tabs: TabObject[] = [
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     {
       name: "activity",
       label: __('Activity'),

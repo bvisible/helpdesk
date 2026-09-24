@@ -344,6 +344,9 @@ import AssignmentSchedule from "./AssignmentSchedule.vue";
 import { convertToConditions } from "@/utils";
 import { disableSettingModalOutsideClick } from "../settingsModal";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for the settings
+// //// labels translated below (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const isDirty = ref(false);
@@ -500,9 +503,12 @@ const saveAssignmentRule = () => {
 };
 
 const showOverwriteConfirm = () => {
+  // //// Neoffice — labels wrapped in __() (41fb04e59 "fix(i18n): finish the
+  // //// SPA pass").
   showConfirmDialog.value = {
     show: true,
     title: __('Confirm overwrite'),
+    // //// Neoffice — see the marker above: label wrapped in __()
     message:
       __('Your old condition will be overwritten. Are you sure you want to save?'),
     onConfirm: () => {
@@ -558,6 +564,8 @@ const createAssignmentRuleResource = createResource({
   },
 });
 
+// //// Neoffice — every label below wrapped in __() (41fb04e59 "fix(i18n):
+// //// finish the SPA pass").
 const priorityOptions = [
   { label: __('Low'), value: "0" },
   { label: __('Low-Medium'), value: "1" },

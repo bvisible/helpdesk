@@ -511,6 +511,8 @@ const quickFilters = createResource({
   },
   transform: (data) => {
     if (Boolean(data.length)) return;
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     data = [{ name: "name", label: __('Name'), fieldtype: "Data" }];
     return data;
   },

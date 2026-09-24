@@ -4,6 +4,7 @@
       class="flex justify-between gap-3 border-t px-6 md:px-5 py-4 md:py-2.5"
     >
       <div class="flex gap-1.5 items-center">
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <Button
           ref="sendEmailRef"
           variant="ghost"
@@ -81,6 +82,7 @@
         @keydown.esc.capture.stop="showCommentBox = false"
       >
         <div class="overflow-hidden">
+          <!-- //// Neoffice — labels and placeholders wrapped in __(): upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <CommentTextEditor
             ref="commentTextEditorRef"
             :label="

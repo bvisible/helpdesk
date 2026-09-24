@@ -2,6 +2,7 @@
   <div class="flex w-[382px] flex-col border-s gap-4">
     <!-- Ticket ID -->
     <div class="flex items-center justify-between border-b px-5 py-3">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <span class="cursor-copy text-lg font-semibold">{{ __("Ticket details") }}</span>
     </div>
     <!-- user info and sla info -->
@@ -59,6 +60,7 @@
             <Badge :label="data.label" :theme="data.theme" variant="subtle" />
           </Tooltip>
           <!-- SLA explanation icon -->
+          <!-- //// Neoffice — data.key (untranslated identity) drives this branch; data.title is displayed and translated, so comparing it directly broke on non-English sites (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <Tooltip
             v-if="
               dayjs(data.value).diff(dayjs(), 'day', true) > 4 &&
@@ -119,6 +121,7 @@ import { Field } from "@/types";
 import { dateFormat, dateTooltipFormat, formatTime } from "@/utils";
 import { Avatar, Tooltip } from "frappe-ui";
 import { computed, inject } from "vue";
+//// Neoffice — added import: __() used by the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const emit = defineEmits(["open"]);
@@ -140,6 +143,7 @@ const slaData = computed(() => {
       theme: firstResponse.color,
     },
     {
+      //// Neoffice — see the block marker above: key/title split
       key: "resolution",
       title: __("Resolution"),
       value: ticket.data.resolution_date || ticket.data.resolution_by,
@@ -177,6 +181,7 @@ function firstResponseData() {
     };
   } else {
     firstResponse = {
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __('Failed'),
       color: "red",
     };
@@ -205,6 +210,7 @@ function resolutionData() {
     };
   } else {
     resolution = {
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __('Failed'),
       color: "red",
     };
@@ -214,6 +220,7 @@ function resolutionData() {
 
 const ticketBasicInfo = computed(() => [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Ticket ID'),
     value: ticket.data.name,
   },
@@ -228,6 +235,7 @@ const ticketAdditionalInfo = computed(() => {
   const fields = [
     {
       fieldname: "subject",
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __("Subject"),
       value: ticket.data.subject,
     },
@@ -238,6 +246,7 @@ const ticketAdditionalInfo = computed(() => {
     },
     {
       fieldname: "priority",
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __("Priority"),
       value: ticket.data.priority,
     },

@@ -221,6 +221,7 @@ import { SavedReply, SavedReplyListResourceSymbol } from "../../../types";
 import SavedReplyIcon from "../../icons/SavedReplyIcon.vue";
 import { storeToRefs } from "pinia";
 import { useConfigStore } from "@/stores/config";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const { getUser } = useUserStore();
@@ -372,6 +373,7 @@ const SCOPE_ICONS: Record<string, unknown> = {
   Global: GlobeIcon,
 };
 
+//// Neoffice — see the block marker above: keyed on the stored value
 const getScopeIcon = (scope: string) => SCOPE_ICONS[scope];
 
 watch(

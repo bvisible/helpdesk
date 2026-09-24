@@ -2,6 +2,7 @@
   <div class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div class="text-lg font-medium text-ink-gray-9">{{ __("Contacts") }}</div>
       </template>
       <template #right-header>
@@ -75,6 +76,7 @@ const options = computed(() => {
       },
     },
     emptyState: {
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       title: __("No contacts found"),
       icon: h(LucideContact2, {
         class: "h-10 w-10",
@@ -104,6 +106,7 @@ function handleContactUpdated(): void {
 }
 usePageMeta(() => {
   return {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     title: __('Contacts'),
   };
 });

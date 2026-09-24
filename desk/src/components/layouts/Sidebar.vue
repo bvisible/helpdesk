@@ -239,6 +239,10 @@ import {
   setActiveSettingsTab,
   showSettingsModal,
 } from "../Settings/settingsModal";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// label translations (71a5669d9 "fix(i18n): 341 visible strings of the
+// //// SPA never went through __()").
 import { __ } from "@/translation";
 
 const { isMobileView } = useScreenSize();

@@ -7,6 +7,7 @@
     :leaveDelay="0.1"
   >
     <template #target="{ togglePopover }">
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <button
         :class="[
           'group w-full flex h-7 items-center justify-between rounded px-2 text-base text-ink-gray-8 hover:bg-surface-gray-2',
@@ -43,6 +44,7 @@
 import { Popover, createResource } from "frappe-ui";
 import ChevronRight from "~icons/lucide/chevron-right";
 import AppsIcon from "./icons/AppsIcon.vue";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const apps = createResource({
@@ -52,6 +54,7 @@ const apps = createResource({
   transform: (data) => {
     let _apps = [
       {
+        //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         name: "frappe",
         logo: "/assets/helpdesk/desk/desk.png",
         title: __('Desk'),

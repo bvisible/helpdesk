@@ -6,6 +6,7 @@
     >
       <template #body-content>
         <div class="space-y-4">
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <div class="space-y-1">
             <Input
               v-model="state.customer"
@@ -14,6 +15,7 @@
               :placeholder="__('Tesla Inc.')"
             />
           </div>
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <div class="space-y-1">
             <Input
               v-model="state.domain"
@@ -22,6 +24,7 @@
               placeholder="eg: tesla.com, mycompany.com"
             />
           </div>
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <div class="float-end flex gap-x-2">
             <Button
               :label="__('Add')"

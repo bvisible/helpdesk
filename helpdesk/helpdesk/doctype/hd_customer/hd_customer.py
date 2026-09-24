@@ -17,18 +17,21 @@ class HDCustomer(Document):
     def default_list_data():
         columns = [
             {
+                # //// Neoffice — wrapped in _(): default_list_data() ships its labels to the SPA raw, so this column header reached the screen in English on every non-English site (97629bb44 "fix(i18n): the list columns, sort options and filters could not be translated at all")
                 "label": _("Name"),
                 "key": "name",
                 "width": "17rem",
                 "type": "Data",
             },
             {
+                # //// Neoffice — wrapped in _(): default_list_data() ships its labels to the SPA raw, so this column header reached the screen in English on every non-English site (97629bb44 "fix(i18n): the list columns, sort options and filters could not be translated at all")
                 "label": _("Domain"),
                 "key": "domain",
                 "width": "24rem",
                 "type": "Data",
             },
             {
+                # //// Neoffice — wrapped in _(): default_list_data() ships its labels to the SPA raw, so this column header reached the screen in English on every non-English site (97629bb44 "fix(i18n): the list columns, sort options and filters could not be translated at all")
                 "label": _("Created On"),
                 "key": "creation",
                 "width": "8rem",

@@ -84,6 +84,9 @@ import FieldDependencyCriteria from "./FieldDependencyCriteria.vue";
 import FieldDependencyFieldsSelection from "./FieldDependencyFieldsSelection.vue";
 import FieldDependencyValueSelection from "./FieldDependencyValueSelection.vue";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// settings labels (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const props = defineProps({

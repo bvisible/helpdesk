@@ -51,6 +51,9 @@ import LogoUpload from "./LogoUpload.vue";
 import { createResource, toast } from "frappe-ui";
 import { useConfigStore } from "@/stores/config";
 import { HDSettingsSymbol } from "@/types";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// settings labels (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const configStore = useConfigStore();

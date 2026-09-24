@@ -6,6 +6,7 @@
   >
     <template #body-content>
       <div class="flex flex-col gap-4">
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div>
           <FormControl
             :type="'select'"
@@ -50,6 +51,7 @@
           <ErrorMessage :message="errors.workday" class="mt-2" />
         </div>
 
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div>
           <FormControl
             :type="'time'"
@@ -64,6 +66,7 @@
           <ErrorMessage :message="errors.start_time" class="mt-2" />
         </div>
 
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div>
           <FormControl
             :type="'time'"

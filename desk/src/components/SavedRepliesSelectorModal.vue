@@ -40,6 +40,7 @@
                 class="absolute end-1 top-1/2 -translate-y-1/2"
               />
             </div>
+            <!-- //// Neoffice — shows the option's translated label; upstream printed the raw stored identifier as the button label (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
             <Dropdown :options="filters" placement="right">
               <Button :label="activeFilterLabel" icon-left="filter" class="p-4">
                 <template #suffix>
@@ -165,6 +166,7 @@ const filters = computed(() => {
       value: "Personal",
       onClick: () => (activeFilter.value = "Personal"),
     },
+    //// Neoffice — stores "Team", not "My Team" (see the scope note below): the option's value is what the filter matches on (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     {
       label: __("My Team"),
       value: "Team",

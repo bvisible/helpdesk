@@ -478,10 +478,12 @@ def parse_call_log(call):
             else [None, None]
         )
         call["_caller"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": contact.get("full_name") or _("Unknown"),
             "image": contact.get("image"),
         }
         call["_receiver"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": receiver[0] or _("Unknown"),
             "image": receiver[1] or "",
         }
@@ -496,10 +498,12 @@ def parse_call_log(call):
             else [None, None]
         )
         call["_caller"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": caller[0] or _("Unknown"),
             "image": caller[1] or "",
         }
         call["_receiver"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": contact.get("full_name") or _("Unknown"),
             "image": contact.get("image"),
         }

@@ -63,6 +63,7 @@ import LockKeyhole from "~icons/lucide/lock-keyhole";
 import { Dialog, toast, createResource } from "frappe-ui";
 import { ref, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const show = defineModel<boolean>();

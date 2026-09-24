@@ -5,6 +5,7 @@
   >
     <template #body-content>
       <div class="flex flex-col flex-1 gap-3">
+        <!-- //// Neoffice — placeholder wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
         <textarea
           class="text-base rounded py-1.5 px-2 border border-[--surface-gray-2] bg-surface-gray-2 placeholder-ink-gray-4 hover:border-outline-gray-modals hover:bg-surface-gray-3 focus:bg-surface-white focus:border-outline-gray-4 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-outline-gray-3 text-ink-gray-8 transition-colors w-full block"
           ref="titleRef"
@@ -28,6 +29,8 @@ import { computed } from "vue";
 import { Dialog } from "frappe-ui";
 import { ref } from "vue";
 import { watch } from "vue";
+// //// Neoffice — import added for the label translations below (41fb04e59
+// //// "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -65,6 +68,8 @@ watch(
 function getActionButton() {
   const action = [];
   if (props.edit) {
+    // //// Neoffice — labels wrapped in __() (41fb04e59 "fix(i18n): finish
+    // //// the SPA pass").
     action.push({
       label: __('Save'),
       variant: "solid",
@@ -73,6 +78,8 @@ function getActionButton() {
       },
     });
   } else {
+    // //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish
+    // //// the SPA pass").
     action.push({
       label: __('Create'),
       variant: "solid",

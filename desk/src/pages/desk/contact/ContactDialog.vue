@@ -90,6 +90,7 @@ import Link from "@/components/frappe-ui/Link.vue";
 import MultiSelect from "@/components/MultiSelect.vue";
 import { useAuthStore } from "@/stores/auth";
 import { AutoCompleteItem, File } from "@/types";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 interface Props {

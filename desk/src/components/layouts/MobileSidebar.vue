@@ -134,6 +134,7 @@ import {
 } from "./layoutSettings";
 import { useTelephonyStore } from "@/stores/telephony";
 import { storeToRefs } from "pinia";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 const { pinnedViews, publicViews } = useView();
 const { currentTheme, toggleTheme } = useTheme();
@@ -164,6 +165,7 @@ const allViews = computed(() => {
     items = items.filter((item) => item.to !== "CallLogs");
   }
 
+  //// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these view-group labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
   const options = [
     {
       label: __('All Views'),
@@ -188,6 +190,7 @@ const allViews = computed(() => {
       views: parseViews(pinnedViews.value),
     });
   }
+  //// Neoffice ▲▲▲
   return options;
 });
 function parseViews(views) {
@@ -209,6 +212,7 @@ function parseViews(views) {
   });
 }
 
+//// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const customerPortalDropdown = computed(() => [
   themeMenuItem.value,
   {
@@ -218,6 +222,7 @@ const customerPortalDropdown = computed(() => [
   },
 ]);
 
+//// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these dropdown labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const agentPortalDropdown = computed(() => [
   {
     component: markRaw(Apps),
@@ -247,6 +252,7 @@ const agentPortalDropdown = computed(() => [
     onClick: () => authStore.logout(),
   },
 ]);
+//// Neoffice ▲▲▲
 
 const profileSettings = computed(() => {
   return isCustomerPortal.value

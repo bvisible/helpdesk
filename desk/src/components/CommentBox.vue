@@ -54,6 +54,7 @@
       >
         <template #bottom v-if="editable">
           <div class="flex flex-row-reverse gap-2">
+            <!-- //// Neoffice — labels wrapped in __() (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
             <div>
               <Button
                 :label="
@@ -67,6 +68,7 @@
                 variant="solid"
               />
             </div>
+            <!-- //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
             <Button :label="__('Discard')" @click="handleDiscard" />
           </div>
         </template>

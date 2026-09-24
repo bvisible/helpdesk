@@ -7,6 +7,7 @@
           <span class="underline">{{ __("emails/ comments") }}</span>
           {{ __("from this email onwards will be moved to new ticket.") }}
         </p>
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <FormControl
           :label="__('New Ticket Subject')"
           type="text"

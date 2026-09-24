@@ -91,6 +91,7 @@
               </div>
 
               <!-- Rest Activities -->
+              <!-- //// Neoffice — passes the TicketTab identity: TicketAgentActivities used to branch its empty state on the translated tab title and none of the branches ever matched (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
               <TicketAgentActivities
                 v-else
                 ref="ticketAgentActivitiesRef"

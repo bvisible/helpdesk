@@ -17,6 +17,7 @@
     >
       <div :class="'text-end text-base text-ink-gray-5'">
         <div v-if="props.itemIndex == 0" class="min-w-[66px] text-start">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           {{ __("Where") }}
         </div>
         <div v-else class="min-w-[66px] flex items-start">
@@ -82,6 +83,7 @@
         :level="props.level"
         :disableAddCondition="props.disableAddCondition"
       />
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <Button
         variant="outline"
         v-if="props.isGroup && (props.level == 2 || props.level == 4)"
@@ -125,6 +127,7 @@ import GroupIcon from "~icons/lucide/group";
 import UnGroupIcon from "~icons/lucide/ungroup";
 import CFConditions from "./CFConditions.vue";
 import { filterableFields } from "./filterableFields";
+//// Neoffice — added import: __() used by the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const show = ref(false);
@@ -169,6 +172,7 @@ const dropdownOptions = computed(() => {
 
   if (!props.isGroup && props.level < 4) {
     options.push({
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __('Turn into a group'),
       icon: () => h(GroupIcon),
       onClick: () => {
@@ -179,6 +183,7 @@ const dropdownOptions = computed(() => {
 
   if (props.isGroup) {
     options.push({
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __('Ungroup conditions'),
       icon: () => h(UnGroupIcon),
       onClick: () => {
@@ -188,6 +193,7 @@ const dropdownOptions = computed(() => {
   }
 
   options.push({
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Remove'),
     component: (props) =>
       TemplateOption({
@@ -203,6 +209,7 @@ const dropdownOptions = computed(() => {
   });
 
   options.push({
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Remove group'),
     component: (props) =>
       TemplateOption({
@@ -252,10 +259,12 @@ function getValueControl() {
       type: "select",
       options: [
         {
+          //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
           label: __('Set'),
           value: "set",
         },
         {
+          //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
           label: __('Not Set'),
           value: "not set",
         },
@@ -336,11 +345,13 @@ function getOperators() {
   if (typeString.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
         { label: "In", value: "in" },
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
         { label: "Is", value: "is" },
       ]
@@ -348,6 +359,7 @@ function getOperators() {
   }
   if (fieldname === "_assign") {
     options = [
+      //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       { label: __('Like'), value: "like" },
       { label: __('Not Like'), value: "not like" },
       { label: "Is", value: "is" },
@@ -356,11 +368,13 @@ function getOperators() {
   if (typeNumber.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
         { label: "In", value: "in" },
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
         { label: "Is", value: "is" },
         { label: "<", value: "<" },
@@ -373,9 +387,11 @@ function getOperators() {
   if (typeSelect.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
         { label: "In", value: "in" },
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
         { label: "Is", value: "is" },
       ]
@@ -384,25 +400,30 @@ function getOperators() {
   if (typeLink.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
         { label: "In", value: "in" },
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
         { label: "Is", value: "is" },
       ]
     );
   }
   if (typeCheck.includes(fieldtype)) {
+    //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     options.push(...[{ label: __('Equals'), value: "==" }]);
   }
   if (["Duration"].includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
         { label: "In", value: "in" },
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
         { label: "Is", value: "is" },
       ]
@@ -411,6 +432,7 @@ function getOperators() {
   if (typeDate.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
         { label: "Is", value: "is" },
@@ -418,6 +440,7 @@ function getOperators() {
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
         { label: "<=", value: "<=" },
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Between'), value: "between" },
       ]
     );
@@ -425,6 +448,7 @@ function getOperators() {
   if (typeRating.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
         { label: "Is", value: "is" },

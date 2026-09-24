@@ -7,6 +7,7 @@
   >
     <template #body-content>
       <div class="flex flex-col gap-4">
+        <!-- //// Neoffice — labels wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
         <FormControl
           :type="'select'"
           size="sm"
@@ -18,6 +19,7 @@
           required
         />
         <div>
+          <!-- //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
           <FormLabel :label="__('Response time')" required />
           <Popover class="mt-2">
             <template #target="{ togglePopover }" class="w-max">
@@ -28,6 +30,7 @@
                 <div v-if="priorityData.response_time">
                   {{ formatTimeHMS(priorityData.response_time) }}
                 </div>
+                <!-- //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
                 <div v-else class="text-ink-gray-4">{{ __("Select time") }}</div>
               </div>
             </template>

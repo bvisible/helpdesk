@@ -25,6 +25,9 @@
 <script setup lang="ts">
 import { createResource, Dialog, toast } from "frappe-ui";
 import { computed, ref, watch } from "vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// settings labels (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const emit = defineEmits(["onRename"]);

@@ -4,6 +4,8 @@
 
 <script setup lang="ts">
 import { globalStore } from "@/stores/globalStore";
+// //// Neoffice — import added for the label translation below (71a5669d9
+// //// "fix(i18n): 341 visible strings of the SPA never went through __()").
 import { __ } from "@/translation";
 const { $dialog } = globalStore();
 const emit = defineEmits<{
@@ -34,6 +36,8 @@ function handleDiscard() {
       hideDialog();
     },
     actions: [
+      // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+      // //// visible strings of the SPA never went through __()").
       {
         label: __("Delete"),
         theme: "red",

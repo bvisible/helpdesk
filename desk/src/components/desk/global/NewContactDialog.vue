@@ -64,6 +64,8 @@ import {
 import zod from "zod";
 
 import { AutoCompleteItem } from "@/types";
+//// Neoffice — removed (34afea6c1 "Merge upstream develop up to 2026-06-02 (c778f533b)"): upstream added its own __ import during the same i18n work; the merge kept ours below rather than importing __ twice
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 interface Props {

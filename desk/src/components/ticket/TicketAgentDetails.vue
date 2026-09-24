@@ -34,6 +34,8 @@ import {
 } from "@/utils";
 import { Badge, Tooltip } from "frappe-ui";
 import { computed, onUnmounted, ref, watch } from "vue";
+// //// Neoffice — import added for the label translations below (71a5669d9
+// //// "fix(i18n): 341 visible strings of the SPA never went through __()").
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -84,6 +86,8 @@ const firstResponseBadge = computed(() => {
       date: props.ticket.first_responded_on,
     };
   } else {
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     firstResponse = {
       label: __('Failed'),
       color: "red",
@@ -132,6 +136,8 @@ const resolutionBadge = computed(() => {
       date: props.ticket.resolution_date,
     };
   } else {
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     resolution = {
       label: __('Failed'),
       color: "red",
@@ -151,6 +157,8 @@ function getCalculatedResolution() {
   return formatTime(resolution);
 }
 
+// //// Neoffice — every label below wrapped in __() (71a5669d9 "fix(i18n):
+// //// 341 visible strings of the SPA never went through __()").
 const sections = computed(() => [
   {
     label: __('First Response'),
@@ -158,12 +166,14 @@ const sections = computed(() => [
     badgeText: firstResponseBadge.value.label,
     badgeColor: firstResponseBadge.value.color,
   },
+  // //// Neoffice — see the marker above: label wrapped in __()
   {
     label: __('Resolution'),
     tooltipValue: dateFormat(resolutionBadge.value.date, dateTooltipFormat),
     badgeText: resolutionBadge.value.label,
     badgeColor: resolutionBadge.value.color,
   },
+  // //// Neoffice — see the marker above: label wrapped in __()
   {
     label: __('Source'),
     value: props.ticket.via_customer_portal ? "Portal" : "Mail",

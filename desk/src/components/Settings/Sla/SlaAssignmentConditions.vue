@@ -35,6 +35,7 @@ import { slaDataErrors, validateSlaData } from "@/stores/sla";
 import { watchDebounced } from "@vueuse/core";
 import CFConditions from "@/components/conditions-filter/CFConditions.vue";
 import { validateConditions } from "@/utils";
+//// Neoffice — added import: __() used by the i18n wraps below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -56,12 +57,14 @@ const getConjunction = () => {
 
 const dropdownOptions = [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Add condition'),
     onClick: () => {
       addCondition();
     },
   },
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Add condition group'),
     onClick: () => {
       const conjunction = getConjunction();

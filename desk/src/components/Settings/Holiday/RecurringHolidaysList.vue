@@ -43,10 +43,12 @@
       </div>
       <hr class="my-0.5" v-if="index !== holidays.length - 1" />
     </div>
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <div v-if="holidays?.length === 0" class="text-center p-4 text-ink-gray-5">
       {{ __("No items in the list") }}
     </div>
   </div>
+  <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
   <Button
     variant="subtle"
     @click="addHoliday"
@@ -64,6 +66,7 @@
     }"
   >
     <template #body-content>
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <div v-if="!props.holidayData.from_date || !props.holidayData.to_date">
         <div class="text-center p-4 text-ink-gray-5">
           {{ __("Please select start and end date first") }}
@@ -71,6 +74,7 @@
       </div>
       <div v-else class="flex flex-col gap-4">
         <div class="flex flex-col gap-1.5">
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <FormLabel :label="__('Day')" required />
           <Select
             :options="availableWorkDays"
@@ -79,8 +83,10 @@
           />
         </div>
         <div class="flex flex-col gap-1.5">
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <FormLabel :label="__('Repetition')" required />
           <div class="grid grid-cols-2 gap-2 mt-2">
+            <!-- //// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these repetition checkboxes; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
             <Checkbox
               v-model="recurringHolidayData.repetition.all"
               :label="__('Every week')"
@@ -116,6 +122,7 @@
               :label="__('Every fifth week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice ▲▲▲ -->
           </div>
         </div>
       </div>
@@ -144,6 +151,7 @@ import weekday from "dayjs/plugin/weekday";
 import { Checkbox, Dropdown, FormLabel, Select, toast } from "frappe-ui";
 import { computed, ref } from "vue";
 import { getRepetitionText } from "./utils";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 dayjs.extend(weekday);
@@ -177,6 +185,7 @@ const props = defineProps({
   },
 });
 
+//// Neoffice — wrapped in __() so the French catalogue can translate these column labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const columns = [
   {
     label: __('Day'),
@@ -188,6 +197,7 @@ const columns = [
   },
 ];
 
+//// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these weekday labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const workDays = ref([
   {
     label: __('Monday'),
@@ -218,7 +228,9 @@ const workDays = ref([
     value: "Sunday",
   },
 ]);
+//// Neoffice ▲▲▲
 
+//// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const dropdownOptions = (holiday: any) => [
   {
     label: __('Edit'),

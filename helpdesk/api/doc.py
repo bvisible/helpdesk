@@ -58,9 +58,14 @@ def get_list_data(
         rows = frappe.parse_json(rows)
 
     if not columns:
+        # //// Neoffice — fallback columns wrapped in _() (97629bb44 "fix(i18n):
+        # //// the list columns, sort options and filters could not be
+        # //// translated at all"): a doctype with no default_list_data() still
+        # //// showed a bare English header.
         columns = [
             {"label": _("Name"), "type": "Data", "key": "name", "width": "16rem"},
             {
+                # //// Neoffice — see the marker above: label wrapped in _()
                 "label": _("Last Modified"),
                 "type": "Datetime",
                 "key": "modified",
@@ -75,9 +80,16 @@ def get_list_data(
     if is_default:
         default_view = default_view_exists(doctype)
         if not default_view:
+            # //// Neoffice — contact_default_columns() / call_log_default_columns()
+            # //// used to be module-level constants evaluated at import, which
+            # //// would have pinned the translation to whichever language loaded
+            # //// the worker first; both are functions now so each caller gets
+            # //// its own language (97629bb44 "fix(i18n): the list columns, sort
+            # //// options and filters could not be translated at all").
             if doctype == "Contact":
                 columns = contact_default_columns()
             elif doctype == "TP Call Log":
+                # //// Neoffice — see the marker above: function, not a constant
                 columns = call_log_default_columns()
             elif hasattr(_list, "default_list_data"):
                 columns = (
@@ -134,16 +146,22 @@ def get_list_data(
         if field.label and field.fieldname
     ]
 
+    # //// Neoffice — every label below wrapped in _() (97629bb44 "fix(i18n):
+    # //// the list columns, sort options and filters could not be translated
+    # //// at all"): these standard fields reached the SPA as bare English
+    # //// literals same as the doctype-specific columns above.
     std_fields = [
         {"label": _("Name"), "type": "Data", "value": "name"},
         {"label": _("Created On"), "type": "Datetime", "value": "creation"},
         {"label": _("Last Modified"), "type": "Datetime", "value": "modified"},
         {
+            # //// Neoffice — see the marker above: label wrapped in _()
             "label": _("Modified By"),
             "type": "Link",
             "value": "modified_by",
             "options": "User",
         },
+        # //// Neoffice — see the marker above: labels wrapped in _()
         {"label": _("Assigned To"), "type": "Text", "value": "_assign"},
         {"label": _("Owner"), "type": "Link", "value": "owner", "options": "User"},
     ]
@@ -232,6 +250,9 @@ def get_list_data(
         "data": data,
         "columns": translate_labels(columns),
         "rows": rows,
+        # //// Neoffice — see the block marker above: same translate_labels()
+        # //// pass, scoped to HD Ticket because that is the only doctype
+        # //// whose `fields` this endpoint returns to the caller.
         "fields": translate_labels(fields) if doctype == "HD Ticket" else [],
         "total_count": frappe.get_list(doctype, fields=[COUNT_NAME], filters=filters)[
             0
@@ -251,6 +272,7 @@ def get_filterable_fields(
     doctype: str,
     show_customer_portal_fields: bool = False,
     ignore_team_restrictions: bool = False,
+    # //// Neoffice — see the block marker above: whitelisted wrapper translates
 ):
     return translate_labels(
         _get_filterable_fields(
@@ -411,6 +433,7 @@ def sort_options(doctype: str, show_customer_portal_fields: bool = False):
     if show_customer_portal_fields:
         fields = get_customer_portal_fields(doctype, fields)
 
+    # //// Neoffice — see the note below: sort menu labels translated
     standard_fields = [
         {"label": _("Name"), "value": "name"},
         {"label": _("Created On"), "value": "creation"},
@@ -433,6 +456,10 @@ def get_quick_filters(doctype: str, show_customer_portal_fields: bool = False):
     meta = frappe.get_meta(doctype)
     fields = [field for field in meta.fields if field.in_standard_filter]
     quick_filters = []
+    # //// Neoffice — label wrapped in _() (97629bb44 "fix(i18n): the list
+    # //// columns, sort options and filters could not be translated at all"):
+    # //// the quick filters' own ID field showed English next to an
+    # //// already-translated field label.
     name_filter = {"label": _("ID"), "name": "name", "type": "Data"}
     if doctype == "Contact":
         quick_filters.append(name_filter)
@@ -527,10 +554,16 @@ def handle_default_view(doctype, _list, show_customer_portal_fields):
     rows = frappe.parse_json(rows)
 
     if not columns:
+        # //// Neoffice — contact_default_columns() / call_log_default_columns()
+        # //// are functions, not module-level constants, so each caller's
+        # //// _()-wrapped labels resolve in their own language (97629bb44
+        # //// "fix(i18n): the list columns, sort options and filters could not
+        # //// be translated at all").
         if doctype == "Contact":
             columns = contact_default_columns()
             rows = ["name", "email_id", "creation"]
         elif doctype == "TP Call Log":
+            # //// Neoffice — see the marker above: function, not a constant
             columns = call_log_default_columns()
             rows = ["name", "caller", "receiver", "creation"]
         else:

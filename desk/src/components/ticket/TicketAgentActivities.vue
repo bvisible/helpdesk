@@ -128,6 +128,7 @@ import FeedbackBox from "../ticket-agent/FeedbackBox.vue";
 import CommentBox from "@/components/CommentBox.vue";
 import EmailArea from "@/components/EmailArea.vue";
 import HistoryBox from "@/components/HistoryBox.vue";
+//// Neoffice — added import: __() used by the i18n wraps below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -170,6 +171,7 @@ const emptyText = computed(() => {
   if (props.tab === "comment") return __("No comments found");
   if (props.tab === "call") return __("No calls made");
 
+  //// Neoffice — see the block marker above: branches on tab, not title
   return __("No activity found");
 });
 
@@ -178,6 +180,7 @@ const emptyTextIcon = computed(() => {
   let icon = ActivityIcon;
   if (props.tab === "email") {
     icon = EmailIcon;
+  //// Neoffice — see the block marker above: identity, not display label
   } else if (props.tab === "comment") {
     icon = CommentIcon;
   } else if (props.tab === "call") {

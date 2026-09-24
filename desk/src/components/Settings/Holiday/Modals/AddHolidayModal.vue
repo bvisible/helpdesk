@@ -9,8 +9,10 @@
   >
     <template #body-content>
       <div class="flex flex-col gap-4 mt-4">
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div class="flex flex-col gap-1.5">
           <FormLabel :label="__('Date')" required />
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <DatePicker
             :value="dayjs(dialog.holiday_date).format('MM-DD-YYYY')"
             @update:model-value="dialog.holiday_date = $event"
@@ -24,6 +26,7 @@
           />
           <ErrorMessage :message="errors.holiday_date" />
         </div>
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div class="flex flex-col gap-1.5">
           <FormControl
             :type="'textarea'"

@@ -1,4 +1,5 @@
 <template>
+  <!-- //// Neoffice — wrapped in __(): one of the three remaining attributes held out of the mechanical pass because of this file's interpolated warning sentence, wrapped by hand (41fb04e59 "fix(i18n): finish the SPA pass — my own script had read only a fragment of each template") -->
   <Dialog
     :options="{
       title: __('Merge with another category'),
@@ -44,9 +45,11 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+//// Neoffice — added `computed`: needed by the warning computed below, which keeps the category-name interpolation translatable (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { computed, ref } from "vue";
 import { Dialog } from "frappe-ui";
 import { Link } from "@/components";
+//// Neoffice — added import: __() used by the wraps in this file (41fb04e59 "fix(i18n): finish the SPA pass — my own script had read only a fragment of each template")
 import { __ } from "@/translation";
 defineProps<{
   categoryId: string;

@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col">
     <LayoutHeader>
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <template #left-header>
         <div class="text-lg font-medium text-ink-gray-9">{{ __("Call Logs") }}</div>
       </template>
@@ -47,6 +48,7 @@ import CallLogDetailModal from "./CallLogDetailModal.vue";
 import CallLogModal from "./CallLogModal.vue";
 import { statusColorMap, statusLabelMap } from "./utils";
 import { PhoneIcon } from "@/components/icons";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const showCallLogModal = ref(false);
@@ -60,6 +62,7 @@ const options = computed(() => {
     doctype: "TP Call Log",
     selectable: true,
     showSelectBanner: true,
+    //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     emptyState: {
       title: __('No Call Logs Found'),
       icon: PhoneIcon,
@@ -135,6 +138,7 @@ function openCallLog(id: string): void {
   showCallLogDetailModal.value = true;
 }
 
+//// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 usePageMeta(() => {
   return {
     title: __('Call Logs'),

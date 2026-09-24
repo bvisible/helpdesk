@@ -6,6 +6,7 @@
     }"
   >
     <template #body-content>
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <div class="mb-1.5 block text-base text-ink-gray-5">{{ __("View Name") }}</div>
       <div class="flex gap-2">
         <IconPicker v-model="view.icon" v-slot="{ togglePopover }">
@@ -16,6 +17,7 @@
             @click="togglePopover"
           />
         </IconPicker>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <FormControl
           class="flex-1"
           size="md"

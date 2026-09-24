@@ -74,6 +74,7 @@ import { Button, Checkbox, Dropdown, Popover } from "frappe-ui";
 import { inject, ref } from "vue";
 import EditResponseResolutionModal from "./Modals/EditResponseResolutionModal.vue";
 import { formatTimeHMS } from "./utils";
+//// Neoffice — added import: __() used by the i18n wraps below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -104,6 +105,7 @@ const priorityOptions = inject<Array<any>>("priorityOptions");
 
 const dropdownOptions = [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Edit'),
     onClick: () => editItem(),
     icon: "edit",

@@ -112,6 +112,10 @@ import { ITicket } from "./symbols";
 import TicketConversation from "./TicketConversation.vue";
 import TicketCustomerTemplateFields from "./TicketCustomerTemplateFields.vue";
 import TicketFeedback from "./TicketFeedback.vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// label translations (71a5669d9 "fix(i18n): 341 visible strings of the
+// //// SPA never went through __()").
 import { __ } from "@/translation";
 const TicketTextEditor = defineAsyncComponent(
   () => import("./TicketTextEditor.vue")
