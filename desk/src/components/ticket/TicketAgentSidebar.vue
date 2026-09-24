@@ -61,6 +61,7 @@
 import { Ticket } from "@/types";
 import { copyToClipboard } from "@/utils";
 import { computed, ref } from "vue";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import LucideMerge from "~icons/lucide/merge";
 import TicketAgentContact from "./TicketAgentContact.vue";
 import TicketAgentDetails from "./TicketAgentDetails.vue";

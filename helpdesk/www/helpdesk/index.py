@@ -98,6 +98,7 @@ def get_boot():
                 "user": frappe.db.get_value("User", frappe.session.user, "time_zone")
                 or get_system_timezone(),
             },
+            # //// Neoffice — upstream's "lang": frappe.local.lang stood here; ours is above, with the system-language fallback (see its marker).
             "dir": "rtl" if is_rtl() else "ltr",
         }
     )

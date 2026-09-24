@@ -143,6 +143,7 @@ import {
   toast,
 } from "frappe-ui";
 import { computed, inject, onUnmounted, ref, watch } from "vue";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import { disableSettingModalOutsideClick } from "../settingsModal";
 import PreviewDialog from "./components/PreviewDialog.vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";

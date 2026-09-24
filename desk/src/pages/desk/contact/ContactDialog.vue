@@ -88,6 +88,7 @@ import {
 import { useOnboarding } from "frappe-ui/frappe";
 import type { Ref } from "vue";
 import { computed, ref } from "vue";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import zod from "zod";
 
 import Link from "@/components/frappe-ui/Link.vue";

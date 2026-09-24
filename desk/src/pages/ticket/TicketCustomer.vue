@@ -93,6 +93,7 @@ import { useScreenSize } from "@/composables/screen";
 
 import { useConfigStore } from "@/stores/config";
 import { globalStore } from "@/stores/globalStore";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import { useTicketStatusStore } from "@/stores/ticketStatus";
 import { isContentEmpty, isCustomerPortal, uploadFunction } from "@/utils";
 import {

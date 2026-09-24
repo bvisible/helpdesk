@@ -221,6 +221,7 @@ import {
 } from "./layoutSettings";
 
 import { useShortcut } from "@/composables/shortcuts";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import { useTelephonyStore } from "@/stores/telephony";
 import LucideArrowLeftFromLine from "~icons/lucide/arrow-left-from-line";
 import LucideArrowRightFromLine from "~icons/lucide/arrow-right-from-line";

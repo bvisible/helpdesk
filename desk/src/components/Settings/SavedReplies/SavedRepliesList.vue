@@ -213,6 +213,7 @@ import {
   LoadingIndicator,
   toast,
 } from "frappe-ui";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import { computed, inject, ref, Ref, watch } from "vue";
 import { ConfirmDelete } from "@/utils";
 import SettingsLayoutBase from "../../layouts/SettingsLayoutBase.vue";
