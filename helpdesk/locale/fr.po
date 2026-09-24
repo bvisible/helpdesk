@@ -721,7 +721,7 @@ msgstr "Conditions d'affectation"
 #: helpdesk/helpdesk/doctype/hd_team/hd_team.json
 #: helpdesk/helpdesk/workspace/helpdesk/helpdesk.json
 msgid "Assignment Rule"
-msgstr "Règle d&#39;assignation"
+msgstr "Règle d'assignation"
 
 #. Label of a Section Break field in DocType 'HD Settings'
 #: Rules/AssignmentRulesList.vue:5 desk/src/components/Settings/Assignment
