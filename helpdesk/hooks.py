@@ -86,9 +86,22 @@ doc_events = {
     # //// helpdesk Customers screen is empty on an instance that runs both, and the
     # //// portal shows a contact only the tickets they raised themselves (the
     # //// permission query filters on customer). See overrides/customer.py.
+    # //// Neoffice — upstream's ERPNext integration (off unless ERPNext HD Settings is
+    # //// enabled) runs here as doc_events instead of its Customer class override, which
+    # //// the theme's own Customer class would erase or be erased by. Listed first: when
+    # //// it is enabled it also sets the back-link on the Customer.
     "Customer": {
-        "after_insert": "helpdesk.overrides.customer.sync_to_hd_customer",
-        "on_update": "helpdesk.overrides.customer.sync_to_hd_customer",
+        "after_insert": [
+            "helpdesk.integrations.erpnext.customer.after_insert",
+            "helpdesk.overrides.customer.sync_to_hd_customer",
+        ],
+        "on_update": [
+            "helpdesk.integrations.erpnext.customer.on_update",
+            "helpdesk.overrides.customer.sync_to_hd_customer",
+        ],
+        "before_rename": "helpdesk.integrations.erpnext.customer.before_rename",
+        "after_rename": "helpdesk.integrations.erpnext.customer.after_rename",
+        "on_trash": "helpdesk.integrations.erpnext.customer.on_trash",
     },
     "Assignment Rule": {
         "on_trash": "helpdesk.extends.assignment_rule.on_assignment_rule_trash",

@@ -64,6 +64,13 @@ class TestHDTeam(FrappeTestCase):
         self.assertNotIn(agent2, ar_users)
 
     def test_weighted_users_synced(self):
+        # //// Neoffice — skipped on a frappe whose Assignment Rule has no
+        # //// weighted_users table: the "Weighted Distribution" rule came to frappe v15
+        # //// after the version our fork is based on (15.89), so no production path on
+        # //// our fleet can reach it (HD Team.sync_users only reads weighted_users when
+        # //// the rule is "Weighted Distribution"). Drop this once frappe is upgraded (#138).
+        if not frappe.get_meta("Assignment Rule").has_field("weighted_users"):
+            self.skipTest("frappe has no Weighted Distribution assignment rule")
         agent1 = make_agent("wd_sync_1@example.com")
         agent2 = make_agent("wd_sync_2@example.com")
         agent3 = make_agent("wd_sync_3@example.com")

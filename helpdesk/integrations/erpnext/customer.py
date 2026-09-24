@@ -75,3 +75,69 @@ class CustomCustomer(Customer):
             # delete this Customer again (it's already being deleted).
             frappe.db.set_value("HD Customer", hd_customer, "erpnext_customer", None)
             frappe.delete_doc("HD Customer", hd_customer, ignore_permissions=True)
+
+
+# //// Neoffice ▼▼▼ — the same behaviour as CustomCustomer, as doc_events.
+# //// The class above is no longer registered in override_doctype_class (see
+# //// hooks.py): neoffice_theme overrides the Customer class too, and frappe keeps
+# //// one override per doctype, the last app installed winning in silence. Doc
+# //// events never erase one another, so the integration keeps working next to the
+# //// theme's class. Upstream made the same move later (main 1.30:
+# //// helpdesk.integrations.erpnext.customer.after_insert & co. in doc_events):
+# //// at that merge, take upstream's functions and drop these.
+def after_insert(doc, method=None):
+    if not should_sync() or doc.flags.get("ignore_erpnext_sync"):
+        return
+
+    if frappe.db.exists("HD Customer", {"erpnext_customer": doc.name}):
+        return
+
+    hd_doc = frappe.get_doc(
+        {
+            "doctype": "HD Customer",
+            "customer_name": doc.customer_name,
+            "erpnext_customer": doc.name,
+            "image": doc.image,
+        }
+    )
+    hd_doc.flags.ignore_erpnext_sync = True
+    hd_doc.insert(ignore_permissions=True)
+    set_links(doc.name, hd_doc.name)
+
+
+def on_update(doc, method=None):
+    if not should_sync() or doc.flags.get("ignore_erpnext_sync"):
+        return
+
+    if doc.has_value_changed("image"):
+        frappe.db.set_value(
+            "HD Customer",
+            {"erpnext_customer": doc.name},
+            "image",
+            doc.image,
+        )
+
+
+def before_rename(doc, method, olddn, newdn, merge=False):
+    validate_rename_conflict("Customer", olddn, newdn, merge)
+
+
+def after_rename(doc, method, olddn, newdn, merge=False):
+    cascade_rename("Customer", olddn, newdn, merge)
+
+
+def on_trash(doc, method=None):
+    if in_cascade() or not should_sync():
+        return
+
+    hd_customer = frappe.db.get_value(
+        "HD Customer", {"erpnext_customer": doc.name}, "name"
+    )
+    if hd_customer:
+        # Clear the back-link first so HDCustomer.on_trash won't try to
+        # delete this Customer again (it's already being deleted).
+        frappe.db.set_value("HD Customer", hd_customer, "erpnext_customer", None)
+        frappe.delete_doc("HD Customer", hd_customer, ignore_permissions=True)
+
+
+# //// Neoffice ▲▲▲
