@@ -1,7 +1,9 @@
 <template>
-  <div class="flex items-center cursor-pointer hover:bg-gray-50 rounded">
+  <div
+    class="flex items-center cursor-pointer hover:bg-surface-menu-bar rounded"
+  >
     <div
-      class="w-full pl-2 flex flex-col justify-center h-14"
+      class="w-full ps-2 flex flex-col justify-center h-14"
       @click="holidayListActiveScreen = { screen: 'view', data: data }"
     >
       <div class="text-base text-ink-gray-7 font-medium">{{ data.name }}</div>
@@ -12,7 +14,7 @@
         {{ data.description }}
       </div>
     </div>
-    <div class="flex justify-between items-center pr-2">
+    <div class="flex justify-between items-center pe-2">
       <div>
         <Dropdown placement="right" :options="dropdownOptions">
           <Button
@@ -33,7 +35,8 @@
         <FormControl
           :label="__('New Holiday List Name')"
           type="text"
-          v-model="duplicateDialog.name"
+          v-model="duplicateDialog.newName"
+          maxlength="100"
         />
       </div>
     </template>
@@ -50,12 +53,20 @@
   </Dialog>
 </template>
 <script setup lang="ts">
-import { Button, createResource, Dropdown, toast } from "frappe-ui";
+import {
+  Button,
+  Dialog,
+  createResource,
+  Dropdown,
+  FormControl,
+  toast,
+} from "frappe-ui";
 import { inject, ref } from "vue";
 import { holidayListActiveScreen } from "@/stores/holidayList";
 import { ConfirmDelete } from "@/utils";
-import { HolidayListResourceSymbol } from "@/types";
 import { __ } from "@/translation";
+import { HolidayListResourceSymbol } from "@/types";
+import { HDServiceHolidayList } from "@/types/doctypes";
 
 const props = defineProps({
   data: {
@@ -68,6 +79,7 @@ const holidayList = inject(HolidayListResourceSymbol);
 
 const duplicateDialog = ref({
   show: false,
+  newName: "",
   name: "",
 });
 
@@ -77,8 +89,13 @@ const dropdownOptions = [
   {
     label: __("Duplicate"),
     onClick: () => {
-      duplicateDialog.value.show = true;
-      duplicateDialog.value.name = props.data.name + " (Copy)";
+      duplicateDialog.value = {
+        show: true,
+        //// Neoffice — upstream glued " (Copy)" in plain English to the proposed name; one msgid now,
+        //// so the French catalogue reaches it (same pass as 71a5669d9). No code keys on the suffix.
+        newName: __("{0} (Copy)", props.data.name),
+        name: props.data.name,
+      };
     },
     icon: "copy",
   },
@@ -90,24 +107,38 @@ const dropdownOptions = [
 
 const duplicate = () => {
   createResource({
-    url: "helpdesk.api.holiday_list.duplicate_holiday_list",
+    url: "frappe.client.get",
     params: {
-      docname: props.data.name,
-      new_name: duplicateDialog.value.name,
+      doctype: "HD Service Holiday List",
+      name: duplicateDialog.value.name,
     },
-    onSuccess: (data) => {
-      holidayList.reload();
-      toast.success(__("Holiday list duplicated"));
-      duplicateDialog.value = {
-        show: false,
-        name: "",
-      };
-      setTimeout(() => {
-        holidayListActiveScreen.value = {
-          screen: "view",
-          data: data,
-        };
-      }, 250);
+    onSuccess: (data: HDServiceHolidayList) => {
+      createResource({
+        url: "frappe.client.insert",
+        params: {
+          doc: {
+            ...data,
+            holiday_list_name: duplicateDialog.value.newName,
+            name: duplicateDialog.value.newName,
+          },
+        },
+        auto: true,
+        onSuccess(newHolidayListData: HDServiceHolidayList) {
+          holidayList?.reload();
+          toast.success(__("Holiday list duplicated successfully."));
+          duplicateDialog.value = {
+            show: false,
+            newName: "",
+            name: "",
+          };
+          setTimeout(() => {
+            holidayListActiveScreen.value = {
+              screen: "view",
+              data: newHolidayListData,
+            };
+          }, 250);
+        },
+      });
     },
     auto: true,
   });
@@ -119,9 +150,9 @@ const deleteHolidayList = () => {
     return;
   }
 
-  holidayList.delete.submit(props.data.name, {
+  holidayList?.delete.submit(props.data.name, {
     onSuccess: () => {
-      toast.success(__("Holiday list deleted"));
+      toast.success(__("Holiday list deleted successfully."));
     },
   });
 };

@@ -5,7 +5,7 @@
          //// the desk to Helpdesk without the navigation changing shape. Falls back
          //// to upstream's <Sidebar /> on its own if the bundle cannot load. -->
     <NeoCockpitHDSidebar />
-    <div class="flex-1 flex flex-col h-full overflow-auto">
+    <div class="flex-1 flex flex-col h-full overflow-auto relative">
       <AppHeader />
       <slot />
     </div>

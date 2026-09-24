@@ -59,7 +59,7 @@
         :class="(subject.length >= 2 || description.length) && 'gap-5'"
       >
         <div class="flex flex-col gap-2">
-          <span class="block text-sm text-gray-700">
+          <span class="block text-sm text-ink-gray-6">
             {{ __("Subject") }}
             <span class="place-self-center text-red-500"> * </span>
           </span>
@@ -67,6 +67,7 @@
             v-model="subject"
             type="text"
             :placeholder="__('A short description')"
+            maxlength="140"
           />
         </div>
         <SearchArticles
@@ -77,7 +78,7 @@
         <div v-if="isCustomerPortal">
           <h4
             v-show="subject.length <= 2 && description.length === 0"
-            class="text-p-sm text-gray-500 ml-1"
+            class="text-p-sm text-ink-gray-4 ms-1"
           >
             {{ __("Please enter a subject to continue") }}
           </h4>
@@ -142,14 +143,15 @@ import {
 import { useAuthStore } from "@/stores/auth";
 import { globalStore } from "@/stores/globalStore";
 import { capture } from "@/telemetry";
+import { __ } from "@/translation";
 import { Field } from "@/types";
 import { isCustomerPortal, uploadFunction } from "@/utils";
 import {
   Breadcrumbs,
   Button,
   call,
-  createResource,
   createListResource,
+  createResource,
   FormControl,
   usePageMeta,
 } from "frappe-ui";
@@ -158,7 +160,6 @@ import sanitizeHtml from "sanitize-html";
 import { computed, defineAsyncComponent, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SearchArticles from "../../components/SearchArticles.vue";
-import { __ } from "@/translation";
 
 const TicketTextEditor = defineAsyncComponent(
   () => import("./TicketTextEditor.vue")
@@ -264,7 +265,9 @@ const ticket = createResource({
     const toVerify = [...fields, "subject", "description"];
     for (const field of toVerify) {
       if (!params.doc[field.fieldname || field]) {
-        return `${field.label || field} is required`;
+        //// Neoffice — upstream wrote it in plain English (a template literal); one msgid with {0}
+        //// for the field label, translated like the label itself (same pass as 71a5669d9)
+        return __("{0} is required", __(field.label || field));
       }
     }
   },
@@ -279,18 +282,6 @@ const ticket = createResource({
       updateOnboardingStep("create_first_ticket", true, false, () =>
         localStorage.setItem("firstTicket", data.name)
       );
-    }
-    // only capture telemetry for customer portal
-    if (isCustomerPortal.value) {
-      capture("new_ticket_submitted", {
-        data: {
-          user: userID,
-          ticketID: data.name,
-          subject: subject.value,
-          description: description.value,
-          customFields: templateFields,
-        },
-      });
     }
   },
 });

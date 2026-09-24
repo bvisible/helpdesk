@@ -1,4 +1,5 @@
 import { createResource } from "frappe-ui";
+//// Neoffice — added: __() import so this store's strings can enter the French catalogue; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
 import { __ } from "@/translation";
 
 // Title
@@ -15,8 +16,11 @@ export const newArticle = createResource({
     };
   },
   validate({ doc }) {
-    if (!doc.title) throw "Title is required";
-    if (!doc.content) throw "Content is required";
+    //// Neoffice — upstream wrote these validation messages in plain English (shown to the person who
+    //// submits); wrapped so the French catalogue reaches them (same pass as 71a5669d9). They run at
+    //// submit time, not at import.
+    if (!doc.title) throw __("Title is required");
+    if (!doc.content) throw __("Content is required");
   },
 });
 
@@ -36,7 +40,8 @@ export const deleteArticles = createResource({
     };
   },
   validate({ articles }) {
-    if (!articles) throw "Articles are required";
+    //// Neoffice — validation message wrapped (see newArticle above)
+    if (!articles) throw __("Articles are required");
   },
 });
 
@@ -49,14 +54,16 @@ export const newCategory = createResource({
     };
   },
   validate({ title }) {
-    if (!title) throw "Title is required";
+    //// Neoffice — validation message wrapped (see newArticle above)
+    if (!title) throw __("Title is required");
   },
 });
 
 export const updateCategoryTitle = createResource({
   url: "frappe.client.set_value",
   validate({ name, value }) {
-    if (!value) throw "Title is required";
+    //// Neoffice — validation message wrapped (see newArticle above)
+    if (!value) throw __("Title is required");
   },
 });
 
@@ -68,6 +75,7 @@ export const moveToCategory = createResource({
       articles,
     };
   },
+  //// Neoffice — wrapped in __() so the French catalogue can translate it; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
   validate({ category, articles }) {
     if (!category) throw { message: __('Category is required') };
     if (!articles) throw { message: __('Articles are required') };
@@ -82,6 +90,7 @@ export const mergeCategory = createResource({
       target,
     };
   },
+  //// Neoffice — wrapped in __() so the French catalogue can translate it; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
   validate({ source, target }) {
     if (!source) throw { message: __('Category is required') };
     if (!target) throw { message: __('Target is required') };
@@ -122,3 +131,4 @@ export const incrementView = createResource({
     article,
   }),
 });
+

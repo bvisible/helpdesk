@@ -1,0 +1,2 @@
+import{a0 as t}from"./index-ca9c61e0.js";const e={inheritAttrs:!1,render(){return t("svg",{xmlns:"http://www.w3.org/2000/svg",width:"24",height:"24",viewBox:"0 0 24 24",fill:"none",stroke:"currentColor","stroke-width":"1.5","stroke-linecap":"round","stroke-linejoin":"round",...this.$attrs,innerHTML:'<path d="M16 2v2" /><path d="M17.915 22a6 6 0 0 0-12 0" /><path d="M8 2v2" /><circle cx="12" cy="12" r="4" /><rect x="3" y="4" width="18" height="18" rx="2" />'})}};export{e as L};
+//# sourceMappingURL=contact-2-a57583f8.js.map

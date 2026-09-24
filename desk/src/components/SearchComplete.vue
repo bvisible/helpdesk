@@ -1,4 +1,5 @@
 <template>
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
   <Autocomplete
     :placeholder="__('Select an option')"
     :options="options"

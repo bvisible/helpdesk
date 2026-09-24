@@ -9,14 +9,14 @@
       <p class="text-p-sm max-w-md text-ink-gray-6">
         {{
           __(
-            "SLAs align your team and customers with defined timelines for a reliable experience."
+            "SLAs align your team and customers with defined timelines for a reliable experience. Learn more about SLA "
           )
         }}
         <a
           href="https://docs.frappe.io/helpdesk/service-level-agreement"
           target="_blank"
           class="underline"
-          >{{ __("Learn more about SLA") }}
+          >{{ __("here.") }}
         </a>
       </p>
     </template>
@@ -27,6 +27,7 @@
         variant="solid"
         @click="goToNew()"
         icon-left="plus"
+        class="rtl:flex-row-reverse"
       />
     </template>
     <template
@@ -39,17 +40,17 @@
           @input="slaSearchQuery = $event"
           :placeholder="__('Search')"
           type="text"
-          class="bg-white hover:bg-white focus:ring-0 border-outline-gray-2"
+          class="focus:ring-0 border-outline-gray-2"
           icon-left="search"
           debounce="300"
-          inputClass="p-4 pr-12"
+          inputClass="p-4 pe-12 rtl:pr-8"
         />
         <Button
           v-if="slaSearchQuery"
           icon="x"
           variant="ghost"
           @click="slaSearchQuery = ''"
-          class="absolute right-1 top-1/2 -translate-y-1/2"
+          class="absolute end-1 top-1/2 -translate-y-1/2"
         />
       </div>
     </template>

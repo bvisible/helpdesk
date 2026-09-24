@@ -12,10 +12,16 @@
       </template>
       <template #right-header>
         <RouterLink
+          class="inline-flex"
           :to="{ name: isCustomerPortal ? 'TicketNew' : 'TicketAgentNew' }"
         >
           <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-          <Button :label="__('Create')" theme="gray" variant="solid">
+          <Button
+            class="rtl:flex-row-reverse"
+            :label="__('Create')"
+            theme="gray"
+            variant="solid"
+          >
             <template #prefix>
               <LucidePlus class="h-4 w-4" />
             </template>
@@ -26,12 +32,6 @@
     <ListViewBuilder
       ref="listViewRef"
       :options="options"
-      @empty-state-action="
-        () =>
-          $router.push({
-            name: isCustomerPortal ? 'TicketNew' : 'TicketAgentNew',
-          })
-      "
       @row-click="
         (row) =>
           $router.push({
@@ -52,18 +52,19 @@
       v-model="viewDialog"
       @update="(view, action) => handleView(view, action)"
     />
+    <BulkReplyModal
+      v-model="showBulkReplyModal"
+      :selections="listSelections"
+      @success="listViewRef?.unselectAll()"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { LayoutHeader, ListViewBuilder } from "@/components";
-import {
-  EditIcon,
-  IndicatorIcon,
-  PinIcon,
-  TicketIcon,
-  UnpinIcon,
-} from "@/components/icons";
+import { EditIcon, PinIcon, TicketIcon, UnpinIcon } from "@/components/icons";
+import IndicatorIcon from "@/components/icons/IndicatorIcon.vue";
+import BulkReplyModal from "@/components/ticket-agent/BulkReplyModal.vue";
 import ExportModal from "@/components/ticket/ExportModal.vue";
 import ViewBreadcrumbs from "@/components/ViewBreadcrumbs.vue";
 import ViewModal from "@/components/ViewModal.vue";
@@ -72,12 +73,12 @@ import { dayjs } from "@/dayjs";
 import { useAuthStore } from "@/stores/auth";
 import { globalStore } from "@/stores/globalStore";
 import { useTicketStatusStore } from "@/stores/ticketStatus";
+import { __ } from "@/translation";
 import { View } from "@/types";
 import { getIcon, isCustomerPortal } from "@/utils";
 import { Badge, FeatherIcon, toast, Tooltip, usePageMeta } from "frappe-ui";
 import { computed, h, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { __ } from "@/translation";
 
 const router = useRouter();
 const route = useRoute();
@@ -90,10 +91,16 @@ const {
   findView,
   updateView,
   deleteView,
+  standardViews,
 } = useView("HD Ticket");
 
+const activeView = computed(() => findView(route.query.view as string).value);
+const hasActiveFilters = computed(
+  () => Object.keys(listViewRef.value?.list?.params?.filters || {}).length > 0
+);
+
 const { $dialog, $socket } = globalStore();
-const { isManager } = useAuthStore();
+const { isManager, userId } = useAuthStore();
 
 const listViewRef = ref(null);
 const showExportModal = ref(false);
@@ -103,7 +110,18 @@ const showExportModal = ref(false);
 const { getStatus, statusLabel } = useTicketStatusStore();
 
 const listSelections = ref(new Set());
+
+const showBulkReplyModal = ref(false);
+
 const selectBannerActions = [
+  {
+    label: __("Bulk Reply"),
+    icon: "corner-up-left",
+    onClick: (selections: Set<string>) => {
+      listSelections.value = new Set(selections);
+      showBulkReplyModal.value = true;
+    },
+  },
   {
     label: __("Export"),
     icon: "download",
@@ -114,18 +132,31 @@ const selectBannerActions = [
   },
 ];
 
-const options = {
+const options = computed(() => ({
   doctype: "HD Ticket",
   columnConfig: {
+    subject: {
+      custom: ({ row, item }) => {
+        const seenBy = row._seen ? JSON.parse(row._seen) : [];
+        const isSeen = seenBy.includes(userId || "");
+        return h(
+          "span",
+          {
+            class: ["truncate flex-1", !isSeen && "font-semibold"],
+          },
+          item
+        );
+      },
+    },
     status: {
       custom: ({ item }) => {
         const status = getStatus(item);
-        //// Neoffice — the STATUS LABEL is displayed, so it goes through __(); the
-        //// VALUE stays raw because it is what HD Ticket.status stores and what the
-        //// filters send back. A default label ('Open', 'Replied') is in the merged
-        //// catalogue and turns French; a label an instance renamed is absent from it
-        //// and __() returns it unchanged, which is right — it is already in their
-        //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
+        //// Neoffice — the STATUS LABEL is displayed, so it goes through statusLabel(),
+        //// not a bare __(): the msgid "Open" is translated by several installed apps,
+        //// some of them as the verb, and the last app installed wins for the whole
+        //// site. statusLabel() asks for a qualified msgid no other app overrides and
+        //// returns a label an instance renamed unchanged (stores/ticketStatus.ts). The
+        //// VALUE stays raw: it is what HD Ticket.status stores and the filters send back.
         const label = statusLabel(
           isCustomerPortal.value
             ? status?.["label_customer"]
@@ -133,7 +164,7 @@ const options = {
         );
         return h(
           "div",
-          { class: "flex items-center space-x-2 justify-start w-full" },
+          { class: "flex items-center gap-x-2 justify-start w-full" },
           [
             h(IndicatorIcon, { class: status?.["parsed_color"] }),
             h("span", { class: "truncate flex-1" }, label),
@@ -144,7 +175,9 @@ const options = {
     agreement_status: {
       custom: ({ item }) => {
         return h(Badge, {
-          label: item,
+          //// Neoffice — the stored Select value ("Resolution Due", "Failed"...) was shown as is;
+          //// translated at display, the value itself still keys slaStatusColorMap below
+          label: __(item),
           theme: slaStatusColorMap[item],
           variant: "outline",
         });
@@ -162,17 +195,27 @@ const options = {
   showSelectBanner: true,
   selectBannerActions,
   emptyState: {
-    title: __("No Tickets Found"),
+    title: __("No tickets found"),
     icon: h(TicketIcon, {
       class: "h-10 w-10",
     }),
+    description:
+      activeView.value?.public || activeView.value?.pinned
+        ? __(
+            "No tickets found for this view. Try adjusting your filters or creating a new view."
+          )
+        : hasActiveFilters.value
+        ? __(
+            "No tickets found for the applied filters. Try adjusting or clearing your filters."
+          )
+        : undefined,
   },
   rowRoute: {
     name: isCustomerPortal.value ? "TicketCustomer" : "TicketAgent",
     prop: "ticketId",
   },
   hideColumnSetting: false,
-};
+}));
 
 function handle_response_by_field(row: any, item: string) {
   if (!row.first_responded_on && dayjs(item).isBefore(new Date())) {
@@ -247,6 +290,22 @@ async function exportRows(
   const order_by = list.params.order_by;
 
   let filters = { ...list.params.filters };
+  // Resolve `@me` filters to the current session user before export
+  Object.keys(filters).forEach((key) => {
+    const value = filters[key];
+
+    // Handle direct filter format: { owner: "@me" }
+    if (value === "@me") {
+      filters[key] = userId;
+      return;
+    }
+    if (!Array.isArray(value)) return;
+
+    // Handle all operator-based filter format: { owner: ["=", "@me"], _assign: ["LIKE", "%@me%"] }
+    filters[key] = value.map((entry) =>
+      entry === "@me" ? userId : entry === "%@me%" ? `%${userId}%` : entry
+    );
+  });
   let pageLength: number;
 
   if (export_all) {
@@ -258,7 +317,9 @@ async function exportRows(
     filters = JSON.stringify(filters);
   }
 
-  window.location.href = `/api/method/frappe.desk.reportview.export_query?file_format_type=${export_type}&title=HD Ticket&doctype=HD Ticket&fields=${fields}&filters=${filters}&order_by=${order_by}&page_length=${pageLength}&start=0&view=Report&with_comment_count=1`;
+  window.location.href = `/api/method/frappe.desk.reportview.export_query?file_format_type=${export_type}&title=HD Ticket&doctype=HD Ticket&fields=${fields}&filters=${encodeURIComponent(
+    filters
+  )}&order_by=${order_by}&page_length=${pageLength}&start=0&view=Report&with_comment_count=1`;
   reset();
   showExportModal.value = false;
 }
@@ -317,12 +378,20 @@ const dropdownOptions = computed(() => {
       items: parseViews(pinnedViews.value),
     });
   }
-  if (publicViews.value?.length !== 0) {
-    items.push({
-      group: __("Public Views"),
-      items: parseViews(publicViews.value),
-    });
-  }
+
+  const allPublicViews = [
+    ...(standardViews.value || []),
+    ...(publicViews.value || []),
+  ];
+
+  const uniquePublicViews = Array.from(
+    new Map(allPublicViews.map((v) => [v.name, v])).values()
+  );
+
+  items.push({
+    group: __("Public Views"),
+    items: parseViews(uniquePublicViews),
+  });
 
   items.push({
     group: __("Create View"),
@@ -344,6 +413,32 @@ const dropdownOptions = computed(() => {
 
 let selectedView: View | null = null;
 
+const toggleViewVisibility = (_view: any, title: string, message: string) => {
+  const newView: any = {
+    name: _view.name,
+    public: !_view.public,
+  };
+
+  if (_view.public) {
+    $dialog({
+      title,
+      message,
+      actions: [
+        {
+          label: __("Confirm"),
+          variant: "solid",
+          onClick({ close }: any) {
+            close();
+            updateView(newView);
+          },
+        },
+      ],
+    });
+  } else {
+    updateView(newView);
+  }
+};
+
 const viewActions = (view) => {
   const _view = findView(view.name).value;
 
@@ -356,7 +451,9 @@ const viewActions = (view) => {
           label: __("Duplicate"),
           icon: h(FeatherIcon, { name: "copy" }),
           onClick: () => {
-            viewDialog.view.label = _view.label + " (New)";
+            //// Neoffice — upstream glued " (New)" in plain English to the proposed view name; one
+            //// msgid now, so the French catalogue reaches it (same pass as 71a5669d9)
+            viewDialog.view.label = __("{0} (New)", _view.label);
             viewDialog.view.icon = _view.icon;
             viewDialog.view.name = _view.name;
             viewDialog.mode = "duplicate";
@@ -368,18 +465,7 @@ const viewActions = (view) => {
     },
   ];
   if (!_view.public || isManager) {
-    actions[0].items.push({
-      label: __("Edit"),
-      icon: h(EditIcon, { class: "h-4 w-4" }),
-      onClick: () => {
-        viewDialog.view.label = _view.label;
-        viewDialog.view.icon = _view.icon;
-        viewDialog.view.name = _view.name;
-        viewDialog.mode = "edit";
-        viewDialog.show = true;
-      },
-    });
-    if (!_view.public) {
+    if (!_view.public && !_view.is_standard) {
       actions[0].items.push({
         label: _view?.pinned ? __("Unpin View") : __("Pin View"),
         icon: h(_view?.pinned ? UnpinIcon : PinIcon, { class: "h-4 w-4" }),
@@ -392,85 +478,102 @@ const viewActions = (view) => {
         },
       });
     }
-    if (isManager && !isCustomerPortal.value) {
+    if (_view?.is_standard && isManager) {
       actions[0].items.push({
-        label: _view?.public ? __("Make Private") : __("Make Public"),
+        label: _view?.public ? __("Hide from sidebar") : __("Show in sidebar"),
         icon: h(FeatherIcon, {
-          name: _view?.public ? "lock" : "unlock",
+          name: _view?.public ? "eye-off" : "eye",
           class: "h-4 w-4",
         }),
         onClick: () => {
-          const newView = {
-            name: _view.name,
-            public: !_view.public,
-          };
-
-          if (_view.public) {
-            $dialog({
-              title: __("Make {0} private?", [_view.label]),
-              message: __(
-                "This view is currently public. Changing it to private will hide it for all the users."
-              ),
-              actions: [
-                {
-                  label: __("Confirm"),
-                  variant: "solid",
-                  onClick({ close }) {
-                    close();
-                    updateView(newView);
-                  },
-                },
-              ],
-            });
-          } else {
-            updateView(newView);
-          }
+          toggleViewVisibility(
+            _view,
+            __("Hide view from sidebar"),
+            __(
+              "{0} view is currently visible in the sidebar. Hiding it will remove it from the sidebar.",
+              [_view.label]
+            )
+          );
         },
       });
     }
-    actions.push({
-      group: __("Delete View"),
-      hideLabel: true,
-      items: [
-        {
-          label: __("Delete"),
-          icon: "trash-2",
+    if (!_view.is_standard) {
+      if (isManager && !isCustomerPortal.value) {
+        actions[0].items.push({
+          label: _view?.public ? __("Make Private") : __("Make Public"),
+          icon: h(FeatherIcon, {
+            name: _view?.public ? "lock" : "unlock",
+            class: "h-4 w-4",
+          }),
           onClick: () => {
-            $dialog({
-              title: __("Delete {0}?", [_view.label]),
-              message:
-                __("Are you sure you want to delete this view?") +
-                (_view.public
-                  ? " " +
-                    __(
-                      "This view is public, and will be removed for all users."
-                    )
-                  : ""),
-              actions: [
-                {
-                  label: __("Confirm"),
-                  variant: "solid",
-                  onClick({ close }) {
-                    if (route.query.view === _view.name) {
-                      router.push({
-                        name: isCustomerPortal.value
-                          ? "TicketsCustomer"
-                          : "TicketsAgent",
-                      });
-                    }
-                    deleteView(_view.name);
-                    handleSuccess(__("deleted"));
-                    close();
-                  },
-                },
-              ],
-            });
+            toggleViewVisibility(
+              _view,
+              __("Make view private"),
+              __(
+                "{0} view is currently public. Changing it to private will hide it for all the users.",
+                [_view.label]
+              )
+            );
           },
+        });
+      }
+      actions[0].items.push({
+        label: __("Edit"),
+        icon: h(EditIcon, { class: "h-4 w-4" }),
+        onClick: () => {
+          viewDialog.view.label = _view.label;
+          viewDialog.view.icon = _view.icon;
+          viewDialog.view.name = _view.name;
+          viewDialog.mode = "edit";
+          viewDialog.show = true;
         },
-      ],
-    });
+      });
+      actions.push({
+        group: __("Delete View"),
+        hideLabel: true,
+        items: [
+          {
+            label: __("Delete"),
+            icon: "trash-2",
+            theme: "red",
+            onClick: () => {
+              $dialog({
+                title: __("Delete {0}", [_view.label]),
+                message:
+                  __("Are you sure you want to delete this view?") +
+                  (_view.public
+                    ? " " +
+                      __(
+                        "This view is public, and will be removed for all users."
+                      )
+                    : ""),
+                actions: [
+                  {
+                    label: __("Confirm"),
+                    variant: "solid",
+                    iconLeft: "trash-2",
+                    theme: "red",
+                    onClick({ close }) {
+                      if (route.query.view === _view.name) {
+                        router.push({
+                          name: isCustomerPortal.value
+                            ? "TicketsCustomer"
+                            : "TicketsAgent",
+                        });
+                      }
+                      deleteView(_view.name);
+                      handleSuccess(__("deleted"));
+                      close();
+                    },
+                  },
+                ],
+              });
+            },
+          },
+        ],
+      });
+    }
   }
-
   return actions;
 };
 

@@ -3,16 +3,18 @@
     v-if="Boolean(articles.data?.length) && query.length > 2"
     class="rounded border p-4 text-base"
   >
-    <div class="mb-2 font-medium pl-2" v-if="!hideViewAll">
+    <div class="mb-2 font-medium ps-2" v-if="!hideViewAll">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       {{ __("These articles may already cover what you are looking for") }}
       <RouterLink
-        class="group cursor-pointer space-x-1 hover:text-gray-900"
+        class="group cursor-pointer space-x-1 hover:text-ink-gray-9"
         :to="{
           name: 'CustomerKnowledgeBase',
         }"
         target="_blank"
       >
-        <span class="text-xs underline">(View All)</span>
+        <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+        <span class="text-xs underline">{{ __("(View All)") }}</span>
       </RouterLink>
     </div>
     <dl
@@ -25,7 +27,7 @@
         class="rounded-md border-2 p-2 border-hidden hover:bg-surface-gray-2"
       >
         <RouterLink
-          class="group cursor-pointer hover:text-gray-900 flex flex-col gap-1"
+          class="group cursor-pointer hover:text-ink-gray-9 flex flex-col gap-1"
           :to="{
             name: 'ArticlePublic',
             params: {
@@ -39,7 +41,7 @@
           <dt class="font-base">{{ a.subject }} - {{ a.headings }}</dt>
           <!-- eslint-disable-next-line vue/no-v-html -->
           <dd
-            class="font-base text-p-sm text-gray-600 line-clamp-1"
+            class="font-base text-p-sm text-ink-gray-5 line-clamp-1"
             v-html="a.description"
           ></dd>
         </RouterLink>
@@ -54,8 +56,10 @@
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <p class="font-base">{{ __("No answers found") }}</p>
-      <span class="font-base text-p-sm text-gray-600 text-center"
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+      <span class="font-base text-p-sm text-ink-gray-5 text-center"
         >{{ __("Rephrase the question and try again with some keywords") }}</span
       >
     </div>
@@ -66,8 +70,10 @@
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <p class="font-base">{{ __("Searching...") }}</p>
-      <span class="font-base text-p-sm text-gray-600 text-center"
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+      <span class="font-base text-p-sm text-ink-gray-5 text-center"
         >{{ __("Please wait while we search for the answers") }}</span
       >
     </div>

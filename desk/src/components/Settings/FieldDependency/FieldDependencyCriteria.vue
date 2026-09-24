@@ -1,8 +1,8 @@
 <template>
   <div class="flex justify-between items-start flex-col gap-6">
+    <!-- //// Neoffice — the sentence was plain English around the field name; one msgid with {0} now (same pass as 71a5669d9) -->
     <span class="text-sm text-ink-gray-5 pt-4 w-full"
-      >Set visibility and mandatory criteria for
-      {{ selections.childField || "child" }} field:</span
+      >{{ __("Set visibility and mandatory criteria for {0} field:", selections.childField || __("child")) }}</span
     >
     <div class="flex flex-col gap-4 w-full pb-2">
       <!-- Display Criteria -->
@@ -20,6 +20,7 @@
             />
           </div>
         </div>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <MultiSelectCombobox
           :disabled="!fieldCriteriaState.display.enabled"
           class="min-w-[120px] max-w-[120px]"
@@ -46,6 +47,7 @@
             />
           </div>
         </div>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <MultiSelectCombobox
           :disabled="!fieldCriteriaState.mandatory.enabled"
           class="min-w-[120px] max-w-[120px]"

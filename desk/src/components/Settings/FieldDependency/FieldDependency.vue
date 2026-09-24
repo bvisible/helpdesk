@@ -1,18 +1,9 @@
 <template>
-  <SettingsLayoutBase>
-    <template #title>
-      <div class="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          icon-left="chevron-left"
-          :label="dependencyLabel"
-          size="md"
-          @click="handleBackNavigation"
-          class="cursor-pointer -ml-4 hover:bg-transparent focus:bg-transparent focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:none active:bg-transparent active:outline-none active:ring-0 active:ring-offset-0 active:text-ink-gray-5 font-semibold text-ink-gray-7 text-lg hover:opacity-70 !pr-0"
-        />
-        <Badge v-if="isDirty" theme="orange"> {{ __("Unsaved") }} </Badge>
-      </div>
-    </template>
+  <SettingsLayoutBase
+    :back-label="dependencyLabel"
+    :on-back="handleBackNavigation"
+    :dirty="isDirty"
+  >
     <template #header-actions>
       <div class="flex gap-4">
         <!-- Switch -->
@@ -63,6 +54,7 @@
               :parent-field-values="state.parentFieldValues"
               v-model="fieldCriteriaState"
               v-model:selections="state"
+              v-if="state.selectedParentField && state.selectedChildField"
             />
           </div>
         </div>
@@ -92,6 +84,9 @@ import FieldDependencyCriteria from "./FieldDependencyCriteria.vue";
 import FieldDependencyFieldsSelection from "./FieldDependencyFieldsSelection.vue";
 import FieldDependencyValueSelection from "./FieldDependencyValueSelection.vue";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// settings labels (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const props = defineProps({

@@ -13,9 +13,9 @@
       <div v-if="column.key === 'start_time' || column.key === 'end_time'">
         {{ formatTime(props.row[column.key]) }}
       </div>
-      <div v-else class="ml-2">
+      <div v-else class="ms-2">
         <select
-          class="w-full h-7 text-base hover:bg-surface-gray-3 rounded-md p-0 pl-2 pr-5 bg-transparent -ml-2 border-0 text-ink-gray-8 focus-visible:!ring-0 bg-none truncate"
+          class="w-full h-7 text-base hover:bg-surface-gray-3 rounded-md p-0 ps-2 pe-5 bg-transparent -ms-2 border-0 text-ink-gray-8 focus-visible:!ring-0 bg-none truncate"
           v-model="props.row[column.key]"
         >
           <option
@@ -51,6 +51,8 @@ import { Button, Dropdown } from "frappe-ui";
 import WorkDayModal from "./Modals/WorkDayModal.vue";
 import { ConfirmDelete, getGridTemplateColumnsForTable } from "@/utils";
 import { slaData } from "@/stores/sla";
+// //// Neoffice — import added for the label translations below (41fb04e59
+// //// "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 interface Column {
@@ -72,6 +74,8 @@ const props = defineProps<{
   isLast?: boolean;
 }>();
 
+// //// Neoffice — every label below wrapped in __() (41fb04e59 "fix(i18n):
+// //// finish the SPA pass").
 const workDayOptions = [
   { label: __('Monday'), value: "Monday" },
   { label: __('Tuesday'), value: "Tuesday" },
@@ -91,6 +95,8 @@ const dialog = ref({
 const isConfirmingDelete = ref(false);
 
 const dropdownOptions = [
+  // //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish the
+  // //// SPA pass").
   {
     label: __('Edit'),
     onClick: () => editWorkDay(),

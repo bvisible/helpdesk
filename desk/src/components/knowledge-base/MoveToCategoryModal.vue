@@ -1,13 +1,17 @@
 <template>
-  <Dialog v-model="showDialog" :options="{ title: 'Move To', actions }">
+  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+  <Dialog v-model="showDialog" :options="{ title: __('Move To'), actions }">
     <template #body-content>
       <div class="flex flex-col flex-1 gap-3">
+        <!-- //// Neoffice — placeholder and label wrapped in __(): upstream showed them in English on every non-English site -->
         <Link
-          class="form-control"
+          ref="linkRef"
+          class="w-full"
           doctype="HD Article Category"
           :placeholder="__('Select Category')"
           v-model="category"
           :label="__('Category')"
+          :filters="defaultFilters"
           :page-length="100"
         />
       </div>
@@ -16,18 +20,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed, watch, nextTick } from "vue";
 import { Dialog } from "frappe-ui";
-import { Link } from "@/components";
+import Link from "@/components/frappe-ui/Link.vue";
+//// Neoffice — __ for the dialog action label below, which upstream left in English.
 import { __ } from "@/translation";
 
 const emit = defineEmits(["move"]);
 const showDialog = defineModel<boolean>();
-
 const category = ref("");
+const linkRef = ref(null);
+
+const props = defineProps<{
+  excludeCategory?: string;
+}>();
+
+const defaultFilters = computed(() => {
+  if (!props.excludeCategory) return {};
+
+  return {
+    name: ["!=", props.excludeCategory],
+  };
+});
+watch(showDialog, async (val) => {
+  if (!val) return;
+  await nextTick();
+  setTimeout(() => {
+    linkRef.value?.$el?.querySelector("button")?.click();
+  }, 300);
+});
 
 const actions = [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
     label: __('Move'),
     variant: "solid",
     onClick: () => {

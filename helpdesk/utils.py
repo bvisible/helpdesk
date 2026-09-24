@@ -175,15 +175,16 @@ def agent_only(fn):
 
 
 def get_agents_team():
-    QBTeam = frappe.qb.DocType("HD Team")
-    QBTeamMember = frappe.qb.DocType("HD Team Member")
+    Team = frappe.qb.DocType("HD Team")
+    TeamMember = frappe.qb.DocType("HD Team Member")
 
     teams = (
-        frappe.qb.from_(QBTeamMember)
-        .where(QBTeamMember.user == frappe.session.user)
-        .join(QBTeam)
-        .on(QBTeam.name == QBTeamMember.parent)
-        .select(QBTeam.team_name, QBTeam.ignore_restrictions)
+        frappe.qb.from_(TeamMember)
+        .join(Team)
+        .on(Team.name == TeamMember.parent)
+        .where(TeamMember.user == frappe.session.user)
+        .where(Team.disabled == 0)
+        .select(Team.team_name, Team.ignore_restrictions)
         .run(as_dict=True)
     )
     return teams
@@ -206,6 +207,14 @@ def _pot_declarations():
         _("Last Updated On"),
         _("Assigned to"),
         _("First Response"),
+        # //// Neoffice — added after the upstream merge of 2026-09-24: api/doc.py's standard_fields
+        # //// gained "Assigned on", and setup/default_views.py creates standard HD Views whose names
+        # //// are persisted and translated where the SPA shows them (same reasons as above).
+        _("Assigned on"),
+        _("SLA Alerts"),
+        _("Recently Assigned Tickets"),
+        _("Pending Tickets"),
+        _("My Feedback"),
     ]
 
 
@@ -477,10 +486,12 @@ def parse_call_log(call):
             else [None, None]
         )
         call["_caller"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": contact.get("full_name") or _("Unknown"),
             "image": contact.get("image"),
         }
         call["_receiver"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": receiver[0] or _("Unknown"),
             "image": receiver[1] or "",
         }
@@ -495,10 +506,12 @@ def parse_call_log(call):
             else [None, None]
         )
         call["_caller"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": caller[0] or _("Unknown"),
             "image": caller[1] or "",
         }
         call["_receiver"] = {
+            # //// Neoffice — see the block marker above: "Unknown" fallback
             "label": contact.get("full_name") or _("Unknown"),
             "image": contact.get("image"),
         }
@@ -530,3 +543,34 @@ def is_frappe_version(version: str, above: bool = False, below: bool = False):
     if below:
         return major_version < target_version
     return major_version == target_version
+
+
+def format_time_difference(dt, context="ago"):
+    if not dt:
+        return ""
+    now = frappe.utils.now_datetime()
+    if isinstance(dt, str):
+        dt = frappe.utils.get_datetime(dt)
+
+    if context == "until":
+        diff = dt - now
+        past_label = "overdue"
+    else:
+        diff = now - dt
+        # //// Neoffice — the unit letters are shown in the home page's reason texts: wrapped so
+        # //// a translation can change them (French writes "j" for days), same pass as 71a5669d9.
+        # //// "overdue" above stays English: it is a sentinel the callers compare, never shown.
+        past_label = _("{0}m").format(0)
+
+    total_seconds = diff.total_seconds()
+
+    if total_seconds < 0:
+        return past_label
+
+    # //// Neoffice — unit letters wrapped (see past_label above)
+    if total_seconds < 3600:
+        return _("{0}m").format(int(total_seconds // 60))
+    elif total_seconds < 86400:
+        return _("{0}h").format(int(total_seconds // 3600))  # //// Neoffice — wrapped, see above
+    else:
+        return _("{0}d").format(int(total_seconds // 86400))  # //// Neoffice — wrapped, see above

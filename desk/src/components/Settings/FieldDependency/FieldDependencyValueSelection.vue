@@ -3,11 +3,12 @@
     class="flex w-full flex-1 justify-between h-full h-[420px] max-h-[420px] min-h-[420px]"
   >
     <!-- left box -->
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <div class="flex-1 flex flex-col gap-1.5">
       <span class="block text-xs text-ink-gray-5">
         {{ __("Select parent field value") }}
       </span>
-      <div class="border flex-1 border-r-0 rounded-l p-2 flex flex-col gap-2">
+      <div class="border flex-1 border-e-0 rounded-s p-2 flex flex-col gap-2">
         <template v-if="state.selectedParentField">
           <FormControl
             v-model="state.parentSearch"
@@ -16,7 +17,7 @@
             class="w-full"
           >
             <template #prefix>
-              <LucideSearch class="h-4 w-4 text-gray-500" />
+              <LucideSearch class="h-4 w-4 text-ink-gray-4" />
             </template>
           </FormControl>
           <div class="flex-1 overflow-y-auto hide-scrollbar basis-0">
@@ -35,7 +36,7 @@
                   value
                 }}</span>
                 <LucideChevronRight
-                  class="h-4 w-4 text-ink-gray-6"
+                  class="h-4 w-4 text-ink-gray-6 rtl:rotate-180"
                   v-if="
                     getSelectedChildValueCount(value) === 0 ||
                     state.currentParentSelection === value
@@ -64,11 +65,11 @@
     </div>
     <!-- right box -->
     <div class="flex-1 flex flex-col gap-1.5">
-      <span class="block text-xs text-ink-gray-5 pl-1.5">
+      <span class="block text-xs text-ink-gray-5 ps-1.5">
         <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         {{ __("Select child field value") }}
       </span>
-      <div class="border flex-1 rounded-r p-2 flex flex-col gap-2">
+      <div class="border flex-1 rounded-e p-2 flex flex-col gap-2">
         <template
           v-if="state.selectedChildField && state.currentParentSelection"
         >
@@ -79,7 +80,7 @@
             class="w-full"
           >
             <template #prefix>
-              <LucideSearch class="h-4 w-4 text-gray-500" />
+              <LucideSearch class="h-4 w-4 text-ink-gray-4" />
             </template>
           </FormControl>
           <div class="flex-1 overflow-y-auto hide-scrollbar basis-0">
@@ -91,7 +92,7 @@
               <FormControl
                 type="checkbox"
                 :model-value="toggleAllChildValues"
-                class="mr-2"
+                class="me-2"
               />
               <span class="text-base text-ink-gray-8 font-medium">
                 {{ toggleCheckboxLabel }}
@@ -107,7 +108,7 @@
                 <FormControl
                   type="checkbox"
                   :model-value="isChildValueSelected(value)"
-                  class="mr-2"
+                  class="me-2"
                 />
                 <span class="text-base text-ink-gray-6">{{ value }}</span>
               </li>
@@ -138,6 +139,8 @@
 <script setup lang="ts">
 import { FieldCriteriaState } from "@/types";
 import { computed } from "vue";
+//// Neoffice — import added for the placeholder / checkbox label wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps<{
   isNew: boolean;
@@ -160,16 +163,21 @@ const filteredChildFieldValues = computed(() => {
   );
 });
 
+//// Neoffice — upstream wrote these placeholders in plain English (template literals); one msgid
+//// each, so the French catalogue reaches them (same pass as 71a5669d9). {0} is the field's
+//// label (translated like everywhere else it is shown) or the selected parent value (data).
 const parentPlaceholder = computed(() => {
-  if (!state.value.selectedParentField) return "Search values";
+  if (!state.value.selectedParentField) return __("Search values");
   let label = props.parentFields.find(
     (f) => f.value === state.value.selectedParentField
   )?.label;
-  return `Search ${label} values`;
+  //// Neoffice — see the note above parentPlaceholder
+  return __("Search {0} values", __(label));
 });
+//// Neoffice — see the note above parentPlaceholder
 const childPlaceholder = computed(() => {
-  if (!state.value.currentParentSelection) return "Search values";
-  return `Search ${state.value.currentParentSelection} values`;
+  if (!state.value.currentParentSelection) return __("Search values");
+  return __("Search {0} values", state.value.currentParentSelection);
 });
 
 function handleParentValueClick(value: string) {
@@ -217,14 +225,17 @@ const toggleAllChildValues = computed({
   },
 });
 
+//// Neoffice — upstream built "N value(s) selected" from English fragments; one msgid per form
+//// now, so the French catalogue reaches it (same pass as 71a5669d9).
 const toggleCheckboxLabel = computed(() => {
   const parent = state.value.currentParentSelection;
-  if (!parent) return "Select All";
+  if (!parent) return __("Select All");
   const selectedCount = getSelectedChildValueCount(parent);
-  if (selectedCount === 0) return "Select All";
-  return `${selectedCount} ${
-    selectedCount === 1 ? "value" : "values"
-  } selected`;
+  //// Neoffice — see the note above toggleCheckboxLabel
+  if (selectedCount === 0) return __("Select All");
+  return selectedCount === 1
+    ? __("{0} value selected", String(selectedCount))
+    : __("{0} values selected", String(selectedCount));
 });
 
 function handleSelectAllChildValues(value: boolean) {

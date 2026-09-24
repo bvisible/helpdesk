@@ -4,91 +4,86 @@
       <TransitionChild
         as="template"
         enter="transition ease-in-out duration-200 transform"
-        enter-from="-translate-x-full"
+        enter-from="-translate-x-full rtl:translate-x-full"
         enter-to="translate-x-0"
         leave="transition ease-in-out duration-200 transform"
         leave-from="translate-x-0"
-        leave-to="-translate-x-full"
+        leave-to="-translate-x-full rtl:translate-x-full"
       >
         <div
-          class="relative z-10 flex h-full w-[230px] flex-col border-r bg-gray-50 transition-all duration-300 ease-in-out"
+          class="relative z-10 flex h-full w-[230px] flex-col border-e bg-surface-menu-bar transition-all duration-300 ease-in-out"
         >
           <!-- user dropwdown -->
           <div class="p-1">
             <UserMenu :options="profileSettings" />
           </div>
-          <!-- notifications -->
-          <div class="overflow-y-auto px-2" v-if="!isCustomerPortal">
-            <div class="mb-3 flex flex-col gap-1">
-              <SidebarLink
-                class="relative"
-                :label="__('Notifications')"
-                :icon="LucideBell"
-                :on-click="() => (sidebarOpened = false)"
-                :is-expanded="true"
-                to="Notifications"
-              >
-                <template #right>
-                  <Badge
-                    v-if="notificationStore.unread"
-                    :label="notificationStore.unread"
-                    theme="gray"
-                    variant="subtle"
-                  />
-                </template>
-              </SidebarLink>
-              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-              <SidebarLink
-                v-if="!isCustomerPortal"
-                class="relative"
-                :label="__('Dashboard')"
-                :icon="LucideLayoutDashboard"
-                :to="'Dashboard'"
-                :is-active="isActiveTab('Dashboard')"
-                :is-expanded="true"
-              />
-            </div>
-          </div>
-
-          <div v-for="view in allViews" :key="view.label">
-            <div
-              v-if="!view.hideLabel && view.views?.length"
-              class="mx-2 my-2 h-1"
-            />
-            <Section
-              :label="view.label"
-              :hideLabel="view.hideLabel"
-              :opened="view.opened"
-            >
-              <template #header="{ opened, hide, toggle }">
-                <div
-                  v-if="!hide"
-                  class="flex cursor-pointer gap-1.5 px-1 text-base font-medium text-ink-gray-5 transition-all duration-300 ease-in-out"
-                  :class="'ml-2 mt-4 h-7 w-auto opacity-100'"
-                  @click="toggle()"
-                >
-                  <FeatherIcon
-                    name="chevron-right"
-                    class="h-4 text-ink-gray-9 transition-all duration-300 ease-in-out"
-                    :class="{ 'rotate-90': opened }"
-                  />
-                  <span>{{ view.label }}</span>
-                </div>
-              </template>
-              <nav class="flex flex-col ml-2 mr-1">
+          <div class="overflow-y-auto overflow-x-hidden">
+            <!-- notifications -->
+            <div v-if="!isCustomerPortal">
+              <div class="flex flex-col gap-1">
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <SidebarLink
-                  v-for="link in view.views"
-                  :icon="link.icon"
-                  :label="link.label"
-                  :to="link.to"
-                  :key="link.label"
+                  class="relative"
+                  :label="__('Notifications')"
+                  :icon="LucideBell"
+                  :on-click="() => (sidebarOpened = false)"
                   :is-expanded="true"
-                  :is-active="isActiveTab(link.to)"
-                  class="my-0.5"
-                  :onClick="link.onClick"
-                />
-              </nav>
-            </Section>
+                  to="Notifications"
+                >
+                  <template #right>
+                    <Badge
+                      v-if="notificationStore.unread"
+                      :label="notificationStore.unread"
+                      theme="gray"
+                      variant="subtle"
+                    />
+                  </template>
+                </SidebarLink>
+              </div>
+            </div>
+
+            <div v-for="view in allViews" :key="view.label">
+              <div v-if="!view.hideLabel && view.views?.length" />
+              <div class="mx-2 my-1.5"></div>
+
+              <Section
+                :label="view.label"
+                :hideLabel="view.hideLabel"
+                :opened="view.opened"
+              >
+                <template #header="{ opened, hide, toggle }">
+                  <div
+                    v-if="!hide"
+                    class="flex cursor-pointer gap-1.5 px-2 text-base font-medium text-ink-gray-5 mx-2 transition-all duration-300 ease-in-out"
+                    :class="'py-[7px] h-7.5 w-auto opacity-100 rtl:flex-row-reverse rtl:justify-end'"
+                    @click="toggle()"
+                  >
+                    <FeatherIcon
+                      name="chevron-right"
+                      class="h-4 text-ink-gray-9 transition-all duration-300 ease-in-out"
+                      :class="{
+                        'rotate-90': opened,
+                        'rtl:rotate-180': !opened,
+                      }"
+                    />
+                    <span>{{ view.label }}</span>
+                  </div>
+                </template>
+                <nav class="flex flex-col">
+                  <SidebarLink
+                    v-for="link in view.views"
+                    :icon="link.icon"
+                    :label="link.label"
+                    :to="link.to"
+                    :key="link.label"
+                    :is-expanded="true"
+                    :is-active="isActiveTab(link.to)"
+                    class="my-0.5"
+                    :onClick="link.onClick"
+                  />
+                </nav>
+              </Section>
+            </div>
           </div>
         </div>
       </TransitionChild>
@@ -101,7 +96,7 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <DialogOverlay class="fixed inset-0 bg-gray-600 bg-opacity-50" />
+        <DialogOverlay class="fixed inset-0 bg-black-overlay-500" />
       </TransitionChild>
     </Dialog>
   </TransitionRoot>
@@ -126,7 +121,9 @@ import { mobileSidebarOpened as sidebarOpened } from "@/composables/mobile";
 import { currentView, useView } from "@/composables/useView";
 
 import LucideBell from "~icons/lucide/bell";
-import LucideLayoutDashboard from "~icons/lucide/layout-dashboard";
+import LucideMoon from "~icons/lucide/moon";
+import LucideSun from "~icons/lucide/sun";
+import { useTheme } from "frappe-ui";
 
 import { useAuthStore } from "@/stores/auth";
 import { isCustomerPortal } from "@/utils";
@@ -137,8 +134,17 @@ import {
 } from "./layoutSettings";
 import { useTelephonyStore } from "@/stores/telephony";
 import { storeToRefs } from "pinia";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 const { pinnedViews, publicViews } = useView();
+const { currentTheme, toggleTheme } = useTheme();
+
+const themeMenuItem = computed(() => ({
+  //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+  label: __("Toggle theme"),
+  icon: currentTheme.value === "dark" ? LucideSun : LucideMoon,
+  onClick: () => toggleTheme(),
+}));
 
 const notificationStore = useNotificationStore();
 const route = useRoute();
@@ -160,6 +166,7 @@ const allViews = computed(() => {
     items = items.filter((item) => item.to !== "CallLogs");
   }
 
+  //// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these view-group labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
   const options = [
     {
       label: __('All Views'),
@@ -170,6 +177,7 @@ const allViews = computed(() => {
   ];
   if (publicViews.value?.length && !isCustomerPortal.value) {
     options.push({
+      //// Neoffice — see the block marker above: __() i18n wrap
       label: __('Public Views'),
       opened: true,
       hideLabel: false,
@@ -178,12 +186,14 @@ const allViews = computed(() => {
   }
   if (pinnedViews.value?.length) {
     options.push({
+      //// Neoffice — see the block marker above: __() i18n wrap
       label: __('Private Views'),
       opened: true,
       hideLabel: false,
       views: parseViews(pinnedViews.value),
     });
   }
+  //// Neoffice ▲▲▲
   return options;
 });
 function parseViews(views) {
@@ -205,19 +215,24 @@ function parseViews(views) {
   });
 }
 
+//// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const customerPortalDropdown = computed(() => [
+  themeMenuItem.value,
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Log out'),
     icon: "log-out",
     onClick: () => authStore.logout(),
   },
 ]);
 
+//// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these dropdown labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const agentPortalDropdown = computed(() => [
   {
     component: markRaw(Apps),
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Customer portal'),
     icon: "users",
     onClick: () => {
@@ -227,20 +242,25 @@ const agentPortalDropdown = computed(() => [
   },
   {
     icon: "life-buoy",
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Support'),
     onClick: () => window.open("https://t.me/frappedesk"),
   },
   {
     icon: "book-open",
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Docs'),
     onClick: () => window.open("https://docs.frappe.io/helpdesk"),
   },
+  themeMenuItem.value,
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Log out'),
     icon: "log-out",
     onClick: () => authStore.logout(),
   },
 ]);
+//// Neoffice ▲▲▲
 
 const profileSettings = computed(() => {
   return isCustomerPortal.value

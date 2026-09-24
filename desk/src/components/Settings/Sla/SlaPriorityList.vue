@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-md border px-2 border-gray-300 text-sm">
+  <div class="rounded-md border px-2 border-outline-gray-2 text-sm">
     <div
       class="grid p-2 px-4 items-center"
       :style="{
@@ -10,16 +10,16 @@
       <div
         v-for="column in columns"
         :key="column.key"
-        class="text-gray-600 overflow-hidden whitespace-nowrap text-ellipsis"
+        class="text-ink-gray-5 overflow-hidden whitespace-nowrap text-ellipsis"
         :class="{
-          'ml-2':
+          'ms-2':
             column.key === 'priority' ||
             column.key === 'response_time' ||
             column.key === 'resolution_time',
         }"
       >
         {{ column.label }}
-        <span v-if="column.isRequired" class="text-red-500">*</span>
+        <span v-if="column.isRequired" class="text-ink-red-3">*</span>
       </div>
     </div>
     <hr v-if="slaData.priorities?.length !== 0" />
@@ -30,10 +30,12 @@
       :columns="columns"
       :isLast="index === slaData.priorities.length - 1"
     />
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <div
       v-if="slaData.priorities?.length === 0"
-      class="text-center p-4 text-gray-600"
+      class="text-center p-4 text-ink-gray-5"
     >
+      <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
       {{ __("No priorities in the list") }}
     </div>
   </div>
@@ -46,6 +48,7 @@
     "
   >
     <div>
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <Button
         v-if="slaData.priorities.length !== priorityOptions.length"
         variant="subtle"
@@ -61,17 +64,18 @@
 </template>
 
 <script setup lang="ts">
-import { Button, createResource, toast } from "frappe-ui";
-import SlaPriorityListItem from "./SlaPriorityListItem.vue";
-import { computed, provide, reactive } from "vue";
 import {
   slaActiveScreen,
   slaData,
   slaDataErrors,
   validateSlaData,
 } from "@/stores/sla";
-import { watchDebounced } from "@vueuse/core";
 import { getGridTemplateColumnsForTable } from "@/utils";
+import { watchDebounced } from "@vueuse/core";
+import { Button, createResource, toast } from "frappe-ui";
+import { computed, provide, reactive } from "vue";
+import SlaPriorityListItem from "./SlaPriorityListItem.vue";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 createResource({
@@ -79,6 +83,9 @@ createResource({
   params: {
     doctype: "HD Ticket Priority",
     fields: ["name"],
+    filters: {
+      disabled: 0,
+    },
     order_by: "integer_value desc",
   },
   auto: true,
@@ -115,7 +122,8 @@ const addRow = () => {
   );
 
   if (availablePriorities.length === 0) {
-    toast.error("All available priorities have already been added");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("All available priorities have already been added"));
     return;
   }
 
@@ -129,6 +137,7 @@ const addRow = () => {
   });
 };
 
+//// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these SLA column labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const columns = computed(() => [
   {
     label: __('Priority'),
@@ -136,20 +145,24 @@ const columns = computed(() => [
     isRequired: true,
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Default priority'),
     key: "default_priority",
     isRequired: true,
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('First response time'),
     key: "response_time",
     isRequired: true,
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Resolution time'),
     key: "resolution_time",
     isRequired: true,
   },
+  //// Neoffice ▲▲▲
   //   slaData.value.apply_sla_for_resolution && {
   //     label: __('Resolution time'),
   //     key: "resolution_time",

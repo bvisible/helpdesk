@@ -7,7 +7,7 @@
           :label="activity?._caller?.label"
           size="md"
         />
-        <span class="font-medium text-ink-gray-8 ml-1">
+        <span class="font-medium text-ink-gray-8 ms-1">
           {{ activity?._caller?.label }}
         </span>
         <span>{{
@@ -16,7 +16,7 @@
             : __("has made a call")
         }}</span>
       </div>
-      <div class="ml-auto whitespace-nowrap">
+      <div class="ms-auto whitespace-nowrap">
         <Tooltip :text="dateFormat(activity.creation, 'MMM D, dddd')">
           <div class="text-sm text-ink-gray-5">
             {{ __(timeAgo(activity.creation)) }}
@@ -76,8 +76,9 @@
             <PlayIcon class="size-3" />
           </template>
         </Badge>
+        <!-- //// Neoffice — statusLabelMap holds English labels (module level, call-logs/utils.ts): translated here, where it is shown (same pass as 71a5669d9) -->
         <Badge
-          :label="statusLabelMap[activity.status]"
+          :label="__(statusLabelMap[activity.status])"
           :theme="statusColorMap[activity.status]"
         />
       </div>

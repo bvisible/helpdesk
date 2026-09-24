@@ -2,10 +2,9 @@
   <Popover placement="bottom-end">
     <template #target="{ togglePopover, close }">
       <div class="flex items-center w-fit">
-        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           :label="__('Filter')"
-          :class="filters?.size ? 'rounded-r-none' : ''"
+          :class="filters?.size ? 'rounded-e-none' : ''"
           @click="togglePopover"
         >
           <template #prefix><FilterIcon class="h-4" /></template>
@@ -21,7 +20,7 @@
         <Tooltip v-if="filters?.size" :text="__('Clear all Filter')">
           <div>
             <Button
-              class="rounded-l-none border-l"
+              class="rounded-s-none border-s"
               icon="x"
               @click.stop="clearfilter(close)"
             />
@@ -30,7 +29,9 @@
       </div>
     </template>
     <template #body="{ close }">
-      <div class="my-2 rounded-lg border border-gray-100 bg-white shadow-xl">
+      <div
+        class="my-2 rounded-lg border border-outline-gray-1 bg-surface-white shadow-xl"
+      >
         <div class="min-w-72 p-2 sm:min-w-[400px]">
           <div
             v-if="filters?.size"
@@ -41,8 +42,9 @@
           >
             <div v-if="isMobileView" class="flex flex-col gap-2">
               <div class="-mb-2 flex w-full items-center justify-between">
-                <div class="text-base text-gray-600">
-                  {{ i == 0 ? "Where" : "And" }}
+                <div class="text-base text-ink-gray-5">
+                  <!-- //// Neoffice — upstream wrote the row prefixes in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+                  {{ i == 0 ? __("Where") : __("And") }}
                 </div>
                 <Button
                   class="flex"
@@ -74,7 +76,8 @@
                 <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <component
                   :is="getValueControl(f)"
-                  v-model="f.value"
+                  :model-value="f.value"
+                  @update:modelValue="(v) => updateValue(v, f)"
                   @change="(v) => updateValue(v, f)"
                   :placeholder="__('John Doe')"
                 />
@@ -82,8 +85,9 @@
             </div>
             <div v-else class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-2 flex-1">
-                <div class="w-13 pl-2 text-end text-base text-gray-600">
-                  {{ i == 0 ? "Where" : "And" }}
+                <div class="w-13 ps-2 text-end text-base text-ink-gray-5">
+                  <!-- //// Neoffice — row prefixes wrapped (see the mobile row above) -->
+                  {{ i == 0 ? __("Where") : __("And") }}
                 </div>
                 <div id="fieldname" class="!min-w-[140px]">
                   <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
@@ -98,6 +102,7 @@
                   <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   <FormControl
                     type="select"
+                    class="!min-w-[140px]"
                     v-model="f.operator"
                     @change="(e) => updateOperator(e, f)"
                     :options="
@@ -110,8 +115,9 @@
                   <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                   <component
                     :is="getValueControl(f)"
-                    v-model="f.value"
+                    :model-value="f.value"
                     @change="(v) => updateValue(v, f)"
+                    @update:modelValue="(v) => updateValue(v, f)"
                     :placeholder="__('John Doe')"
                   />
                 </div>
@@ -126,9 +132,9 @@
           </div>
           <div
             v-else
-            class="mb-3 flex h-7 items-center px-3 text-sm text-gray-600"
+            class="mb-3 flex h-7 items-center px-3 text-sm text-ink-gray-5"
           >
-            {{ "Empty - Choose a field to filter by" }}
+            {{ __("Empty - Choose a field to filter by") }}
           </div>
           <div class="flex items-center justify-between gap-2">
             <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
@@ -138,9 +144,8 @@
               :placeholder="__('First name')"
             >
               <template #target="{ togglePopover }">
-                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <Button
-                  class="!text-gray-600"
+                  class="!text-ink-gray-5"
                   variant="ghost"
                   @click="togglePopover()"
                   :label="__('Add Filter')"
@@ -154,7 +159,7 @@
             <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Button
               v-if="filters?.size"
-              class="!text-gray-600"
+              class="!text-ink-gray-5"
               variant="ghost"
               :label="__('Clear all Filter')"
               @click="clearfilter(close)"
@@ -169,9 +174,10 @@
 import { Link, StarRating } from "@/components";
 import FilterIcon from "@/components/icons/FilterIcon.vue";
 import { useScreenSize } from "@/composables/screen";
+import { useDebounceFn } from "@vueuse/core";
 import {
-  Autocomplete,
   Button,
+  Combobox,
   DatePicker,
   DateRangePicker,
   DateTimePicker,
@@ -180,7 +186,9 @@ import {
   Popover,
   Tooltip,
 } from "frappe-ui";
+import Autocomplete from "@/components/frappe-ui/Autocomplete.vue";
 import { computed, h, inject } from "vue";
+//// Neoffice — __ for the operator, value and timespan labels below, which upstream hardcoded in English.
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -238,39 +246,40 @@ function convertFilters(data, allFilters) {
   return new Set(f);
 }
 
+//// Neoffice — operator labels wrapped in __() below: upstream showed them in English on every non-English site.
 function getOperators(fieldtype, fieldname) {
   let options = [];
   if (typeString.includes(fieldtype)) {
     options.push(
       ...[
-        { label: __('Equals'), value: "equals" },
+        { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
-        { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
   if (fieldname === "_assign") {
     // TODO: make equals and not equals work
     options = [
-      { label: __('Like'), value: "like" },
+      { label: __('Like'), value: "like" }, //// Neoffice — __(), see getOperators()
       { label: __('Not Like'), value: "not like" },
-      { label: "Is", value: "is" },
+      { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
     ];
   }
   if (typeNumber.includes(fieldtype)) {
     options.push(
       ...[
-        { label: __('Equals'), value: "equals" },
+        { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
-        { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: "<", value: "<" },
         { label: ">", value: ">" },
         { label: "<=", value: "<=" },
@@ -281,52 +290,52 @@ function getOperators(fieldtype, fieldname) {
   if (typeSelect.includes(fieldtype)) {
     options.push(
       ...[
-        { label: __('Equals'), value: "equals" },
+        { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
-        { label: "In", value: "in" },
-        { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
   if (typeLink.includes(fieldtype)) {
     options.push(
       ...[
-        { label: __('Equals'), value: "equals" },
+        { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
-        { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
   if (typeCheck.includes(fieldtype)) {
-    options.push(...[{ label: __('Equals'), value: "equals" }]);
+    options.push(...[{ label: __('Equals'), value: "equals" }]); //// Neoffice — __(), see getOperators()
   }
   if (["Duration"].includes(fieldtype)) {
     options.push(
       ...[
-        { label: __('Like'), value: "like" },
+        { label: __('Like'), value: "like" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
-        { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
   if (typeDate.includes(fieldtype)) {
     options.push(
       ...[
-        { label: __('Equals'), value: "equals" },
+        { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
         { label: "<=", value: "<=" },
-        { label: __('Between'), value: "between" },
+        { label: __('Between'), value: "between" }, //// Neoffice — __(), see getOperators()
         { label: __('Timespan'), value: "timespan" },
       ]
     );
@@ -334,9 +343,9 @@ function getOperators(fieldtype, fieldname) {
   if (typeRating.includes(fieldtype)) {
     options.push(
       ...[
-        { label: __('Equals'), value: "equals" },
+        { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
@@ -355,19 +364,21 @@ function getValueControl(f) {
       type: "select",
       options: [
         {
-          label: __('Set'),
+          label: __('Set'), //// Neoffice — __(), see getOperators()
           value: "set",
         },
         {
-          label: __('Not Set'),
+          label: __('Not Set'), //// Neoffice — __(), see getOperators()
           value: "not set",
         },
       ],
     });
   } else if (operator == "timespan") {
-    return h(FormControl, {
-      type: "select",
+    return h(Combobox, {
       options: timespanOptions,
+      trigger: "button",
+      modelValue: f.value,
+      "onUpdate:modelValue": (v) => updateValue(v, f),
     });
   } else if (["like", "not like", "in", "not in"].includes(operator)) {
     return h(FormControl, { type: "text" });
@@ -377,7 +388,9 @@ function getValueControl(f) {
     return h(FormControl, {
       type: "select",
       options: _options.map((o) => ({
-        label: o,
+        //// Neoffice — value / label split: the value ("Yes", "No", a Select option) is what the
+        //// filter stores and what is compared below; only the label is translated
+        label: __(o),
         value: o,
       })),
     });
@@ -493,13 +506,18 @@ function clearfilter(close) {
 }
 
 function updateValue(value, filter) {
+  if (value && typeof value === "object" && !value.target && "value" in value) {
+    value = value.value;
+  }
   value = value.target ? value.target.value : value;
-  if (filter.operator === "between") {
+  if (filter.operator === "in" || filter.operator === "not in") {
+    filter.value = value.split(",").map((v) => v.trim());
+  } else if (filter.operator === "between") {
     filter.value = [value.split(",")[0], value.split(",")[1]];
   } else {
     filter.value = value;
   }
-  apply();
+  debouncedApply();
 }
 
 function updateOperator(event, filter) {
@@ -609,74 +627,52 @@ const oppositeOperatorMap = {
   timespan: "timespan",
 };
 
+//// Neoffice — labels wrapped in __(): upstream showed every timespan option in
+//// English on non-English sites (the 7 "N Days" entries upstream added are wrapped too).
 const timespanOptions = [
-  {
-    label: __('Last Week'),
-    value: "last week",
-  },
-  {
-    label: __('Last Month'),
-    value: "last month",
-  },
-  {
-    label: __('Last Quarter'),
-    value: "last quarter",
-  },
-  {
-    label: __('Last 6 Months'),
-    value: "last 6 months",
-  },
-  {
-    label: __('Last Year'),
-    value: "last year",
-  },
-  {
-    label: __('Yesterday'),
-    value: "yesterday",
-  },
-  {
-    label: __('Today'),
-    value: "today",
-  },
-  {
-    label: __('Tomorrow'),
-    value: "tomorrow",
-  },
-  {
-    label: __('This Week'),
-    value: "this week",
-  },
-  {
-    label: __('This Month'),
-    value: "this month",
-  },
-  {
-    label: __('This Quarter'),
-    value: "this quarter",
-  },
-  {
-    label: __('This Year'),
-    value: "this year",
-  },
-  {
-    label: __('Next Week'),
-    value: "next week",
-  },
-  {
-    label: __('Next Month'),
-    value: "next month",
-  },
-  {
-    label: __('Next Quarter'),
-    value: "next quarter",
-  },
-  {
-    label: __('Next 6 Months'),
-    value: "next 6 months",
-  },
-  {
-    label: __('Next Year'),
-    value: "next year",
-  },
+  { label: __("Last 7 Days"), value: "last 7 days" },
+  { label: __("Last 14 Days"), value: "last 14 days" },
+  { label: __("Last 30 Days"), value: "last 30 days" },
+  { label: __("Last 90 Days"), value: "last 90 days" },
+
+  //// Neoffice — labels wrapped in __(), as above.
+  { label: __("Last Week"), value: "last week" },
+  { label: __("Last Month"), value: "last month" },
+  { label: __("Last Quarter"), value: "last quarter" },
+  { label: __("Last 6 Months"), value: "last 6 months" },
+  { label: __("Last Year"), value: "last year" },
+
+  //// Neoffice — labels wrapped in __(), as above.
+  { label: __("Yesterday"), value: "yesterday" },
+  { label: __("Today"), value: "today" },
+  { label: __("Tomorrow"), value: "tomorrow" },
+
+  //// Neoffice — labels wrapped in __(), as above.
+  { label: __("This Week"), value: "this week" },
+  { label: __("This Month"), value: "this month" },
+  { label: __("This Quarter"), value: "this quarter" },
+  { label: __("This Year"), value: "this year" },
+
+  //// Neoffice — labels wrapped in __(), as above.
+  { label: __("Next 7 Days"), value: "next 7 days" },
+  { label: __("Next 14 Days"), value: "next 14 days" },
+  { label: __("Next 30 Days"), value: "next 30 days" },
+
+  //// Neoffice — labels wrapped in __(), as above.
+  { label: __("Next Week"), value: "next week" },
+  { label: __("Next Month"), value: "next month" },
+  { label: __("Next Quarter"), value: "next quarter" },
+  { label: __("Next 6 Months"), value: "next 6 months" },
+  { label: __("Next Year"), value: "next year" },
 ];
+
+const debouncedApply = useDebounceFn(() => {
+  apply();
+}, 500);
 </script>
+<style>
+& #operator button,
+& #value button {
+  width: 100%;
+}
+</style>

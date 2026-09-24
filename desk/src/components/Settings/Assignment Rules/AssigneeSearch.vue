@@ -7,14 +7,17 @@
           icon-left="plus"
           @click="togglePopover()"
           :label="__('Add Assignee')"
+          class="rtl:flex-row-reverse"
         />
       </template>
       <template #body="{ togglePopover }">
-        <div class="mt-1 rounded-lg bg-white py-1 text-base shadow-2xl w-60">
+        <div
+          class="mt-1 rounded-lg bg-surface-white py-1 text-base shadow-2xl w-60"
+        >
           <div class="relative px-1.5 pt-0.5">
             <ComboboxInput
               ref="search"
-              class="form-input w-full"
+              class="form-input w-full bg-transparent"
               type="text"
               @change="
                 (e) => {
@@ -26,7 +29,7 @@
               :placeholder="__('Search')"
             />
             <button
-              class="absolute right-1.5 inline-flex h-7 w-7 items-center justify-center"
+              class="absolute end-1.5 inline-flex h-7 w-7 items-center justify-center"
               @click="query = ''"
             >
               <FeatherIcon name="x" class="w-4" />
@@ -49,7 +52,7 @@
             >
               <li
                 class="flex items-center rounded p-1.5 w-full text-base"
-                :class="{ 'bg-gray-100': active }"
+                :class="{ 'bg-surface-gray-2': active }"
               >
                 <div class="flex gap-2 items-center w-full select-none">
                   <Avatar
@@ -71,7 +74,7 @@
             </ComboboxOption>
             <li
               v-if="users.length == 0"
-              class="mt-1.5 rounded-md p-1.5 text-base text-gray-600"
+              class="mt-1.5 rounded-md p-1.5 text-base text-ink-gray-5"
             >
               {{ __("No results found") }}
             </li>
@@ -79,7 +82,7 @@
           <div class="border-t p-1.5 pb-0.5">
             <Button
               variant="ghost"
-              class="w-full"
+              class="w-full rtl:flex-row-reverse"
               icon-left="plus"
               :label="__('Invite agent')"
               @click="inviteAgents"
@@ -111,6 +114,7 @@ import { setActiveSettingsTab } from "../settingsModal";
 import { useAgentStore } from "@/stores/agent";
 import { onMounted } from "vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const emit = defineEmits(["addAssignee"]);

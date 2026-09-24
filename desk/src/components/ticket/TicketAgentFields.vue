@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-1 flex-col overflow-hidden overflow-y-auto border-b">
+  <div
+    class="flex flex-1 flex-col overflow-hidden overflow-y-auto border-b px-6 py-3 sm:px-0 sm:py-3"
+  >
     <TicketField
       v-for="field in fields"
       :key="field.fieldname"
@@ -15,6 +17,8 @@ import { Field, FieldValue } from "@/types";
 import { toast } from "frappe-ui";
 import { computed } from "vue";
 import TicketField from "../TicketField.vue";
+//// Neoffice — import added for the toast wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 const emit = defineEmits(["update"]);
 
 const props = defineProps({
@@ -30,7 +34,8 @@ const fields = computed(() => {
 
 function update(field: Field["fieldname"], value: FieldValue, event = null) {
   if (field === "subject" && value === "") {
-    toast.error("Subject is required");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("Subject is required"));
     event.target.value = props.ticket.subject;
     return;
   }
@@ -42,8 +47,8 @@ function update(field: Field["fieldname"], value: FieldValue, event = null) {
 :deep(.form-control select),
 :deep(.form-control textarea),
 :deep(.form-control button) {
-  border-color: transparent;
-  background: white;
+  border-color: var(--outline-gray-2);
+  background: var(--surface-white);
 }
 :deep(.form-control textarea) {
   field-sizing: content;
@@ -64,7 +69,7 @@ function update(field: Field["fieldname"], value: FieldValue, event = null) {
 }
 
 :deep(.form-control button svg) {
-  color: white;
+  color: var(--ink-white);
   width: 0;
 }
 </style>

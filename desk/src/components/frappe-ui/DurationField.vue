@@ -6,7 +6,7 @@
         class="min-h-7 w-full cursor-pointer select-none leading-5 p-1 px-2 rounded"
       >
         <div class="flex items-center justify-between">
-          <span :class="{ 'text-gray-600': !modelValue || disabled }">
+          <span :class="{ 'text-ink-gray-5': !modelValue || disabled }">
             {{ formattedValue }}
           </span>
         </div>
@@ -14,10 +14,10 @@
     </template>
 
     <template #body="{ close }">
-      <div class="absolute bg-white top-2">
+      <div class="absolute bg-surface-white top-2">
         <!-- Built-in Duration Picker -->
         <div
-          class="flex gap-2 border border-gray-300 rounded w-fit min-w-max px-4 select-none shadow-sm"
+          class="flex gap-2 border border-outline-gray-2 rounded w-fit min-w-max px-4 select-none shadow-sm"
         >
           <!-- Hours -->
           <div
@@ -35,23 +35,24 @@
                 @keyup.enter="$event.target.blur()"
               />
               <div
-                class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -right-3"
+                class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -end-3"
               >
                 <button
                   @click="increment('hours')"
-                  class="hover:bg-gray-100 rounded-sm select-none px-1 py-0.5 text-xs"
+                  class="hover:bg-surface-gray-2 rounded-sm select-none px-1 py-0.5 text-xs"
                 >
                   <FeatherIcon name="chevron-up" class="size-3.5" />
                 </button>
                 <button
                   @click="decrement('hours')"
-                  class="hover:bg-gray-100 rounded-sm select-none px-1 py-0.5 text-xs"
+                  class="hover:bg-surface-gray-2 rounded-sm select-none px-1 py-0.5 text-xs"
                 >
                   <FeatherIcon name="chevron-down" class="size-3.5" />
                 </button>
               </div>
             </div>
-            <div class="text-xs text-gray-600 mt-1">Hrs</div>
+            <!-- //// Neoffice — upstream wrote the unit labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+            <div class="text-xs text-ink-gray-5 mt-1">{{ __("Hrs") }}</div>
           </div>
 
           <!-- Minutes -->
@@ -70,23 +71,24 @@
                 @keyup.enter="$event.target.blur()"
               />
               <div
-                class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -right-3"
+                class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -end-3"
               >
                 <button
                   @click="increment('minutes')"
-                  class="hover:bg-gray-100 rounded-sm select-none px-1 py-0.5 text-xs"
+                  class="hover:bg-surface-gray-2 rounded-sm select-none px-1 py-0.5 text-xs"
                 >
                   <FeatherIcon name="chevron-up" class="size-3.5" />
                 </button>
                 <button
                   @click="decrement('minutes')"
-                  class="hover:bg-gray-100 rounded-sm select-none px-1 py-0.5 text-xs"
+                  class="hover:bg-surface-gray-2 rounded-sm select-none px-1 py-0.5 text-xs"
                 >
                   <FeatherIcon name="chevron-down" class="size-3.5" />
                 </button>
               </div>
             </div>
-            <div class="text-xs text-gray-600 mt-1">Min</div>
+            <!-- //// Neoffice — unit label wrapped (see Hrs above) -->
+            <div class="text-xs text-ink-gray-5 mt-1">{{ __("Min") }}</div>
           </div>
 
           <!-- Seconds -->
@@ -104,23 +106,24 @@
                 class="w-8 text-sm bg-transparent border-0 p-0 text-center focus:ring-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
               <div
-                class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -right-3"
+                class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -end-3"
               >
                 <button
                   @click="increment('seconds')"
-                  class="hover:bg-gray-100 rounded-sm select-none px-1 py-0.5 text-xs"
+                  class="hover:bg-surface-gray-2 rounded-sm select-none px-1 py-0.5 text-xs"
                 >
                   <FeatherIcon name="chevron-up" class="size-3.5" />
                 </button>
                 <button
                   @click="decrement('seconds')"
-                  class="hover:bg-gray-100 rounded-sm select-none px-1 py-0.5 text-xs"
+                  class="hover:bg-surface-gray-2 rounded-sm select-none px-1 py-0.5 text-xs"
                 >
                   <FeatherIcon name="chevron-down" class="size-3.5" />
                 </button>
               </div>
             </div>
-            <div class="text-xs text-gray-600 mt-1">Sec</div>
+            <!-- //// Neoffice — unit label wrapped (see Hrs above) -->
+            <div class="text-xs text-ink-gray-5 mt-1">{{ __("Sec") }}</div>
           </div>
         </div>
       </div>
@@ -131,6 +134,8 @@
 <script setup>
 import { Popover } from "frappe-ui";
 import { computed, ref, watch } from "vue";
+//// Neoffice — import added for the formatted duration below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps({
   modelValue: {
@@ -186,7 +191,9 @@ watch(
 const formattedValue = computed(() => {
   const hrs = hoursValue.value;
   const mins = minutesValue.value;
-  return `${hrs} hours ${mins} minutes`;
+  //// Neoffice — upstream wrote it in plain English (a template literal); one msgid now, so the
+  //// French catalogue reaches it (same pass as 71a5669d9)
+  return __("{0} hours {1} minutes", hrs, mins);
 });
 
 // Handle popover open/close

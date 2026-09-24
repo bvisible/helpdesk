@@ -1,7 +1,8 @@
 <template>
-  <div class="flex w-[382px] flex-col border-l gap-4">
+  <div class="flex w-[382px] flex-col border-s gap-4">
     <!-- Ticket ID -->
     <div class="flex items-center justify-between border-b px-5 py-3">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <span class="cursor-copy text-lg font-semibold">{{ __("Ticket details") }}</span>
     </div>
     <!-- user info and sla info -->
@@ -36,9 +37,9 @@
         class="flex items-center text-base leading-5"
         v-for="field in ticketBasicInfo"
       >
-        <span class="w-[126px] text-sm text-gray-600">{{ field.label }}</span>
+        <span class="w-[126px] text-sm text-ink-gray-5">{{ field.label }}</span>
         <span
-          class="text-base text-gray-800 flex-1"
+          class="text-base text-ink-gray-8 flex-1"
           :class="!field.value && 'text-ink-gray-4'"
         >
           {{ field.value || "—" }}
@@ -51,14 +52,15 @@
         :key="data.label"
         class="flex items-center text-base"
       >
-        <div class="w-[126px] text-gray-600 text-sm">{{ data.title }}</div>
+        <div class="w-[126px] text-ink-gray-5 text-sm">{{ data.title }}</div>
         <div
-          class="break-words text-base text-gray-800 flex items-center gap-2"
+          class="break-words text-base text-ink-gray-8 flex items-center gap-2"
         >
-          <Tooltip :text="dayjs(data.value).long()">
+          <Tooltip :text="dateFormat(data.value, dateTooltipFormat)">
             <Badge :label="data.label" :theme="data.theme" variant="subtle" />
           </Tooltip>
           <!-- SLA explanation icon -->
+          <!-- //// Neoffice — data.key (untranslated identity) drives this branch; data.title is displayed and translated, so comparing it directly broke on non-English sites (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <Tooltip
             v-if="
               dayjs(data.value).diff(dayjs(), 'day', true) > 4 &&
@@ -80,20 +82,33 @@
     <!-- feedback component -->
     <TicketFeedback
       v-if="ticket.data.feedback_rating"
-      class="border-b text-base text-gray-600"
+      class="border-b text-base text-ink-gray-5"
       :ticket="ticket.data"
     />
     <div class="flex flex-col gap-4 pt-0 px-5 py-3 overflow-y-scroll">
       <div
         class="flex items-center text-base leading-5"
         v-for="field in ticketAdditionalInfo"
+        :key="field.fieldname"
       >
-        <span class="w-[126px] text-sm text-gray-600">{{ field.label }}</span>
+        <!-- //// Neoffice — the template's custom field labels arrive in English from the doctype; translated at render like TicketField / UniInput do (same pass as 71a5669d9) -->
+        <span class="w-[126px] text-sm text-ink-gray-5">{{ __(field.label) }}</span>
         <span
-          class="text-base text-gray-800 flex-1"
+          class="text-base text-ink-gray-8 flex-1"
           :class="!field.value && 'text-ink-gray-4'"
         >
-          {{ field.value || "—" }}
+          <template
+            v-if="
+              field.value &&
+              (field.fieldtype === 'Date' || field.fieldtype === 'Datetime') &&
+              dayjs(field.value).isValid()
+            "
+          >
+            {{ dateFormat(field.value, dateTooltipFormat) }}
+          </template>
+          <template v-else>
+            {{ field.value || "—" }}
+          </template>
         </span>
       </div>
     </div>
@@ -104,9 +119,10 @@
 import { dayjs } from "@/dayjs";
 import { ITicket } from "@/pages/ticket/symbols";
 import { Field } from "@/types";
-import { formatTime } from "@/utils";
+import { dateFormat, dateTooltipFormat, formatTime } from "@/utils";
 import { Avatar, Tooltip } from "frappe-ui";
 import { computed, inject } from "vue";
+//// Neoffice — added import: __() used by the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const emit = defineEmits(["open"]);
@@ -128,6 +144,7 @@ const slaData = computed(() => {
       theme: firstResponse.color,
     },
     {
+      //// Neoffice — see the block marker above: key/title split
       key: "resolution",
       title: __("Resolution"),
       value: ticket.data.resolution_date || ticket.data.resolution_by,
@@ -144,9 +161,12 @@ function firstResponseData() {
     dayjs().isBefore(dayjs(ticket.data.response_by))
   ) {
     firstResponse = {
-      label: `Due in ${formatTime(
-        dayjs(ticket.data.response_by).diff(dayjs(), "s")
-      )}`,
+      //// Neoffice — upstream wrote these SLA labels in plain English (template literals); one msgid
+      //// each, {0} for the duration, so the French catalogue reaches them (same pass as 71a5669d9)
+      label: __(
+        "Due in {0}",
+        formatTime(dayjs(ticket.data.response_by).diff(dayjs(), "s"))
+      ),
       color: "orange",
     };
   } else if (
@@ -155,16 +175,21 @@ function firstResponseData() {
     )
   ) {
     firstResponse = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(ticket.data.first_responded_on).diff(
-          dayjs(ticket.data.creation),
-          "s"
+      //// Neoffice — SLA label wrapped (see the "Due in" branch above)
+      label: __(
+        "Fulfilled in {0}",
+        formatTime(
+          dayjs(ticket.data.first_responded_on).diff(
+            dayjs(ticket.data.creation),
+            "s"
+          )
         )
-      )}`,
+      ), //// Neoffice — end of the wrapped "Fulfilled in {0}" label
       color: "green",
     };
   } else {
     firstResponse = {
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __('Failed'),
       color: "red",
     };
@@ -179,20 +204,25 @@ function resolutionData() {
     dayjs().isBefore(ticket.data.resolution_by)
   ) {
     resolution = {
-      label: `Due in ${formatTime(
-        dayjs(ticket.data.resolution_by).diff(dayjs(), "s")
-      )}`,
+      //// Neoffice — SLA label wrapped (see firstResponseData)
+      label: __(
+        "Due in {0}",
+        formatTime(dayjs(ticket.data.resolution_by).diff(dayjs(), "s"))
+      ),
       color: "orange",
     };
   } else if (ticket.data.agreement_status === "Fulfilled") {
+    //// Neoffice — duration computed before the __() call: inside it, the .vue extractor would
+    //// read the "s" argument of dayjs() as a translation context of "Fulfilled in {0}".
+    const fulfilledIn = formatTime(dayjs(ticket.data.resolution_time, "s"));
     resolution = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(ticket.data.resolution_time, "s")
-      )}`,
+      //// Neoffice — SLA label wrapped (see firstResponseData)
+      label: __("Fulfilled in {0}", fulfilledIn),
       color: "green",
     };
   } else {
     resolution = {
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       label: __('Failed'),
       color: "red",
     };
@@ -202,11 +232,13 @@ function resolutionData() {
 
 const ticketBasicInfo = computed(() => [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Ticket ID'),
     value: ticket.data.name,
   },
   {
-    label: "Status",
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    label: __("Status"),
     value: ticket.data.status,
     bold: true,
   },
@@ -215,15 +247,21 @@ const ticketBasicInfo = computed(() => [
 const ticketAdditionalInfo = computed(() => {
   const fields = [
     {
-      label: __('Subject'),
+      fieldname: "subject",
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
+      label: __("Subject"),
       value: ticket.data.subject,
     },
     {
-      label: "Team",
+      fieldname: "team",
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+      label: __("Team"),
       value: ticket.data.agent_group || "-",
     },
     {
-      label: __('Priority'),
+      fieldname: "priority",
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
+      label: __("Priority"),
       value: ticket.data.priority,
     },
   ];
@@ -233,10 +271,24 @@ const ticketAdditionalInfo = computed(() => {
         !field.hide_from_customer &&
         ["subject", "team", "priority"].indexOf(field.fieldname) === -1
     )
-    .map((field: Field) => ({
-      label: field.label,
-      value: ticket.data[field.fieldname],
-    }));
+    .map((field: Field) => {
+      const option = {
+        label: field.label,
+        value: ticket.data[field.fieldname],
+      };
+      if (field.fieldtype === "Date") {
+        option.value = dayjs(option.value).format(
+          window.date_format.toUpperCase()
+        );
+      }
+      if (field.fieldtype === "Datetime") {
+        // window.time_format
+        option.value = dayjs(option.value).format(
+          `${window.date_format.toUpperCase()} ${window.time_format}`
+        );
+      }
+      return option;
+    });
 
   return [...fields, ...custom_fields];
 });

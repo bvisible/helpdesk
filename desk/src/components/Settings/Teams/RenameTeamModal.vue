@@ -10,6 +10,7 @@
     <template #actions>
       <Button
         variant="solid"
+        class="flex w-full"
         @click="renameTeam"
         :loading="renameTeamResource.loading"
         :disabled="teamName == dialog.teamName || teamName.trim() == ''"
@@ -24,6 +25,9 @@
 <script setup lang="ts">
 import { createResource, Dialog, toast } from "frappe-ui";
 import { computed, ref, watch } from "vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// settings labels (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const emit = defineEmits(["onRename"]);
@@ -49,7 +53,7 @@ const renameTeamResource = createResource({
       return __("New and old title cannot be same");
   },
   onSuccess(data) {
-    toast.success(__("Team renamed"));
+    toast.success(__("Team renamed successfully."));
     dialog.value.show = false;
     emit("onRename", data);
   },

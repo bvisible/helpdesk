@@ -1,26 +1,11 @@
 <template>
-  <SettingsLayoutBase>
-    <template #title>
-      <div class="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          icon-left="chevron-left"
-          :label="
-            assignmentRuleData.assignmentRuleName || __('New Assignment Rule')
-          "
-          size="md"
-          @click="goBack()"
-          class="cursor-pointer -ml-4 hover:bg-transparent focus:bg-transparent focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:none active:bg-transparent active:outline-none active:ring-0 active:ring-offset-0 active:text-ink-gray-5 font-semibold text-lg hover:opacity-70 !pr-0 !max-w-96 !justify-start"
-        />
-        <Badge
-          variant="subtle"
-          theme="orange"
-          size="sm"
-          :label="__('Unsaved')"
-          v-if="isDirty"
-        />
-      </div>
-    </template>
+  <SettingsLayoutBase
+    :back-label="
+      assignmentRuleData.assignmentRuleName || __('New Assignment Rule')
+    "
+    :on-back="goBack"
+    :dirty="isDirty"
+  >
     <template #header-actions>
       <div class="flex items-center gap-4">
         <div
@@ -47,7 +32,7 @@
     <template #content>
       <div
         v-if="getAssignmentRuleData.loading"
-        class="flex items-center h-full justify-center"
+        class="flex items-center justify-center h-[stretch] absolute w-[stretch] left-0 top-5.5"
       >
         <LoadingIndicator class="w-4" />
       </div>
@@ -75,7 +60,7 @@
             <Popover>
               <template #target="{ togglePopover }">
                 <div
-                  class="flex items-center justify-between text-base rounded h-7 py-1.5 pl-2 pr-2 border border-[--surface-gray-2] bg-surface-gray-2 placeholder-ink-gray-4 hover:border-outline-gray-modals hover:bg-surface-gray-3 focus:bg-surface-white focus:border-outline-gray-4 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-outline-gray-3 text-ink-gray-8 transition-colors w-full dark:[color-scheme:dark] cursor-default"
+                  class="flex items-center justify-between text-base rounded h-7 py-1.5 ps-2 pe-2 border border-[--surface-gray-2] bg-surface-gray-2 placeholder-ink-gray-4 hover:border-outline-gray-modals hover:bg-surface-gray-3 focus:bg-surface-white focus:border-outline-gray-4 focus:shadow-sm focus:ring-0 focus-visible:ring-2 focus-visible:ring-outline-gray-3 text-ink-gray-8 transition-colors w-full dark:[color-scheme:dark] cursor-default"
                   @click="togglePopover()"
                 >
                   <div>
@@ -90,12 +75,12 @@
               </template>
               <template #body="{ togglePopover }">
                 <div
-                  class="p-1 text-ink-gray-6 top-1 absolute bg-white shadow-2xl rounded w-[--reka-popper-anchor-width]"
+                  class="p-1 text-ink-gray-6 top-1 absolute bg-surface-white shadow-2xl rounded w-[--reka-popper-anchor-width]"
                 >
                   <div
                     v-for="option in priorityOptions"
                     :key="option.value"
-                    class="p-2 cursor-pointer hover:bg-gray-50 text-base flex items-center justify-between rounded"
+                    class="p-2 cursor-pointer hover:bg-surface-menu-bar text-base flex items-center justify-between rounded"
                     @click="
                       assignmentRuleData.priority = option.value;
                       togglePopover();
@@ -134,7 +119,7 @@
         <div>
           <div class="flex flex-col gap-1">
             <span class="text-lg font-semibold text-ink-gray-8">{{
-              __("Assignment condition")
+              __("Assignment Condition")
             }}</span>
             <div class="flex items-center justify-between gap-6">
               <span class="text-p-sm text-ink-gray-6">
@@ -164,7 +149,7 @@
                   </template>
                   <template #body-main>
                     <div
-                      class="text-sm text-ink-gray-6 p-2 bg-white rounded-md max-w-96 text-wrap whitespace-pre-wrap leading-5"
+                      class="text-sm text-ink-gray-6 p-2 bg-surface-white rounded-md max-w-96 text-wrap whitespace-pre-wrap leading-5"
                     >
                       <code>{{ assignmentRuleData.assignCondition }}</code>
                     </div>
@@ -175,19 +160,17 @@
           </div>
           <div class="mt-5">
             <div
-              class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-gray-300 rounded-md p-3 py-4"
+              class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-outline-gray-2 rounded-md p-3 py-4"
               v-if="
                 !useNewUIForAssignCondition &&
                 assignmentRuleData.assignCondition
               "
             >
               <span class="text-p-sm">
-                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-                {{ __("Conditions for this rule were created from") }}
-                <a :href="deskUrl" target="_blank" class="underline">desk</a>
-                which are not compatible with this UI, you will need to recreate
-                the conditions here if you want to manage and add new conditions
-                from this UI.
+                <!-- //// Neoffice — one sentence cut around the link: only its first fragment went through __() and the rest stayed in plain English. One msgid with {0} where the link goes, halves read back from the translation (deskConditionsNote; same pattern as MergeCategoryModal, 71a5669d9) -->
+                {{ deskConditionsNote.before
+                }}<a :href="deskUrl" target="_blank" class="underline">desk</a
+                >{{ deskConditionsNote.after }}
               </span>
               <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
@@ -213,7 +196,7 @@
         <div>
           <div class="flex flex-col gap-1">
             <span class="text-lg font-semibold text-ink-gray-8">{{
-              __("Unassignment condition")
+              __("Unassignment Condition")
             }}</span>
             <div class="flex items-center justify-between gap-6">
               <span class="text-p-sm text-ink-gray-6">
@@ -247,7 +230,7 @@
                   </template>
                   <template #body-main>
                     <div
-                      class="text-sm text-ink-gray-6 p-2 bg-white rounded-md max-w-96 text-wrap whitespace-pre-wrap leading-5"
+                      class="text-sm text-ink-gray-6 p-2 bg-surface-white rounded-md max-w-96 text-wrap whitespace-pre-wrap leading-5"
                     >
                       <code>{{ assignmentRuleData.unassignCondition }}</code>
                     </div>
@@ -258,19 +241,17 @@
           </div>
           <div class="mt-5">
             <div
-              class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-gray-300 rounded-md p-3 py-4"
+              class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-outline-gray-2 rounded-md p-3 py-4"
               v-if="
                 !useNewUIForUnassignCondition &&
                 assignmentRuleData.unassignCondition
               "
             >
               <span class="text-p-sm">
-                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-                {{ __("Conditions for this rule were created from") }}
-                <a :href="deskUrl" target="_blank" class="underline">desk</a>
-                which are not compatible with this UI, you will need to recreate
-                the conditions here if you want to manage and add new conditions
-                from this UI.
+                <!-- //// Neoffice — same sentence as above: one msgid with {0} for the link (deskConditionsNote) -->
+                {{ deskConditionsNote.before
+                }}<a :href="deskUrl" target="_blank" class="underline">desk</a
+                >{{ deskConditionsNote.after }}
               </span>
               <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
@@ -344,7 +325,8 @@ import {
   Switch,
   toast,
 } from "frappe-ui";
-import { onMounted, onUnmounted, provide, ref, watch } from "vue";
+//// Neoffice — `computed` added for deskConditionsNote below.
+import { computed, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import {
   assignmentRuleData,
   assignmentRulesActiveScreen,
@@ -359,6 +341,9 @@ import AssignmentSchedule from "./AssignmentSchedule.vue";
 import { convertToConditions } from "@/utils";
 import { disableSettingModalOutsideClick } from "../settingsModal";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for the settings
+// //// labels translated below (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const isDirty = ref(false);
@@ -384,6 +369,14 @@ const useNewUIForUnassignCondition = ref(true);
 const isAssignConditionOld = ref(false);
 const isUnassignConditionOld = ref(false);
 const deskUrl = `${window.location.origin}/app/assignment-rule/${assignmentRulesActiveScreen.value.data?.name}`;
+//// Neoffice — one message, {0} where the desk link goes; the halves are read back from the
+//// translation so each language keeps its own word order (see the template).
+const deskConditionsNote = computed(() => {
+  const [before, after] = __(
+    "Conditions for this rule were created from {0} which are not compatible with this UI, you will need to recreate the conditions here if you want to manage and add new conditions from this UI."
+  ).split("{0}");
+  return { before, after: after ?? "" };
+});
 
 const getAssignmentRuleData = createResource({
   url: "frappe.client.get",
@@ -399,7 +392,8 @@ const getAssignmentRuleData = createResource({
       assignConditionJson = JSON.parse(data.assign_condition_json || "[]");
     } catch (error) {
       toast.error(
-        "Assignment conditions are invalid or corrupt, recreate the conditions."
+        //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+        __("Assignment conditions are invalid or corrupt, recreate the conditions.")
       );
       assignConditionJson = [];
     }
@@ -407,7 +401,8 @@ const getAssignmentRuleData = createResource({
       unassignConditionJson = JSON.parse(data.unassign_condition_json || "[]");
     } catch (error) {
       toast.error(
-        "Unassignment conditions are invalid or corrupt, recreate the conditions."
+        //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+        __("Unassignment conditions are invalid or corrupt, recreate the conditions.")
       );
       unassignConditionJson = [];
     }
@@ -515,9 +510,12 @@ const saveAssignmentRule = () => {
 };
 
 const showOverwriteConfirm = () => {
+  // //// Neoffice — labels wrapped in __() (41fb04e59 "fix(i18n): finish the
+  // //// SPA pass").
   showConfirmDialog.value = {
     show: true,
     title: __('Confirm overwrite'),
+    // //// Neoffice — see the marker above: label wrapped in __()
     message:
       __('Your old condition will be overwritten. Are you sure you want to save?'),
     onConfirm: () => {
@@ -561,7 +559,7 @@ const createAssignmentRule = () => {
 const createAssignmentRuleResource = createResource({
   url: "frappe.client.insert",
   onSuccess(data) {
-    toast.success(__("Assignment rule created"));
+    toast.success(__("Assignment rule created successfully."));
     assignmentRulesActiveScreen.value = {
       screen: "view",
       data: data,
@@ -573,6 +571,8 @@ const createAssignmentRuleResource = createResource({
   },
 });
 
+// //// Neoffice — every label below wrapped in __() (41fb04e59 "fix(i18n):
+// //// finish the SPA pass").
 const priorityOptions = [
   { label: __('Low'), value: "0" },
   { label: __('Low-Medium'), value: "1" },
@@ -648,7 +648,7 @@ const updateAssignmentRule = async () => {
   }
 
   isLoading.value = false;
-  toast.success(__("Assignment rule updated"));
+  toast.success(__("Assignment rule updated successfully."));
 };
 
 watch(

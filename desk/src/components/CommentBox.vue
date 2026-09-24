@@ -1,48 +1,34 @@
 <template>
   <div class="flex-col text-base flex-1" ref="commentBoxRef">
-    <div class="mb-1 ml-0.5 flex items-center justify-between">
-      <div class="text-gray-600 flex items-center gap-2">
+    <div class="mb-2 flex items-center justify-between">
+      <div class="text-ink-gray-5 flex items-center gap-2">
         <Avatar
           size="md"
           :label="commenter"
           :image="getUser(commentedBy).user_image"
         />
         <p>
-          <span class="font-medium text-gray-800">
+          <span class="font-medium text-ink-gray-8">
             {{ commenter }}
           </span>
-          <span> added a</span>
-          <span class="max-w-xs truncate font-medium text-gray-800">
-            comment
-          </span>
+          <span> {{ __(" commented") }}</span>
         </p>
       </div>
       <div class="flex items-center gap-1">
         <Tooltip :text="dateFormat(creation, dateTooltipFormat)">
-          <span class="pl-0.5 text-sm text-gray-600">
+          <span class="ps-0.5 text-sm text-ink-gray-5">
             {{ timeAgo(creation) }}
           </span>
         </Tooltip>
         <div v-if="authStore.userId === commentedBy && !editable">
           <Dropdown
             :placement="'right'"
-            :options="[
-              {
-                label: 'Edit',
-                onClick: () => handleEditMode(),
-                icon: 'edit-2',
-                condition: () => !isTicketMergedComment,
-              },
-              {
-                label: 'Delete',
-                onClick: () => (showDialog = true),
-                icon: 'trash-2',
-              },
-            ]"
+            :options="dropdownOptions"
+            @click="isConfirmingDelete = false"
           >
             <Button
               icon="more-horizontal"
-              class="text-gray-600"
+              class="text-ink-gray-5"
               variant="ghost"
             />
           </Dropdown>
@@ -51,10 +37,9 @@
     </div>
     <div
       :id="`comment-${name}`"
-      class="rounded bg-gray-50 transition-colors px-4 py-3"
+      class="rounded-md bg-surface-gray-1 transition-colors px-3 py-1.5"
     >
       <TextEditor
-        ref="editorRef"
         :editor-class="[
           'prose-f shrink text-p-sm transition-all duration-300 ease-in-out block w-full content',
           getFontFamily(_content),
@@ -62,18 +47,34 @@
         :content="_content"
         :editable="editable"
         :bubble-menu="textEditorMenuButtons"
-        :mentions="[]"
+        :mentions="userMentions"
         @change="(event:string) => {_content = event}"
+        @keydown.ctrl.enter.capture.stop="handleSaveComment"
+        @keydown.meta.enter.capture.stop="handleSaveComment"
       >
         <template #bottom v-if="editable">
           <div class="flex flex-row-reverse gap-2">
-            <Button :label="__('Save')" @click="handleSaveComment" variant="solid" />
+            <!-- //// Neoffice — labels wrapped in __() (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+            <div>
+              <Button
+                :label="
+                  isMobileView
+                    ? __('Save')
+                    : isMac
+                    ? __('Save (⌘ + ⏎)')
+                    : __('Save (Ctrl + ⏎)')
+                "
+                @click="handleSaveComment"
+                variant="solid"
+              />
+            </div>
+            <!-- //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
             <Button :label="__('Discard')" @click="handleDiscard" />
           </div>
         </template>
       </TextEditor>
       <div
-        class="flex flex-wrap gap-2"
+        class="flex flex-wrap gap-2 mb-2"
         v-if="!editable && Boolean(attachments.length)"
       >
         <AttachmentItem
@@ -84,13 +85,13 @@
         />
       </div>
       <div
-        class="flex items-center gap-2 mt-2"
+        class="flex items-center gap-2 my-2"
         v-if="!editable && enableCommentReactions"
       >
         <Popover>
           <template #target="{ togglePopover }">
             <button
-              class="flex h-full items-center justify-center rounded-full bg-surface-gray-2 px-2 py-1 text-ink-gray-6 transition hover:bg-surface-gray-3"
+              class="flex h-full items-center justify-center rounded-full bg-surface-gray-2 px-1 py-1 text-ink-gray-6 transition hover:bg-surface-gray-3"
               @click="togglePopover()"
             >
               <ReactionIcon class="w-4 h-4" />
@@ -130,9 +131,10 @@
               class="flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-colors"
               :class="
                 reaction.current_user_reacted
-                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                  ? 'bg-surface-blue-2 text-ink-blue-3 hover:bg-surface-blue-3'
                   : 'bg-surface-gray-3 text-ink-gray-6 hover:bg-surface-gray-4'
               "
+              v-if="reaction.count !== 0"
               @click="handleReaction(reaction.emoji)"
             >
               <span>{{ reaction.emoji }}</span>
@@ -143,32 +145,22 @@
       </div>
     </div>
   </div>
-  <Dialog
-    v-model="showDialog"
-    :options="{
-      title: __('Delete Comment'),
-      message: __('Are you sure you want to confirm this action?'),
-      actions: [
-        { label: __('Cancel'), onClick: () => (showDialog = false) },
-        {
-          label: __('Delete'),
-          onClick: () => deleteComment.submit(),
-          variant: 'solid',
-        },
-      ],
-    }"
-  />
 </template>
 
 <script setup lang="ts">
 import { AttachmentItem } from "@/components";
 import ReactionIcon from "@/components/icons/ReactionIcon.vue";
+import { useDevice } from "@/composables";
+import { useScreenSize } from "@/composables/screen";
+import { useAgentStore } from "@/stores/agent";
 import { useAuthStore } from "@/stores/auth";
 import { useConfigStore } from "@/stores/config";
 import { updateRes as updateComment } from "@/stores/knowledgeBase";
 import { useUserStore } from "@/stores/user";
+import { __ } from "@/translation";
 import { CommentActivity } from "@/types";
 import {
+  ConfirmDelete,
   dateFormat,
   dateTooltipFormat,
   getFontFamily,
@@ -178,7 +170,6 @@ import {
 } from "@/utils";
 import {
   Avatar,
-  Dialog,
   Dropdown,
   Popover,
   TextEditor,
@@ -187,7 +178,6 @@ import {
   toast,
 } from "frappe-ui";
 import { PropType, computed, onMounted, ref } from "vue";
-import { __ } from "@/translation";
 
 const authStore = useAuthStore();
 const props = defineProps({
@@ -202,17 +192,36 @@ const { enableCommentReactions } = useConfigStore();
 const { name, creation, content, commenter, commentedBy, attachments } =
   props.activity;
 
+const { isMac } = useDevice();
+const { isMobileView } = useScreenSize();
 const isTicketMergedComment = computed(() => {
   const regex = /has been merged with ticket #\d+/;
   return regex.test(content);
 });
+const agentStore = useAgentStore();
+const userMentions = computed(() => agentStore.dropdown ?? []);
 
 const emit = defineEmits(["update"]);
-const showDialog = ref(false);
+const isConfirmingDelete = ref(false);
 const editable = ref(false);
 const _content = ref(content);
 
 const emojiList = ["👍", "👎", "❤️", "🎉", "👀", "✅"];
+
+const dropdownOptions = computed(() => [
+  {
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    label: __("Edit"),
+    onClick: () => handleEditMode(),
+    icon: "edit-2",
+    condition: () => !isTicketMergedComment.value,
+  },
+  ...ConfirmDelete({
+    onConfirmDelete: () => deleteComment.submit(),
+    isConfirmingDelete,
+  }),
+]);
+// editor.commands.focus('end')
 
 const reactions = ref<
   Array<{
@@ -243,19 +252,51 @@ const toggleReaction = createResource({
 });
 
 function handleReaction(emoji: string) {
+  const previousReaction = reactions.value.find(
+    (r) => r.current_user_reacted && r.emoji !== emoji
+  );
+  if (previousReaction) {
+    previousReaction.count = Math.max(0, previousReaction.count - 1);
+    previousReaction.current_user_reacted = false;
+  }
+
+  const existingReaction = reactions.value.find((r) => r.emoji === emoji);
+  if (existingReaction) {
+    if (existingReaction.current_user_reacted) {
+      existingReaction.count = Math.max(0, existingReaction.count - 1);
+      existingReaction.current_user_reacted = false;
+    } else {
+      existingReaction.count += 1;
+      existingReaction.current_user_reacted = true;
+    }
+  } else {
+    reactions.value.push({
+      emoji,
+      count: 1,
+      current_user_reacted: true,
+      users: [
+        {
+          user: authStore.userId,
+          full_name: getUser(authStore.userId).full_name,
+        },
+      ],
+    });
+  }
+
   toggleReaction.submit(emoji);
 }
 
 const commentBoxRef = ref(null);
-const editorRef = ref(null);
+const lastSavedContent = ref(content);
+const commentBoxState = ref(content);
 
 function handleEditMode() {
   editable.value = true;
-  editorRef.value.editor.chain().focus("start");
+  commentBoxState.value = _content.value;
 }
 
 function handleDiscard() {
-  _content.value = content;
+  _content.value = commentBoxState.value;
   editable.value = false;
 }
 
@@ -267,18 +308,17 @@ const deleteComment = createResource({
   }),
   onSuccess() {
     emit("update");
-    showDialog.value = false;
-    toast.success("Comment deleted");
+    toast.success(__("Comment deleted successfully."));
   },
 });
 
 function handleSaveComment() {
-  if (content === _content.value) {
+  if (lastSavedContent.value === _content.value) {
     editable.value = false;
     return;
   }
   if (isContentEmpty(_content.value)) {
-    toast.error("Comment cannot be empty");
+    toast.error(__("Comment cannot be empty."));
     return;
   }
 
@@ -292,14 +332,15 @@ function handleSaveComment() {
     {
       onSuccess: () => {
         editable.value = false;
+        lastSavedContent.value = _content.value;
         emit("update");
-        toast.success("Comment updated");
+        toast.success(__("Comment updated successfully."));
       },
     }
   );
 }
-
 onMounted(() => {
+  // hack to persist the width of comment box to prevent it from resizing when the content is updated
   commentBoxRef.value.style.width = "0px";
 });
 </script>

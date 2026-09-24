@@ -5,10 +5,10 @@
     <div class="mb-4 flex items-center justify-between text-base">
       <div class="flex items-center gap-0.5">
         <UserAvatar v-bind="user" size="lg" expand strong :hide-avatar="true" />
-        <LucideDot class="text-gray-500 size-4" />
-        <Tooltip :text="dayjs(date).long()">
-          <span class="text-gray-600">
-            {{ dayjs.tz(date).fromNow() }}
+        <LucideDot class="text-ink-gray-4 size-4" />
+        <Tooltip :text="dateFormat(date, dateTooltipFormat)">
+          <span class="text-ink-gray-5">
+            {{ timeAgo(date) }}
           </span>
         </Tooltip>
       </div>
@@ -30,6 +30,7 @@
 import { AttachmentItem, UserAvatar } from "@/components";
 import { dayjs } from "@/dayjs";
 import { UserInfo } from "@/types";
+import { dateFormat, dateTooltipFormat, timeAgo } from "@/utils";
 import { Tooltip } from "frappe-ui";
 import sanitizeHtml from "sanitize-html";
 
@@ -59,7 +60,10 @@ function sanitize(html: string) {
     allowedAttributes: {
       a: ["href"],
       video: ["src", "controls"],
-      img: ["src"],
+      img: ["src", "width", "height"],
+      table: ["border", "cellpadding", "cellspacing", "width", "data-type"],
+      td: ["colspan", "rowspan", "width", "align", "valign"],
+      th: ["colspan", "rowspan", "width", "align", "valign"],
     },
   });
 }

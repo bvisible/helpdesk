@@ -5,6 +5,7 @@
       size: '4xl',
     }"
     @vue:unmounted="resetFilter"
+    @after-leave="onAfterLeave"
   >
     <template #body>
       <div class="max-h-[575px]" :style="{ height: 'calc(100vh - 8rem)' }">
@@ -26,19 +27,20 @@
                 @input="search = $event"
                 :placeholder="__('Search')"
                 type="text"
-                class="bg-white hover:bg-white focus:ring-0 border-outline-gray-2"
+                class="focus:ring-0 border-outline-gray-2"
                 icon-left="search"
                 debounce="300"
-                inputClass="p-4 pr-12"
+                inputClass="p-4 pe-12 rtl:pr-8"
               />
               <Button
                 v-if="search"
                 icon="x"
                 variant="ghost"
                 @click="search = ''"
-                class="absolute right-1 top-1/2 -translate-y-1/2"
+                class="absolute end-1 top-1/2 -translate-y-1/2"
               />
             </div>
+            <!-- //// Neoffice — shows the option's translated label; upstream printed the raw stored identifier as the button label (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
             <Dropdown :options="filters" placement="right">
               <Button :label="activeFilterLabel" icon-left="filter" class="p-4">
                 <template #suffix>
@@ -70,7 +72,7 @@
             <div
               v-for="template in savedReplyListResource?.data"
               :key="template.name"
-              class="flex h-56 cursor-pointer flex-col gap-2 rounded-lg border p-3 hover:bg-gray-100 relative"
+              class="flex h-56 cursor-pointer flex-col gap-2 rounded-lg border p-3 hover:bg-surface-gray-2 relative"
               @click="onTemplateSelect(template)"
             >
               <div class="text-base font-semibold truncate border-b pb-2">
@@ -80,7 +82,7 @@
                 v-if="template.message"
                 :content="template.message"
                 :editable="false"
-                editor-class="!prose-sm max-w-none !text-sm text-gray-600 focus:outline-none"
+                editor-class="!prose-sm max-w-none !text-sm text-ink-gray-5 focus:outline-none"
                 class="flex-1 overflow-hidden pointer-events-none"
               />
               <div
@@ -88,7 +90,7 @@
                   selectedTemplate.name === template.name &&
                   selectedTemplate.isLoading
                 "
-                class="flex items-center justify-center absolute top-0 left-0 w-full h-full bg-black/20 rounded-lg"
+                class="flex items-center justify-center absolute top-0 start-0 w-full h-full bg-surface-gray-7/20 rounded-lg"
               >
                 <LoadingIndicator class="size-4" />
               </div>
@@ -102,8 +104,8 @@
             class="mt-2"
           >
             <div class="flex h-56 flex-col items-center justify-center">
-              <div class="text-p-sm text-gray-500">
-                {{ __("No Saved Replies found") }}
+              <div class="text-p-sm text-ink-gray-4">
+                {{ __("No saved replies found") }}
               </div>
             </div>
           </div>
@@ -115,6 +117,8 @@
 
 <script setup lang="ts">
 import { useConfigStore } from "@/stores/config";
+import { capture } from "@/telemetry";
+import { __ } from "@/translation";
 import { SavedReply } from "@/types";
 import { useStorage } from "@vueuse/core";
 import {
@@ -128,13 +132,11 @@ import {
   TextEditor,
 } from "frappe-ui";
 import { storeToRefs } from "pinia";
-import { computed, nextTick, onUnmounted, ref, watch } from "vue";
-import { showEmailBox } from "../pages/ticket/modalStates";
+import { computed, nextTick, ref, watch } from "vue";
 import {
   setActiveSettingsTab,
   showSettingsModal,
 } from "./Settings/settingsModal";
-import { __ } from "@/translation";
 
 const props = defineProps({
   doctype: {
@@ -164,9 +166,11 @@ const filters = computed(() => {
       value: "Personal",
       onClick: () => (activeFilter.value = "Personal"),
     },
+    //// Neoffice — stores "Team", not "My Team" (see the scope note below): the option's value is what the filter matches on (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     {
       label: __("My Team"),
       value: "Team",
+      //// Neoffice — see the block marker above: value, not label
       onClick: () => (activeFilter.value = "Team"),
     },
     {
@@ -205,11 +209,20 @@ const selectedTemplate = ref({
   name: "",
   isLoading: false,
 });
+const pendingTemplate = ref<string | null>(null);
 
-//// Neoffice — was `f.label === activeFilter.value`: the label is translated while
-//// activeFilter holds an English value, so on a French site the scope resolved to
-//// undefined and the filter silently listed every scope. Matches on `value` now.
-//// "My Team" is tolerated because an older build wrote it into localStorage.
+function onAfterLeave() {
+  if (pendingTemplate.value !== null) {
+    emit("apply", pendingTemplate.value);
+    pendingTemplate.value = null;
+  }
+}
+
+//// Neoffice — upstream matches on `value` too (it used to match the translated
+//// label), but its "My Team" option stores "My Team", which is no option's value:
+//// that filter resolved to undefined and listed every scope. The option stores
+//// "Team" here; "My Team" is still accepted because older builds wrote it into
+//// localStorage.
 const scope = computed(() => {
   const wanted = activeFilter.value === "My Team" ? "Team" : activeFilter.value;
   return filters.value.find((f) => f.value === wanted)?.value;
@@ -226,10 +239,6 @@ const savedReplyListResource = createListResource({
   orderBy: "modified desc",
   start: 0,
   pageLength: 999,
-});
-
-onUnmounted(() => {
-  showEmailBox.value = true;
 });
 
 const onTemplateSelect = (template: SavedReply) => {
@@ -249,7 +258,11 @@ const onTemplateSelect = (template: SavedReply) => {
         name: "",
         isLoading: false,
       };
-      emit("apply", data);
+      // If user cancelled (Escape/outside click) while API was in flight, discard
+      if (!show.value) return;
+      pendingTemplate.value = data;
+      show.value = false;
+      capture("saved_reply_applied");
     },
   });
   renderResponse.submit().catch(() => {

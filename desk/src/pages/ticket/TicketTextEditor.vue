@@ -35,6 +35,7 @@
     <template #bottom-left>
       <span class="flex">
         <slot name="bottom-left" />
+        <!-- //// Neoffice — upstream wrote the upload error in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
         <FileUploader
           :upload-args="{
             folder: 'Home/Helpdesk',
@@ -43,7 +44,7 @@
           @success="
             (f: File) => $emit('update:attachments', [...attachments, f])
           "
-          @failure="() => toast.error('Error uploading file')"
+          @failure="() => toast.error(__('Error uploading file'))"
         >
           <template #default="{ openFileSelector }">
             <Button theme="gray" variant="ghost" @click="openFileSelector()">
@@ -67,7 +68,7 @@
   </HTextEditor>
   <div
     v-else
-    class="flex w-full cursor-pointer items-center gap-2 rounded bg-gray-100 px-3.5 py-2 hover:bg-gray-200"
+    class="flex w-full cursor-pointer items-center gap-2 rounded bg-surface-gray-2 px-3.5 py-2 hover:bg-surface-gray-3"
     @click="() => $emit('update:expand', !expand)"
   >
     <UserAvatar
@@ -75,12 +76,11 @@
       :image="authStore.userImage"
       size="sm"
     />
-    <span class="text-base text-gray-700">
+    <span class="text-base text-ink-gray-7">
       {{ placeholder }}
     </span>
   </div>
 </template>
-
 <script setup lang="ts">
 import {
   AttachmentItem,

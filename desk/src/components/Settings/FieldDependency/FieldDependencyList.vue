@@ -5,19 +5,21 @@
         <h1 class="text-lg font-semibold text-ink-gray-8">
           {{ __("Field Dependencies") }}
         </h1>
-        <DocumentationButton
-          url="https://docs.frappe.io/helpdesk/field-dependency"
-          color="!text-ink-gray-6"
-        />
       </div>
     </template>
     <template #description>
       <p class="text-p-sm max-w-md text-ink-gray-6">
         {{
           __(
-            "Create dependencies between fields to dynamically control options based on user selections."
+            "Create field dependencies to dynamically update options based on user selections. Learn more about field dependencies"
           )
         }}
+        <a
+          href="https://docs.frappe.io/helpdesk/field-dependency"
+          target="_blank"
+          class="underline"
+          >{{ __("here.") }}</a
+        >
       </p>
     </template>
     <template #header-actions>
@@ -27,6 +29,7 @@
         variant="solid"
         @click="$emit('update:step', 'fd')"
         icon-left="plus"
+        class="rtl:flex-row-reverse"
       />
     </template>
     <template #content>
@@ -40,36 +43,20 @@
         </div>
 
         <!-- Empty State -->
-        <div
+        <!-- //// Neoffice — upstream wrote title and description in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+        <EmptyState
           v-if="
             !fieldDependenciesList.loading &&
             !fieldDependenciesList.data?.length
           "
-          class="flex flex-col items-center justify-center gap-4 p-4 h-full"
-        >
-          <div
-            class="p-4 size-14.5 rounded-full bg-surface-gray-1 flex justify-center items-center"
-          >
-            <FieldDependencyIcon class="size-6 text-ink-gray-6" />
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <div class="text-base font-medium text-ink-gray-6">
-              {{ __("No field dependency found") }}
-            </div>
-            <div class="text-p-sm text-ink-gray-5 max-w-60 text-center">
-              {{ __("Add one to get started") }}
-            </div>
-          </div>
-          <Button
-            :label="__('New')"
-            variant="outline"
-            icon-left="plus"
-            @click="$emit('update:step', 'fd')"
-          />
-        </div>
+          variant="badge"
+          :icon="FieldDependencyIcon"
+          :title="__('No field dependency found')"
+          :description="__('Add one to get started.')"
+        />
 
         <div
-          class="w-full -ml-2"
+          class="w-full -ms-2"
           v-if="
             !fieldDependenciesList.loading &&
             fieldDependenciesList.data?.length > 0
@@ -77,10 +64,10 @@
         >
           <div>
             <div
-              class="grid grid-cols-11 items-center gap-4 text-sm text-gray-600"
+              class="grid grid-cols-11 items-center gap-4 text-sm text-ink-gray-5"
             >
-              <div class="col-span-7 ml-2">{{ __("Name") }}</div>
-              <div class="col-span-2">{{ __("Created By") }}</div>
+              <div class="col-span-7 ms-2">{{ __("Name") }}</div>
+              <div class="col-span-2">{{ __("Created by") }}</div>
               <div class="col-span-2">{{ __("Enabled") }}</div>
             </div>
             <hr class="mt-2 mx-2" />
@@ -89,11 +76,11 @@
               :key="row.name"
             >
               <div
-                class="grid grid-cols-11 items-center gap-4 cursor-pointer hover:bg-gray-50 rounded h-12.5"
+                class="grid grid-cols-11 items-center gap-4 cursor-pointer hover:bg-surface-menu-bar rounded h-12.5"
               >
                 <div
                   @click.stop="$emit('update:step', 'fd', row.name)"
-                  class="w-full py-3 pl-2 col-span-7 text-base text-ink-gray-7"
+                  class="w-full py-3 ps-2 col-span-7 text-base text-ink-gray-7"
                 >
                   <span>{{ getFieldDependencyLabel(row.name) }}</span>
                 </div>
@@ -104,7 +91,7 @@
                   }}</span>
                 </div>
                 <div
-                  class="flex justify-between items-center w-full pr-2 col-span-2"
+                  class="flex justify-between items-center w-full pe-2 col-span-2"
                 >
                   <div>
                     <Switch
@@ -157,9 +144,10 @@ import {
 import { getFieldDependencyLabel, ConfirmDelete } from "@/utils";
 import { onMounted, ref } from "vue";
 import { fieldDependenciesList } from "./fieldDependency";
-import DocumentationButton from "@/components/DocumentationButton.vue";
 import FieldDependencyIcon from "@/components/icons/FieldDependencyIcon.vue";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+//// Neoffice — removed (34afea6c1 "Merge upstream develop up to 2026-06-02 (c778f533b)"): upstream added its own __ import during the same i18n work; the merge kept ours below rather than importing __ twice
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 onMounted(() => {
@@ -174,7 +162,7 @@ function getOptions(rowName: string) {
     onConfirmDelete: () => {
       fieldDependenciesList.delete.submit(rowName, {
         onSuccess: () => {
-          toast.success(__("Field dependency deleted successfully"));
+          toast.success(__("Field dependency deleted successfully."));
           fieldDependenciesList.reload();
         },
       });

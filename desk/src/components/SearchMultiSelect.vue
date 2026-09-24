@@ -1,5 +1,5 @@
 <template>
-  <div class="relative inline-block text-left">
+  <div class="relative inline-block text-start">
     <div class="flex">
       <Button
         variant="outline"
@@ -12,7 +12,7 @@
         >
           <template v-if="selectedCount > 0">
             <!-- Stacked Avatars -->
-            <div class="flex -space-x-2 isolate">
+            <div class="flex -space-x-2 rtl:space-x-reverse isolate">
               <div
                 v-for="(option, index) in selectedOptions.slice(0, 3)"
                 :key="`avatar-${option.value}`"
@@ -23,25 +23,23 @@
                   v-if="option.image"
                   :image="option.image"
                   :label="option.label"
-                  class="border-2 border-white flex-shrink-0"
+                  class="border-2 border-[var(--surface-white)] flex-shrink-0"
                   size="sm"
                 />
               </div>
             </div>
             <!-- Count Text -->
             <span class="text-ink-gray-7">
-              {{
-                selectedCount === 1
-                  ? selectedOptions[0]?.label
-                  : `${selectedCount} ${selectionText}`
-              }}
+              <!-- //// Neoffice — upstream glued the count to "items" in plain English; one msgid now, so the French catalogue reaches it (same pass as 71a5669d9). A caller's own selectionText still wins. -->
+              {{ selectedCount === 1 ? selectedOptions[0]?.label : selectionText ? `${selectedCount} ${selectionText}` : __("{0} items", selectedCount) }}
             </span>
           </template>
-          <span v-else class="text-ink-gray-6">{{ placeholder }}</span>
+          <!-- //// Neoffice — the default placeholder is translated here, at render: as a withDefaults value its __() ran before the catalogue arrived -->
+          <span v-else class="text-ink-gray-6">{{ placeholder ?? __("Select options...") }}</span>
         </div>
         <template #suffix>
           <LucideChevronDown
-            class="ml-2 h-4 w-4 transition-transform duration-200"
+            class="ms-2 h-4 w-4 transition-transform duration-200"
             :class="{ 'rotate-180': isOpen }"
           />
         </template>
@@ -50,17 +48,18 @@
 
     <div
       v-if="isOpen"
-      class="absolute z-50 mt-2 w-64 divide-y divide-outline-gray-modals rounded-lg bg-surface-modal shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none left-0 origin-top-left"
+      class="absolute z-50 mt-2 w-64 divide-y divide-outline-gray-modals rounded-lg bg-surface-modal shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none start-0 origin-top-left"
     >
       <!-- Header -->
       <div class="py-1.5 px-1.5">
         <div
           class="flex h-7 items-center text-sm font-medium text-ink-gray-6 justify-between"
         >
+          <!-- //// Neoffice — default label translated here, at render (see the placeholder above) -->
           <input
             ref="inputRef"
             v-model="filterText"
-            :placeholder="label"
+            :placeholder="label ?? __('Options')"
             class="px-2 flex-1 bg-transparent border-none outline-none text-sm focus:border-none focus:ring-0 text-ink-gray-6 placeholder-ink-gray-4"
             @click.stop
             @keydown="handleInputKeydown"
@@ -91,7 +90,7 @@
           >
             <Checkbox
               :modelValue="props.modelValue.includes(option.value)"
-              class="mr-2 flex-shrink-0"
+              class="me-2 flex-shrink-0"
             />
 
             <component v-if="option.icon" :is="renderIcon(option.icon)" />
@@ -100,17 +99,17 @@
               v-else-if="hasAnyVisualElements"
               :image="option.image"
               :label="option.label"
-              class="mr-2 flex-shrink-0"
+              class="me-2 flex-shrink-0"
               size="sm"
             />
 
-            <span class="text-ink-gray-7 flex-1 text-left truncate">
+            <span class="text-ink-gray-7 flex-1 text-start truncate">
               {{ option.label }}
             </span>
 
             <span
               v-if="(option.count ?? 0) > 0"
-              class="text-xs text-ink-gray-5 ml-auto"
+              class="text-xs text-ink-gray-5 ms-auto"
             >
               {{ option.count }}
             </span>
@@ -136,7 +135,7 @@
           >
             <Checkbox
               :modelValue="props.modelValue.includes(option.value)"
-              class="mr-2 flex-shrink-0"
+              class="me-2 flex-shrink-0"
             />
 
             <component v-if="option.icon" :is="renderIcon(option.icon)" />
@@ -145,23 +144,23 @@
               v-else-if="option.image"
               :image="option.image"
               :label="option.label"
-              class="mr-2 flex-shrink-0"
+              class="me-2 flex-shrink-0"
               size="sm"
             />
 
             <!-- Spacer for alignment when other options have visual elements -->
             <div
               v-else-if="hasAnyVisualElements"
-              class="mr-2 w-6 h-6 flex-shrink-0"
+              class="me-2 w-6 h-6 flex-shrink-0"
             ></div>
 
-            <span class="text-ink-gray-7 flex-1 text-left truncate">
+            <span class="text-ink-gray-7 flex-1 text-start truncate">
               {{ option.label }}
             </span>
 
             <span
               v-if="(option.count ?? 0) > 0"
-              class="text-xs text-ink-gray-5 ml-auto"
+              class="text-xs text-ink-gray-5 ms-auto"
             >
               {{ option.count }}
             </span>
@@ -197,6 +196,8 @@ import {
 } from "vue";
 import LucideChevronDown from "~icons/lucide/chevron-down";
 import LucideX from "~icons/lucide/x";
+// //// Neoffice — import added for the label translations below (71a5669d9
+// //// "fix(i18n): 341 visible strings of the SPA never went through __()").
 import { __ } from "@/translation";
 
 // Type Definitions
@@ -225,9 +226,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  placeholder: __('Select options...'),
-  label: __('Options'),
-  selectionText: "items",
+  // //// Neoffice — placeholder / label / selectionText defaults removed: withDefaults is
+  // //// compiled into the component definition, so the __() we had put here (71a5669d9) ran
+  // //// before the catalogue arrived and stayed English. The template translates them.
   options: () => [],
 });
 
@@ -393,7 +394,7 @@ function renderIcon(icon: string | any) {
     "span",
     {
       class:
-        "flex-shrink-0 w-4 h-4 inline-flex items-center justify-center mr-2",
+        "flex-shrink-0 w-4 h-4 inline-flex items-center justify-center me-2",
     },
     [iconContent]
   );

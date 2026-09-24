@@ -25,21 +25,21 @@
           <template #target="{ togglePopover }">
             <div
               @click="togglePopover()"
-              class="min-h-7 w-full cursor-pointer select-none leading-5 p-1 px-2 hover:bg-gray-200 rounded"
+              class="min-h-7 w-full cursor-pointer select-none leading-5 p-1 px-2 hover:bg-surface-gray-3 rounded"
             >
               {{ formatTimeHMS(props.row[column.key]) }}
             </div>
           </template>
           <template #body>
-            <div class="absolute bg-white top-2">
+            <div class="absolute bg-surface-white top-2">
               <DurationPicker v-model="props.row[column.key]" />
             </div>
           </template>
         </Popover>
       </div>
-      <div v-else class="ml-2">
+      <div v-else class="ms-2">
         <select
-          class="w-full h-7 text-base hover:bg-surface-gray-3 rounded-md p-0 pl-2 pr-5 bg-transparent -ml-2 border-0 text-ink-gray-8 focus-visible:!ring-0 bg-none truncate"
+          class="w-full h-7 text-base hover:bg-surface-gray-3 rounded-md p-0 ps-2 pe-5 bg-transparent -ms-2 border-0 text-ink-gray-8 focus-visible:!ring-0 bg-none truncate"
           v-model="props.row[column.key]"
         >
           <option
@@ -74,6 +74,7 @@ import { Button, Checkbox, Dropdown, Popover } from "frappe-ui";
 import { inject, ref } from "vue";
 import EditResponseResolutionModal from "./Modals/EditResponseResolutionModal.vue";
 import { formatTimeHMS } from "./utils";
+//// Neoffice — added import: __() used by the i18n wraps below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -104,6 +105,7 @@ const priorityOptions = inject<Array<any>>("priorityOptions");
 
 const dropdownOptions = [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Edit'),
     onClick: () => editItem(),
     icon: "edit",

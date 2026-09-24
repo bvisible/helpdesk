@@ -35,7 +35,7 @@
             ref="search"
             :value="query"
             autocomplete="off"
-            class="bg-transparent p-0 outline-none border-0 text-base text-ink-gray-8 h-full placeholder:text-ink-gray-4 focus:outline-none focus:ring-0 focus:border-0 w-full select-none"
+            class="bg-transparent p-0 outline-none border-0 text-base text-ink-gray-8 h-full placeholder:text-ink-gray-4 focus:outline-none focus:ring-0 focus:border-0 w-full select-none rtl:text-right"
             :placeholder="__('Type agent name or email')"
             @focus="showOptions = true"
             @click="showOptions = true"
@@ -65,7 +65,7 @@
                 :value="agent.name"
                 class="text-base leading-none text-ink-gray-7 rounded flex items-center px-2 py-1 relative select-none data-[highlighted]:outline-none data-[highlighted]:bg-surface-gray-3 cursor-pointer"
               >
-                <UserAvatar class="mr-1" :name="agent.agent_name" size="lg" />
+                <UserAvatar class="me-1" :name="agent.agent_name" size="lg" />
                 <div class="flex flex-col gap-1 p-1 text-ink-gray-8">
                   <div class="text-base font-medium">
                     {{ agent.agent_name }}

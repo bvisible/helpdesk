@@ -2,7 +2,7 @@
   <Dialog :options="options">
     <template #body-main>
       <div class="flex flex-col items-center gap-4 p-6">
-        <div class="text-xl font-medium text-gray-900">
+        <div class="text-xl font-medium text-ink-gray-9">
           {{ contact.doc?.full_name }}
         </div>
         <Avatar
@@ -38,7 +38,7 @@
             :loading="isLoading"
           />
         </div>
-        <div class="w-full space-y-2 text-sm text-gray-700">
+        <div class="w-full space-y-2 text-sm text-ink-gray-7">
           <div class="space-y-1">
             <div class="text-xs">{{ __("Emails") }}</div>
             <MultiSelect
@@ -72,6 +72,10 @@
 </template>
 
 <script setup lang="ts">
+//// Neoffice — removed import { __ } from "@/translation" from upstream's
+//// position here (34afea6c1 "Merge upstream develop up to 2026-06-02"):
+//// upstream had added its own __ import for this file's i18n work too; the
+//// merge kept ours below rather than importing __ twice.
 import {
   Avatar,
   call,
@@ -84,12 +88,14 @@ import {
 import { useOnboarding } from "frappe-ui/frappe";
 import type { Ref } from "vue";
 import { computed, ref } from "vue";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import zod from "zod";
 
 import Link from "@/components/frappe-ui/Link.vue";
 import MultiSelect from "@/components/MultiSelect.vue";
 import { useAuthStore } from "@/stores/auth";
 import { AutoCompleteItem, File } from "@/types";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 interface Props {
@@ -301,7 +307,7 @@ async function inviteContact(): Promise<void> {
         contact: contact.doc.name,
       }
     );
-    toast.success(__("Contact invited successfully"));
+    toast.success(__("Contact invited successfully."));
     await contact.setValue.submit({
       user: user,
     });

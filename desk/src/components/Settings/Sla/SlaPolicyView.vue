@@ -1,24 +1,9 @@
 <template>
-  <SettingsLayoutBase>
-    <template #title>
-      <div class="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          icon-left="chevron-left"
-          :label="slaData.service_level || __('New SLA Policy')"
-          size="md"
-          @click="goBack()"
-          class="cursor-pointer -ml-4 hover:bg-transparent focus:bg-transparent focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:none active:bg-transparent active:outline-none active:ring-0 active:ring-offset-0 active:text-ink-gray-5 font-semibold text-ink-gray-7 text-lg hover:opacity-70 !pr-0"
-        />
-        <Badge
-          :variant="'subtle'"
-          :theme="'orange'"
-          size="sm"
-          :label="__('Unsaved')"
-          v-if="isDirty"
-        />
-      </div>
-    </template>
+  <SettingsLayoutBase
+    :back-label="slaData.service_level || __('New SLA Policy')"
+    :on-back="goBack"
+    :dirty="isDirty"
+  >
     <template #header-actions>
       <div class="flex gap-4 items-center">
         <div
@@ -43,7 +28,7 @@
     <template #content>
       <div
         v-if="slaData.loading"
-        class="flex items-center h-full justify-center"
+        class="flex items-center justify-center h-[stretch] absolute w-[stretch] left-0 top-5.5"
       >
         <LoadingIndicator class="w-4" />
       </div>
@@ -78,7 +63,7 @@
         <div>
           <div class="flex flex-col gap-1">
             <span class="text-lg font-semibold text-ink-gray-8">{{
-              __("Assignment conditions")
+              __("Assignment Conditions")
             }}</span>
             <span class="text-p-sm text-ink-gray-6">
               {{ __("Choose which tickets are affected by this policy.") }}
@@ -106,7 +91,7 @@
                   </template>
                   <template #body-main>
                     <div
-                      class="text-sm text-ink-gray-6 p-2 bg-white rounded-md max-w-96 text-wrap whitespace-pre-wrap leading-5"
+                      class="text-sm text-ink-gray-6 p-2 bg-surface-white rounded-md max-w-96 text-wrap whitespace-pre-wrap leading-5"
                     >
                       <code>{{ slaData.condition }}</code>
                     </div>
@@ -116,16 +101,14 @@
             </div>
             <div class="mt-5" v-if="!slaData.default_sla">
               <div
-                class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-gray-300 rounded-md p-3 py-4"
+                class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-outline-gray-2 rounded-md p-3 py-4"
                 v-if="!useNewUI"
               >
                 <span class="text-p-sm">
-                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-                  {{ __("Conditions for this SLA were created from") }}
-                  <a :href="deskUrl" target="_blank" class="underline">desk</a>
-                  which are not compatible with this UI, you will need to
-                  recreate the conditions here if you want to manage and add new
-                  conditions from this UI.
+                  <!-- //// Neoffice — one sentence cut around the link: only its first fragment went through __() and the rest stayed in plain English. One msgid with {0} where the link goes, halves read back from the translation (deskConditionsNote; same pattern as MergeCategoryModal, 71a5669d9) -->
+                  {{ deskConditionsNote.before
+                  }}<a :href="deskUrl" target="_blank" class="underline">desk</a
+                  >{{ deskConditionsNote.after }}
                 </span>
                 <Button
                   :label="__('I understand, add conditions')"
@@ -145,7 +128,7 @@
         <div>
           <div class="flex flex-col gap-1">
             <span class="text-lg font-semibold text-ink-gray-8">
-              {{ __("Valid from") }}
+              {{ __("Valid From") }}
             </span>
             <span class="text-p-sm text-ink-gray-6">
               {{ __("Choose how long this SLA policy will be active.") }}
@@ -192,12 +175,12 @@
         <div>
           <div class="flex flex-col gap-1">
             <span class="text-lg font-semibold text-ink-gray-8">
-              {{ __("Response and resolution") }}
+              {{ __("Response and Resolution") }}
             </span>
             <span class="text-p-sm text-ink-gray-6">
               {{
                 __(
-                  "Add time targets around support milestones like first reply and resolution times"
+                  "Add time targets around support milestones like first reply and resolution times."
                 )
               }}
             </span>
@@ -244,7 +227,7 @@
         <div>
           <div class="flex flex-col gap-1">
             <span class="text-lg font-semibold text-ink-gray-8">
-              {{ __("Status details") }}
+              {{ __("Status Details") }}
             </span>
             <span class="text-p-sm text-ink-gray-6">
               {{
@@ -295,16 +278,18 @@ import {
   Switch,
   toast,
 } from "frappe-ui";
-import { inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+//// Neoffice — `computed` added for deskConditionsNote below.
+import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import SlaAssignmentConditions from "./SlaAssignmentConditions.vue";
 import SlaHolidays from "./SlaHolidays.vue";
 import SlaPriorityList from "./SlaPriorityList.vue";
 import SlaStatusList from "./SlaStatusList.vue";
 import { disableSettingModalOutsideClick } from "../settingsModal";
 import { useOnboarding } from "frappe-ui/frappe";
+import { __ } from "@/translation";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import { SlaPolicyListResourceSymbol } from "@/types";
-import { __ } from "@/translation";
+import { HDServiceLevelAgreement } from "@/types/doctypes";
 
 const { updateOnboardingStep } = useOnboarding("helpdesk");
 
@@ -322,19 +307,29 @@ const isOldSla = ref(false);
 
 const slaPolicyList = inject(SlaPolicyListResourceSymbol);
 const deskUrl = `${window.location.origin}/app/hd-service-level-agreement/${slaActiveScreen.value.data?.name}`;
+//// Neoffice — one message, {0} where the desk link goes; the halves are read back from the
+//// translation so each language keeps its own word order (see the template).
+const deskConditionsNote = computed(() => {
+  const [before, after] = __(
+    "Conditions for this SLA were created from {0} which are not compatible with this UI, you will need to recreate the conditions here if you want to manage and add new conditions from this UI."
+  ).split("{0}");
+  return { before, after: after ?? "" };
+});
 
 const getSlaData = createResource({
-  url: "helpdesk.api.sla.get_sla",
+  url: "frappe.client.get",
   params: {
-    docname: slaActiveScreen.value.data?.name,
+    doctype: "HD Service Level Agreement",
+    name: slaActiveScreen.value.data?.name,
   },
-  onSuccess(data) {
+  onSuccess(data: HDServiceLevelAgreement) {
     let condition_json;
     try {
       condition_json = JSON.parse(data.condition_json || "[]");
     } catch (error) {
       toast.error(
-        "Assignment conditions are invalid or corrupt, recreate the conditions."
+        //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+        __("Assignment conditions are invalid or corrupt, recreate the conditions.")
       );
       condition_json = [];
     }
@@ -432,7 +427,7 @@ const createSla = () => {
   const ticketReopenStatus = slaData.value.reopen_ticket_status
     ? slaData.value.reopen_ticket_status?.value
     : null;
-  slaPolicyList.insert.submit(
+  slaPolicyList?.insert.submit(
     {
       ...slaData.value,
       default_ticket_status: defaultTicketStatus,
@@ -445,11 +440,12 @@ const createSla = () => {
     },
     {
       onSuccess(data) {
-        toast.success(__("SLA policy created"));
+        toast.success(__("SLA policy created successfully."));
         slaActiveScreen.value.data = data;
         slaActiveScreen.value.screen = "view";
         getSlaData.submit({
-          docname: data.name,
+          doctype: "HD Service Level Agreement",
+          name: data.name,
         });
         updateOnboardingStep("setup_sla", true);
       },
@@ -464,10 +460,10 @@ const updateSla = () => {
   const ticketReopenStatus = slaData.value.reopen_ticket_status
     ? slaData.value.reopen_ticket_status?.value
     : null;
-  slaPolicyList.setValue.submit(
+  slaPolicyList?.setValue.submit(
     {
       ...slaData.value,
-      name: slaActiveScreen.value.data.name,
+      name: slaActiveScreen.value.data?.name,
       default_ticket_status: defaultTicketStatus,
       ticket_reopen_status: ticketReopenStatus,
       condition: useNewUI.value
@@ -483,7 +479,7 @@ const updateSla = () => {
     {
       onSuccess() {
         getSlaData.submit();
-        toast.success(__("SLA policy updated"));
+        toast.success(__("SLA policy updated successfully."));
         slaPolicyList.reload();
       },
     }

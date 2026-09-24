@@ -8,15 +8,16 @@
         icon-right="chevron-down"
       >
         <div class="w-full truncate">
+          <!-- //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
           {{
-            options?.find((option) => option.value == model)?.label || "Select"
+            options?.find((option) => option.value == model)?.label || __("Select")
           }}
         </div>
       </Button>
     </template>
     <template #body="{ togglePopover }">
       <div
-        class="p-1 text-ink-gray-6 top-1 absolute w-[--reka-popper-anchor-width] bg-white shadow-2xl rounded"
+        class="p-1 text-ink-gray-6 top-1 absolute w-[--reka-popper-anchor-width] bg-surface-white shadow-2xl rounded"
         :class="bodyClass"
       >
         <div class="max-h-52 overflow-y-auto">
@@ -37,7 +38,7 @@
             <FeatherIcon
               v-if="model == option.value"
               name="check"
-              class="size-4 ml-2"
+              class="size-4 ms-2"
             />
           </div>
         </div>
@@ -64,14 +65,16 @@ interface Props {
   targetClass?: string;
   bodyClass?: string;
   placement?: string;
+  defaultValue?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   placement: "bottom-start",
+  defaultValue: undefined,
 });
 
 const onReset = (togglePopover: () => void) => {
-  model.value = null;
+  model.value = props.defaultValue !== undefined ? props.defaultValue : null;
   togglePopover();
 };
 

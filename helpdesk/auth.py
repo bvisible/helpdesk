@@ -1,11 +1,16 @@
 import json
 
 import frappe
+# //// Neoffice — added import: _() for the permission message below.
+from frappe import _
 
 ALLOWED_PATHS = [
     "/api/method/ping",
     "/api/method/login",
     "/api/method/logout",
+    "/api/method/frappe.core.doctype.user.user.sign_up",
+    "/api/method/frappe.core.doctype.user.user.verify_password",
+    "/api/method/frappe.core.doctype.user.user.test_password_strength",
     "/api/method/frappe.core.doctype.communication.email.mark_email_as_seen",
     "/api/method/frappe.realtime.get_user_info",
     "/api/method/frappe.realtime.can_subscribe_doc",
@@ -22,12 +27,14 @@ ALLOWED_PATHS = [
     "/api/method/frappe.www.login.login_via_salesforce",
     "/api/method/frappe.www.login.login_via_fairlogin",
     "/api/method/frappe.www.login.login_via_keycloak",
+    "/api/method/frappe.www.login.send_login_link",
+    "/api/method/frappe.www.login.login_via_token",
+    "/api/method/frappe.www.login.login_via_key",
     "/api/method/frappe.www.login.custom",
     "/api/method/frappe.integrations.oauth2_logins.login_via_frappe",
     "/api/method/frappe.integrations.oauth2_logins.login_via_office365",
     "/api/method/frappe.integrations.oauth2_logins.login_via_salesforce",
     "/api/method/frappe.integrations.oauth2_logins.login_via_fairlogin",
-    "/api/method/frappe.core.api.user_invitation.get_pending_invitations",
     "/api/method/frappe.integrations.oauth2.openid_profile",
     "/api/method/frappe.website.doctype.web_page_view.web_page_view.make_view_log",
     "/api/method/upload_file",
@@ -52,6 +59,11 @@ ALLOWED_PATHS = [
     "/api/method/frappe.core.doctype.user.user.reset_password",
     "/api/method/frappe.desk.form.load.getdoctype",
     "/api/method/run_doc_method",
+    "/api/method/frappe.core.api.user_invitation.accept_invitation",
+    "/api/method/frappe.core.api.user_invitation.get_pending_invitations",
+    "/api/method/frappe.core.api.user_invitation.cancel_invitation",
+    "/api/method/frappe.core.api.user_invitation.invite_by_email",
+    "/api/method/frappe.desk.reportview.export_query",
 ]
 
 WILDCARD_PATHS = [
@@ -92,7 +104,11 @@ def authenticate():
 
     if path in ALLOWED_PATHS:
         return
-    frappe.throw(f"Access not allowed for this URL: {path}", frappe.PermissionError)
+    # //// Neoffice — upstream wrote it in plain English (an f-string); one msgid now, so the French
+    # //// catalogue reaches it (same pass as 71a5669d9)
+    frappe.throw(
+        _("Access not allowed for this URL: {0}").format(path), frappe.PermissionError
+    )
 
 
 def is_server_script_path(path):

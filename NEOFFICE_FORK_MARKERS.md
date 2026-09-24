@@ -11,6 +11,72 @@ picture for every file that can carry a comment; this file carries what cannot
 **Upstream**: `frappe/helpdesk` (default branch `develop`; `main` / `main-hotfix` are the
 release branches, `legacy` the archived v0 line — there is no `upstream/version-15`).
 
+### Upstream merge of 2026-09-24 — `develop` up to 2026-06-02, and why not further
+
+**Merged**: `upstream/develop` at `c778f533b` ("Merge pull request #3417 from
+RitvikSardana/security-new-ticket", 2026-06-02): 1 259 upstream commits on top of the old
+BASE below. It carries upstream's security work of that period: the February security PRs
+(#2960, #2961, #2966: permission checks on API endpoints, select instead of read, the
+`All` role removed from HD Agent), the March authorization / privilege-escalation fix and
+its tests (e79107eec, 345c34a6c, 3f23513ca), the May permission guard on whitelisted
+methods (cee84c850), and the security-new-ticket PR itself.
+
+**Why the cut is there and not at the tip.** Measured the same day, three walls stand after
+2026-06-02, and each one is a project of its own, not a merge:
+
+| From | Upstream change | What it needs from us |
+|---|---|---|
+| 2026-06-03 (099c78d6c) | frappe-ui 0.1 → **1.0** (beta) | every component of ours (NeoCockpit sidebar, NORA dialog) re-checked against a new major |
+| 2026-07-21 (20f65744a) | `desk/package.json` links **`@framework/ui` from `../../frappe/ui`** | a `ui/` package in frappe itself: upstream frappe v15 got it on 2026-08-03 ("feat(ui): backport @framework/ui components"), our frappe fork does not have it (tracker #138) |
+| 2026-08-15 (aed32274a) | ticket comments and notifications moved to core `Comment` / `Notification Log` with `Notification Type` records | **frappe v16**: `Notification Type` does not exist in frappe v15. `develop` is the v16 line from here on |
+
+Upstream's v15 line is `main` (1.30.1 on 2026-09-03, `frappe >=15.116.1`). It has the same
+first two walls, plus a new customer model (`HD Customer Member`, roles `HD Customer` /
+`HD Customer Manager`, a bidirectional ERPNext integration gated by `ERPNext HD Settings`)
+that overlaps our one-way `overrides/customer.py` mirror. All 211 Python modules of `main`
+import cleanly on our frappe 15.89 (measured on the hub), so the backend is not the
+obstacle; the SPA build and the customer/portal model are.
+
+**Next step**: move the fork onto `main` (the v15 release line) once the build can resolve
+`@framework/ui` (vendor upstream frappe's `ui/` into the build, or land #138), porting our
+divergence as a squash onto `main` (measured: 100 conflicted files, 173 hunks). From then on
+the fork merges `main` / `main-hotfix`, never `develop`.
+
+Decisions taken in this merge:
+
+- `hd_ticket.py` acknowledgement subject: OUR line kept. Upstream now wraps it in `_()` too,
+  but without `lang=`, which re-breaks the language in workers (see below).
+- `HD Agent` permissions: upstream's fix taken (the whole `All` row removed), stronger than
+  ours (only `select` removed). Our patch `agents_are_not_a_public_directory` stays: it
+  cleans the Custom DocPerm rows the JSON cannot reach.
+- `www/helpdesk/index.py` boot: upstream's `timezone` and `dir` added next to our
+  `socketio_port` and our `lang` (ours has the system-language fallback, upstream's has none).
+- `desk/src/telemetry.ts`: upstream's `useTelemetry`, still WITHOUT the sibling-app
+  `posthog.js` import (upstream drops it later on its own).
+- `desk/vite.config.js`: upstream's async config; our `build` block moved inside it.
+- `EmailEditor.vue`: rebuilt from upstream's new editor (signature pre-fill, quoted reply,
+  From selector) with our NORA button in upstream's toolbar style. The suggestion now lands
+  ABOVE the pre-filled signature, and "append or replace?" is only asked when the agent typed
+  something beyond the signature.
+- `MobileSidebar.vue`, `layouts/Sidebar.vue`, `Settings/emailConfig.ts`: upstream's versions,
+  which now wrap their strings themselves; only the Notifications label was re-wrapped.
+- `AssignmentModal.vue`, `ticket-agent/TicketContactTab.vue`: deleted upstream (replaced by
+  new components); our changes to them were i18n only, so the deletion is taken.
+- Upstream's ERPNext integration defines `HD Customer.erpnext_customer` too: its definition is
+  kept (the auto-merge had kept BOTH, and two fields with one fieldname abort the migrate), and
+  its `Customer` class override is left out of `override_doctype_class` because
+  `neoffice_theme` overrides that class as well (frappe keeps one per doctype, the last app
+  installed winning in silence). The class's behaviour runs as `doc_events` instead
+  (`integrations/erpnext/customer.py`, block marker), as upstream itself did later in `main`.
+- `hd_ticket/api.py`: two `except A, B:` clauses (Python 3.14 syntax, PEP 758) parenthesized;
+  the fleet runs Python 3.12, and a local `py_compile` under 3.14 does not see it. Check with
+  `python3.12 -m compileall helpdesk` before pushing an upstream merge.
+- `test_hd_team.test_weighted_users_synced` skips itself when Assignment Rule has no
+  `weighted_users` (frappe 15.89 has no Weighted Distribution rule).
+- `helpdesk/locale/fr.po`: our catalogue wins where it has a translation (1 227 entries),
+  upstream's Crowdin fills the rest (39); 20 upstream identity translations were dropped
+  (an identity translation is a veto in the merged catalogue, see 1b49f5458).
+
 ### Base of the divergence
 
 ```
@@ -18,6 +84,9 @@ BASE = 33785829c10b826e834fb092135625023e00da97
      = "Merge pull request #2951 from aerodeval/fix/posthog-issue"
        Shariq Ansari, 2026-01-28, on upstream/develop
 ```
+
+Since 2026-09-24 the merge-base with `upstream/develop` is `c778f533b` (2026-06-02): see the
+section above.
 
 The branch name lies about the base, as usual: our `version-15` is **not** a fork of an
 upstream `version-15` (none exists) — it is `upstream/develop` cut at 2026-01-28 plus our
@@ -62,12 +131,12 @@ divergence, nothing of upstream's is attributed to us.
 | `helpdesk/public/desk/sw.js.map` | added (build artifact) | see "Build artifacts" below | take upstream / rebuild |
 | `helpdesk/locale/fr.po` | 13 `msgid` added (FR) | strings of our own additions: the acknowledgement subject `Ticket #{0}: We've received your request` and the NORA reply-suggestion dialog (`Suggested reply`, `Draft — reread before sending`, `NORA is writing…`, `Use this reply`, `Regenerate`, `Suggest a reply`, `Could not draft a reply`, `Your reply already contains text — it will be replaced.`, `Append`, `Replace`, `Instruction (optional)`, `e.g. explain the delay and offer a call`) | merge both sides; ours are additions only, no upstream `msgid` was retranslated |
 
-| `helpdesk/helpdesk/doctype/hd_customer/hd_customer.json` | added the field `erpnext_customer` (Link → Customer, read-only, unique, standard filter) after `domain` | `HD Customer` is a doctype PARALLEL to ERPNext's `Customer` with no link between them, so the Customers screen is empty on an instance that runs both (0 mirrors against 234 customers, measured) — and the portal's permission query filters tickets by customer, so a contact saw only the tickets they raised themselves, never their company's. The field is the identity of the mirror kept by `overrides/customer.py`; a Custom Field would have put half the mechanism in another app. | keep ours — upstream has no such field, the row is a pure addition to `fields` / `field_order` |
+| `helpdesk/helpdesk/doctype/hd_customer/hd_customer.json` | **nothing any more (2026-09-24)**. We had added `erpnext_customer` (Link → Customer, unique); upstream now ships the SAME fieldname (Data, read-only) for its own ERPNext integration, and the merge kept both definitions — two fields with one fieldname abort the migrate. Upstream's is kept; our mirror (`overrides/customer.py`) writes the same field. The unique index goes with our definition. | take upstream |
 
 | `helpdesk/helpdesk/doctype/hd_article/hd_article.json` | added `wiki_document` (Link → Wiki Document, read-only) | identity of the knowledge-base mirror; without it the mirror would have to guess which wiki document an article belongs to, by title | keep ours, pure addition |
 | `helpdesk/helpdesk/doctype/hd_settings/hd_settings.json` | added a "Knowledge Base Mirror" section: `mirror_kb_to_wiki` (Check, default 0) and `kb_wiki_space` (Link → Wiki Space, read-only) | the mirror is off until someone turns it on, and the space it writes into is recorded rather than resolved by route — a route can be renamed, and the mirror must not start writing into whatever answers to it afterwards | keep ours, pure addition |
 
-**Three JSON DocTypes are modified** (the rows above). Nothing else in the fork changes
+**Two JSON DocTypes are modified** (`hd_article.json`, `hd_settings.json`; `hd_customer.json` went back to upstream on 2026-09-24). Nothing else in the fork changes
 a DocType schema.
 
 ### Submodule pointer (unreachable — no comment syntax at all)

@@ -1,19 +1,31 @@
 <template>
-  <Dialog v-model="showSubjectDialog" :options="{ title: 'Rename Subject' }">
+  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+  <Dialog v-model="showSubjectDialog" :options="{ title: __('Rename Subject') }">
     <template #body-content>
       <div class="flex flex-col flex-1 gap-3">
         <FormControl
+          ref="subjectInput"
           v-model="renameSubject"
           type="textarea"
           size="sm"
           variant="subtle"
           :disabled="false"
+          @keydown.ctrl.enter.capture.stop="handleRename"
+          @keydown.meta.enter.capture.stop="handleRename"
+          maxlength="140"
         />
         <Button
           variant="solid"
           :loading="isLoading"
-          :label="__('Rename')"
+          :label="
+            isMobileView
+              ? __('Rename')
+              : isMac
+              ? __('Rename (⌘ + ⏎)')
+              : __('Rename (Ctrl + ⏎)')
+          "
           @click="handleRename"
+          :disabled="!isDirty"
         />
       </div>
     </template>
@@ -21,15 +33,35 @@
 </template>
 
 <script setup lang="ts">
+import { useDevice } from "@/composables";
+import { useScreenSize } from "@/composables/screen";
 import { TicketSymbol } from "@/types";
-import { inject, ref } from "vue";
+import { computed, inject, nextTick, ref, watch } from "vue";
 
-const ticket = inject(TicketSymbol);
-const showSubjectDialog = defineModel();
+const ticket = inject(TicketSymbol)!;
+const { isMac } = useDevice();
+const { isMobileView } = useScreenSize();
+const showSubjectDialog = defineModel<boolean>({ default: false });
 const renameSubject = ref(ticket.value?.doc?.subject || "");
 const isLoading = ref(false);
+const subjectInput = ref<any>(null);
+const isDirty = computed(() => {
+  return renameSubject.value !== ticket?.value?.doc?.subject;
+});
+
+watch(
+  () => showSubjectDialog.value,
+  async (val) => {
+    if (val) {
+      renameSubject.value = ticket?.value?.doc?.subject || "";
+      await nextTick();
+      subjectInput.value?.$el?.querySelector("textarea").focus();
+    }
+  }
+);
 
 function handleRename() {
+  if (!isDirty.value) return;
   isLoading.value = true;
   ticket.value.setValue.submit(
     {

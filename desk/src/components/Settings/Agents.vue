@@ -4,10 +4,12 @@
     :description="__('Add, manage agents and assign roles to them.')"
   >
     <template #header-actions>
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <Button
         @click="() => setActiveSettingsTab('Invite Agents')"
         :label="__('New')"
         variant="solid"
+        class="rtl:flex-row-reverse"
       >
         <template #prefix>
           <LucidePlus class="h-4 w-4 stroke-1.5" />
@@ -22,17 +24,17 @@
             @input="search = $event"
             :placeholder="__('Search')"
             type="text"
-            class="bg-white hover:bg-white focus:ring-0 border-outline-gray-2"
+            class="focus:ring-0 border-outline-gray-2"
             icon-left="search"
             debounce="300"
-            inputClass="p-4 pr-12"
+            inputClass="p-4 pe-12 rtl:pr-8"
           />
           <Button
             v-if="search"
             icon="x"
             variant="ghost"
             @click="search = ''"
-            class="absolute right-1 top-1/2 -translate-y-1/2"
+            class="absolute end-1 top-1/2 -translate-y-1/2"
           />
         </div>
         <Dropdown :options="dropdownOptions" placement="right">
@@ -51,9 +53,9 @@
               </template>
             </Button>
           </template>
-          <template #item="{ item }">
+          <template #item-label="{ item }">
             <button
-              class="group flex text-ink-gray-6 gap-4 h-7 w-full justify-between items-center rounded p-2 text-base hover:bg-surface-gray-3"
+              class="group flex text-ink-gray-6 gap-4 w-full justify-between items-center rounded text-base"
               @click="item.onClick"
             >
               <div class="flex items-center justify-between flex-1">
@@ -87,48 +89,32 @@
           />
         </div>
         <!-- Empty State -->
-        <div
+        <!-- //// Neoffice — upstream wrote title and description in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+        <EmptyState
           v-if="!agents.loading && !agents.data?.length"
-          class="flex flex-col items-center justify-center gap-4 h-full"
-        >
-          <div
-            class="p-4 size-14.5 rounded-full bg-surface-gray-1 flex items-center justify-center"
-          >
-            <AgentIcon class="size-6 text-ink-gray-6" />
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <div class="text-base font-medium text-ink-gray-6">
-              {{ __("No agent found") }}
-            </div>
-            <div class="text-p-sm text-ink-gray-5 max-w-60 text-center">
-              {{
-                activeFilter.length
-                  ? __("Change your search terms or filters")
-                  : __("Add one to get started.")
-              }}
-            </div>
-          </div>
-          <Button
-            :label="__('New')"
-            variant="outline"
-            icon-left="plus"
-            @click="setActiveSettingsTab('Invite Agents')"
-          />
-        </div>
+          variant="badge"
+          :icon="AgentIcon"
+          :title="__('No agent found')"
+          :description="
+            activeFilter.length
+              ? __('Change your search terms or filters')
+              : __('Add one to get started.')
+          "
+        />
         <!-- Agent List -->
         <div
           class="w-full"
           v-if="!agents.loading && Boolean(agents.data?.length)"
         >
           <div
-            class="grid grid-cols-8 items-center gap-3 text-sm text-gray-600"
+            class="grid grid-cols-8 items-center gap-3 text-sm text-ink-gray-5"
           >
-            <div class="col-span-6 text-p-sm">{{ __("Agent Name") }}</div>
+            <div class="col-span-6 text-p-sm">{{ __("Agent name") }}</div>
           </div>
           <hr class="mt-2" />
           <div v-for="(agent, index) in agents.data" :key="agent.agent_name">
             <div class="flex items-center justify-between h-14 group rounded">
-              <div class="flex items-center space-x-3 grow">
+              <div class="flex items-center gap-x-3 grow">
                 <Avatar
                   :image="agent.user_image"
                   :label="agent.agent_name"
@@ -152,13 +138,14 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
+                <!-- //// Neoffice — the button printed the role identifier ("Agent", "Manager") as is; translated only where it is shown, the comparisons below keep the value (same pass as 71a5669d9) -->
                 <Dropdown
                   v-if="isManager"
                   class="flex justify-end items-center"
                   :options="getRoles(agent.name)"
-                  :label="getUserRole(agent.name)"
+                  :label="__(getUserRole(agent.name))"
                   :button="{
-                    label: getUserRole(agent.name),
+                    label: __(getUserRole(agent.name)),
                     iconRight: 'chevron-down',
                     iconLeft:
                       getUserRole(agent.name) === 'Agent'
@@ -172,7 +159,7 @@
                 <Dropdown
                   :options="getOptions(agent)"
                   :key="agent"
-                  class="ml-2"
+                  class="ms-2"
                   placement="right"
                 >
                   <Button icon="more-horizontal" variant="ghost" />
@@ -202,7 +189,10 @@
 import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import { Avatar, Button, call, Dropdown, FeatherIcon, toast } from "frappe-ui";
-import { h, onUnmounted } from "vue";
+//// Neoffice — `computed` added: activeFilterLabel below (our value/label split, 559991121)
+//// used it without importing it, so the built chunk called a free `computed` and the
+//// Agents settings screen threw a ReferenceError as soon as it opened.
+import { computed, h, onUnmounted } from "vue";
 import LucideCheck from "~icons/lucide/check";
 import { activeFilter, useAgents } from "./agents";
 import AgentIcon from "../icons/AgentIcon.vue";
@@ -221,7 +211,9 @@ function getRoles(agent: string) {
   const agentRole = getUserRole(agent);
   const roles = [
     {
-      label: "Agent",
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it
+      //// (same pass as 71a5669d9). `role` below stays the identity sent to the server.
+      label: __("Agent"),
       component: (props) =>
         RoleOption({
           role: "Agent",
@@ -236,7 +228,8 @@ function getRoles(agent: string) {
   ];
   if (isManager) {
     roles.unshift({
-      label: "Manager",
+      //// Neoffice — see the note above: label translated, `role` kept as the identity
+      label: __("Manager"),
       component: (props) =>
         RoleOption({
           role: "Manager",
@@ -273,7 +266,8 @@ function RoleOption({ active, role, onClick, selected, icon = null }) {
               "aria-hidden": true,
             })
           : null,
-        h("span", { class: "whitespace-nowrap" }, role),
+        //// Neoffice — `role` is the identity ("Agent", "Manager"); translated only for display
+        h("span", { class: "whitespace-nowrap" }, __(role)),
       ]),
       selected
         ? h(LucideCheck, {
@@ -295,13 +289,16 @@ function updateRole(agent: string, newRole: string) {
     new_role: newRole,
   }).then(() => {
     updateUserRoleCache(agent, newRole);
-    toast.success(`Role updated to ${newRole}`);
+    //// Neoffice — upstream passed a template literal to __(): a msgid built at run time never
+    //// reaches the catalogue. One msgid with {0} now (same pass as 71a5669d9).
+    toast.success(__("Role updated to {0} successfully.", __(newRole)));
   });
 }
 
 function getOptions(agent) {
   let filters = agentStore.filters;
   return [
+    //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     {
       label: __('Disable Agent'),
       icon: "x-circle",
@@ -311,6 +308,7 @@ function getOptions(agent) {
       },
       condition: () => agent.is_active,
     },
+    //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     {
       label: __('Enable Agent'),
       icon: "check-circle",

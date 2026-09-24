@@ -1,12 +1,13 @@
 <template>
-  <div class="flex !w-[382px] flex-col justify-between border-l">
+  <div class="flex !w-[382px] flex-col justify-between border-s">
     <div
       class="flex h-10.5 items-center border-b px-5 py-2.5 text-lg font-medium text-ink-gray-9 justify-between"
     >
+      <!-- //// Neoffice — the copy message was a plain-English template literal; one msgid now, the one TicketSLA uses (same pass as 71a5669d9) -->
       <span
         class="cursor-copy text-lg font-semibold"
         @click="
-          copyToClipboard(ticket.name, `'${ticket.name}' copied to clipboard`)
+          copyToClipboard(ticket.name, __('Ticket #{0} copied to clipboard', ticket.name))
         "
         >#{{ ticket.name }}
       </span>
@@ -22,7 +23,11 @@
           },
         ]"
       >
-        <Button icon="more-horizontal" class="text-gray-600" variant="ghost" />
+        <Button
+          icon="more-horizontal"
+          class="text-ink-gray-5"
+          variant="ghost"
+        />
       </Dropdown>
     </div>
     <TicketAgentContact
@@ -33,7 +38,7 @@
     <!-- feedback component -->
     <TicketFeedback
       v-if="ticket.feedback_rating"
-      class="py-3 !px-6 !gap-3 text-base text-gray-600"
+      class="py-3 !px-6 !gap-3 text-base text-ink-gray-5"
       :ticket="ticket"
     />
     <!-- ticket details -->
@@ -50,14 +55,20 @@
 </template>
 
 <script setup lang="ts">
+//// Neoffice — removed import { __ } from "@/translation" from upstream's
+//// position here (34afea6c1 "Merge upstream develop up to 2026-06-02"):
+//// upstream had added its own __ import for this file's i18n work too; the
+//// merge kept ours below rather than importing __ twice.
 import { Ticket } from "@/types";
 import { copyToClipboard } from "@/utils";
 import { computed, ref } from "vue";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import LucideMerge from "~icons/lucide/merge";
 import TicketAgentContact from "./TicketAgentContact.vue";
 import TicketAgentDetails from "./TicketAgentDetails.vue";
 import TicketAgentFields from "./TicketAgentFields.vue";
 import TicketMergeModal from "./TicketMergeModal.vue";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 interface Props {

@@ -4,13 +4,10 @@
 		"postinstall": "cd desk && yarn install",
 		"dev": "cd desk && yarn dev",
 		"build": "if [ -d 'helpdesk/public/desk/assets' ] && [ -z \"$FORCE_REBUILD\" ]; then echo '[skip-build] pre-built artifacts present at helpdesk/public/desk/assets (set FORCE_REBUILD=1 to force rebuild)'; else yarn build:force; fi",
-		"build:force": "cd desk && yarn build",
-		"disable-workspaces": "sed -i '' 's/\"workspaces\"/\"aworkspaces\"/g' package.json",
-        "enable-workspaces": "sed -i '' 's/\"aworkspaces\"/\"workspaces\"/g' package.json && rm -rf node_modules ./desk/node_modules/ frappe-ui/node_modules/ && yarn install"
+		"build:force": "cd desk && yarn build"
 	},
-	"workspaces": ["desk", "frappe-ui"],
 	"resolutions": {
 		"cheerio": "1.0.0-rc.12",
-		"prosemirror-model": "1.25.1"
+		"prosemirror-model": "1.25.4"
 	}
 }

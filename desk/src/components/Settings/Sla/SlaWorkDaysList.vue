@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-md border px-2 border-gray-300 text-sm">
+  <div class="rounded-md border px-2 border-outline-gray-2 text-sm">
     <div
       class="grid p-2 px-4 items-center"
       :style="{
@@ -10,13 +10,13 @@
       <div
         v-for="column in columns"
         :key="column.key"
-        class="text-gray-600 overflow-hidden whitespace-nowrap text-ellipsis"
+        class="text-ink-gray-5 overflow-hidden whitespace-nowrap text-ellipsis"
         :class="{
-          'ml-2': column.key === 'workday',
+          'ms-2': column.key === 'workday',
         }"
       >
         {{ column.label }}
-        <span v-if="column.isRequired" class="text-red-500">*</span>
+        <span v-if="column.isRequired" class="text-ink-red-3">*</span>
       </div>
     </div>
     <hr v-if="slaData.support_and_resolution?.length !== 0" />
@@ -29,12 +29,14 @@
     />
     <div
       v-if="slaData.support_and_resolution?.length === 0"
-      class="text-center p-4 text-gray-600"
+      class="text-center p-4 text-ink-gray-5"
     >
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       {{ __("No workdays in the list") }}
     </div>
   </div>
   <div class="flex items-center justify-between mt-2.5">
+    <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
     <Button
       v-if="slaData.support_and_resolution.length < 7"
       variant="subtle"
@@ -51,6 +53,7 @@ import { Button } from "frappe-ui";
 import SlaWorkDaysListItem from "./SlaWorkDaysListItem.vue";
 import { slaData, slaDataErrors } from "@/stores/sla";
 import { getGridTemplateColumnsForTable } from "@/utils";
+//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 interface Column {
@@ -85,16 +88,19 @@ const addWorkDay = () => {
 
 const columns: Column[] = [
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Day'),
     key: "workday",
     isRequired: true,
   },
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('Start time'),
     key: "start_time",
     isRequired: true,
   },
   {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     label: __('End time'),
     key: "end_time",
     isRequired: true,

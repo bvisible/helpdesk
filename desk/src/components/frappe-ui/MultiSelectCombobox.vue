@@ -19,13 +19,13 @@
           }"
         >
           <div class="w-full space-y-1.5">
-            <label v-if="$props.label" class="block text-xs text-gray-600">
+            <label v-if="$props.label" class="block text-xs text-ink-gray-5">
               {{ $props.label }}
             </label>
             <button
-              class="flex h-7 w-full items-center justify-between gap-2 rounded bg-gray-100 py-1 px-2 transition-colors hover:bg-gray-200 focus:ring-2 focus:ring-gray-400"
+              class="flex h-7 w-full items-center justify-between gap-2 rounded bg-surface-gray-2 py-1 px-2 transition-colors hover:bg-surface-gray-3 focus:ring-2 focus:ring-outline-gray-3"
               :class="[
-                isComboboxOpen ? 'bg-gray-200' : '',
+                isComboboxOpen ? 'bg-surface-gray-3' : '',
                 $props.buttonClasses,
                 disabled ? 'cursor-not-allowed opacity-50' : '',
               ]"
@@ -39,11 +39,11 @@
                 <slot name="prefix" />
                 <span
                   v-if="selectedValue"
-                  class="flex-1 truncate text-left text-base leading-5"
+                  class="flex-1 truncate text-start text-base leading-5"
                 >
                   {{ displayValue(selectedValue) }}
                 </span>
-                <span v-else class="text-base leading-5 text-gray-600">
+                <span v-else class="text-base leading-5 text-ink-gray-4">
                   {{ placeholder || "" }}
                 </span>
                 <slot name="suffix" />
@@ -51,11 +51,11 @@
               <FeatherIcon
                 v-show="!loading"
                 name="chevron-down"
-                class="h-4 w-4 text-gray-600"
+                class="h-4 w-4 text-ink-gray-5"
                 aria-hidden="true"
               />
               <LoadingIndicator
-                class="h-4 w-4 text-gray-600"
+                class="h-4 w-4 text-ink-gray-5"
                 v-show="loading"
               />
             </button>
@@ -65,7 +65,7 @@
       <template #body="{ isOpen, togglePopover }">
         <div v-show="isOpen">
           <div
-            class="relative mt-1 overflow-hidden rounded-lg bg-white text-base shadow-2xl"
+            class="relative mt-1 overflow-hidden rounded-lg bg-surface-white text-base shadow-2xl"
             :class="bodyClasses"
           >
             <ComboboxOptions
@@ -79,7 +79,7 @@
                 <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <ComboboxInput
                   ref="searchInput"
-                  class="form-input w-full"
+                  class="form-input w-full bg-transparent"
                   type="text"
                   :value="query"
                   @change="query = $event.target.value"
@@ -87,7 +87,7 @@
                   :placeholder="__('Search')"
                 />
                 <button
-                  class="absolute right-0 inline-flex h-7 w-7 items-center justify-center"
+                  class="absolute end-0 inline-flex h-7 w-7 items-center justify-center"
                   @click="selectedValue = null"
                 >
                   <FeatherIcon name="x" class="w-4" />
@@ -101,7 +101,7 @@
                 >
                   <div
                     v-if="group.group && !group.hideLabel"
-                    class="sticky top-0 truncate bg-white px-2.5 py-1.5 text-sm font-medium text-gray-600"
+                    class="sticky top-0 truncate bg-surface-white px-2.5 py-1.5 text-sm font-medium text-ink-gray-5"
                   >
                     {{ group.group }}
                   </div>
@@ -115,7 +115,7 @@
                     <li
                       :class="[
                         'flex h-7 cursor-pointer items-center justify-between rounded px-2.5 text-base',
-                        { 'bg-gray-100': active },
+                        { 'bg-surface-gray-2': active },
                       ]"
                     >
                       <div
@@ -131,11 +131,11 @@
                           >
                             <LucideSquare
                               v-show="!isOptionSelected(option)"
-                              class="h-4 w-4 text-gray-700"
+                              class="h-4 w-4 text-ink-gray-7"
                             />
                             <LucideCheckSquare
                               v-show="isOptionSelected(option)"
-                              class="h-4 w-4 text-gray-700"
+                              class="h-4 w-4 text-ink-gray-7"
                             />
                           </slot>
                         </div>
@@ -146,7 +146,7 @@
 
                       <div
                         v-if="$slots['item-suffix'] || option?.description"
-                        class="ml-2 flex-shrink-0"
+                        class="ms-2 flex-shrink-0"
                       >
                         <slot
                           name="item-suffix"
@@ -154,7 +154,7 @@
                         >
                           <div
                             v-if="option?.description"
-                            class="text-sm text-gray-600"
+                            class="text-sm text-ink-gray-5"
                           >
                             {{ option.description }}
                           </div>
@@ -166,7 +166,7 @@
               </div>
               <li
                 v-if="groups.length == 0"
-                class="rounded-md px-2.5 py-1.5 text-base text-gray-600"
+                class="rounded-md px-2.5 py-1.5 text-base text-ink-gray-5"
               >
                 <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 {{ __("No results found") }}
@@ -214,6 +214,8 @@ import { LoadingIndicator, Popover } from "frappe-ui";
 import { nextTick } from "vue";
 import LucideCheckSquare from "~icons/lucide/check-square";
 import LucideSquare from "~icons/lucide/square";
+//// Neoffice — import added for the "N values" wrap below; called inside a method, at run time (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 export default {
   name: "Autocomplete",
@@ -342,7 +344,9 @@ export default {
 
       if (option.length === 0) return "";
       if (option.length === 1) return this.getLabel(option[0]);
-      return `${option.length} values`;
+      //// Neoffice — upstream wrote it in plain English (a template literal); one msgid now, so the
+      //// French catalogue reaches it (same pass as 71a5669d9)
+      return __("{0} values", option.length);
       // in case of `multiple`, option is an array of values
       // so the display value should be comma separated labels
       // return option

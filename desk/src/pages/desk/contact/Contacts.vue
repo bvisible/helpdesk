@@ -2,7 +2,8 @@
   <div class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-gray-900">{{ __("Contacts") }}</div>
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+        <div class="text-lg font-medium text-ink-gray-9">{{ __("Contacts") }}</div>
       </template>
       <template #right-header>
         <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
@@ -45,11 +46,14 @@ import { Avatar, toast, usePageMeta } from "frappe-ui";
 import { computed, h, ref } from "vue";
 import ContactDialog from "./ContactDialog.vue";
 import { showNewContactModal } from "./dialogState";
+import LucideContact2 from "~icons/lucide/contact-2";
 import { __ } from "@/translation";
 
 const isContactDialogVisible = ref(false);
 const selectedContact = ref(null);
-
+const hasActiveFilters = computed(
+  () => Object.keys(listViewRef.value?.list?.params?.filters || {}).length > 0
+);
 const listViewRef = ref(null);
 const options = computed(() => {
   return {
@@ -72,7 +76,16 @@ const options = computed(() => {
       },
     },
     emptyState: {
-      title: __('No Contacts Found'),
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
+      title: __("No contacts found"),
+      icon: h(LucideContact2, {
+        class: "h-10 w-10",
+      }),
+      description: hasActiveFilters.value
+        ? __(
+            "No contacts found for the applied filters. Try adjusting or clearing your filters."
+          )
+        : undefined,
     },
   };
 });
@@ -88,12 +101,13 @@ function openContact(id: string): void {
 }
 
 function handleContactUpdated(): void {
-  toast.success("Contact updated");
-  isContactDialogVisible.value = !isContactDialogVisible.value;
+  //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+  toast.success(__("Contact updated successfully."));
   listViewRef.value?.reload();
 }
 usePageMeta(() => {
   return {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     title: __('Contacts'),
   };
 });

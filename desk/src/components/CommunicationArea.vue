@@ -1,14 +1,17 @@
 <template>
-  <div class="comm-area">
+  <div class="comm-area" resizable="true">
     <div
-      class="flex justify-between gap-3 border-t px-6 md:px-10 py-4 md:py-2.5"
+      class="flex justify-between gap-3 border-t px-6 md:px-5 py-4 md:py-2.5"
     >
       <div class="flex gap-1.5 items-center">
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <Button
           ref="sendEmailRef"
           variant="ghost"
           :label="__('Reply')"
-          :class="[showEmailBox ? '!bg-gray-300 hover:!bg-gray-200' : '']"
+          :class="[
+            showEmailBox ? '!bg-surface-gray-4 hover:!bg-surface-gray-3' : '',
+          ]"
           @click="toggleEmailBox()"
         >
           <template #prefix>
@@ -19,7 +22,9 @@
         <Button
           variant="ghost"
           :label="__('Comment')"
-          :class="[showCommentBox ? '!bg-gray-300 hover:!bg-gray-200' : '']"
+          :class="[
+            showCommentBox ? '!bg-surface-gray-4 hover:!bg-surface-gray-3' : '',
+          ]"
           @click="toggleCommentBox()"
         >
           <template #prefix>
@@ -29,70 +34,83 @@
         <TypingIndicator :ticketId="ticketId" />
       </div>
     </div>
-    <div
-      ref="emailBoxRef"
-      v-show="showEmailBox"
-      class="flex gap-1.5 flex-1"
-      @keydown.ctrl.enter.capture.stop="submitEmail"
-      @keydown.meta.enter.capture.stop="submitEmail"
-    >
-      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-      <EmailEditor
-        ref="emailEditorRef"
-        :label="
-          isMobileView ? 'Send' : isMac ? 'Send (⌘ + ⏎)' : 'Send (Ctrl + ⏎)'
-        "
-        v-model:content="content"
-        :placeholder="__('Hi John, we are looking into this issue.')"
-        :ticketId="ticketId"
-        :to-emails="toEmails"
-        :cc-emails="ccEmails"
-        :bcc-emails="bccEmails"
-        @submit="
-          () => {
-            showEmailBox = false;
-            emit('update');
-          }
-        "
-        @discard="
-          () => {
-            showEmailBox = false;
-          }
-        "
-      />
-    </div>
-    <div
-      ref="commentBoxRef"
-      v-show="showCommentBox"
-      @keydown.ctrl.enter.capture.stop="submitComment"
-      @keydown.meta.enter.capture.stop="submitComment"
-    >
-      <CommentTextEditor
-        ref="commentTextEditorRef"
-        :label="
-          isMobileView
-            ? 'Comment'
-            : isMac
-            ? 'Comment (⌘ + ⏎)'
-            : 'Comment (Ctrl + ⏎)'
-        "
-        :ticketId="ticketId"
-        :editable="showCommentBox"
-        :doctype="doctype"
-        placeholder="@John could you please look into this?"
-        @submit="
-          () => {
-            showCommentBox = false;
-            emit('update');
-          }
-        "
-        @discard="
-          () => {
-            showCommentBox = false;
-          }
-        "
-      />
-    </div>
+    <Transition name="slide">
+      <div
+        v-show="showEmailBox"
+        ref="emailBoxRef"
+        @keydown.ctrl.enter.capture.stop="submitEmail"
+        @keydown.meta.enter.capture.stop="submitEmail"
+        @keydown.esc.capture.stop="showEmailBox = false"
+      >
+        <div class="overflow-hidden">
+          <!-- //// Neoffice — labels and placeholders wrapped in __(): upstream showed them in English on every non-English site -->
+          <EmailEditor
+            ref="emailEditorRef"
+            :label="
+              isMobileView
+                ? __('Send')
+                : isMac
+                ? __('Send (⌘ + ⏎)')
+                : __('Send (Ctrl + ⏎)')
+            "
+            :placeholder="__('Hi John, we are looking into this issue.')"
+            :ticketId="ticketId"
+            :to-emails="toEmails"
+            :cc-emails="ccEmails"
+            :bcc-emails="bccEmails"
+            @submit="
+              () => {
+                showEmailBox = false;
+                emit('update');
+              }
+            "
+            @discard="
+              () => {
+                showEmailBox = false;
+              }
+            "
+          />
+        </div>
+      </div>
+    </Transition>
+    <Transition name="slide">
+      <div
+        v-show="showCommentBox"
+        ref="commentBoxRef"
+        @keydown.ctrl.enter.capture.stop="submitComment"
+        @keydown.meta.enter.capture.stop="submitComment"
+        @keydown.esc.capture.stop="showCommentBox = false"
+      >
+        <div class="overflow-hidden">
+          <!-- //// Neoffice — labels and placeholders wrapped in __(): upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+          <CommentTextEditor
+            ref="commentTextEditorRef"
+            :label="
+              isMobileView
+                ? __('Comment')
+                : isMac
+                ? __('Comment (⌘ + ⏎)')
+                : __('Comment (Ctrl + ⏎)')
+            "
+            :ticketId="ticketId"
+            :editable="showCommentBox"
+            :doctype="doctype"
+            :placeholder="__('@John could you please look into this?')"
+            @submit="
+              () => {
+                showCommentBox = false;
+                emit('update');
+              }
+            "
+            @discard="
+              () => {
+                showCommentBox = false;
+              }
+            "
+          />
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -103,8 +121,8 @@ import { useDevice } from "@/composables";
 import { useScreenSize } from "@/composables/screen";
 import { useShortcut } from "@/composables/shortcuts";
 import { showCommentBox, showEmailBox } from "@/pages/ticket/modalStates";
-import { ref, watch } from "vue";
 import { onClickOutside } from "@vueuse/core";
+import { ref, watch } from "vue";
 
 const emit = defineEmits(["update"]);
 const content = defineModel("content");
@@ -188,7 +206,7 @@ watch(
   () => showEmailBox.value,
   (value) => {
     if (value) {
-      emailEditorRef.value?.editor?.commands?.focus();
+      emailEditorRef.value?.editor?.commands?.focus("start");
     }
   }
 );
@@ -224,13 +242,16 @@ onClickOutside(
     }
   },
   {
-    //// Neoffice — ".neo-suggest-dialog" added. The reply-suggestion dialog
-    //// is teleported to <body>, so it sits OUTSIDE emailBoxRef: without this
-    //// exception, any click inside it (Regenerate, Use this reply, the
-    //// Instruction field) closed the editor behind it, and the agent found
-    //// their reply again on reopening the box with no idea why it had shut.
-    //// Same reason as .tippy-box right next to it.
-    ignore: [".tippy-box", ".tippy-content", ".neo-suggest-dialog"],
+    //// Neoffice — ".neo-suggest-dialog" kept next to upstream's '[role="dialog"]':
+    //// the NORA reply-suggestion dialog is teleported to <body>, outside
+    //// emailBoxRef, and a click inside it must not close the editor behind it.
+    ignore: [
+      ".neo-suggest-dialog",
+      ".tippy-box",
+      ".tippy-content",
+      ".PopoverContent",
+      '[role="dialog"]',
+    ],
   }
 );
 
@@ -242,7 +263,7 @@ onClickOutside(
     }
   },
   {
-    ignore: [".tippy-box", ".tippy-content"],
+    ignore: [".tippy-box", ".tippy-content", ".PopoverContent"],
   }
 );
 </script>
@@ -252,5 +273,19 @@ onClickOutside(
   .comm-area {
     width: 100vw;
   }
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  display: grid;
+  transition: grid-template-rows 0.25s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  grid-template-rows: 0fr;
+}
+.slide-enter-to,
+.slide-leave-from {
+  grid-template-rows: 1fr;
 }
 </style>

@@ -1,32 +1,25 @@
 <template>
-  <SettingsLayoutBase>
-    <template #title>
-      <div class="flex items-center gap-2">
+  <SettingsLayoutBase
+    :back-label="teamData.name || __('New Team')"
+    :on-back="goBack"
+    :dirty="isDirty"
+  >
+    <template #header-actions>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 cursor-pointer">
+          <Switch v-model="teamData.enabled" />
+          <span class="text-sm text-ink-gray-7 font-medium">
+            {{ __("Enabled") }}
+          </span>
+        </div>
         <Button
-          variant="ghost"
-          icon-left="chevron-left"
-          :label="teamData.name || __('New Team')"
-          size="md"
-          @click="goBack()"
-          class="cursor-pointer -ml-4 hover:bg-transparent focus:bg-transparent focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:none active:bg-transparent active:outline-none active:ring-0 active:ring-offset-0 active:text-ink-gray-5 font-semibold text-ink-gray-7 text-lg hover:opacity-70 !pr-0"
-        />
-        <Badge
-          variant="subtle"
-          theme="orange"
-          size="sm"
-          :label="__('Unsaved')"
-          v-if="isDirty"
+          :label="__('Save')"
+          variant="solid"
+          @click="saveTeam()"
+          :disabled="!isDirty"
+          :loading="teamsList.insert.loading"
         />
       </div>
-    </template>
-    <template #header-actions>
-      <Button
-        :label="__('Save')"
-        variant="solid"
-        @click="saveTeam()"
-        :disabled="!isDirty"
-        :loading="teamsList.insert.loading"
-      />
     </template>
     <template #content>
       <div class="flex flex-col gap-4">
@@ -65,12 +58,19 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref } from "vue";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
-import { Badge, ErrorMessage, FormControl, FormLabel, toast } from "frappe-ui";
+import {
+  Badge,
+  ErrorMessage,
+  FormControl,
+  FormLabel,
+  Switch,
+  toast,
+} from "frappe-ui";
+import { __ } from "@/translation";
 import AgentSelector from "./components/AgentSelector.vue";
 import { useAgentStore } from "@/stores/agent";
 import { TeamListResourceSymbol } from "@/types";
 import ConfirmDialog from "../../ConfirmDialog.vue";
-import { __ } from "@/translation";
 
 interface E {
   (event: "update:step", step: string, team?: string): void;
@@ -94,6 +94,7 @@ const showConfirmDialog = ref({
 const teamData = ref({
   name: "",
   agents: [],
+  enabled: true,
 });
 
 const errors = ref({
@@ -132,10 +133,11 @@ const saveTeam = () => {
     {
       team_name: teamData.value.name,
       users: teamData.value.agents.map((agent) => ({ user: agent })),
+      disabled: !teamData.value.enabled,
     },
     {
       onSuccess: (data) => {
-        toast.success(__("Team created"));
+        toast.success(__("Team created successfully."));
         emit("update:step", "team-edit", data.name);
       },
     }
@@ -148,13 +150,16 @@ const validateData = (key?: string) => {
 
     switch (field) {
       case "name":
+        //// Neoffice — upstream wrote these field errors in plain English; wrapped so the French
+        //// catalogue reaches them (same pass as 71a5669d9). Nothing compares them: shown only.
         teamData.value.name?.length == 0
-          ? (errors.value.name = "Name is required")
+          ? (errors.value.name = __("Name is required"))
           : (errors.value.name = "");
         break;
       case "agents":
+        //// Neoffice — see above
         teamData.value.agents.length == 0
-          ? (errors.value.agents = "At least one team member is required")
+          ? (errors.value.agents = __("At least one team member is required"))
           : (errors.value.agents = "");
         break;
     }

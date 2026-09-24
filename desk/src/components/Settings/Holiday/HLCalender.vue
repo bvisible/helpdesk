@@ -1,12 +1,12 @@
 <template>
   <div class="w-max mx-auto">
-    <div class="text-base font-medium mb-2 text-gray-800 ml-2.5">
+    <div class="text-base font-medium mb-2 text-ink-gray-8 ms-2.5">
       {{ formattedMonth }}
     </div>
     <div class="rounded-md text-sm">
       <div class="flex items-center text-xs uppercase">
         <div
-          class="flex size-7.5 items-center justify-center text-center text-gray-600"
+          class="flex size-7.5 items-center justify-center text-center text-ink-gray-5"
           v-for="(d, i) in ['s', 'm', 't', 'w', 't', 'f', 's']"
           :key="i"
         >
@@ -20,7 +20,7 @@
               <div
                 class="flex size-7 cursor-pointer text-orange-700 bg-yellow-100 items-center justify-center rounded hover:bg-yellow-100 select-none m-[1px]"
                 :class="{
-                  '!text-ink-gray-4 !bg-gray-100': isWeekOff(date),
+                  '!text-ink-gray-4 !bg-surface-gray-2': isWeekOff(date),
                 }"
                 @mouseover="handleMouseEnter(getFormattedDate(date), open)"
                 @mouseleave="handleMouseLeave(getFormattedDate(date), close)"
@@ -37,7 +37,7 @@
             </template>
             <template #body-main="{ close: closePopover, open: openPopover }">
               <div
-                class="p-3 flex gap-2.5 text-ink-gray-9 w-80 border border-gray-100 rounded-md"
+                class="p-3 flex gap-2.5 text-ink-gray-9 w-80 border border-outline-gray-1 rounded-md"
                 @mouseover="
                   handleMouseEnter(getFormattedDate(date), openPopover)
                 "
@@ -77,7 +77,7 @@
                     #body-main="{ close: closeDropdown, open: openDropdown }"
                   >
                     <div
-                      class="p-2 flex flex-col gap-1 w-40 text-ink-gray-9 border border-gray-100 rounded-md"
+                      class="p-2 flex flex-col gap-1 w-40 text-ink-gray-9 border border-outline-gray-1 rounded-md"
                       @mouseover="
                         handleMouseEnter(getFormattedDate(date), openPopover);
                         handleMouseEnter(
@@ -107,12 +107,13 @@
                           }
                         "
                       />
+                      <!-- //// Neoffice — upstream wrote both labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
                       <Button
                         class="w-full flex !justify-start"
                         icon-left="trash-2"
                         variant="ghost"
                         :label="
-                          isConfirmingDelete ? 'Confirm Delete' : 'Delete'
+                          isConfirmingDelete ? __('Confirm Delete') : __('Delete')
                         "
                         :theme="isConfirmingDelete ? 'red' : 'gray'"
                         @click="
@@ -138,7 +139,7 @@
               'text-ink-gray-3':
                 // @ts-ignore
                 date.getMonth() !== currentMonth - 1 || !isDateInRange(date),
-              'bg-black text-ink-white hover:!bg-black/80 hover:text-ink-white':
+              'bg-surface-gray-7 text-ink-white hover:!bg-surface-gray-7/80 hover:text-ink-white':
                 getFormattedDate(date) === dateValue && isDateInRange(date),
               'opacity-50 cursor-not-allowed': !isDateInRange(date),
             }"
@@ -160,6 +161,8 @@ import dayjs from "dayjs";
 import { Popover, useDatePicker } from "frappe-ui";
 import { ref, watch } from "vue";
 import AddHolidayModal from "./Modals/AddHolidayModal.vue";
+//// Neoffice — import added for the recurring-holiday wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const dialog = ref({
   show: false,
@@ -307,8 +310,10 @@ const getHolidayDescription = (date: Date): string => {
     return holidayDate === editDate;
   });
 
+  //// Neoffice — upstream wrote the suffix in plain English (a template literal); one msgid now,
+  //// so the French catalogue reaches it (same pass as 71a5669d9)
   const text = holiday?.weekly_off
-    ? `${htmlToText(holiday?.description || "")}: Recurring holiday`
+    ? __("{0}: Recurring holiday", htmlToText(holiday?.description || ""))
     : htmlToText(holiday?.description || "");
 
   return text;

@@ -1,4 +1,5 @@
 import { SlaValidationErrors } from "@/components/Settings/Sla/types";
+import { __ } from "@/translation";
 import { validateConditions } from "@/utils";
 import { ref } from "vue";
 
@@ -130,7 +131,7 @@ export function validateSlaData(
     switch (field) {
       case "service_level":
         if (!slaData.value.service_level?.trim()) {
-          slaDataErrors.value.service_level = "SLA policy name is required";
+          slaDataErrors.value.service_level = __("SLA policy name is required.");
         } else {
           slaDataErrors.value.service_level = "";
         }
@@ -140,25 +141,31 @@ export function validateSlaData(
           !Array.isArray(slaData.value.priorities) ||
           slaData.value.priorities.length === 0
         ) {
-          slaDataErrors.value.priorities = "At least one priority is required";
+          slaDataErrors.value.priorities = __("At least one priority is required.");
         } else {
           const prioritiesError: string[] = [];
           slaData.value.priorities.forEach((priority, index) => {
             const priorityNum = index + 1;
+            //// Neoffice — upstream wrapped some of these validation messages and wrote the rest in
+            //// plain English (template literals among them); every one is a msgid now, {0} for the
+            //// priority's position, so the French catalogue reaches them (same pass as 71a5669d9).
+            //// They are only shown (joined with ", "), never compared.
             if (!priority.priority?.trim()) {
               prioritiesError.push(
-                `Priority ${priorityNum}: Priority name is required`
+                __("Priority {0}: Priority name is required.", String(priorityNum))
               );
             }
             if (!priority.response_time || priority.response_time == 0) {
               prioritiesError.push(
-                `Priority ${priorityNum}: Response time is required`
+                //// Neoffice — see above
+                __("Priority {0}: Response time is required.", String(priorityNum))
               );
             }
             if (Boolean(slaData.value.apply_sla_for_resolution)) {
               if (!priority.resolution_time || priority.resolution_time == 0) {
                 prioritiesError.push(
-                  `Priority ${priorityNum}: Resolution time is required`
+                  //// Neoffice — see above
+                  __("Priority {0}: Resolution time is required.", String(priorityNum))
                 );
               }
             }
@@ -167,7 +174,11 @@ export function validateSlaData(
               Boolean(slaData.value.apply_sla_for_resolution)
             ) {
               prioritiesError.push(
-                `Priority ${priorityNum}: Response time cannot be greater than resolution time`
+                //// Neoffice — see above
+                __(
+                  "Priority {0}: Response time cannot be greater than resolution time.",
+                  String(priorityNum)
+                )
               );
             }
           });
@@ -179,7 +190,7 @@ export function validateSlaData(
           const uniquePriorities = new Set(priorityNames);
 
           if (priorityNames.length !== uniquePriorities.size) {
-            prioritiesError.push("Priorities must be unique");
+            prioritiesError.push(__("Priorities must be unique")); //// Neoffice — wrapped, see above
           }
 
           if (prioritiesError.length > 0) {
@@ -193,7 +204,7 @@ export function validateSlaData(
           );
           if (!hasDefaultPriority) {
             slaDataErrors.value.default_priority =
-              "Default priority is required";
+              __("Default priority is required"); //// Neoffice — wrapped, see above
           } else {
             slaDataErrors.value.default_priority = "";
           }
@@ -201,7 +212,7 @@ export function validateSlaData(
         break;
       case "holiday_list":
         if (!slaData.value.holiday_list) {
-          slaDataErrors.value.holiday_list = "Holiday list is required";
+          slaDataErrors.value.holiday_list = __("Holiday list is required."); //// Neoffice — wrapped, see above
         } else {
           slaDataErrors.value.holiday_list = "";
         }
@@ -211,7 +222,7 @@ export function validateSlaData(
           new Date(slaData.value.end_date) < new Date(slaData.value.start_date)
         ) {
           slaDataErrors.value.start_date =
-            "Start date cannot be after end date";
+            __("Start date cannot be after end date."); //// Neoffice — wrapped, see above
         } else {
           slaDataErrors.value.start_date = "";
         }
@@ -221,7 +232,7 @@ export function validateSlaData(
           slaData.value.end_date &&
           new Date(slaData.value.end_date) < new Date(slaData.value.start_date)
         ) {
-          slaDataErrors.value.end_date = "End date cannot be before start date";
+          slaDataErrors.value.end_date = __("End date cannot be before start date."); //// Neoffice — wrapped, see above
         } else {
           slaDataErrors.value.end_date = "";
         }
@@ -234,7 +245,7 @@ export function validateSlaData(
           slaData.value.condition_json.length > 0 &&
           !validateConditions(slaData.value.condition_json)
         ) {
-          slaDataErrors.value.condition = "Valid conditions are required";
+          slaDataErrors.value.condition = __("Valid conditions are required."); //// Neoffice — wrapped, see above
         } else {
           slaDataErrors.value.condition = "";
         }
@@ -252,7 +263,7 @@ export function validateSlaData(
 
         if (!validWorkdays?.length) {
           slaDataErrors.value.support_and_resolution =
-            "At least one valid workday with workday, start time, and end time is required";
+            __("At least one valid workday with workday, start time, and end time is required."); //// Neoffice — wrapped, see above
         } else {
           // Check for duplicate workdays
           const workdayMap = new Map();
@@ -267,9 +278,12 @@ export function validateSlaData(
           }
 
           if (duplicateWorkdays.length > 0) {
-            slaDataErrors.value.support_and_resolution = `Duplicate workday found: ${duplicateWorkdays.join(
-              ", "
-            )}. Each workday should be unique.`;
+            //// Neoffice — one msgid for the sentence (was a template literal); the day names are
+            //// workday values ("Monday"), translated for the reader
+            slaDataErrors.value.support_and_resolution = __(
+              "Duplicate workday found: {0}. Each workday should be unique.",
+              duplicateWorkdays.map((day) => __(day)).join(", ")
+            );
             return slaDataErrors.value;
           } else {
             slaDataErrors.value.support_and_resolution = "";
@@ -293,19 +307,23 @@ export function validateSlaData(
 
               if (startTime >= endTime) {
                 invalidTimeRanges.push(
-                  `${day.workday} (${startTimeStr} - ${endTimeStr})`
+                  //// Neoffice — the workday value translated for the reader
+                  `${__(day.workday)} (${startTimeStr} - ${endTimeStr})`
                 );
               }
             } catch (error) {
               // If time parsing fails, mark as invalid
-              invalidTimeRanges.push(`${day.workday} (Invalid time format)`);
+              //// Neoffice — upstream wrote it in plain English (a template literal); one msgid now
+              invalidTimeRanges.push(__("{0} (Invalid time format)", __(day.workday)));
             }
           }
 
           if (invalidTimeRanges.length > 0) {
-            slaDataErrors.value.support_and_resolution = `End time must be after start time for: ${invalidTimeRanges.join(
-              ", "
-            )}`;
+            //// Neoffice — one msgid for the sentence (was a template literal)
+            slaDataErrors.value.support_and_resolution = __(
+              "End time must be after start time for: {0}",
+              invalidTimeRanges.join(", ")
+            );
           } else {
             slaDataErrors.value.support_and_resolution = "";
           }

@@ -9,7 +9,7 @@
         </template>
       </LayoutHeader>
       <div class="mx-auto mt-6 max-w-4xl px-4 sm:px-5">
-        <div class="flex items-center space-x-2 px-2.5">
+        <div class="flex items-center gap-x-2 px-2.5">
           <TextInput
             ref="searchInput"
             class="flex-1"
@@ -80,7 +80,7 @@
             <Button
               v-if="hasActiveFilters()"
               size="sm"
-              class="ml-auto text-ink-gray-5"
+              class="ms-auto text-ink-gray-5"
               variant="gray-ghost"
               @click="clearFilters"
               :label="__('Clear all filters')"
@@ -114,11 +114,11 @@
               <div class="space-y-1">
                 <p class="text-ink-gray-6">
                   {{
-                    __("{0} matches ({1}s)", [
-                      searchResponse.summary.filtered_matches,
-                      searchResponse.summary.duration,
-                    ])
+                    __("{0} matches", [searchResponse.summary.filtered_matches])
                   }}
+                  <span>
+                    {{ __("({0}s)", [searchResponse.summary.duration]) }}
+                  </span>
                   <span v-if="hasActiveFilters()">
                     •
                     {{
@@ -135,7 +135,7 @@
                   class="text-ink-gray-6"
                 >
                   <span class="text-ink-gray-5">{{ __("Searched for:") }}</span>
-                  <span class="ml-1 font-medium text-primary">
+                  <span class="ms-1 font-medium text-primary">
                     {{ searchResponse.summary.corrected_query }}
                   </span>
                 </p>
@@ -148,9 +148,9 @@
           <template v-for="item in searchResponse?.results" :key="item.id">
             <router-link
               :to="getItemRoute(item)"
-              class="flex space-x-2 overflow-hidden rounded px-2.5 py-3 hover:bg-surface-gray-2"
+              class="flex gap-x-2 overflow-hidden rounded px-2.5 py-3 hover:bg-surface-gray-2"
             >
-              <div class="flex items-start space-x-2">
+              <div class="flex items-start gap-x-2">
                 <div class="flex-shrink-0">
                   <LucideTicket
                     v-if="item.doctype === 'HD Ticket'"
@@ -171,7 +171,7 @@
                 <div class="flex items-center">
                   <div
                     v-if="item.title"
-                    class="text-base font-medium"
+                    class="text-base font-medium truncate max-w-[60%]"
                     v-html="item.title"
                   />
                   <div class="text-base font-medium" v-else>
@@ -179,16 +179,13 @@
                   </div>
                   <span class="px-1 leading-none text-sm text-ink-gray-5">
                     &middot;
-                    {{
-                      item.doctype == "Communication"
-                        ? __("Email")
-                        : item.doctype.replace("HD ", "")
-                    }}
+                    <!-- //// Neoffice — upstream printed the doctype name minus its "HD " prefix, in English; translated at display, with a literal msgid for the comment doctype (same pass as 71a5669d9). item.doctype stays the identity compared in the script -->
+                    {{ item.doctype == "Communication" ? __("Email") : item.doctype == "HD Ticket Comment" ? __("Ticket Comment") : __(item.doctype.replace("HD ", "")) }}
                   </span>
                   <span class="px-1 leading-none text-sm text-ink-gray-5">
                     &middot; #{{ getTicketNumber(item) }}
                   </span>
-                  <div class="ml-auto text-sm text-ink-gray-5">
+                  <div class="ms-auto text-sm text-ink-gray-5">
                     {{ formatDate(item.modified) }}
                   </div>
                 </div>
@@ -211,6 +208,7 @@
 import { LayoutHeader } from "@/components";
 import SearchMultiSelect from "@/components/SearchMultiSelect.vue";
 import { useShortcut } from "@/composables/shortcuts";
+import { __ } from "@/translation";
 import dayjs from "dayjs";
 import {
   Breadcrumbs,
@@ -221,7 +219,6 @@ import {
 } from "frappe-ui";
 import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { __ } from "@/translation";
 // Icons
 
 // Type Definitions

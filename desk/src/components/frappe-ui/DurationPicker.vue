@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex gap-2 border border-gray-300 rounded w-fit min-w-max px-4 select-none shadow-sm"
+    class="flex gap-2 border border-outline-gray-2 rounded w-fit min-w-max px-4 select-none shadow-sm"
   >
     <div
       v-if="displayOptions.hours"
@@ -17,7 +17,7 @@
           @keyup.enter="handleEnter"
         />
         <div
-          class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -right-3"
+          class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -end-3"
         >
           <button
             @mousedown="startAction(() => increment('hours'))"
@@ -26,7 +26,7 @@
             @mouseleave="clearActiveInterval"
             @touchend="clearActiveInterval"
             @touchcancel="clearActiveInterval"
-            class="hover:bg-gray-100 rounded-sm select-none"
+            class="hover:bg-surface-gray-2 rounded-sm select-none"
           >
             <FeatherIcon name="chevron-up" class="size-3.5" />
           </button>
@@ -37,13 +37,14 @@
             @mouseleave="clearActiveInterval"
             @touchend="clearActiveInterval"
             @touchcancel="clearActiveInterval"
-            class="hover:bg-gray-100 rounded-sm select-none"
+            class="hover:bg-surface-gray-2 rounded-sm select-none"
           >
             <FeatherIcon name="chevron-down" class="size-3.5" />
           </button>
         </div>
       </div>
-      <div class="text-xs text-gray-600 mt-1">Hrs</div>
+      <!-- //// Neoffice — upstream wrote the unit labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+      <div class="text-xs text-ink-gray-5 mt-1">{{ __("Hrs") }}</div>
     </div>
     <div
       v-if="displayOptions.minutes"
@@ -61,7 +62,7 @@
           @keyup.enter="handleEnter"
         />
         <div
-          class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -right-3"
+          class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -end-3"
         >
           <button
             @mousedown="startAction(() => increment('minutes'))"
@@ -70,7 +71,7 @@
             @mouseleave="clearActiveInterval"
             @touchend="clearActiveInterval"
             @touchcancel="clearActiveInterval"
-            class="hover:bg-gray-100 rounded-sm select-none"
+            class="hover:bg-surface-gray-2 rounded-sm select-none"
           >
             <FeatherIcon name="chevron-up" class="size-3.5" />
           </button>
@@ -81,13 +82,14 @@
             @mouseleave="clearActiveInterval"
             @touchend="clearActiveInterval"
             @touchcancel="clearActiveInterval"
-            class="hover:bg-gray-100 rounded-sm select-none"
+            class="hover:bg-surface-gray-2 rounded-sm select-none"
           >
             <FeatherIcon name="chevron-down" class="size-3.5" />
           </button>
         </div>
       </div>
-      <div class="text-xs text-gray-600 mt-1">Min</div>
+      <!-- //// Neoffice — unit label wrapped (see Hrs above) -->
+      <div class="text-xs text-ink-gray-5 mt-1">{{ __("Min") }}</div>
     </div>
     <div
       v-if="displayOptions.seconds"
@@ -105,7 +107,7 @@
           @keyup.enter="handleEnter"
         />
         <div
-          class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -right-3"
+          class="flex flex-col group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 -end-3"
         >
           <button
             @mousedown="startAction(() => increment('seconds'))"
@@ -114,7 +116,7 @@
             @mouseleave="clearActiveInterval"
             @touchend="clearActiveInterval"
             @touchcancel="clearActiveInterval"
-            class="hover:bg-gray-100 rounded-sm select-none"
+            class="hover:bg-surface-gray-2 rounded-sm select-none"
           >
             <FeatherIcon name="chevron-up" class="size-3.5" />
           </button>
@@ -125,13 +127,14 @@
             @mouseleave="clearActiveInterval"
             @touchend="clearActiveInterval"
             @touchcancel="clearActiveInterval"
-            class="hover:bg-gray-100 rounded-sm select-none"
+            class="hover:bg-surface-gray-2 rounded-sm select-none"
           >
             <FeatherIcon name="chevron-down" class="size-3.5" />
           </button>
         </div>
       </div>
-      <div class="text-xs text-gray-600 mt-1">Sec</div>
+      <!-- //// Neoffice — unit label wrapped (see Hrs above) -->
+      <div class="text-xs text-ink-gray-5 mt-1">{{ __("Sec") }}</div>
     </div>
   </div>
 </template>

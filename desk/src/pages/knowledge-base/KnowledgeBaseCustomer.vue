@@ -1,8 +1,9 @@
 <template>
-  <div class="p-5 pb-10 px-10 w-full overflow-scroll items-center">
+  <div class="p-5 pb-10 px-10 w-full overflow-scroll items-center relative">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-gray-900">{{ __("Knowledge Base") }}</div>
+        <!-- //// Neoffice — label wrapped in __(): the mechanical i18n pass first split each .vue on the FIRST </template>, which for a named slot like this one closes the nested template rather than the root, so this string was missed until the pass was rewritten to split on the LAST </template> (41fb04e59 "fix(i18n): finish the SPA pass") -->
+        <div class="text-lg font-medium text-ink-gray-9">{{ __("Knowledge Base") }}</div>
       </template>
     </LayoutHeader>
     <div
@@ -22,8 +23,7 @@
       <!-- Categories Folder -->
       <section class="flex flex-col gap-3">
         <!-- Heading -->
-        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-        <p class="text-lg text-gray-900">{{ __("Categories") }}</p>
+        <p class="text-lg text-ink-gray-9">{{ __("Categories") }}</p>
         <CategoryFolderContainer />
       </section>
     </div>
@@ -38,6 +38,8 @@ import { LayoutHeader } from "@/components";
 import CategoryFolderContainer from "@/components/knowledge-base/CategoryFolderContainer.vue";
 import SearchPopover from "@/components/SearchPopover.vue";
 import { capture } from "@/telemetry";
+// //// Neoffice — import added for the label translations in this file
+// //// (41fb04e59 "fix(i18n): finish the SPA pass").
 import { __ } from "@/translation";
 
 const query = ref("");
@@ -46,6 +48,8 @@ onMounted(() => {
   capture("kb_customer_page_viewed");
 });
 usePageMeta(() => {
+  // //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish the
+  // //// SPA pass").
   return {
     title: __('Knowledge Base'),
   };

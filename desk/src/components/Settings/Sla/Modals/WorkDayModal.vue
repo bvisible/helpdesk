@@ -1,11 +1,14 @@
 <template>
+  <!-- //// Neoffice — upstream wrote both titles in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
   <Dialog
     v-model="dialog.show"
     @after-leave="resetForm"
-    :options="{ title: dialog.isEditing ? 'Edit workday' : 'Add workday' }"
+    :options="{ title: dialog.isEditing ? __('Edit workday') : __('Add workday') }"
   >
     <template #body-content>
       <div class="flex flex-col gap-4">
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+        <!-- //// Neoffice — the day options: `label` translated, `value` kept (it is the workday stored on the SLA and compared below) -->
         <div>
           <FormControl
             :type="'select'"
@@ -16,40 +19,41 @@
             v-model="workDayData.workday"
             :options="[
               {
-                label: 'Monday',
+                label: __('Monday'),
                 value: 'Monday',
               },
               {
-                label: 'Tuesday',
+                label: __('Tuesday'),
                 value: 'Tuesday',
               },
               {
-                label: 'Wednesday',
+                label: __('Wednesday'),
                 value: 'Wednesday',
               },
               {
-                label: 'Thursday',
+                label: __('Thursday'),
                 value: 'Thursday',
               },
               {
-                label: 'Friday',
+                label: __('Friday'),
                 value: 'Friday',
               },
               {
-                label: 'Saturday',
+                label: __('Saturday'),
                 value: 'Saturday',
               },
               {
-                label: 'Sunday',
+                label: __('Sunday'),
                 value: 'Sunday',
               },
             ]"
-            :class="{ 'border-red-500': errors.workday }"
+            :class="{ 'border-outline-red-3': errors.workday }"
             @blur="validateField('workday')"
           />
           <ErrorMessage :message="errors.workday" class="mt-2" />
         </div>
 
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div>
           <FormControl
             :type="'time'"
@@ -58,12 +62,13 @@
             :placeholder="__('Start Time')"
             :label="__('Start Time')"
             v-model="workDayData.start_time"
-            :class="{ 'border-red-500': errors.start_time }"
+            :class="{ 'border-outline-red-3': errors.start_time }"
             @blur="validateField('start_time')"
           />
           <ErrorMessage :message="errors.start_time" class="mt-2" />
         </div>
 
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div>
           <FormControl
             :type="'time'"
@@ -72,7 +77,7 @@
             :placeholder="__('End Time')"
             :label="__('End Time')"
             v-model="workDayData.end_time"
-            :class="{ 'border-red-500': errors.end_time }"
+            :class="{ 'border-outline-red-3': errors.end_time }"
             @blur="validateTimeRange"
           />
           <ErrorMessage :message="errors.end_time" class="mt-2" />
@@ -88,10 +93,11 @@
         }"
       >
         <div v-if="dialog.isEditing">
+          <!-- //// Neoffice — upstream wrote both labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
           <Button
             variant="subtle"
             :theme="isConfirmingDelete ? 'red' : 'gray'"
-            :label="isConfirmingDelete ? 'Confirm Delete' : 'Delete'"
+            :label="isConfirmingDelete ? __('Confirm Delete') : __('Delete')"
             @click="deleteWorkDay"
             icon-left="trash-2"
           />
@@ -115,6 +121,7 @@
 <script setup lang="ts">
 import { ref, defineModel, reactive, watch } from "vue";
 import { Dialog, FormControl, Button, toast } from "frappe-ui";
+import { __ } from "@/translation";
 
 const isConfirmingDelete = ref(false);
 const props = defineProps({
@@ -201,7 +208,9 @@ function resetForm() {
 
 const validateField = (field: string) => {
   if (!workDayData[field as keyof typeof workDayData]) {
-    errors[field as keyof typeof errors] = "This field is required";
+    //// Neoffice — upstream wrote these field errors in plain English; wrapped so the French
+    //// catalogue reaches them (same pass as 71a5669d9). Nothing compares them: shown only.
+    errors[field as keyof typeof errors] = __("This field is required");
     return false;
   }
   errors[field as keyof typeof errors] = "";
@@ -210,8 +219,9 @@ const validateField = (field: string) => {
 
 const validateTimeRange = () => {
   if (!workDayData.start_time || !workDayData.end_time) {
-    if (!workDayData.start_time) errors.start_time = "Start time is required";
-    if (!workDayData.end_time) errors.end_time = "End time is required";
+    //// Neoffice — see validateField above: shown only, wrapped
+    if (!workDayData.start_time) errors.start_time = __("Start time is required");
+    if (!workDayData.end_time) errors.end_time = __("End time is required");
     return false;
   }
 
@@ -224,7 +234,8 @@ const validateTimeRange = () => {
     endHours < startHours ||
     (endHours === startHours && endMinutes <= startMinutes)
   ) {
-    errors.end_time = "End time must be after start time";
+    //// Neoffice — see validateField above: shown only, wrapped
+    errors.end_time = __("End time must be after start time");
     return false;
   }
 
@@ -242,7 +253,7 @@ const validateForm = () => {
 
 const onSave = () => {
   if (!validateForm()) {
-    toast.error("Please fix the errors in the form");
+    toast.error(__("Please fix the errors in the form"));
     return;
   }
 
@@ -257,7 +268,7 @@ const onSave = () => {
           ...workDayData,
         };
         props.workDaysList.splice(itemIndex, 1, updatedItem);
-        toast.success("Workday updated");
+        toast.success(__("Workday updated successfully."));
       }
     } else {
       const isDuplicate = props.workDaysList.some(
@@ -265,18 +276,21 @@ const onSave = () => {
       );
 
       if (isDuplicate) {
-        errors.workday = "This workday already exists";
-        toast.error("A workday with this name already exists");
+        //// Neoffice — see validateField above: shown only, wrapped
+        errors.workday = __("This workday already exists");
+        toast.error(__("A workday with this name already exists"));
         return;
       }
 
       const newWorkDay = { ...workDayData };
       props.workDaysList.push(newWorkDay);
-      toast.success("Workday added");
+      toast.success(__("Workday added successfully."));
     }
     dialog.value.show = false;
   } catch (error) {
-    toast.error(`Failed to save workday: ${error}`);
+    //// Neoffice — upstream passed a template literal to __(): a msgid built at run time never
+    //// reaches the catalogue. One msgid with {0} now (same pass as 71a5669d9).
+    toast.error(__("Failed to save workday: {0}", error));
   }
 };
 

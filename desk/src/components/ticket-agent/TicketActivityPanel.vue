@@ -3,9 +3,10 @@
     :modelValue="tabIndex"
     :tabs="tabs"
     @update:modelValue="changeTabTo"
-    class="[&_[role='tab']]:px-0 [&_[role='tablist']]:px-5 [&_[role='tablist']]:gap-7.5 [&_[role='tablist']]:flex-shrink-0"
+    class="[&_[role='tab']]:px-0 [&_[role='tablist']]:px-5 [&_[role='tablist']]:gap-7.5 [&_[role='tablist']]:flex-shrink-0 [&_[role='tabpanel'][data-state='active']]:flex-1"
   >
     <template #tab-panel="{ tab }">
+      <!-- //// Neoffice — :tab passes the TicketTab identity as a prop: TicketAgentActivities used to choose its empty state from the translated tab title, so no branch ever matched on a non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <TicketAgentActivities
         v-if="Boolean(activities.data)"
         ref="ticketAgentActivitiesRef"
@@ -15,22 +16,20 @@
         :ticket-status="ticket.doc.status"
         @email:reply="
           (e) => {
-            communicationAreaRef.replyToEmail(e);
+            communicationAreaRef?.replyToEmail(e);
           }
         "
         @update="
           () => {
             activities.reload();
-            ticketAgentActivitiesRef.scrollToLatestActivity();
+            ticketAgentActivitiesRef?.scrollToLatestActivity();
           }
         "
       />
-      <div v-else class="flex items-center justify-center flex-col mt-20">
-        <LoadingIndicator :scale="8" class="text-ink-gray-5" />
-        <p class="text-xl font-medium text-ink-gray-5 absolute top-[50%]">
-          {{ __("Loading...") }}
-        </p>
-      </div>
+      <!-- <div v-else class="flex items-center justify-center flex-col flex-1">
+        <Button :loading="true" variant="ghost" size="2xl" />
+        <p class="text-xl font-medium text-ink-gray-5">Loading...</p>
+      </div> -->
     </template>
   </Tabs>
   <!-- Comm Area -->
@@ -44,13 +43,14 @@
     @update="
       () => {
         activities.reload();
-        ticketAgentActivitiesRef.scrollToLatestActivity();
+        ticketAgentActivitiesRef?.scrollToLatestActivity();
       }
     "
   />
 </template>
 
 <script setup lang="ts">
+import CommunicationArea from "@/components/CommunicationArea.vue";
 import {
   ActivityIcon,
   CommentIcon,
@@ -66,39 +66,47 @@ import {
   TicketSymbol,
   TicketTab,
 } from "@/types";
-import { LoadingIndicator, Tabs } from "frappe-ui";
+import { Button, Tabs } from "frappe-ui";
 import { storeToRefs } from "pinia";
-import { computed, ComputedRef, defineAsyncComponent, inject, ref } from "vue";
-import TicketAgentActivities from "../ticket/TicketAgentActivities.vue";
+import { computed, ComputedRef, inject, ref } from "vue";
+import { TicketAgentActivities } from "../ticket";
+// //// Neoffice — import added for the label translation below (71a5669d9
+// //// "fix(i18n): 341 visible strings of the SPA never went through __()").
 import { __ } from "@/translation";
 
-const CommunicationArea = defineAsyncComponent(
-  () => import("@/components/CommunicationArea.vue")
+const ticket = inject(TicketSymbol)!;
+const activities = inject(ActivitiesSymbol)!;
+
+const ticketAgentActivitiesRef = ref<InstanceType<
+  typeof TicketAgentActivities
+> | null>(null);
+const communicationAreaRef = ref<InstanceType<typeof CommunicationArea> | null>(
+  null
 );
-
-const ticket = inject(TicketSymbol);
-const activities = inject(ActivitiesSymbol);
-
-const ticketAgentActivitiesRef = ref(null);
-const communicationAreaRef = ref(null);
 const telephonyStore = useTelephonyStore();
 const { isCallingEnabled } = storeToRefs(telephonyStore);
 
 const tabs: ComputedRef<TabObject[]> = computed(() => {
   const _tabs: TabObject[] = [
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     {
       name: "activity",
       label: __('Activity'),
       icon: ActivityIcon,
     },
+    //// Neoffice — upstream wrote these tab labels in plain English; wrapped so the French catalogue
+    //// reaches them (same pass as 71a5669d9). `name` stays the tab identity (URL hash, filters),
+    //// and ActivityHeader now branches on it instead of on this label.
     {
       name: "email",
-      label: "Emails",
+      label: __("Emails"),
       icon: EmailIcon,
     },
     {
       name: "comment",
-      label: "Comments",
+      //// Neoffice — see above: label translated, name kept
+      label: __("Comments"),
       icon: CommentIcon,
     },
   ];
@@ -106,7 +114,8 @@ const tabs: ComputedRef<TabObject[]> = computed(() => {
   if (isCallingEnabled.value) {
     _tabs.push({
       name: "call",
-      label: "Calls",
+      //// Neoffice — see above: label translated, name kept
+      label: __("Calls"),
       icon: PhoneIcon,
     });
   }
@@ -117,17 +126,20 @@ const { tabIndex, changeTabTo } = useActiveTabManager(tabs);
 
 // TODO: refactor for pagination
 // can be done once we sort out the backend
+// sender mail will be  user using portal
 const _activities = computed(() => {
   if (!activities.value?.data) {
     return [];
   }
-
   const emailProps = activities.value?.data?.communications.map(
     (email, idx: number) => {
       return {
         subject: email.subject,
         content: email.content,
-        sender: { name: email.user.email, full_name: email.user.name },
+        sender: {
+          name: email.user.email,
+          full_name: email.user.name,
+        },
         to: email.recipients,
         type: "email",
         key: email.creation,
@@ -155,6 +167,17 @@ const _activities = computed(() => {
     };
   });
 
+  activities.value.data.history.map((h) => {
+    // }
+    h.action;
+    h.owner;
+    // if h.actions includes h.owner, replace it with 'themselves'
+    if (h.action && h.owner && h.action.includes(h.owner)) {
+      h.action = h.action.replace(h.owner, "themselves");
+    }
+    return h;
+  });
+
   const historyProps = [
     ...activities.value.data.history,
     ...activities.value.data.views,
@@ -162,7 +185,9 @@ const _activities = computed(() => {
     return {
       type: "history",
       key: h.creation,
-      content: h.action ? h.action : "viewed this",
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it
+      //// (same pass as 71a5669d9). The grouping below compares against the same __() value.
+      content: h.action ? h.action : __("viewed this"),
       creation: h.creation,
       user: h.user.name + " ",
     };
@@ -202,7 +227,8 @@ const _activities = computed(() => {
         if (
           nextActivity &&
           nextActivity.user === currentActivity.user &&
-          nextActivity.content !== "viewed this" &&
+          //// Neoffice — compared with the translated text, since `content` holds the translated "viewed this" now
+          nextActivity.content !== __("viewed this") &&
           !nextActivity.content.includes("assigned") &&
           !nextActivity.content.includes("unassigned")
         ) {
@@ -250,5 +276,3 @@ function filterActivities(eventType: TicketTab) {
   return _activities.value.filter((activity) => activity.type === eventType);
 }
 </script>
-
-<style scoped></style>

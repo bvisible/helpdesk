@@ -21,6 +21,8 @@
 import frappe
 from frappe.utils import cint
 
+from helpdesk.integrations.erpnext.utils import should_sync
+
 
 def _domain_of(email):
     """The domain part of an email address, or None."""
@@ -98,6 +100,15 @@ def sync_to_hd_customer(doc, method=None):
     if not frappe.db.has_column("HD Customer", "erpnext_customer"):
         # migration has not run yet on this site — do nothing rather than write a
         # mirror that cannot be traced back
+        return
+    if should_sync():
+        # upstream's two-way integration is on (ERPNext HD Settings): it owns the
+        # pairing, back-link on the Customer included, and it marks the Customers
+        # it creates itself with ignore_erpnext_sync precisely so that no second
+        # HD Customer appears. Mirroring here too would write an HD Customer that
+        # points at the Customer with no link back — a pair its sync then skips
+        # for good, since the name is taken (in_sync() stayed False, caught by
+        # upstream's test_in_sync_reflects_link_state).
         return
     if cint(doc.get("disabled")):
         # a disabled customer keeps its mirror (tickets point at it) but stops

@@ -1,10 +1,14 @@
 <template>
-  <div class="flex gap-1">
+  <div
+    v-if="ticketsToNavigate.data?.length > 1"
+    class="flex gap-1 rtl:flex-row-reverse"
+  >
+    <!-- //// Neoffice — plain quotes instead of backticks: the .vue extractor only reads quoted msgids (this one reached fr.po only through the committed build); same msgid -->
     <Tooltip
       :text="
         getPreviousTicket()
-          ? `Go to previous ticket: #${getPreviousTicket()}`
-          : 'No previous ticket'
+          ? __('Go to previous ticket (Shift + <)')
+          : __('No previous ticket')
       "
       :disabled="disableLeftCondition"
     >
@@ -15,11 +19,12 @@
         @click="goToPreviousTicket()"
       />
     </Tooltip>
+    <!-- //// Neoffice — plain quotes instead of backticks (see above); same msgid -->
     <Tooltip
       :text="
         getNextTicket()
-          ? `Go to next ticket: #${getNextTicket()}`
-          : 'No next ticket'
+          ? __('Go to next ticket (Shift + >)')
+          : __('No next ticket')
       "
       :disabled="disableRightCondition"
     >

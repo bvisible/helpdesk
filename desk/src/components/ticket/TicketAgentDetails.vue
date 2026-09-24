@@ -6,14 +6,14 @@
       class="flex items-center text-base leading-5"
     >
       <Tooltip :text="s.label">
-        <div class="w-[126px] text-sm text-gray-600">{{ s.label }}</div>
+        <div class="w-[126px] text-sm text-ink-gray-5">{{ s.label }}</div>
       </Tooltip>
       <div class="flex items-center justify-between">
         <div v-if="s.value">{{ s.value }}</div>
         <Tooltip :text="s.tooltipValue">
           <Badge
             v-if="s.badgeText"
-            class="-ml-1"
+            class="-ms-1"
             :label="s.badgeText"
             variant="subtle"
             :theme="s.badgeColor"
@@ -34,6 +34,8 @@ import {
 } from "@/utils";
 import { Badge, Tooltip } from "frappe-ui";
 import { computed, onUnmounted, ref, watch } from "vue";
+// //// Neoffice — import added for the label translations below (71a5669d9
+// //// "fix(i18n): 341 visible strings of the SPA never went through __()").
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -64,7 +66,10 @@ const firstResponseBadge = computed(() => {
     }
     handleFirstResponseInterval(responseBy);
     firstResponse = {
-      label: `Due in ${formatTime(firstResponseSeconds.value)}`,
+      //// Neoffice — upstream wrote these SLA labels in plain English (template literals); one msgid
+      //// each, {0} for the duration, so the French catalogue reaches them (same pass as 71a5669d9).
+      //// formatTime's own output stays as is: getTimeInSeconds parses its unit letters back.
+      label: __("Due in {0}", formatTime(firstResponseSeconds.value)),
       color: "orange",
       date: props.ticket.response_by,
     };
@@ -74,16 +79,22 @@ const firstResponseBadge = computed(() => {
     )
   ) {
     firstResponse = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(props.ticket.first_responded_on).diff(
-          dayjs(props.ticket.creation),
-          "s"
+      //// Neoffice — SLA label wrapped (see the note in the "Due in" branch above)
+      label: __(
+        "Fulfilled in {0}",
+        formatTime(
+          dayjs(props.ticket.first_responded_on).diff(
+            dayjs(props.ticket.creation),
+            "s"
+          )
         )
-      )}`,
+      ), //// Neoffice — end of the wrapped "Fulfilled in {0}" label
       color: "green",
       date: props.ticket.first_responded_on,
     };
   } else {
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     firstResponse = {
       label: __('Failed'),
       color: "red",
@@ -105,7 +116,8 @@ const resolutionBadge = computed(() => {
   ) {
     let timeLeft = dayjs(props.ticket.resolution_by).diff(dayjs(), "s");
     resolution = {
-      label: `${formatTime(timeLeft)} left (On Hold)`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponseBadge)
+      label: __("{0} left (On Hold)", formatTime(timeLeft)),
       color: "blue",
       date: props.ticket.on_hold_since,
     };
@@ -119,19 +131,24 @@ const resolutionBadge = computed(() => {
     handleResolutionInterval(resolutionBy);
 
     resolution = {
-      label: `Due in ${formatTime(resolutionSeconds.value)}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponseBadge)
+      label: __("Due in {0}", formatTime(resolutionSeconds.value)),
       color: "orange",
       date: props.ticket.resolution_by,
     };
   } else if (props.ticket.agreement_status === "Fulfilled") {
+    //// Neoffice — duration computed before the __() call: inside it, the .vue extractor would
+    //// read the "s" argument of dayjs() as a translation context of "Fulfilled in {0}".
+    const fulfilledIn = formatTime(dayjs(props.ticket.resolution_time, "s"));
     resolution = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(props.ticket.resolution_time, "s")
-      )}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponseBadge)
+      label: __("Fulfilled in {0}", fulfilledIn),
       color: "green",
       date: props.ticket.resolution_date,
     };
   } else {
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     resolution = {
       label: __('Failed'),
       color: "red",
@@ -151,6 +168,8 @@ function getCalculatedResolution() {
   return formatTime(resolution);
 }
 
+// //// Neoffice — every label below wrapped in __() (71a5669d9 "fix(i18n):
+// //// 341 visible strings of the SPA never went through __()").
 const sections = computed(() => [
   {
     label: __('First Response'),
@@ -158,15 +177,19 @@ const sections = computed(() => [
     badgeText: firstResponseBadge.value.label,
     badgeColor: firstResponseBadge.value.color,
   },
+  // //// Neoffice — see the marker above: label wrapped in __()
   {
     label: __('Resolution'),
     tooltipValue: dateFormat(resolutionBadge.value.date, dateTooltipFormat),
     badgeText: resolutionBadge.value.label,
     badgeColor: resolutionBadge.value.color,
   },
+  // //// Neoffice — see the marker above: label wrapped in __()
   {
     label: __('Source'),
-    value: props.ticket.via_customer_portal ? "Portal" : "Mail",
+    //// Neoffice — upstream wrote the source in plain English; shown as is, compared nowhere:
+    //// wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    value: props.ticket.via_customer_portal ? __("Portal") : __("Mail"),
   },
 ]);
 

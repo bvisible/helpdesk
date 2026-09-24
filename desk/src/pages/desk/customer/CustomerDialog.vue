@@ -2,7 +2,7 @@
   <Dialog :options="options">
     <template #body-main>
       <div class="flex flex-col items-center gap-4 p-6">
-        <div class="text-xl font-medium text-gray-900">
+        <div class="text-xl font-medium text-ink-gray-9">
           {{ customer.doc?.name }}
         </div>
         <Avatar
@@ -14,8 +14,9 @@
         <div class="flex gap-2">
           <FileUploader @success="(file) => updateImage(file)">
             <template #default="{ uploading, openFileSelector }">
+              <!-- //// Neoffice — upstream wrote both labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
               <Button
-                :label="customer.doc?.image ? 'Change photo' : 'Upload photo'"
+                :label="customer.doc?.image ? __('Change photo') : __('Upload photo')"
                 :loading="uploading"
                 @click="openFileSelector"
               />
@@ -38,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import { __ } from "@/translation";
 import {
   Avatar,
   createDocumentResource,
@@ -46,7 +48,6 @@ import {
   toast,
 } from "frappe-ui";
 import { computed } from "vue";
-import { __ } from "@/translation";
 
 const props = defineProps({
   name: {
@@ -72,10 +73,10 @@ const customer = createDocumentResource({
   auto: true,
   setValue: {
     onSuccess() {
-      toast.success("Customer updated");
+      toast.success(__("Customer updated successfully."));
     },
     onError() {
-      toast.error("Error updating customer");
+      toast.error(__("Error updating customer"));
     },
   },
 });
@@ -83,6 +84,8 @@ const customer = createDocumentResource({
 const options = computed(() => ({
   title: customer.doc?.name,
   actions: [
+    // //// Neoffice — label wrapped in __() (71a5669d9 "fix(i18n): 341
+    // //// visible strings of the SPA never went through __()").
     {
       label: __('Save'),
       theme: "gray",

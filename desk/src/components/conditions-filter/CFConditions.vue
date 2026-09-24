@@ -1,5 +1,7 @@
 <template>
-  <div class="rounded-lg border border-gray-300 p-3 flex flex-col gap-4 w-full">
+  <div
+    class="rounded-lg border border-outline-gray-2 p-3 flex flex-col gap-4 w-full"
+  >
     <template v-for="(condition, i) in props.conditions" :key="condition.field">
       <CFCondition
         v-if="Array.isArray(condition)"
@@ -35,6 +37,7 @@ import { Button, Dropdown } from "frappe-ui";
 import { computed, onMounted } from "vue";
 import CFCondition from "./CFCondition.vue";
 import { filterableFields } from "./filterableFields";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -75,6 +78,7 @@ const isGroupCondition = (condition) => {
 };
 
 const dropdownOptions = computed(() => {
+  //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
   const options = [
     {
       label: __('Add condition'),
@@ -85,6 +89,7 @@ const dropdownOptions = computed(() => {
     },
   ];
   if (props.level < 3) {
+    //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     options.push({
       label: __('Add condition group'),
       onClick: () => {

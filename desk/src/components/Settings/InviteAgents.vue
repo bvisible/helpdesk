@@ -12,16 +12,22 @@
           placeholder="user1@example.com, user2@example.com, ..."
           v-model="emails"
           :debounce="100"
-          :description="__('Comma separated emails to invite')"
+          :description="__('Comma separated emails to invite.')"
         />
-        <FormControl
-          :label="__('Role')"
-          type="select"
-          :required="true"
-          :options="roleOptions"
-          v-model="role"
-          :description="roleDescription"
-        />
+        <div class="space-y-1.5">
+          <label class="block text-xs text-ink-gray-5">
+            {{ __("Role") }}
+            <span class="text-ink-red-3 select-none" aria-hidden="true">*</span>
+          </label>
+          <Select :options="roleOptions" v-model="role" required class="w-full">
+            <template #suffix>
+              <LucideChevronDown
+                class="size-4 shrink-0 text-ink-gray-4 ms-auto"
+              />
+            </template>
+          </Select>
+          <p class="text-p-xs text-ink-gray-5">{{ roleDescription }}</p>
+        </div>
         <Button
           type="submit"
           variant="solid"
@@ -98,10 +104,19 @@
 
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/auth";
-import { FormControl, Button, Tooltip, createResource, toast } from "frappe-ui";
+import {
+  FormControl,
+  Select,
+  Button,
+  Tooltip,
+  createResource,
+  toast,
+} from "frappe-ui";
 import { computed, ref } from "vue";
 import { useOnboarding } from "frappe-ui/frappe";
+import LucideChevronDown from "~icons/lucide/chevron-down";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import { capture } from "@/telemetry";
 import { __ } from "@/translation";
 
 const authStore = useAuthStore();
@@ -121,11 +136,15 @@ type RoleOption = {
 const roleToLabel = (role: Role) => {
   switch (role) {
     case "Agent":
-      return "Agent";
+      //// Neoffice — upstream wrote the role labels in plain English; wrapped so the French catalogue
+      //// reaches them (same pass as 71a5669d9). The Role values stay the identity sent to the server.
+      return __("Agent");
     case "Agent Manager":
-      return "Manager";
+      //// Neoffice — label translated, value kept (see above)
+      return __("Manager");
     case "System Manager":
-      return "Admin";
+      //// Neoffice — label translated, value kept (see above)
+      return __("Admin");
     default:
       const x: never = role;
       throw new Error(`Invalid role: ${x}`);
@@ -167,7 +186,8 @@ const roleDescription = computed(
 
 const onSubmit = async () => {
   if (emails.value.trim() === "") {
-    toast.error(__("At least one email required"));
+    toast.error(__("Please enter at least one valid email to send an invite."));
+    return;
   }
   await inviteByEmailResource.submit({
     emails: emails.value,
@@ -199,22 +219,32 @@ const inviteByEmailResource = createResource({
     resetInputValues();
     let emailsStr = emailsToStr(data.invited_emails);
     if (emailsStr.trim() !== "") {
-      toast.success(`${emailsStr} invited successfully`);
+      //// Neoffice — upstream wrote these toasts in plain English (template literals); one msgid each
+      //// now, so the French catalogue reaches them (same pass as 71a5669d9)
+      toast.success(__("{0} invited successfully", emailsStr));
     }
     emailsStr = emailsToStr(data.disabled_user_emails);
     if (emailsStr.trim() !== "") {
-      toast.info(`${emailsStr} already present and disabled`);
+      //// Neoffice — same as above: one msgid, {0} for the addresses
+      toast.info(__("{0} already present and disabled", emailsStr));
     }
     emailsStr = emailsToStr(data.pending_invite_emails);
     if (emailsStr.trim() !== "") {
-      toast.info(`${emailsStr} already invited`);
+      //// Neoffice — same as above: one msgid, {0} for the addresses
+      toast.info(__("{0} already invited", emailsStr));
     }
     emailsStr = emailsToStr(data.accepted_invite_emails);
     if (emailsStr.trim() !== "") {
-      toast.info(`${emailsStr} already present`);
+      //// Neoffice — same as above: one msgid, {0} for the addresses
+      toast.info(__("{0} already present", emailsStr));
     }
     pendingInvitesResource.reload();
     updateOnboardingStep("invite_your_team");
+    capture("agents_invited", {
+      data: {
+        role: role.value,
+      },
+    });
   },
 });
 
@@ -229,7 +259,8 @@ const cancelInviteResource = createResource({
   url: "frappe.core.api.user_invitation.cancel_invitation",
   method: "PATCH",
   onSuccess() {
-    toast.success("Invitation cancelled successfully");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.success(__("Invitation cancelled successfully"));
     pendingInvitesResource.fetch();
   },
 });

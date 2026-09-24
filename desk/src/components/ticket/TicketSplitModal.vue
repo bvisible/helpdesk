@@ -1,12 +1,14 @@
 <template>
-  <Dialog :options="{ title: `Split ticket` }" v-model="showDialog">
+  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+  <Dialog :options="{ title: __('Split ticket') }" v-model="showDialog">
     <template #body-content>
       <div class="flex flex-col gap-4">
         <p class="text-p-base text-ink-gray-8">
-          All
-          <span class="underline">emails/ comments</span>
-          from this email onwards will be moved to new ticket.
+          {{ __("All") }}
+          <span class="underline">{{ __("emails/ comments") }}</span>
+          {{ __("from this email onwards will be moved to new ticket.") }}
         </p>
+        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <FormControl
           :label="__('New Ticket Subject')"
           type="text"
@@ -14,13 +16,13 @@
           :placeholder="__('Add a subject for the new ticket')"
         />
         <div
-          class="flex items-center gap-2 rounded-md p-2 ring-1 ring-gray-200"
+          class="flex items-center gap-2 rounded-md p-2 ring-1 ring-outline-gray-modals"
         >
           <TriangleAlert
             class="h-6 w-5 w-min-5 w-max-5 min-h-5 max-w-5 text-yellow-500"
           />
 
-          <div class="text-wrap text-sm text-gray-700">
+          <div class="text-wrap text-sm text-ink-gray-7">
             {{ __("This action is irreversible.") }}
           </div>
         </div>
@@ -41,11 +43,11 @@
 </template>
 
 <script setup lang="ts">
+import { __ } from "@/translation";
 import { Dialog, createResource, toast } from "frappe-ui";
 import { ref } from "vue";
 import LucideSplit from "~icons/lucide/split";
 import TriangleAlert from "~icons/lucide/triangle-alert";
-import { __ } from "@/translation";
 
 interface Props {
   ticket_id: string;
@@ -72,11 +74,12 @@ const splitTicket = createResource({
     };
   },
   validate({ subject, communication_id }) {
-    if (!subject) throw { message: __('Subject is required') };
-    if (!communication_id) throw { message: __('Communication ID is required') };
+    if (!subject) throw { message: __("Subject is required") };
+    if (!communication_id)
+      throw { message: __("Communication ID is required") };
   },
   onSuccess: (newTicket: string) => {
-    toast.success("Ticket split successfully");
+    toast.success(__("Ticket split successfully."));
     showDialog.value = false;
     window.open(
       window.location.origin + "/helpdesk/tickets/" + newTicket,

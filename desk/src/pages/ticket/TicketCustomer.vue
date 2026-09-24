@@ -2,7 +2,7 @@
   <div v-if="ticket.data" class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
-        <Breadcrumbs :items="breadcrumbs" />
+        <Breadcrumbs :items="breadcrumbs" class="-ms-0.5" />
       </template>
       <template #right-header>
         <CustomActions
@@ -81,17 +81,21 @@
 </template>
 
 <script setup lang="ts">
+// //// Neoffice — removed import { __ } from "@/translation" from upstream's
+// //// position here (34afea6c1 "Merge upstream develop up to 2026-06-02"):
+// //// repositioned below, next to this file's label translations — see the
+// //// marker there.
 import { LayoutHeader } from "@/components";
 import TicketCustomerSidebar from "@/components/ticket/TicketCustomerSidebar.vue";
 import { setupCustomizations } from "@/composables/formCustomisation";
 import { useActiveViewers } from "@/composables/realtime";
 import { useScreenSize } from "@/composables/screen";
-import { socket } from "@/socket";
+
 import { useConfigStore } from "@/stores/config";
 import { globalStore } from "@/stores/globalStore";
+//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
 import { useTicketStatusStore } from "@/stores/ticketStatus";
 import { isContentEmpty, isCustomerPortal, uploadFunction } from "@/utils";
-import LucideWarning from "~icons/lucide/triangle-alert";
 import {
   Alert,
   Breadcrumbs,
@@ -113,6 +117,10 @@ import { ITicket } from "./symbols";
 import TicketConversation from "./TicketConversation.vue";
 import TicketCustomerTemplateFields from "./TicketCustomerTemplateFields.vue";
 import TicketFeedback from "./TicketFeedback.vue";
+// //// Neoffice — import repositioned by the upstream merge (34afea6c1
+// //// "Merge upstream develop up to 2026-06-02"); needed for this file's
+// //// label translations (71a5669d9 "fix(i18n): 341 visible strings of the
+// //// SPA never went through __()").
 import { __ } from "@/translation";
 const TicketTextEditor = defineAsyncComponent(
   () => import("./TicketTextEditor.vue")
@@ -122,7 +130,6 @@ interface P {
   ticketId: string;
 }
 const router = useRouter();
-
 const props = defineProps<P>();
 
 const { getStatus } = useTicketStatusStore();
@@ -148,7 +155,7 @@ const ticket = createResource({
     });
   },
   onError: () => {
-    toast.error(__("Ticket not found"));
+    toast.error(__("Ticket not found."));
     router.replace("/my-tickets");
   },
 });
@@ -161,7 +168,7 @@ const showFeedbackDialog = ref(false);
 const isExpanded = ref(false);
 
 const { isMobileView } = useScreenSize();
-const { $dialog } = globalStore();
+const { $dialog, $socket } = globalStore();
 const isDismissed = ref(false);
 
 function getTodayKey() {
@@ -276,7 +283,7 @@ function updateTicket(fieldname: string, value: string) {
     auto: true,
     onSuccess: () => {
       ticket.reload();
-      toast.success(__("Ticket updated"));
+      toast.success(__("Ticket updated successfully."));
     },
   });
 }
@@ -303,7 +310,7 @@ function showConfirmationDialog() {
             { fieldname: "status", value: "Closed" },
             {
               onSuccess: () => {
-                toast.success(__("Ticket closed"));
+                toast.success(__("Ticket closed successfully."));
               },
             }
           );
@@ -351,12 +358,13 @@ const showFeedback = computed(() => {
   return hasAgentCommunication && isFeedbackMandatory;
 });
 const { startViewing, stopViewing } = useActiveViewers(props.ticketId);
+
 onMounted(() => {
   startViewing(props.ticketId);
   document.title = props.ticketId;
 
-  socket.on("helpdesk:ticket-update", ({ ticket_id }) => {
-    if (ticket_id === props.ticketId) {
+  $socket.on("helpdesk:ticket-update", ({ ticket_id }) => {
+    if (ticket_id == props.ticketId) {
       ticket.reload();
     }
   });
@@ -365,6 +373,6 @@ onMounted(() => {
 onUnmounted(() => {
   stopViewing(props.ticketId);
   document.title = "Helpdesk";
-  socket.off("helpdesk:ticket-update");
+  $socket.off("helpdesk:ticket-update");
 });
 </script>

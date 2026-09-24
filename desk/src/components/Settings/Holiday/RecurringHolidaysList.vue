@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-md border p-1 border-gray-300 text-sm">
+  <div class="rounded-md border p-1 border-outline-gray-2 text-sm">
     <div
       class="grid p-2 items-center"
       :style="{
@@ -10,7 +10,7 @@
       <div
         v-for="column in columns"
         :key="column.key"
-        class="text-gray-600 overflow-hidden whitespace-nowrap text-ellipsis"
+        class="text-ink-gray-5 overflow-hidden whitespace-nowrap text-ellipsis"
       >
         {{ column.label }}
       </div>
@@ -43,10 +43,12 @@
       </div>
       <hr class="my-0.5" v-if="index !== holidays.length - 1" />
     </div>
-    <div v-if="holidays?.length === 0" class="text-center p-4 text-gray-600">
+    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+    <div v-if="holidays?.length === 0" class="text-center p-4 text-ink-gray-5">
       {{ __("No items in the list") }}
     </div>
   </div>
+  <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
   <Button
     variant="subtle"
     @click="addHoliday"
@@ -54,23 +56,26 @@
     :label="__('Add Recurring Holiday')"
     icon-left="plus"
   />
+  <!-- //// Neoffice — the dialog titles were plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
   <Dialog
     v-model="dialog"
     :options="{
       size: 'md',
       title: recurringHolidayData.isEditing
-        ? 'Edit Recurring Holiday'
-        : 'Add Recurring Holiday',
+        ? __('Edit Recurring Holiday')
+        : __('Add Recurring Holiday'),
     }"
   >
     <template #body-content>
+      <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
       <div v-if="!props.holidayData.from_date || !props.holidayData.to_date">
-        <div class="text-center p-4 text-gray-600">
+        <div class="text-center p-4 text-ink-gray-5">
           {{ __("Please select start and end date first") }}
         </div>
       </div>
       <div v-else class="flex flex-col gap-4">
         <div class="flex flex-col gap-1.5">
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <FormLabel :label="__('Day')" required />
           <Select
             :options="availableWorkDays"
@@ -79,8 +84,10 @@
           />
         </div>
         <div class="flex flex-col gap-1.5">
+          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <FormLabel :label="__('Repetition')" required />
           <div class="grid grid-cols-2 gap-2 mt-2">
+            <!-- //// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these repetition checkboxes; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
             <Checkbox
               v-model="recurringHolidayData.repetition.all"
               :label="__('Every week')"
@@ -91,43 +98,50 @@
                 recurringHolidayData.repetition.fourth
               "
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.first"
               :label="__('Every first week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.second"
               :label="__('Every second week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.third"
               :label="__('Every third week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.fourth"
               :label="__('Every fourth week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — see the block marker above: __() i18n wrap -->
             <Checkbox
               v-model="recurringHolidayData.repetition.fifth"
               :label="__('Every fifth week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice ▲▲▲ -->
           </div>
         </div>
       </div>
     </template>
     <template #actions>
+      <!-- //// Neoffice — the button labels were plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
       <Button
         variant="solid"
         @click="saveHoliday"
         class="w-full"
         v-if="props.holidayData.from_date && props.holidayData.to_date"
         :label="
-          recurringHolidayData.isEditing ? 'Update Holiday' : 'Add Holiday'
+          recurringHolidayData.isEditing ? __('Update Holiday') : __('Add Holiday')
         "
         :icon-left="recurringHolidayData.isEditing ? 'edit-2' : 'plus'"
       />
@@ -144,6 +158,7 @@ import weekday from "dayjs/plugin/weekday";
 import { Checkbox, Dropdown, FormLabel, Select, toast } from "frappe-ui";
 import { computed, ref } from "vue";
 import { getRepetitionText } from "./utils";
+//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
 
 dayjs.extend(weekday);
@@ -177,48 +192,59 @@ const props = defineProps({
   },
 });
 
+//// Neoffice — wrapped in __() so the French catalogue can translate these column labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const columns = [
   {
     label: __('Day'),
     key: "day",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Repetition'),
     key: "repetition",
   },
 ];
 
+//// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these weekday labels; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const workDays = ref([
   {
     label: __('Monday'),
     value: "Monday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Tuesday'),
     value: "Tuesday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Wednesday'),
     value: "Wednesday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Thursday'),
     value: "Thursday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Friday'),
     value: "Friday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Saturday'),
     value: "Saturday",
   },
   {
+    //// Neoffice — see the block marker above: __() i18n wrap
     label: __('Sunday'),
     value: "Sunday",
   },
 ]);
+//// Neoffice ▲▲▲
 
+//// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 const dropdownOptions = (holiday: any) => [
   {
     label: __('Edit'),
@@ -280,14 +306,16 @@ const editHoliday = (holiday: any) => {
 
 const saveHoliday = () => {
   if (!recurringHolidayData.value.day) {
-    toast.error("Please select a day of the week");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("Please select a day of the week"));
     return;
   }
 
   const { all, first, second, third, fourth, fifth } =
     recurringHolidayData.value.repetition;
   if (!all && !first && !second && !third && !fourth && !fifth) {
-    toast.error("Please select at least one repetition option");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("Please select at least one repetition option"));
     return;
   }
 
@@ -298,7 +326,8 @@ const saveHoliday = () => {
       props.holidays[holidayData.editIndex] = { ...holidayData };
       updateWeeklyOffDates();
     } else {
-      toast.error("Error: Unable to find the holiday to update");
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+      toast.error(__("Error: Unable to find the holiday to update"));
       return;
     }
   } else {
@@ -310,7 +339,8 @@ const saveHoliday = () => {
     );
 
     if (isDuplicate) {
-      toast.error("Holiday with the same day and repetition already exists");
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+      toast.error(__("Holiday with the same day and repetition already exists"));
       return;
     }
 

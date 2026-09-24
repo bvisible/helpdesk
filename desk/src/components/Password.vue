@@ -16,7 +16,8 @@
             class="rounded bg-surface-gray-7 py-1.5 px-2 text-xs text-ink-white shadow-xl"
           >
             <span class="flex items-center gap-1">
-              {{ show ? "Hide Password" : "Show Password" }}
+              <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+              {{ show ? __("Hide Password") : __("Show Password") }}
             </span>
           </div>
         </template>
@@ -24,7 +25,7 @@
           <component
             v-show="showEye"
             :is="show ? LucideEyeOff : LucideEye"
-            class="h-3 cursor-pointer mr-1"
+            class="h-3 cursor-pointer me-1"
             @click="show = !show"
           />
         </div>

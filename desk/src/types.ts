@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 import { Component, ComputedRef, InjectionKey, Ref } from "vue";
-import type { HDTicket } from "./types/doctypes";
+import type { AssignmentRule, HDTicket } from "./types/doctypes";
 
 interface ResourceOptions<T = any> {
   method?: string;
@@ -21,7 +21,7 @@ interface ResourceOptions<T = any> {
   resourceFetcher?: (options: any) => Promise<any>;
 }
 
-interface Resource<T = any> {
+export interface Resource<T = any> {
   method: string | undefined;
   url: string;
   data: T | null;
@@ -153,6 +153,10 @@ export interface Communication {
   sender: string;
   bcc?: string;
   cc?: string;
+  sent_or_received?: "Sent" | "Received";
+  email_account?: string;
+  sender_full_name?: string;
+  sender_mail_id?: string;
 }
 
 export interface Activity {
@@ -397,6 +401,7 @@ export interface View {
   group_by_field?: string;
   name?: string;
   is_customer_portal?: boolean;
+  is_standard?: boolean;
 }
 
 export interface ViewType {
@@ -585,12 +590,12 @@ export interface TicketContact {
 }
 
 export type RecentTicket = Record<
-  "subject" | "status" | "priority" | "name",
-  string | number
+  "subject" | "status" | "priority" | "name" | "creation",
+  string
 >;
 export type SimilarTicket = Record<
-  "subject" | "status" | "priority" | "name",
-  string | number
+  "subject" | "status" | "priority" | "name" | "creation",
+  string
 >;
 export interface RecentSimilarTicket {
   recent_tickets: RecentTicket[];
@@ -602,13 +607,6 @@ export interface TicketActivities {
   communications: Communication[];
   history: Activity[];
   views: ViewLog[];
-}
-
-export interface AssignmentRule {
-  name: string;
-  description: string;
-  priority: string;
-  enabled: boolean;
 }
 
 export interface HDSettings {
@@ -648,6 +646,7 @@ export interface SlaPolicy {
 export interface Team {
   name: string;
   team: string;
+  disabled: boolean;
 }
 
 export interface SavedReply {
@@ -665,6 +664,12 @@ export type DropdownOption = {
   label: string;
   value: string | number;
 };
+
+export interface AgentOption {
+  value: string;
+  label: string;
+  image?: string;
+}
 
 // symbols
 export const TicketSymbol: InjectionKey<
@@ -718,5 +723,7 @@ declare global {
     date_format: string;
     time_format: string;
     session_user: string;
+    timezone: Record<"user" | "system", string>;
+    agent: string | null;
   }
 }

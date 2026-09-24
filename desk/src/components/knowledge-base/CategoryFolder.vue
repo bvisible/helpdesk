@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="flex flex-col gap-2 rounded-lg border p-3 border-gray-200 cursor-pointer hover:shadow-xl"
+    class="flex flex-col gap-2 rounded-lg border p-3 border-outline-gray-modals cursor-pointer hover:shadow-xl"
     :to="{
       name: 'Articles',
       params: {
@@ -9,14 +9,19 @@
     }"
   >
     <div>
-      <FeatherIcon name="folder" class="h-6 w-6 text-ink-gray-4 -ml-[2px]" />
+      <FeatherIcon name="folder" class="h-6 w-6 text-ink-gray-4 -ms-[2px]" />
     </div>
     <div class="gap-1 flex flex-col">
-      <p class="text-base font-medium text-gray-800 truncate">
-        {{ category.category_name }}
+      <p class="text-base font-medium text-ink-gray-8 truncate">
+        {{ category?.category_name }}
       </p>
+      <!-- //// Neoffice — upstream glued the count to "article(s)" in plain English; one msgid per form now, so the French catalogue reaches it (same pass as 71a5669d9). Upstream's own singular test is kept as is. -->
       <span class="truncate text-xs md:text-sm text-ink-gray-5">
-        {{ category.article_count }} articles
+        {{
+          category?.article_count % 2 === 1
+            ? __("{0} article", category?.article_count)
+            : __("{0} articles", category?.article_count)
+        }}
       </span>
     </div>
   </router-link>
