@@ -1,7 +1,7 @@
 <template>
-  <div class="p-6.5 px-5 rounded-xl border border-gray-300">
+  <div class="p-6.5 px-5 rounded-xl border border-outline-gray-2">
     <div class="mb-6.5 flex justify-between items-center">
-      <div class="ml-1">
+      <div class="ms-1">
         <Popover v-if="startYear !== endYear">
           <template #target="{ togglePopover }">
             <Button
@@ -19,7 +19,7 @@
                   v-for="year in yearsList"
                   :key="year"
                   ref="yearItems"
-                  class="cursor-pointer px-3 py-1.5 text-sm hover:bg-gray-100 flex items-center justify-between"
+                  class="cursor-pointer px-3 py-1.5 text-sm hover:bg-surface-gray-2 flex items-center justify-between"
                   @click="onYearChange(togglePopover, year)"
                 >
                   {{ year }}
@@ -86,8 +86,8 @@
         :class="[
           'size-1.5 rounded-full cursor-pointer',
           {
-            'bg-black': visibleMonths === 'first-half',
-            'bg-gray-400': visibleMonths === 'second-half',
+            'bg-surface-gray-7': visibleMonths === 'first-half',
+            'bg-surface-gray-4': visibleMonths === 'second-half',
           },
         ]"
         @click="visibleMonths = 'first-half'"
@@ -96,8 +96,8 @@
         :class="[
           'size-1.5 rounded-full cursor-pointer',
           {
-            'bg-black': visibleMonths === 'second-half',
-            'bg-gray-400': visibleMonths === 'first-half',
+            'bg-surface-gray-7': visibleMonths === 'second-half',
+            'bg-surface-gray-4': visibleMonths === 'first-half',
           },
         ]"
         @click="visibleMonths = 'second-half'"

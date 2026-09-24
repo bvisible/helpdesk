@@ -10,9 +10,7 @@
       <div class="flex flex-col gap-3 rounded-lg border w-full p-4">
         <div class="flex justify-between items-center mb-3">
           <!-- Author Info -->
-          <div
-            class="flex gap-1 items-center flex-1 mr-7 max-w-fit overflow-hidden"
-          >
+          <div class="flex gap-1 items-center flex-1 me-7 max-w-fit">
             <UserAvatar :name="user.name" :expand="true" />
             <span>{{ __("in") }}</span>
             <Link
@@ -36,7 +34,7 @@
         </div>
         <!-- Title -->
         <textarea
-          class="w-full resize-none border-0 text-3xl font-bold placeholder-ink-gray-3 p-0 pb-3 border-b border-gray-200 focus:ring-0 focus:border-gray-200"
+          class="w-full resize-none border-0 bg-transparent text-3xl font-bold placeholder-ink-gray-3 p-0 pb-3 border-b border-outline-gray-modals focus:ring-0 focus:border-outline-gray-modals"
           v-model="title"
           :placeholder="__('Title')"
           rows="1"
@@ -59,7 +57,7 @@
         >
           <template #bottom>
             <TextEditorFixedMenu
-              class="-ml-1 overflow-x-auto w-full"
+              class="-ms-1 overflow-x-auto w-full"
               :buttons="textEditorMenuButtons"
             />
           </template>
@@ -77,8 +75,9 @@ import {
   toast,
   usePageMeta,
 } from "frappe-ui";
-import { useOnboarding } from "frappe-ui/frappe";
-import { computed, ref } from "vue";
+import { useOnboarding, Link } from "frappe-ui/frappe";
+import { computed, ref, watch } from "vue";
+import { __ } from "@/translation";
 
 import { LayoutHeader, UserAvatar } from "@/components";
 import { useAuthStore } from "@/stores/auth";
@@ -88,7 +87,6 @@ import { useUserStore } from "@/stores/user";
 import { Article } from "@/types";
 import { textEditorMenuButtons } from "@/utils";
 import { useRoute, useRouter } from "vue-router";
-import { __ } from "@/translation";
 
 const userStore = useUserStore();
 const user = userStore.getUser();
@@ -116,7 +114,7 @@ function handleCreateArticle() {
     { title: title.value, content: content.value, category: categoryId.value },
     {
       onSuccess: (article: Article) => {
-        toast.success(__("Article created"));
+        toast.success(__("Article created successfully."));
         if (isManager) {
           updateOnboardingStep("first_article");
         }
@@ -172,12 +170,6 @@ const breadcrumbs = computed(() => {
       route: { name: "AgentKnowledgeBase" },
     },
   ];
-  if (categoryName.value) {
-    options.push({
-      label: categoryName.value,
-      route: { name: "AgentKnowledgeBase" },
-    });
-  }
   options.push({
     label: __("New Article"),
   });

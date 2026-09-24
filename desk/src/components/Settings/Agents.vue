@@ -8,6 +8,7 @@
         @click="() => setActiveSettingsTab('Invite Agents')"
         :label="__('New')"
         variant="solid"
+        class="rtl:flex-row-reverse"
       >
         <template #prefix>
           <LucidePlus class="h-4 w-4 stroke-1.5" />
@@ -22,17 +23,17 @@
             @input="search = $event"
             :placeholder="__('Search')"
             type="text"
-            class="bg-white hover:bg-white focus:ring-0 border-outline-gray-2"
+            class="focus:ring-0 border-outline-gray-2"
             icon-left="search"
             debounce="300"
-            inputClass="p-4 pr-12"
+            inputClass="p-4 pe-12 rtl:pr-8"
           />
           <Button
             v-if="search"
             icon="x"
             variant="ghost"
             @click="search = ''"
-            class="absolute right-1 top-1/2 -translate-y-1/2"
+            class="absolute end-1 top-1/2 -translate-y-1/2"
           />
         </div>
         <Dropdown :options="dropdownOptions" placement="right">
@@ -51,9 +52,9 @@
               </template>
             </Button>
           </template>
-          <template #item="{ item }">
+          <template #item-label="{ item }">
             <button
-              class="group flex text-ink-gray-6 gap-4 h-7 w-full justify-between items-center rounded p-2 text-base hover:bg-surface-gray-3"
+              class="group flex text-ink-gray-6 gap-4 w-full justify-between items-center rounded text-base"
               @click="item.onClick"
             >
               <div class="flex items-center justify-between flex-1">
@@ -87,48 +88,31 @@
           />
         </div>
         <!-- Empty State -->
-        <div
+        <EmptyState
           v-if="!agents.loading && !agents.data?.length"
-          class="flex flex-col items-center justify-center gap-4 h-full"
-        >
-          <div
-            class="p-4 size-14.5 rounded-full bg-surface-gray-1 flex items-center justify-center"
-          >
-            <AgentIcon class="size-6 text-ink-gray-6" />
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <div class="text-base font-medium text-ink-gray-6">
-              {{ __("No agent found") }}
-            </div>
-            <div class="text-p-sm text-ink-gray-5 max-w-60 text-center">
-              {{
-                activeFilter.length
-                  ? __("Change your search terms or filters")
-                  : __("Add one to get started.")
-              }}
-            </div>
-          </div>
-          <Button
-            :label="__('New')"
-            variant="outline"
-            icon-left="plus"
-            @click="setActiveSettingsTab('Invite Agents')"
-          />
-        </div>
+          variant="badge"
+          :icon="AgentIcon"
+          title="No agent found"
+          :description="
+            activeFilter.length
+              ? 'Change your search terms or filters'
+              : 'Add one to get started.'
+          "
+        />
         <!-- Agent List -->
         <div
           class="w-full"
           v-if="!agents.loading && Boolean(agents.data?.length)"
         >
           <div
-            class="grid grid-cols-8 items-center gap-3 text-sm text-gray-600"
+            class="grid grid-cols-8 items-center gap-3 text-sm text-ink-gray-5"
           >
-            <div class="col-span-6 text-p-sm">{{ __("Agent Name") }}</div>
+            <div class="col-span-6 text-p-sm">{{ __("Agent name") }}</div>
           </div>
           <hr class="mt-2" />
           <div v-for="(agent, index) in agents.data" :key="agent.agent_name">
             <div class="flex items-center justify-between h-14 group rounded">
-              <div class="flex items-center space-x-3 grow">
+              <div class="flex items-center gap-x-3 grow">
                 <Avatar
                   :image="agent.user_image"
                   :label="agent.agent_name"
@@ -172,7 +156,7 @@
                 <Dropdown
                   :options="getOptions(agent)"
                   :key="agent"
-                  class="ml-2"
+                  class="ms-2"
                   placement="right"
                 >
                   <Button icon="more-horizontal" variant="ghost" />
@@ -295,7 +279,7 @@ function updateRole(agent: string, newRole: string) {
     new_role: newRole,
   }).then(() => {
     updateUserRoleCache(agent, newRole);
-    toast.success(`Role updated to ${newRole}`);
+    toast.success(__(`Role updated to ${newRole} successfully.`));
   });
 }
 

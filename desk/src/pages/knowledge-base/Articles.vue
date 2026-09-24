@@ -2,7 +2,7 @@
   <div class="p-5 pb-5 md:pb-10 px-10 w-full overflow-scroll items-center">
     <LayoutHeader>
       <template #left-header>
-        <Breadcrumbs :items="breadcrumbs" class="-ml-0.5" />
+        <Breadcrumbs :items="breadcrumbs" class="-ms-0.5" />
       </template>
     </LayoutHeader>
     <div
@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { onMounted, computed } from "vue";
 import { categoryName } from "@/stores/knowledgeBase";
-import { Breadcrumbs, createResource } from "frappe-ui";
+import { Breadcrumbs, createResource, usePageMeta } from "frappe-ui";
 import LayoutHeader from "@/components/LayoutHeader.vue";
 import ArticleCard from "@/components/knowledge-base/ArticleCard.vue";
 import { capture } from "@/telemetry";
@@ -75,5 +75,11 @@ const breadcrumbs = computed(() => {
       label: categoryTitle.value,
     },
   ];
+});
+
+usePageMeta(() => {
+  return {
+    title: `${categoryTitle?.value}` + " - " + "Knowledge Base",
+  };
 });
 </script>

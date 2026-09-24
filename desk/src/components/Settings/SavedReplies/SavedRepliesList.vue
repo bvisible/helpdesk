@@ -14,6 +14,7 @@
         variant="solid"
         @click="goToNew()"
         icon-left="plus"
+        class="rtl:flex-row-reverse"
       />
     </template>
     <template #header-bottom>
@@ -24,17 +25,17 @@
             @input="savedRepliesSearchQuery = $event"
             :placeholder="__('Search')"
             type="text"
-            class="bg-white hover:bg-white focus:ring-0 border-outline-gray-2"
+            class="bg-surface-white hover:bg-surface-white focus:ring-0 border-outline-gray-2"
             icon-left="search"
             debounce="300"
-            inputClass="p-4 pr-12"
+            inputClass="p-4 pe-12 rtl:pr-8 "
           />
           <Button
             v-if="savedRepliesSearchQuery"
             icon="x"
             variant="ghost"
             @click="savedRepliesSearchQuery = ''"
-            class="absolute right-1 top-1/2 -translate-y-1/2"
+            class="absolute end-1 top-1/2 -translate-y-1/2"
           />
         </div>
         <Dropdown :options="filterOptions" placement="right">
@@ -51,9 +52,9 @@
               </template>
             </Button>
           </template>
-          <template #item="{ item }">
+          <template #item-label="{ item }">
             <button
-              class="group flex text-ink-gray-6 gap-4 h-7 w-full justify-between items-center rounded p-2 text-base hover:bg-surface-gray-3"
+              class="group flex text-ink-gray-6 gap-4 w-full justify-between items-center rounded text-base"
               @click="item.onSelect"
             >
               <div class="flex items-center justify-between flex-1">
@@ -74,46 +75,29 @@
     <template #content>
       <div
         v-if="savedRepliesListResource?.list?.loading"
-        class="flex items-center justify-center mt-12"
+        class="flex items-center justify-center my-auto"
       >
         <LoadingIndicator class="w-4" />
       </div>
-      <div
+      <EmptyState
         v-if="
           !savedRepliesListResource?.list?.loading &&
           !savedRepliesListResource?.data?.length
         "
-        class="flex flex-col items-center justify-center gap-4 grow"
-      >
-        <div
-          class="p-4 size-14.5 rounded-full bg-surface-gray-1 flex justify-center items-center"
-        >
-          <SavedReplyIcon class="size-6 text-ink-gray-6" />
-        </div>
-        <div class="flex flex-col items-center gap-1">
-          <div class="text-base font-medium text-ink-gray-6">
-            {{ __("No Saved reply found") }}
-          </div>
-          <div class="text-p-sm text-ink-gray-5 max-w-60 text-center">
-            {{ __("Add your first Saved reply to get started.") }}
-          </div>
-        </div>
-        <Button
-          :label="__('Add Saved reply')"
-          variant="outline"
-          icon-left="plus"
-          @click="goToNew()"
-        />
-      </div>
+        variant="badge"
+        :icon="SavedReplyIcon"
+        :title="__('No saved replies found')"
+        :description="__('Add one to get started.')"
+      />
       <div
         v-if="
           !savedRepliesListResource?.list?.loading &&
           savedRepliesListResource?.data?.length
         "
-        class="-ml-2"
+        class="-ms-2"
       >
         <div
-          class="grid grid-cols-12 items-center gap-3 text-sm text-gray-600 ml-2"
+          class="grid grid-cols-12 items-center gap-3 text-sm text-ink-gray-5 ms-2"
         >
           <div class="col-span-7">{{ __("Title") }}</div>
           <div class="col-span-2">{{ __("Owner") }}</div>
@@ -125,7 +109,7 @@
           :key="savedReply.name"
         >
           <div
-            class="grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-gray-50 rounded"
+            class="grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-surface-menu-bar rounded"
           >
             <div
               @click="
@@ -134,7 +118,7 @@
                   data: savedReply,
                 }
               "
-              class="w-full px-2 flex flex-col justify-center h-12.5 col-span-7"
+              class="w-full px-2 flex flex-col justify-center h-12.5 col-span-7 min-w-0"
             >
               <div
                 class="text-base text-ink-gray-7 font-medium w-full truncate"
@@ -143,7 +127,7 @@
               </div>
             </div>
             <div
-              class="flex items-center gap-1.5 text-sm text-ink-gray-7 truncate col-span-2"
+              class="flex items-center gap-1.5 text-sm text-ink-gray-7 col-span-2 min-w-0"
             >
               <Avatar
                 :label="
@@ -151,11 +135,14 @@
                 "
                 :image="getUser(savedReply.owner)?.user_image"
                 size="xs"
+                class="shrink-0"
               />
-              {{ getUser(savedReply.owner)?.full_name }}
+              <span class="truncate">{{
+                getUser(savedReply.owner)?.full_name
+              }}</span>
             </div>
             <div
-              class="flex justify-between items-center w-full pr-2 col-span-3"
+              class="flex justify-between items-center w-full pe-2 col-span-3"
             >
               <div class="flex items-center gap-1 text-sm text-ink-gray-7">
                 <component
@@ -172,12 +159,15 @@
                   icon="more-horizontal"
                   variant="ghost"
                   @click="isConfirmingDelete = false"
-                  class="mr-2"
+                  class="me-2"
                 />
               </Dropdown>
             </div>
           </div>
-          <hr v-if="index !== savedRepliesList.length - 1" class="mx-2" />
+          <hr
+            v-if="index !== savedRepliesListResource.data.length - 1"
+            class="mx-2"
+          />
         </div>
       </div>
     </template>
@@ -250,7 +240,13 @@ const savedRepliesList = ref([]);
 const goToNew = () => {
   savedRepliesActiveScreen.value = {
     screen: "view",
-    data: null,
+    data: {
+      scope: activeFilter.value
+        ? activeFilter.value === "All"
+          ? "Personal"
+          : activeFilter.value
+        : "Personal",
+    },
   };
 };
 
@@ -285,7 +281,7 @@ const deleteSavedReply = (savedReply: SavedReply) => {
 
   savedRepliesListResource?.delete.submit(savedReply.name, {
     onSuccess: () => {
-      toast.success(__("Saved reply deleted"));
+      toast.success(__("Saved reply deleted successfully."));
     },
   });
 };
@@ -302,7 +298,7 @@ const duplicate = async () => {
       },
       {
         onSuccess: (data) => {
-          toast.success(__("Saved reply duplicated"));
+          toast.success(__("Saved reply duplicated successfully."));
           duplicateDialog.value = {
             show: false,
             name: "",

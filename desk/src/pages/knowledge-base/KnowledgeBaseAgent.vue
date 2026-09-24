@@ -2,13 +2,17 @@
   <div class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-gray-900">
+        <div class="text-lg font-medium text-ink-gray-9">
           {{ __("Knowledge Base") }}
         </div>
       </template>
       <template #right-header>
         <Dropdown :options="headerOptions">
-          <Button :label="__('Create')" variant="solid">
+          <Button
+            :label="__('Create')"
+            variant="solid"
+            class="rtl:flex-row-reverse"
+          >
             <template #prefix>
               <LucidePlus class="h-4 w-4" />
             </template>
@@ -66,9 +70,10 @@ import {
   usePageMeta,
 } from "frappe-ui";
 import { computed, h, onMounted, reactive, ref } from "vue";
+import { __ } from "@/translation";
 import { useRouter } from "vue-router";
 import LucideMerge from "~icons/lucide/merge";
-import { __ } from "@/translation";
+import LucideBookOpen from "~icons/lucide/book-open";
 
 const router = useRouter();
 const { $dialog } = globalStore();
@@ -86,7 +91,9 @@ const editTitle = ref(false);
 const showCategoryModal = ref(false);
 const moveToModal = ref(false);
 const mergeModal = ref(false);
-
+const hasActiveFilters = computed(
+  () => Object.keys(listViewRef.value?.list?.params?.filters || {}).length > 0
+);
 const generalCategory = createResource({
   url: "helpdesk.api.knowledge_base.get_general_category",
   auto: true,
@@ -197,11 +204,13 @@ const selectBannerActions = [
     onClick: (selections: Set<string>) => {
       listSelections.value = selections;
       $dialog({
-        title: __("Delete articles?"),
+        title: __("Delete articles"),
         message: __("Are you sure you want to delete these articles?"),
         actions: [
           {
-            label: __("Confirm"),
+            label: __("Delete"),
+            theme: "red",
+            iconLeft: "trash-2",
             variant: "solid",
             onClick({ close }) {
               handleDeleteArticles();
@@ -226,7 +235,7 @@ function handleMoveToCategory(category: string) {
         listViewRef.value?.reload();
         listViewRef.value?.unselectAll();
         listSelections.value.clear();
-        toast.success(__("Articles moved"));
+        toast.success(__("Articles moved successfully."));
       },
       onError: (error: Error) => {
         const title = error?.messages?.[0] || error.message;
@@ -257,7 +266,7 @@ function handleCategoryCreate() {
             isEdit: 1,
           },
         });
-        toast.success(__("Category created"));
+        toast.success(__("Category created successfully."));
         capture("category_created", {
           data: {
             category: category.title,
@@ -265,8 +274,12 @@ function handleCategoryCreate() {
         });
         resetState();
       },
-      onError: (error: string) => {
-        toast.error(error);
+      onError: (error: any) => {
+        const message =
+          error?.messages?.[0] ||
+          error?.message ||
+          __("Failed to create category");
+        toast.error(message);
       },
     }
   );
@@ -292,11 +305,15 @@ function handleCategoryUpdate() {
         showCategoryModal.value = false;
         editTitle.value = false;
 
-        toast.success(__("Category updated"));
+        toast.success(__("Category updated successfully."));
         resetState();
       },
-      onError: (error: string) => {
-        toast.error(error);
+      onError: (error: any) => {
+        const title =
+          error?.messages?.[0] ||
+          error?.message ||
+          __("Failed to update category.");
+        toast.error(title);
       },
     }
   );
@@ -320,7 +337,7 @@ function handleCategoryDelete(groupedRow) {
             },
             {
               onSuccess: () => {
-                toast.success(__("Category deleted"));
+                toast.success(__("Category deleted successfully."));
                 listViewRef.value.reload();
               },
             }
@@ -342,7 +359,7 @@ function handleDeleteArticles() {
         listViewRef.value?.reload();
         listViewRef.value?.unselectAll();
         listSelections.value?.clear();
-        toast.success(__("Articles deleted"));
+        toast.success(__("Articles deleted successfully."));
       },
     }
   );
@@ -357,7 +374,7 @@ function handleMergeCategory(source: string, target: string) {
     {
       onSuccess: () => {
         listViewRef.value.reload();
-        toast.success(__("Category merged"));
+        toast.success(__("Category merged successfully."));
         mergeModal.value = false;
         resetState();
       },
@@ -401,6 +418,17 @@ const options = computed(() => {
           });
         },
       },
+    },
+    emptyState: {
+      title: "No articles found",
+      icon: h(LucideBookOpen, {
+        class: "h-10 w-10",
+      }),
+      description: hasActiveFilters.value
+        ? __(
+            "No articles found for the applied filters. Try adjusting or clearing your filters."
+          )
+        : __("No articles found in the following category."),
     },
     rowRoute: {
       name: "Article",

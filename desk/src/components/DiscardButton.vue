@@ -35,7 +35,9 @@ function handleDiscard() {
     },
     actions: [
       {
-        label: __('Confirm'),
+        label: __("Delete"),
+        theme: "red",
+        iconLeft: "trash-2",
         variant: "solid",
         onClick(close: Function) {
           emit("discard");

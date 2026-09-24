@@ -8,6 +8,7 @@
     <template #header-actions>
       <Button
         :label="__('New')"
+        class="rtl:flex-row-reverse"
         theme="gray"
         variant="solid"
         @click="emit('update:step', 'new-team', '')"
@@ -24,17 +25,17 @@
           @input="teamsSearchQuery = $event"
           :placeholder="__('Search')"
           type="text"
-          class="bg-white hover:bg-white focus:ring-0 border-outline-gray-2"
+          class="focus:ring-0 border-outline-gray-2"
           icon-left="search"
           debounce="300"
-          inputClass="p-4 pr-12"
+          inputClass="p-4 pe-12 rtl:pr-8"
         />
         <Button
           v-if="teamsSearchQuery"
           icon="x"
           variant="ghost"
           @click="teamsSearchQuery = ''"
-          class="absolute right-1 top-1/2 -translate-y-1/2"
+          class="absolute end-1 top-1/2 -translate-y-1/2"
         />
       </div>
     </template>
@@ -42,25 +43,26 @@
       <!-- List -->
       <div
         v-if="!teams.loading && teams.data?.length > 0"
-        class="w-full h-full -ml-2"
+        class="w-full h-full -ms-2"
       >
-        <div class="flex text-sm text-gray-600">
-          <div class="ml-2">{{ __("Team name") }}</div>
+        <div class="flex text-sm text-ink-gray-5">
+          <p class="ms-2">{{ __("Team name") }}</p>
         </div>
         <hr class="mx-2 mt-2" />
         <div v-for="(team, index) in teams.data" :key="team.name">
           <div
-            class="flex items-center cursor-pointer hover:bg-gray-50 rounded h-12.5"
+            class="flex items-center cursor-pointer hover:bg-surface-menu-bar rounded h-12.5"
           >
             <div
-              class="w-full py-3 pl-2"
+              class="w-full py-3 ps-2 flex gap-1 items-center"
               @click="() => emit('update:step', 'team-edit', team.name)"
             >
-              <div class="text-base text-ink-gray-7 font-medium">
+              <p class="text-base text-ink-gray-7 font-medium">
                 {{ team.name }}
-              </div>
+              </p>
+              <Badge :label="__('Disabled')" v-if="team.disabled" />
             </div>
-            <div class="flex justify-between items-center pr-2">
+            <div class="flex justify-between items-center pe-2">
               <div>
                 <Dropdown placement="right" :options="dropdownOptions(team)">
                   <Button
@@ -99,34 +101,17 @@
         />
       </div>
       <!-- Empty State -->
-      <div
+      <EmptyState
         v-if="!teams.loading && !teams.data?.length"
-        class="flex flex-col items-center justify-center gap-4 h-full"
-      >
-        <div
-          class="p-4 size-14.5 rounded-full bg-surface-gray-1 flex justify-center items-center"
-        >
-          <AgentIcon class="size-6 text-ink-gray-6" />
-        </div>
-        <div class="flex flex-col items-center gap-1">
-          <div class="text-base font-medium text-ink-gray-6">
-            {{ __("No team found") }}
-          </div>
-          <div class="text-p-sm text-ink-gray-5 max-w-60 text-center">
-            {{
-              teamsSearchQuery.length
-                ? __("Change your search terms to find teams.")
-                : __("Add one to get started.")
-            }}
-          </div>
-        </div>
-        <Button
-          :label="__('New')"
-          variant="outline"
-          icon-left="plus"
-          @click="showForm = true"
-        />
-      </div>
+        variant="badge"
+        :icon="AgentIcon"
+        title="No team found"
+        :description="
+          teamsSearchQuery.length
+            ? 'Change your search terms to find teams.'
+            : 'Add one to get started.'
+        "
+      />
     </template>
   </SettingsLayoutBase>
   <NewTeamModal
@@ -141,15 +126,17 @@
 </template>
 
 <script setup lang="ts">
+import EditIcon from "@/components/icons/EditIcon.vue";
+import AgentIcon from "@/components/icons/AgentIcon.vue";
+import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import EmptyState from "@/components/EmptyState.vue";
+import { __ } from "@/translation";
+import { TeamListResourceSymbol } from "@/types";
+import { ConfirmDelete } from "@/utils";
 import { Dropdown, Input, toast } from "frappe-ui";
 import { inject, markRaw, Ref, ref, watch } from "vue";
 import NewTeamModal from "../NewTeamModal.vue";
-import { ConfirmDelete } from "@/utils";
-import EditIcon from "@/components/icons/EditIcon.vue";
 import RenameTeamModal from "./RenameTeamModal.vue";
-import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
-import { TeamListResourceSymbol } from "@/types";
-import { __ } from "@/translation";
 
 interface E {
   (event: "update:step", step: string, team: string): void;
@@ -158,7 +145,7 @@ interface E {
 const emit = defineEmits<E>();
 const teamsSearchQuery = inject<Ref>("teamsSearchQuery");
 
-const teams = inject(TeamListResourceSymbol);
+const teams = inject(TeamListResourceSymbol)!;
 const showForm = ref(false);
 const showRename = ref({
   show: false,
@@ -193,7 +180,7 @@ const deleteTeam = (team: any) => {
 
   teams.delete.submit(team.name, {
     onSuccess: () => {
-      toast.success(__("Team deleted"));
+      toast.success(__("Team deleted successfully."));
     },
   });
 };

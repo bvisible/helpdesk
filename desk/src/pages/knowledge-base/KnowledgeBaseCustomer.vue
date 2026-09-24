@@ -1,8 +1,8 @@
 <template>
-  <div class="p-5 pb-10 px-10 w-full overflow-scroll items-center">
+  <div class="p-5 pb-10 px-10 w-full overflow-scroll items-center relative">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-gray-900">{{ __("Knowledge Base") }}</div>
+        <div class="text-lg font-medium text-ink-gray-9">{{ __("Knowledge Base") }}</div>
       </template>
     </LayoutHeader>
     <div
@@ -22,8 +22,7 @@
       <!-- Categories Folder -->
       <section class="flex flex-col gap-3">
         <!-- Heading -->
-        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-        <p class="text-lg text-gray-900">{{ __("Categories") }}</p>
+        <p class="text-lg text-ink-gray-9">{{ __("Categories") }}</p>
         <CategoryFolderContainer />
       </section>
     </div>

@@ -2,12 +2,12 @@
   <LayoutHeader>
     <template #left-header>
       <div class="flex flex-col truncate">
-        <Breadcrumbs :items="breadcrumbs" class="breadcrumbs">
+        <Breadcrumbs :items="breadcrumbs" class="breadcrumbs -ms-0.5">
           <template #prefix="{ item }">
             <Icon
               v-if="item.icon"
               :icon="item.icon"
-              class="mr-1 h-4 flex items-center justify-center self-center"
+              class="me-1 h-4 flex items-center justify-center self-center"
             />
           </template>
         </Breadcrumbs>
@@ -22,7 +22,7 @@
           :hide-name="true"
         />
         <!-- Navigation -->
-        <TicketNavigation :key="ticket.name" />
+        <TicketNavigation :key="ticket?.name" />
         <!-- Custom Actions -->
         <div v-if="normalActions.length" class="flex gap-2">
           <Button v-for="action in normalActions" v-bind="action">
@@ -34,7 +34,7 @@
         <div v-if="groupedWithLabelActions.length">
           <div v-for="g in groupedWithLabelActions" :key="g.label">
             <Dropdown v-slot="{ open }" :options="g.action">
-              <Button :label="g.label">
+              <Button :label="__(g.label)">
                 <template #suffix>
                   <FeatherIcon
                     :name="open ? 'chevron-up' : 'chevron-down'"
@@ -48,7 +48,8 @@
         <!-- Status -->
         <Dropdown :options="statusDropdown" placement="right">
           <template #default="{ open }">
-            <Button :label="ticket.doc.status" ref="statusRef">
+            <!-- //// Neoffice — statusLabel() instead of upstream's __(ticket.doc.status): see the status dropdown in the script -->
+            <Button :label="statusLabel(ticket.doc.status)" ref="statusRef">
               <template #prefix>
                 <IndicatorIcon
                   :class="
@@ -61,7 +62,7 @@
         </Dropdown>
         <!-- Core Actions + Custom Actions -->
         <Dropdown
-          v-if="groupedActions.length"
+          v-if="groupedActions[0]?.items?.length >= 1"
           :options="groupedActions"
           placement="right"
         >
@@ -76,7 +77,7 @@
     v-model="showMergeModal"
     @update="ticket.reload()"
   />
-  <TicketSubjectModal v-if="showSubjectDialog" v-model="showSubjectDialog" />
+  <TicketSubjectModal v-model="showSubjectDialog" />
 </template>
 
 <script setup lang="ts">
@@ -87,8 +88,10 @@ import { setupCustomizations } from "@/composables/formCustomisation";
 import { useNotifyTicketUpdate } from "@/composables/realtime";
 import { useShortcut } from "@/composables/shortcuts";
 import { useView } from "@/composables/useView";
+import { useAuthStore } from "@/stores/auth";
 import { globalStore } from "@/stores/globalStore";
 import { useTicketStatusStore } from "@/stores/ticketStatus";
+import { __ } from "@/translation";
 import {
   ActivitiesSymbol,
   CustomizationSymbol,
@@ -97,7 +100,14 @@ import {
 } from "@/types";
 import { HDTicketStatus } from "@/types/doctypes";
 import { getIcon } from "@/utils";
-import { Breadcrumbs, call, Dropdown, toast } from "frappe-ui";
+import {
+  Breadcrumbs,
+  Button,
+  call,
+  createResource,
+  Dropdown,
+  toast,
+} from "frappe-ui";
 import {
   computed,
   ComputedRef,
@@ -115,7 +125,8 @@ import { IndicatorIcon } from "../icons";
 import TicketNavigation from "./TicketNavigation.vue";
 import TicketSLA from "./TicketSLA.vue";
 import TicketSubjectModal from "./TicketSubjectModal.vue";
-import { __ } from "@/translation";
+const { isAdmin } = useAuthStore();
+const { $dialog } = globalStore();
 
 defineProps({
   viewers: {
@@ -129,13 +140,12 @@ const router = useRouter();
 const { findView } = useView("HD Ticket");
 const ticketStatusStore = useTicketStatusStore();
 //// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket
-//// status, used by the status dropdown below.
+//// status, used by the status button of the template and the status dropdown below.
 const { statusLabel } = ticketStatusStore;
 
-const ticket = inject(TicketSymbol);
-const customizations = inject(CustomizationSymbol);
-const activities = inject(ActivitiesSymbol);
-
+const ticket = inject(TicketSymbol)!;
+const customizations = inject(CustomizationSymbol)!;
+const activities = inject(ActivitiesSymbol)!;
 const showSubjectDialog = ref(false);
 
 const { notifyTicketUpdate } = useNotifyTicketUpdate(ticket.value?.name);
@@ -143,12 +153,12 @@ const statusDropdown = computed(() => {
   const statuses =
     ticketStatusStore.statuses.data?.filter((s) => s.enabled) || [];
   return statuses.map((o: HDTicketStatus) => ({
-    //// Neoffice — the STATUS LABEL is displayed, so it goes through __(); the
-    //// VALUE stays raw because it is what HD Ticket.status stores and what the
-    //// filters send back. A default label ('Open', 'Replied') is in the merged
-    //// catalogue and turns French; a label an instance renamed is absent from it
-    //// and __() returns it unchanged, which is right — it is already in their
-    //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
+    //// Neoffice — statusLabel() instead of upstream's __(o.label_agent): the bare
+    //// msgid "Open" is translated by several installed apps, some of them as the
+    //// verb, and the last app installed wins for the whole site. statusLabel()
+    //// asks for a qualified msgid no other app overrides and returns a label an
+    //// instance renamed unchanged (stores/ticketStatus.ts). The VALUE stays raw:
+    //// it is what HD Ticket.status stores and what the filters send back.
     label: statusLabel(o.label_agent),
     value: o.label_agent,
     onClick: () => {
@@ -175,7 +185,7 @@ const breadcrumbs = computed(() => {
     const currView: ComputedRef<View> = findView(route.query.view as string);
     if (currView) {
       items.push({
-        label: currView.value?.label,
+        label: __(currView.value?.label),
         icon: getIcon(currView.value?.icon),
         route: { name: "TicketsAgent", query: { view: currView.value?.name } },
       });
@@ -198,11 +208,54 @@ function updateField(fieldname: string, value: string, callback = () => {}) {
   callback();
 }
 
+function handleDeleteTicket() {
+  $dialog({
+    title: __(`Delete ticket #${ticket?.value?.name}`),
+    message: __(
+      "Are you sure you want to delete this ticket? This is an irreversible action and cannot be undone."
+    ),
+    actions: [
+      {
+        label: __("Delete"),
+        theme: "red",
+        iconLeft: "trash-2",
+        variant: "solid",
+        onClick({ close }) {
+          call("frappe.client.delete", {
+            doctype: "HD Ticket",
+            name: ticket?.value?.doc.name,
+          })
+            .then(() => {
+              toast.success(__("Ticket deleted successfully."));
+              router.push({ name: "TicketsAgent" });
+            })
+            .catch((err: any) => {
+              toast.error(err || __("Failed to delete ticket."));
+            });
+          close();
+        },
+      },
+    ],
+  });
+}
+
+const ticketCount = createResource({
+  url: "frappe.client.get_count",
+  makeParams: () => ({
+    doctype: "HD Ticket",
+    filters: {
+      status_category: ["!=", "Resolved"],
+      is_merged: 0,
+    },
+  }),
+  auto: true,
+});
 const showMergeModal = ref(false);
 const showMergeOption = computed(() => {
   return (
-    !ticket.value.doc.is_merged &&
-    ["Open", "Paused"].includes(ticket.value.doc.status_category)
+    !ticket?.value?.doc?.is_merged &&
+    ["Open", "Paused"].includes(ticket?.value?.doc?.status_category) &&
+    ticketCount.data > 1
   );
 });
 const defaultActions = computed(() => {
@@ -216,6 +269,7 @@ const defaultActions = computed(() => {
       onClick: () => (showMergeModal.value = true),
     });
   }
+
   return [
     {
       group: __("Default actions"),
@@ -224,7 +278,31 @@ const defaultActions = computed(() => {
     },
   ];
 });
-const actions = ref([]);
+
+const deleteAction = computed(() => {
+  if (!isAdmin) return [];
+  return [
+    {
+      group: __("Default actions"),
+      hideLabel: true,
+      items: [
+        {
+          label: __("Delete"),
+          component: h(Button, {
+            label: __("Delete"),
+            variant: "ghost",
+            iconLeft: "trash-2",
+            theme: "red",
+            style: "width: 100%; justify-content: flex-start;",
+            onClick: handleDeleteTicket,
+          }),
+        },
+      ],
+    },
+  ];
+});
+
+const actions = ref<any[]>([]);
 const normalActions = computed(() => {
   return actions.value.filter((action) => !action.group);
 });
@@ -242,7 +320,7 @@ const groupedWithLabelActions = computed(() => {
         _actions[groupIndex].action.push(action);
       } else {
         _actions.push({
-          label: action.buttonLabel,
+          label: __(action.buttonLabel),
           action: [action],
         });
       }
@@ -252,9 +330,11 @@ const groupedWithLabelActions = computed(() => {
 
 const groupedActions = computed(() => {
   let _actions = [];
+  _actions = _actions.concat(defaultActions.value);
   _actions = _actions.concat(
-    actions.value.filter((action) => action.group && !action.buttonLabel)
+    actions.value.filter((action) => action.group && !__(action.buttonLabel))
   );
+  _actions = _actions.concat(deleteAction.value);
   return _actions;
 });
 
@@ -276,10 +356,7 @@ watchEffect(async () => {
       customizationCtx.value
     );
 
-    actions.value = [
-      ...defaultActions.value,
-      ...(customizations.value?.data?._customActions || []),
-    ];
+    actions.value = [...(customizations.value?.data?._customActions || [])];
   }
 });
 

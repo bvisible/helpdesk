@@ -2,8 +2,6 @@ import json
 import uuid
 from datetime import timedelta
 from email.utils import parseaddr
-from functools import lru_cache
-from typing import List
 
 import frappe
 from bs4 import BeautifulSoup
@@ -20,7 +18,6 @@ from pypika.functions import Count
 from pypika.queries import Query
 from pypika.terms import Criterion
 
-from helpdesk.consts import DEFAULT_TICKET_PRIORITY, DEFAULT_TICKET_TYPE
 from helpdesk.helpdesk.doctype.hd_settings.helpers import (
     get_default_email_content,
     is_email_content_empty,
@@ -32,8 +29,8 @@ from helpdesk.helpdesk.utils.email import (
     default_outgoing_email_account,
     default_ticket_outgoing_email_account,
 )
-from helpdesk.search import HelpdeskSearch
 from helpdesk.utils import (
+    agent_only,
     capture_event,
     get_agents_team,
     get_customer,
@@ -69,7 +66,6 @@ class HDTicket(Document):
         publish_event(
             "helpdesk:ticket-update", room=room, data={"ticket_id": self.name}
         )
-        capture_event("ticket_updated")
 
     def autoname(self):
         return self.name
@@ -86,7 +82,6 @@ class HDTicket(Document):
         self.set_feedback_values()
         self.set_default_status()
         self.set_status_category()
-        # self.apply_escalation_rule()
         self.set_sla()
 
         self.set_contact()
@@ -190,16 +185,11 @@ class HDTicket(Document):
             frappe.throw(_("Could not send feedback email,due to: {0}").format(e))
 
     def after_insert(self):
-        if self.ticket_split_from:
-            log_ticket_activity(
-                self.name,
-                "split the ticket from #{0}".format(self.ticket_split_from),
-            )
-            capture_event("ticket_split")
-            return
 
-        capture_event("ticket_created")
+        # Telemetry Event
+        self.capture_ticket_created_telemetry_events()
         publish_event("helpdesk:new-ticket")
+
         if self.get("description"):
             self.create_communication_via_contact(self.description, new_ticket=True)
             self.handle_inline_media_new_ticket()
@@ -214,6 +204,23 @@ class HDTicket(Document):
         ):
             self.send_acknowledgement_email()
 
+    def capture_ticket_created_telemetry_events(self):
+        if self.subject == "Welcome to Helpdesk":
+            return
+
+        capture_event("ticket_created")
+        if not self.via_customer_portal:
+            capture_event("ticket_created_via_email")
+        if self.via_customer_portal and not is_agent():
+            capture_event("ticket_created_via_customer")
+
+        if self.ticket_split_from:
+            log_ticket_activity(
+                self.name,
+                "split the ticket from #{0}".format(self.ticket_split_from),
+            )
+            capture_event("ticket_split")
+
     def on_update(self):
         # flake8: noqa
         if self.status_category == "Open":
@@ -224,11 +231,13 @@ class HDTicket(Document):
                 agents = self.get_assigned_agents()
                 if agents:
                     for agent in agents:
+                        if agent.name == frappe.session.user:
+                            continue
                         self.notify_agent(agent.name, "Reaction")
 
         self.remove_assignment_if_not_in_team()
         self.publish_update()
-        self.update_search_index()
+        self.capture_update_telemetry_events()
 
     def notify_agent(self, agent, notification_type="Assignment"):
         frappe.get_doc(
@@ -241,19 +250,28 @@ class HDTicket(Document):
             )
         ).insert(ignore_permissions=True)
 
-    def update_search_index(self):
-        search = HelpdeskSearch()
-        search.index_doc(self)
+    def capture_update_telemetry_events(self):
+        capture_event("ticket_updated")
+
+        if self.has_value_changed("status"):
+            capture_event("ticket_status_updated")
+        if (
+            self.has_value_changed("status_category")
+            and self.status_category == "Resolved"
+        ):
+            capture_event("ticket_resolved")
 
     def set_ticket_type(self):
         if self.ticket_type:
             return
-        settings = frappe.get_doc("HD Settings")
-        ticket_type = settings.default_ticket_type or DEFAULT_TICKET_TYPE
-        self.ticket_type = ticket_type
+        self.ticket_type = (
+            frappe.db.get_single_value("HD Settings", "default_ticket_type") or ""
+        )
 
     def set_raised_by(self):
-        self.raised_by = self.raised_by or frappe.session.user
+        if self.raised_by:
+            return
+        self.raised_by = frappe.session.user
 
     def set_contact(self):
         email_id = parseaddr(self.raised_by)[1]
@@ -283,11 +301,9 @@ class HDTicket(Document):
     def set_priority(self):
         if self.priority:
             return
-        self.priority = (
-            frappe.get_cached_value("HD Ticket Type", self.ticket_type, "priority")
-            or frappe.get_cached_value("HD Settings", "HD Settings", "default_priority")
-            or DEFAULT_TICKET_PRIORITY
-        )
+        self.priority = frappe.get_cached_value(
+            "HD Ticket Type", self.ticket_type, "priority"
+        ) or frappe.get_cached_value("HD Settings", "HD Settings", "default_priority")
 
     def set_first_responded_on(self):
         if self.is_new():
@@ -362,6 +378,7 @@ class HDTicket(Document):
             "agent_group": "team",
             "ticket_type": "type",
             "contact": "contact",
+            "sla": "SLA",
         }
         for field in [
             "status",
@@ -369,11 +386,16 @@ class HDTicket(Document):
             "agent_group",
             "contact",
             "ticket_type",
+            "sla",
         ]:
             if self.has_value_changed(field):
-                log_ticket_activity(
-                    self.name, f"set {field_maps[field]} to {self.as_dict()[field]}"
-                )
+                value = self.as_dict()[field]
+                if not value:
+                    msg = f"cleared {field_maps[field]}"
+                else:
+                    msg = f"set {field_maps[field]} to {value}"
+
+                log_ticket_activity(self.name, msg)
 
     def generate_key(self):
         self.key = uuid.uuid4()
@@ -399,11 +421,6 @@ class HDTicket(Document):
                 not is_agent_in_assigned_team
             ) and self.users_present_in_team_assignment_rule():
                 clear_all_assignments("HD Ticket", self.name)
-                frappe.publish_realtime(
-                    "helpdesk:update-ticket-assignee",
-                    {"ticket_id": self.name},
-                    after_commit=True,
-                )
 
     def agent_in_assigned_team(self, agent, team):
         return frappe.db.exists(
@@ -439,7 +456,8 @@ class HDTicket(Document):
         return True
 
     @frappe.whitelist()
-    def assign_agent(self, agent):
+    @agent_only
+    def assign_agent(self, agent: str):
         assign({"assign_to": [agent], "doctype": "HD Ticket", "name": self.name})
 
         if frappe.session.user != agent:
@@ -484,6 +502,17 @@ class HDTicket(Document):
         skip: str = frappe.get_value("HD Settings", None, "skip_email_workflow") or "0"
 
         return bool(int(skip))
+
+    def _resolve_sender_email(self, email_account_name, from_email_id):
+        if not email_account_name:
+            sender_email = self.sender_email()
+            return sender_email, (sender_email.name if sender_email else None)
+
+        if not frappe.db.exists("Email Account", email_account_name):
+            frappe.throw(_("No Email Account found for {0}").format(from_email_id))
+
+        sender_email = frappe._dict(name=email_account_name, email_id=from_email_id)
+        return sender_email, email_account_name
 
     def instantly_send_email(self):
         check: str = (
@@ -604,7 +633,7 @@ class HDTicket(Document):
         return f"{root_uri}/helpdesk/my-tickets/{self.name}"
 
     @frappe.whitelist()
-    def new_comment(self, content: str, attachments: List[str] = []):
+    def new_comment(self, content: str, attachments: list[str] = []):
         if not is_agent():
             frappe.throw(
                 _("You are not permitted to add a comment"), frappe.PermissionError
@@ -621,24 +650,36 @@ class HDTicket(Document):
             )
 
     @frappe.whitelist()
+    @agent_only
     def reply_via_agent(
         self,
         message: str,
-        to: str = None,
-        cc: str = None,
-        bcc: str = None,
-        attachments: List[str] = [],
+        from_email: dict | None = None,
+        to: str | None = None,
+        cc: str | None = None,
+        bcc: str | None = None,
+        attachments: list[str] = [],
     ):
+        if not is_agent():
+            frappe.throw(
+                _("You are not permitted to reply as an agent"), frappe.PermissionError
+            )
         skip_email_workflow = self.skip_email_workflow()
         medium = "" if skip_email_workflow else "Email"
         subject = f"Re: {self.subject}"
-        sender = frappe.session.user
-        recipients = to or self.raised_by
-        sender_email = None if skip_email_workflow else self.sender_email()
+        from_email_id = from_email.get("email_id") if from_email else None
+        email_account_name = from_email.get("email_account") if from_email else None
+        sender = from_email_id or frappe.session.user
+        recipients = to
+
+        sender_email = None
+        if not skip_email_workflow:
+            sender_email, email_account_name = self._resolve_sender_email(
+                email_account_name, from_email_id
+            )
 
         if recipients == "Administrator":
-            admin_email = frappe.get_value("User", "Administrator", "email")
-            recipients = admin_email
+            recipients = frappe.get_value("User", "Administrator", "email")
 
         communication = frappe.get_doc(
             {
@@ -648,7 +689,7 @@ class HDTicket(Document):
                 "communication_type": "Communication",
                 "content": message,
                 "doctype": "Communication",
-                "email_account": sender_email.name if sender_email else None,
+                "email_account": email_account_name,
                 "email_status": "Open",
                 "recipients": recipients,
                 "reference_doctype": "HD Ticket",
@@ -670,13 +711,10 @@ class HDTicket(Document):
         _attachments = []
 
         for attachment in attachments:
-            file_doc = frappe.get_doc("File", attachment)
-            file_doc.attached_to_name = communication.name
-            file_doc.attached_to_doctype = "Communication"
-            file_doc.save(ignore_permissions=True)
-            self.attach_file_with_doc("HD Ticket", self.name, file_doc.file_url)
-
-            _attachments.append({"file_url": file_doc.file_url})
+            file_url = frappe.db.get_value("File", attachment, "file_url")
+            self.attach_file_with_doc("Communication", communication.name, file_url)
+            self.attach_file_with_doc("HD Ticket", self.name, file_url)
+            _attachments.append({"file_url": file_url})
 
         if skip_email_workflow or not frappe.db.get_single_value(
             "HD Settings", "enable_reply_email_via_agent"
@@ -684,7 +722,9 @@ class HDTicket(Document):
             return
 
         if not sender_email:
-            frappe.throw(_("Can not send email. No sender email set up!"))
+            frappe.throw(
+                _("Unable to send email. Please setup default outgoing email account.")
+            )
 
         message = self.parse_content(message)
 
@@ -739,13 +779,13 @@ class HDTicket(Document):
     @frappe.whitelist()
     # flake8: noqa
     def create_communication_via_contact(
-        self, message, attachments=[], new_ticket=False
+        self, message: str, attachments: list[dict] = [], new_ticket: bool = False
     ):
         if not new_ticket and frappe.db.get_single_value(
             "HD Settings", "enable_reply_email_to_agent"
         ):
             # send email to assigned agents
-            self.send_reply_email_to_agent()
+            self.send_reply_email_to_agent(message)
 
         # if self.status_category == "Paused" and not new_ticket:
         if not new_ticket:
@@ -805,7 +845,9 @@ class HDTicket(Document):
                 doc.attached_to_name = self.name
                 doc.save()
 
-    def send_reply_email_to_agent(self):
+    def send_reply_email_to_agent(
+        self, message: str = "Please check the latest update on the portal."
+    ):
         assigned_agents = self.get_assigned_agents()
         if not assigned_agents:
             return
@@ -826,7 +868,8 @@ class HDTicket(Document):
                     {
                         "ticket_url": frappe.utils.get_url(
                             "/helpdesk/tickets/" + str(self.name)
-                        )
+                        ),
+                        "message": message,
                     },
                 ),
                 reference_doctype="HD Ticket",
@@ -889,6 +932,7 @@ class HDTicket(Document):
         self.add_viewed(
             unique_views=True, force=True
         )  # Document class method, no way to add unique_views via document settings, hence used force and unique_views=True
+        self.add_seen()
         clear_notifications(ticket=self.name)
 
     def get_escalation_rule(self):
@@ -932,19 +976,6 @@ class HDTicket(Document):
                     return rule
             except Exception:
                 pass
-
-    def apply_escalation_rule(self):
-        if not self.status_category == "Open" or self.is_new():
-            return
-        escalation_rule = self.get_escalation_rule()
-        if not escalation_rule:
-            return
-        self.agent_group = escalation_rule.to_team or self.agent_group
-        self.priority = escalation_rule.to_priority or self.priority
-        self.ticket_type = escalation_rule.to_ticket_type or self.ticket_type
-
-        if escalation_rule.to_agent:
-            self.assign_agent(escalation_rule.to_agent)
 
     def set_sla(self):
         """
@@ -1033,6 +1064,9 @@ class HDTicket(Document):
             self.last_customer_response = frappe.utils.now_datetime()
         # If communication is outgoing, it must be a reply from agent
         if c.sent_or_received == "Sent":
+            # Ignore system notifications
+            if c.communication_type and c.communication_type == "Automated Message":
+                return
             # Set first response date if not set already
             self.first_responded_on = (
                 self.first_responded_on or frappe.utils.now_datetime()
@@ -1052,6 +1086,15 @@ class HDTicket(Document):
         self.save()
 
     def attach_file_with_doc(self, doctype, docname, file_url):
+        if frappe.db.exists(
+            "File",
+            {
+                "file_url": file_url,
+                "attached_to_doctype": doctype,
+                "attached_to_name": docname,
+            },
+        ):
+            return
         file_doc = frappe.new_doc("File")
         file_doc.attached_to_doctype = doctype
         file_doc.attached_to_name = docname
@@ -1065,7 +1108,7 @@ class HDTicket(Document):
                 "label": _("ID"),
                 "type": "Int",
                 "key": "name",
-                "width": "5rem",
+                "width": "auto",
             },
             {
                 "label": _("Subject"),
@@ -1080,7 +1123,7 @@ class HDTicket(Document):
                 "width": "8rem",
             },
             {
-                "label": _("First response"),
+                "label": _("First Response"),
                 "type": "Datetime",
                 "key": "response_by",
                 "width": "8rem",
@@ -1238,12 +1281,8 @@ class HDTicket(Document):
         for tag in soup.find_all(["img", "video"]):
             if tag.name == "img":
                 tag["embed"] = tag.get("src")
-                tag["width"] = "80%"
-                tag["height"] = "80%"
-                del tag["src"]
             elif tag.name == "video":
                 tag["embed"] = tag.get("src")
-                del tag["src"]
 
         return str(soup)
 
@@ -1434,5 +1473,49 @@ def close_tickets_after_n_days():
         doc = frappe.get_doc("HD Ticket", ticket)
         doc.status = "Closed"
         doc.flags.ignore_validate = True
-        doc.save(ignore_permissions=True)
+        try:
+            doc.save(ignore_permissions=True)
+            # activity log for auto closing the ticket
+            log_ticket_activity(
+                doc.name,
+                f"automatically closed the ticket after {days_threshold} day{'s' if days_threshold > 1 else ''} of inactivity",
+            )
+        except Exception as e:
+            frappe.log_error(
+                message=f"Failed to auto close ticket {doc.name} after {days_threshold} days. Error: {e}",
+                title="Auto Close Ticket Failed",
+            )
+            continue
+
+        frappe.db.commit()  # nosemgrep
+
+
+def update_sla_status_in_ticket():
+    stale_tickets = frappe.get_all(
+        "HD Ticket",
+        filters={
+            "status_category": ["=", "Open"],
+            "sla": ["is", "set"],
+        },
+        pluck="name",
+    )
+    for ticket in stale_tickets:
+        doc = frappe.get_doc("HD Ticket", ticket)
+        sla = frappe.get_doc("HD Service Level Agreement", doc.sla)
+        sla.handle_agreement_status(doc)
+        try:
+            frappe.db.set_value(
+                "HD Ticket",
+                doc.name,
+                "agreement_status",
+                doc.agreement_status,
+                update_modified=False,
+            )
+
+        except Exception as e:
+            frappe.log_error(
+                message=f"Failed to update agreement status for ticket {doc.name}. Error: {e}",
+                title="Update SLA Status Failed",
+            )
+            continue
         frappe.db.commit()  # nosemgrep

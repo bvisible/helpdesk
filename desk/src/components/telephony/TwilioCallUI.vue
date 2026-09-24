@@ -105,7 +105,7 @@
   </div>
   <div
     v-show="showSmallCallWindow"
-    class="ml-2 mt-1 flex cursor-pointer select-none items-center justify-between gap-3 rounded-lg bg-surface-gray-7 px-2 py-1 text-base !text-ink-gray-2"
+    class="ms-2 mt-1 flex cursor-pointer select-none items-center justify-between gap-3 rounded-lg bg-surface-gray-7 px-2 py-1 text-base !text-ink-gray-2"
     @click="toggleCallWindow"
     v-bind="$attrs"
   >
@@ -186,9 +186,15 @@ import MinimizeIcon from "./Icons/MinimizeIcon.vue";
 
 const telephonyStore = useTelephonyStore();
 
-const onCallStarted = inject<() => void>("onCallStarted");
-const onCallEnded = inject<() => void>("onCallEnded");
-const onCallFailed = inject<() => void>("onCallFailed");
+const onCallStarted = inject<(() => void) | undefined>(
+  "onCallStarted",
+  undefined
+);
+const onCallEnded = inject<(() => void) | undefined>("onCallEnded", undefined);
+const onCallFailed = inject<(() => void) | undefined>(
+  "onCallFailed",
+  undefined
+);
 
 let device: Device | null = null;
 let log = ref("");

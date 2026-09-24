@@ -9,7 +9,7 @@
       <div class="space-y-3">
         <form
           @submit.prevent="onSubmit"
-          class="flex flex-row items-center space-x-2"
+          class="flex flex-row items-center gap-x-2"
         >
           <Input
             id="searchInput"
@@ -34,21 +34,21 @@
           </Button>
         </form>
         <div
-          class="flex max-h-[300px] min-h-[100px] flex-col overflow-y-auto rounded border bg-gray-100 px-2"
+          class="flex max-h-[300px] min-h-[100px] flex-col overflow-y-auto rounded border bg-surface-gray-2 px-2"
           v-if="inviteQueue.length"
         >
           <ul class="flex flex-wrap gap-2 py-2">
             <li
-              class="flex items-center space-x-2 rounded bg-white p-1 shadow"
+              class="flex items-center gap-x-2 rounded bg-surface-white p-1 shadow"
               v-for="email in inviteQueue.slice().reverse()"
               :key="email"
               :title="email"
             >
-              <span class="ml-2 text-base">
+              <span class="ms-2 text-base">
                 {{ email }}
               </span>
               <button
-                class="grid h-4 w-4 place-items-center rounded text-gray-700 hover:bg-gray-300"
+                class="grid h-4 w-4 place-items-center rounded text-ink-gray-7 hover:bg-surface-gray-4"
                 @click="removeEmailFromQueue(email)"
               >
                 <FeatherIcon class="w-3" name="x" />
@@ -65,7 +65,7 @@
           :disabled="inviteQueue.length == 0"
           appearance="primary"
           @click="sendInvites"
-          class="mr-2"
+          class="me-2"
           variant="solid"
           :loading="sentInvitesResource.loading"
           >{{ __("Send Invites") }}

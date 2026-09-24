@@ -2,78 +2,123 @@
   <TextEditor
     ref="editorRef"
     :editor-class="[
-      'prose-sm max-w-full mx-6 md:mx-10 max-h-[50vh] py-3',
-      'min-h-[7rem]',
+      'prose-sm max-w-full mx-6 md:mx-5 py-3',
       getFontFamily(newEmail),
-      editable && '!max-h-[35vh] overflow-y-auto',
+      '[&_p.reply-to-content]:hidden',
     ]"
     :content="newEmail"
     :starterkit-options="{ heading: { levels: [2, 3, 4, 5, 6] } }"
     :placeholder="placeholder"
     :editable="editable"
     @change="editable ? (newEmail = $event) : null"
-    :extensions="[PreserveVideoControls]"
+    :extensions="[ComponentUtils, HandleExcelPaste, CleanStyles]"
     :uploadFunction="(file:any)=>uploadFunction(file, doctype, ticketId)"
+    @keydown.capture="handleKeydown"
   >
     <template #top>
-      <div class="mx-6 md:mx-10 flex items-center gap-2 border-y py-2.5">
-        <span class="text-xs text-gray-500">TO:</span>
+      <div
+        v-if="hasMultipleSenders"
+        class="mx-6 md:mx-5 flex items-center gap-2 border-t py-2.5 h-12.5"
+      >
+        <span class="text-p-xs text-ink-gray-4">{{ __("From") }}:</span>
+        <FormControl
+          v-model="fromEmail"
+          type="select"
+          variant="ghost"
+          class="w-full"
+          :placeholder="__('')"
+          :options="from"
+        />
+      </div>
+      <div class="mx-6 md:mx-5 flex items-center gap-2 border-y py-2.5">
+        <span class="text-p-xs text-ink-gray-4">{{ __("To") }}:</span>
         <MultiSelectInput
           v-model="toEmailsClone"
           class="flex-1"
-          :validate="validateEmail"
+          :validate="validateEmailWithZod"
           :error-message="(value) => `${value} is an invalid email address`"
         />
-        <Button
-          :label="'CC'"
-          :class="[cc ? 'bg-gray-300 hover:bg-gray-200' : '']"
-          @click="toggleCC()"
-        />
-        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-        <Button
-          :label="__('BCC')"
-          :class="[bcc ? 'bg-gray-300 hover:bg-gray-200' : '']"
-          @click="toggleBCC()"
-        />
+        <div class="flex gap-1.5">
+          <Button
+            :label="__('Cc')"
+            variant="ghost"
+            :class="[
+              cc || showCC
+                ? '!bg-surface-gray-4 hover:bg-surface-gray-3'
+                : '!text-ink-gray-4',
+            ]"
+            @click="toggleCC()"
+          />
+          <Button
+            :label="__('Bcc')"
+            variant="ghost"
+            :class="[
+              bcc || showBCC
+                ? '!bg-surface-gray-4 hover:bg-surface-gray-3'
+                : '!text-ink-gray-4',
+            ]"
+            @click="toggleBCC()"
+          />
+        </div>
       </div>
       <div
         v-if="showCC || cc"
-        class="mx-10 flex items-center gap-2 py-2.5"
+        class="mx-5 flex items-center gap-2 py-2.5"
         :class="cc || showCC ? 'border-b' : ''"
       >
-        <span class="text-xs text-gray-500">CC:</span>
+        <span class="text-xs text-ink-gray-4">{{ __("Cc:") }}</span>
         <MultiSelectInput
           ref="ccInput"
           v-model="ccEmailsClone"
           class="flex-1"
-          :validate="validateEmail"
+          :validate="validateEmailWithZod"
           :error-message="(value) => `${value} is an invalid email address`"
         />
       </div>
       <div
         v-if="showBCC || bcc"
-        class="mx-10 flex items-center gap-2 py-2.5"
+        class="mx-5 flex items-center gap-2 py-2.5"
         :class="bcc || showBCC ? 'border-b' : ''"
       >
-        <span class="text-xs text-gray-500">BCC:</span>
+        <span class="text-xs text-ink-gray-4">{{ __("Bcc:") }}</span>
         <MultiSelectInput
           ref="bccInput"
           v-model="bccEmailsClone"
           class="flex-1"
-          :validate="validateEmail"
+          :validate="validateEmailWithZod"
           :error-message="(value) => `${value} is an invalid email address`"
         />
       </div>
     </template>
-    <!-- <template v-slot:editor="{ _editor }">
-      <EditorContent
-        :class="[editable && 'max-h-[35vh] overflow-y-auto']"
-        :editor="_editor"
-      />
-    </template> -->
+
+    <template #editor>
+      <div class="overflow-y-auto min-h-[7rem] max-h-[30vh] flex flex-col">
+        <div class="flex-1">
+          <EditorContent :editor="editor" />
+        </div>
+        <div
+          v-if="quotedContent"
+          class="replied-content mx-6 md:mx-5 mb-2 mt-auto"
+        >
+          <label class="collapse" for="quoted-toggle">...</label>
+          <input
+            id="quoted-toggle"
+            class="replyCollapser"
+            type="checkbox"
+            :checked="isQuoteExpanded"
+          />
+          <div
+            ref="quotedContentRef"
+            contenteditable="true"
+            class="prose !max-w-full mx-1 my-2 border-s-4 border-outline-gray-2 ps-4 text-sm focus:outline-none"
+            @input="onQuotedInput"
+          />
+        </div>
+      </div>
+    </template>
     <template #bottom>
       <!-- Attachments -->
-      <div class="flex flex-wrap gap-2 px-10">
+      <div class="flex flex-wrap gap-2 px-5 my-2">
         <AttachmentItem
           v-for="a in attachments"
           :key="a.file_url"
@@ -91,10 +136,10 @@
       </div>
       <!-- TextEditor Fixed Menu -->
       <div
-        class="flex justify-between overflow-scroll pl-10 py-2.5 items-center"
+        class="flex justify-between overflow-scroll px-4 py-2.5 items-center border-t"
       >
         <div class="flex items-center overflow-x-auto w-[60%]">
-          <div class="flex gap-1">
+          <div class="inline-flex items-center gap-1.5 p-1">
             <FileUploader
               :upload-args="{
                 doctype: doctype,
@@ -109,58 +154,53 @@
             >
               <template #default="{ openFileSelector, uploading }">
                 {{ void (isUploading = uploading) }}
-                <Button
-                  variant="ghost"
+                <button
+                  class="flex rounded p-1 text-ink-gray-8 transition-colors focus-within:ring-0 hover:bg-surface-gray-3"
                   @click="openFileSelector()"
-                  :loading="uploading"
+                  :disabled="uploading"
                 >
-                  <template #icon>
-                    <AttachmentIcon
-                      class="h-4"
-                      style="color: #000000; stroke-width: 1.5 !important"
-                    />
-                  </template>
-                </Button>
+                  <AttachmentIcon
+                    class="h-4 w-4"
+                    style="stroke-width: 1.5 !important"
+                  />
+                </button>
               </template>
             </FileUploader>
-            <Button
-              variant="ghost"
+            <button
+              class="flex rounded p-1 text-ink-gray-8 transition-colors focus-within:ring-0 hover:bg-surface-gray-3"
               @click="showSavedRepliesSelectorModal = true"
             >
-              <template #icon>
-                <SavedReplyIcon class="h-4" />
-              </template>
-            </Button>
+              <SavedReplyIcon class="h-4 w-4" />
+            </button>
             <!-- //// Neoffice — ask NORA for a draft based on the actual thread.
                  Sits next to Saved Replies because it answers the same need
                  ("I don't want to start from nothing"), except it reads the
                  conversation instead of pasting a fixed template. Inserts only
                  after the agent confirms in the dialog. -->
-            <Button
-              variant="ghost"
+            <button
+              class="flex rounded p-1 text-ink-gray-8 transition-colors focus-within:ring-0 hover:bg-surface-gray-3"
               :title="__('Suggest a reply')"
               @click="showNeoSuggestDialog = true"
             >
-              <template #icon>
-                <svg
-                  class="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.75"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M12 3l1.9 4.9L19 9.8l-4.1 2.9L15.6 18 12 15.2 8.4 18l.7-5.3L5 9.8l5.1-1.9z" />
-                </svg>
-              </template>
-            </Button>
+              <svg
+                class="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 3l1.9 4.9L19 9.8l-4.1 2.9L15.6 18 12 15.2 8.4 18l.7-5.3L5 9.8l5.1-1.9z"
+                />
+              </svg>
+            </button>
+            <div class="h-4 w-[2px] border-s" />
           </div>
-          <TextEditorFixedMenu class="ml-1" :buttons="textEditorMenuButtons" />
+          <TextEditorFixedMenu :buttons="textEditorMenuButtons" />
         </div>
-        <div
-          class="flex items-center justify-end space-x-2 sm:mt-0 w-[40%] mr-9"
-        >
+        <div class="flex items-center justify-end gap-x-2 sm:mt-0 w-[40%]">
           <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button :label="__('Discard')" @click="handleDiscard" />
           <Button
@@ -178,20 +218,19 @@
       </div>
     </template>
   </TextEditor>
+  <SavedRepliesSelectorModal
+    v-model="showSavedRepliesSelectorModal"
+    :doctype="doctype"
+    @apply="applySavedReplies"
+    :ticketId="ticketId"
+  />
   <!-- //// Neoffice — NORA draft dialog, see NeoSuggestReplyDialog.vue. -->
   <NeoSuggestReplyDialog
     v-if="showNeoSuggestDialog"
     v-model="showNeoSuggestDialog"
     :ticketId="ticketId"
-    :hasContent="!isContentEmpty(newEmail || '')"
+    :hasContent="hasTypedContent"
     @apply="applyNeoSuggestion"
-  />
-  <SavedRepliesSelectorModal
-    v-if="showSavedRepliesSelectorModal"
-    v-model="showSavedRepliesSelectorModal"
-    :doctype="doctype"
-    @apply="applySavedReplies"
-    :ticketId="ticketId"
   />
 </template>
 
@@ -203,17 +242,23 @@ import {
 } from "@/components";
 import { AttachmentIcon } from "@/components/icons";
 import { useTyping } from "@/composables/realtime";
+import { getUserEmailInfo } from "@/composables/useUserEmailInfo";
 import { useAuthStore } from "@/stores/auth";
-import { PreserveVideoControls } from "@/tiptap-extensions";
+import {
+  CleanStyles,
+  ComponentUtils,
+  HandleExcelPaste,
+} from "@/tiptap-extensions";
 import {
   getFontFamily,
+  htmlToText,
   isContentEmpty,
   removeAttachmentFromServer,
   textEditorMenuButtons,
   uploadFunction,
-  validateEmail,
+  validateEmailWithZod,
 } from "@/utils";
-// import { EditorContent } from "@tiptap/vue-3";
+import { EditorContent } from "@tiptap/vue-3";
 import { useStorage } from "@vueuse/core";
 import {
   FileUploader,
@@ -223,16 +268,20 @@ import {
   toast,
 } from "frappe-ui";
 import { useOnboarding } from "frappe-ui/frappe";
-import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import SavedReplyIcon from "./icons/SavedReplyIcon.vue";
+import { __ } from "@/translation";
 //// Neoffice — NORA reply suggestion (added component, no upstream equivalent).
 import NeoSuggestReplyDialog from "./NeoSuggestReplyDialog.vue";
 
-const editorRef = ref(null);
-const showSavedRepliesSelectorModal = ref(false);
-//// Neoffice
-const showNeoSuggestDialog = ref(false);
-
+// ─── Props & Emits ────────────────────────────────────────────
 const props = defineProps({
   ticketId: {
     type: String,
@@ -268,36 +317,91 @@ const props = defineProps({
   },
 });
 
-const label = computed(() => {
-  return sendMail.loading ? "Sending..." : props.label;
-});
-
 const emit = defineEmits(["submit", "discard"]);
 
-const newEmail = useStorage("emailBoxContent" + props.ticketId, null);
 const { updateOnboardingStep } = useOnboarding("helpdesk");
 const { isManager } = useAuthStore();
-
-// Initialize typing composable
 const { onUserType, cleanup } = useTyping(props.ticketId);
 
-const attachments = ref([]);
-const isUploading = ref(false);
-const isDisabled = computed(() => {
-  return (
-    isContentEmpty(newEmail.value) || sendMail.loading || isUploading.value
-  );
-});
+const editorRef = ref(null);
+const editor = computed(() => editorRef.value.editor);
 
-// Watch for changes in email content to trigger typing events
+function focusEditorAtStart() {
+  setTimeout(() => {
+    editorRef.value?.editor?.commands?.focus("start");
+  }, 0);
+}
+
+const cachedEmail = useStorage<null | string>(
+  "emailBoxContent" + props.ticketId,
+  null
+);
+
+const newEmail = ref<null | string>(cachedEmail.value);
+
+const emailSignature = ref<string | null>(null);
+
+function isOnlySignature(content: string | null) {
+  if (!content || !emailSignature.value) return false;
+  return htmlToText(content) === htmlToText(emailSignature.value);
+}
+
+const userResource = getUserEmailInfo();
+
 watch(newEmail, (newValue, oldValue) => {
   if (newValue !== oldValue && newValue) {
     onUserType();
   }
+  cachedEmail.value = isOnlySignature(newValue) ? null : newValue;
 });
 
-onBeforeUnmount(() => {
-  cleanup();
+const quotedContent = useStorage<null | string>(
+  "quotedEmailBoxContent" + props.ticketId,
+  null
+);
+const quotedContentRef = ref<HTMLElement | null>(null);
+const isQuoteExpanded = ref(false);
+
+function onQuotedInput() {
+  const el = quotedContentRef.value;
+  if (!el) return;
+  quotedContent.value = el.innerHTML || null;
+}
+
+watch(quotedContent, (newVal, oldVal) => {
+  if (!oldVal && newVal) {
+    nextTick(() => {
+      if (quotedContentRef.value) {
+        quotedContentRef.value.innerHTML = newVal;
+      }
+    });
+  }
+});
+
+watch(
+  () => userResource.data,
+  (data: { email_signature?: string } | null) => {
+    if (!data?.email_signature) return;
+    emailSignature.value = `<br>${data.email_signature}`;
+    if (isOnlySignature(cachedEmail.value)) {
+      cachedEmail.value = null;
+    }
+    if (isContentEmpty(newEmail.value) && !quotedContent.value) {
+      newEmail.value = emailSignature.value;
+      focusEditorAtStart();
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  if (quotedContent.value) {
+    nextTick(() => {
+      if (quotedContentRef.value) {
+        quotedContentRef.value.innerHTML = quotedContent.value;
+      }
+    });
+  }
 });
 
 const toEmailsClone = ref([...props.toEmails]);
@@ -310,75 +414,8 @@ const bcc = computed(() => (bccEmailsClone.value?.length ? true : false));
 const ccInput = ref(null);
 const bccInput = ref(null);
 
-function applySavedReplies(template) {
-  newEmail.value = template;
-  showSavedRepliesSelectorModal.value = false;
-}
-
-//// Neoffice — append rather than overwrite. Saved Replies replaces the body
-//// because the agent picks a template before writing; a suggestion can be
-//// asked for mid-sentence, and silently destroying what they already typed
-//// would be the one unforgivable behaviour here.
-function applyNeoSuggestion({ html, mode }) {
-  // Coalesce first: an untouched editor holds null, not "", and template
-  // literals happily stringify that into a literal "null" line above the reply.
-  const current = newEmail.value || "";
-  newEmail.value =
-    mode === "append" && !isContentEmpty(current) ? `${current}${html}` : html;
-  showNeoSuggestDialog.value = false;
-  // The reply is often longer than the box: bring the agent to it rather than
-  // leaving them in front of what looks like an unchanged editor.
-  nextTick(() => {
-    try {
-      editorRef.value?.editor?.commands?.focus("end");
-    } catch (e) {
-      // focus is a convenience, never a reason to break the insertion
-    }
-  });
-}
-
-const sendMail = createResource({
-  url: "run_doc_method",
-  makeParams: () => ({
-    dt: props.doctype,
-    dn: props.ticketId,
-    method: "reply_via_agent",
-    args: {
-      attachments: attachments.value.map((x) => x.name),
-      to: toEmailsClone.value.join(","),
-      cc: ccEmailsClone.value?.join(","),
-      bcc: bccEmailsClone.value?.join(","),
-      message: newEmail.value,
-    },
-  }),
-  onSuccess: () => {
-    resetState();
-    emit("submit");
-
-    if (isManager) {
-      updateOnboardingStep("reply_on_ticket");
-    }
-  },
-  debounce: 300,
-});
-
-function submitMail() {
-  if (isContentEmpty(newEmail.value)) {
-    return false;
-  }
-  if (!toEmailsClone.value.length) {
-    toast.warning(
-      "Email has no recipients. Please add at least one email address in the 'TO' field."
-    );
-    return false;
-  }
-
-  sendMail.submit();
-}
-
 function toggleCC() {
   showCC.value = !showCC.value;
-
   showCC.value &&
     nextTick(() => {
       ccInput.value.setFocus();
@@ -393,9 +430,159 @@ function toggleBCC() {
     });
 }
 
+const fromEmail = useStorage<string | "">("from-email", "");
+
+const outgoingEmails = computed<{ email_account: string; email_id: string }[]>(
+  () => userResource.data?.outgoing_emails ?? []
+);
+
+// selected mail from the outgoing emails list
+const selectedFromEmail = computed(() =>
+  outgoingEmails.value.find((e) => e.email_id === fromEmail.value)
+);
+
+const from = computed(() => {
+  if (!outgoingEmails.value.length) return [];
+  if (
+    outgoingEmails.value.length === 1 &&
+    outgoingEmails.value[0].email_id === userResource.data?.email
+  )
+    return [];
+  return outgoingEmails.value.map((e) => ({
+    label: e.email_account + " <" + e.email_id + ">",
+    value: e.email_id,
+  }));
+});
+
+const hasMultipleSenders = computed(() => (from?.value.length ?? 0) > 1);
+
+watch(
+  from,
+  (fromOptions) => {
+    if (!fromOptions.find((f) => f.value === fromEmail.value)) {
+      fromEmail.value = fromOptions.length ? fromOptions[0].value : "";
+    }
+  },
+  { immediate: true }
+);
+
+const attachments = ref([]);
+const isUploading = ref(false);
+
 async function removeAttachment(attachment) {
   attachments.value = attachments.value.filter((a) => a !== attachment);
   await removeAttachmentFromServer(attachment.name);
+}
+
+const showSavedRepliesSelectorModal = ref(false);
+//// Neoffice — NORA reply suggestion dialog.
+const showNeoSuggestDialog = ref(false);
+
+function applySavedReplies(template: string) {
+  const textEditor = editorRef.value?.editor;
+  if (!textEditor) return;
+  textEditor.chain().focus("start").insertContent(template).run();
+}
+
+//// Neoffice — what the agent typed, the pre-filled signature left out: the
+//// dialog asks "append or replace?" only when there is something to lose.
+const hasTypedContent = computed(
+  () => !isContentEmpty(newEmail.value || "") && !isOnlySignature(newEmail.value)
+);
+
+//// Neoffice — never destroy what the agent already typed, and keep the
+//// signature last: a suggestion can be asked for mid-sentence. "replace"
+//// replaces the typed text only; "append" adds the draft after it. Both land
+//// ABOVE the signature the editor pre-fills.
+function applyNeoSuggestion({ html, mode }) {
+  // An untouched editor holds null, not "": coalesce before concatenating, or
+  // the template literal writes a literal "null" line above the reply.
+  const current = newEmail.value || "";
+  const signature = emailSignature.value || "";
+  const typed =
+    signature && current.endsWith(signature)
+      ? current.slice(0, -signature.length)
+      : current;
+  const body =
+    mode === "append" && !isContentEmpty(typed) ? `${typed}${html}` : html;
+  newEmail.value = `${body}${signature && current.endsWith(signature) ? signature : ""}`;
+  showNeoSuggestDialog.value = false;
+  // The reply is often longer than the box: bring the agent to it.
+  nextTick(() => {
+    try {
+      editorRef.value?.editor?.commands?.focus("start");
+    } catch (e) {
+      // focus is a convenience, never a reason to break the insertion
+    }
+  });
+}
+
+const sendMail = createResource({
+  url: "run_doc_method",
+  makeParams: () => ({
+    dt: props.doctype,
+    dn: props.ticketId,
+    method: "reply_via_agent",
+    args: {
+      attachments: attachments.value.map((x) => x.name),
+      from_email: selectedFromEmail.value,
+      to: toEmailsClone.value.join(","),
+      cc: ccEmailsClone.value?.join(","),
+      bcc: bccEmailsClone.value?.join(","),
+      message:
+        newEmail.value +
+        (quotedContentRef.value
+          ? `<p class="reply-to-content"></p><blockquote>${quotedContentRef.value.innerHTML}</blockquote>`
+          : ""),
+    },
+  }),
+  onSuccess: () => {
+    resetState();
+    emit("submit");
+
+    if (isManager) {
+      updateOnboardingStep("reply_on_ticket");
+    }
+  },
+  debounce: 300,
+});
+
+//// Neoffice — "Sending..." translatable; the label itself arrives translated
+//// from the caller (CommunicationArea), so it is not translated twice here.
+const label = computed(() =>
+  sendMail.loading ? __("Sending...") : props.label
+);
+
+const isDisabled = computed(
+  () =>
+    (isContentEmpty(newEmail.value) && isContentEmpty(quotedContent.value)) ||
+    sendMail.loading ||
+    isUploading.value
+);
+
+function submitMail() {
+  if (isContentEmpty(newEmail.value) && isContentEmpty(quotedContent.value)) {
+    return false;
+  }
+  if (
+    !toEmailsClone.value.length &&
+    !ccEmailsClone.value.length &&
+    !bccEmailsClone.value.length
+  ) {
+    //// Neoffice — translatable warning (was a bare English literal).
+    toast.warning(
+      __(
+        "Email has no recipients. Please add at least one recipient (To, Cc, or Bcc) before sending."
+      )
+    );
+    return false;
+  }
+
+  sendMail.submit();
+}
+
+function getInitialContent() {
+  return emailSignature.value ? emailSignature.value : "<p></p>";
 }
 
 function addToReply(
@@ -407,37 +594,108 @@ function addToReply(
   toEmailsClone.value = toEmails;
   ccEmailsClone.value = ccEmails;
   bccEmailsClone.value = bccEmails;
-  editorRef.value.editor
-    .chain()
-    .clearContent()
-    .insertContent(body)
-    .focus("all")
-    .setBlockquote()
-    .insertContentAt(0, { type: "paragraph" })
-    .focus("start")
-    .run();
+
+  if (body !== quotedContent.value) {
+    //trigger change for watch when replied to body data is different from current quoted content
+    quotedContent.value = null;
+    isQuoteExpanded.value = false;
+    nextTick(() => {
+      quotedContent.value = body;
+    });
+  }
+
+  nextTick(() => {
+    newEmail.value = getInitialContent();
+  });
+  focusEditorAtStart();
 }
 
 function resetState() {
-  newEmail.value = null;
+  newEmail.value = emailSignature.value ? emailSignature.value : null;
   attachments.value = [];
+  quotedContent.value = null;
+  isQuoteExpanded.value = false;
+  focusEditorAtStart();
 }
 
 function handleDiscard() {
   attachments.value = [];
-  newEmail.value = null;
-
+  newEmail.value = getInitialContent();
+  quotedContent.value = null;
   ccEmailsClone.value = [];
   bccEmailsClone.value = [];
-  ccEmailsClone.value = [];
   showCC.value = false;
   showBCC.value = false;
+  isQuoteExpanded.value = false;
 
+  focusEditorAtStart();
   emit("discard");
 }
 
-const editor = computed(() => {
-  return editorRef.value.editor;
+function handleSelectAll(e: KeyboardEvent) {
+  const active = document.activeElement;
+  const editorContext = editorRef.value?.editor;
+  const editorDom = editorContext?.view?.dom as HTMLElement | undefined;
+  const quotedEl = quotedContentRef.value;
+  const sel = window.getSelection();
+  if (!sel || !editorDom) return;
+  if (!editorDom.contains(active) && !(quotedEl && quotedEl.contains(active))) {
+    return;
+  }
+  e.preventDefault();
+  editorContext?.commands.selectAll();
+  sel.removeAllRanges();
+  const range = document.createRange();
+
+  if (quotedEl) {
+    range.setStartBefore(editorDom);
+    range.setEndAfter(quotedEl);
+  } else {
+    range.selectNodeContents(editorDom);
+  }
+  sel.addRange(range);
+}
+
+function handleDelete(e: KeyboardEvent) {
+  const sel = window.getSelection();
+  const quotedEl = quotedContentRef.value;
+  const editorDom = editorRef.value?.editor?.view?.dom as
+    | HTMLElement
+    | undefined;
+
+  if (!sel || sel.isCollapsed || !quotedEl || !editorDom) return;
+
+  const isSelectingEntireEditor = sel.containsNode(editorDom, true);
+  const isSelectingEntireQuote = sel.containsNode(quotedEl, true);
+
+  if (isSelectingEntireEditor && isSelectingEntireQuote) {
+    e.preventDefault();
+
+    editorRef.value?.editor?.commands?.clearContent();
+    newEmail.value = null;
+    quotedContent.value = null;
+
+    sel.removeAllRanges();
+  }
+}
+
+function handleKeydown(e: KeyboardEvent) {
+  const key = e.key.toLowerCase();
+
+  if ((e.metaKey || e.ctrlKey) && key === "a") {
+    isQuoteExpanded.value = true;
+    handleSelectAll(e);
+    return;
+  }
+
+  if (key === "backspace" || key === "delete") {
+    handleDelete(e);
+    return;
+  }
+}
+
+onBeforeUnmount(() => {
+  cleanup();
 });
 
 defineExpose({

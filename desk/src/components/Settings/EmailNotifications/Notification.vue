@@ -3,27 +3,21 @@
     <template #title>
       <div class="flex items-center">
         <div
-          class="pl-5 pr-2 relative text-ink-gray-7 hover:opacity-70 min-h-8 flex items-center"
+          class="ps-5 pe-2 relative text-ink-gray-7 hover:opacity-70 min-h-8 flex items-center"
         >
           <button
             type="button"
             @click="internalOnBack"
-            class="absolute top-0 -left-[0.375rem] w-full h-full"
+            class="absolute top-0 -start-[0.375rem] w-full h-full"
           >
             <span class="sr-only">{{ __("back to email event list") }}</span>
-            <LucideChevronLeft class="w-4.5 h-4.5" />
+            <LucideChevronLeft class="w-4.5 h-4.5 rtl:rotate-180" />
           </button>
           <h1 class="font-semibold text-xl">
             {{ props.title }}
           </h1>
         </div>
-        <Badge
-          v-if="unsavedChanges"
-          :variant="'subtle'"
-          :theme="'orange'"
-          size="sm"
-          :label="__('Unsaved')"
-        />
+        <UnsavedBadge :show="unsavedChanges" />
       </div>
     </template>
     <template #header-actions>
@@ -36,9 +30,9 @@
           size="sm"
           :label="__('Enabled')"
           v-model="enabled"
-          @update:model-value="setUnsavedChanges"
+          @update:model-value="(val) => setUnsavedChanges(val)"
           :style="{ background: 'transparent', padding: '0px' }"
-          class="flex-row-reverse gap-x-2 pl-0"
+          class="flex-row-reverse gap-x-2 ps-0"
         />
         <Button
           type="button"
@@ -68,10 +62,10 @@
               :required="true"
               :rows="10"
               v-model="content"
-              :oninput="setUnsavedChanges"
+              :oninput="() => setUnsavedChanges()"
             />
             <div class="flex gap-x-1 items-start justify-between">
-              <p class="text-sm text-gray-700 leading-5">
+              <p class="text-sm text-ink-gray-7 leading-5">
                 {{
                   __(
                     "Find out all of the variables that can be used in the content"
@@ -135,10 +129,11 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import type { NotificationName } from "./types";
-import { createResource, Switch, LoadingIndicator } from "frappe-ui";
+import { createResource, Switch, LoadingIndicator, Button } from "frappe-ui";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import { disableSettingModalOutsideClick } from "../settingsModal";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import UnsavedBadge from "@/components/UnsavedBadge.vue";
 
 const props = defineProps<{
   title: string;
@@ -169,14 +164,22 @@ const notificationDataResource = createResource({
   onSuccess: props.onGetDataSuccess,
 });
 
-function setUnsavedChanges() {
-  unsavedChanges.value = true;
+function setUnsavedChanges(
+  newEnabled = enabled.value,
+  newContent = content.value
+) {
+  unsavedChanges.value =
+    newEnabled !== notificationDataResource.data.enabled ||
+    newContent !== notificationDataResource.data.content;
 }
-
 function resetUnsavedChanges() {
+  notificationDataResource.data = {
+    ...notificationDataResource.data,
+    enabled: enabled.value,
+    content: content.value,
+  };
   unsavedChanges.value = false;
 }
-
 function resetContent() {
   content.value = props.defaultContent;
   setUnsavedChanges();

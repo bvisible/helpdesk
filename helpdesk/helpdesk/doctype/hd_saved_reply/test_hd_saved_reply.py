@@ -4,6 +4,8 @@
 import frappe
 from frappe.tests import IntegrationTestCase
 
+from helpdesk.test_utils import make_team
+
 # Test user emails
 AGENT1 = "saved_reply_agent1@test.com"
 AGENT2 = "saved_reply_agent2@test.com"
@@ -46,38 +48,6 @@ def make_agent(user_email):
     )
     agent.insert(ignore_permissions=True)
     return agent
-
-
-def make_team(team_name, members=None):
-    """Create an HD Team with optional members."""
-    if frappe.db.exists("HD Team", team_name):
-        # Delete existing team members
-        frappe.db.delete("HD Team Member", {"parent": team_name})
-        # Add new members directly to DB
-        if members:
-            for idx, member in enumerate(members):
-                frappe.get_doc(
-                    {
-                        "doctype": "HD Team Member",
-                        "parent": team_name,
-                        "parenttype": "HD Team",
-                        "parentfield": "users",
-                        "user": member,
-                        "idx": idx + 1,
-                    }
-                ).db_insert()
-        return frappe.get_doc("HD Team", team_name)
-
-    # Create new team - this will trigger after_insert which creates assignment rule
-    team = frappe.get_doc(
-        {
-            "doctype": "HD Team",
-            "team_name": team_name,
-            "users": [{"user": m} for m in (members or [])],
-        }
-    )
-    team.insert(ignore_permissions=True)
-    return team
 
 
 def make_saved_reply(title, message, scope="Global", teams=None, owner=ADMIN_AGENT):
@@ -297,8 +267,9 @@ class TestHDSavedReply(IntegrationTestCase):
     # ==========================================================================
 
     def test_admin_sees_all_replies(self):
-        """Admin user should see all saved replies in the list."""
+        """Admin user should see all saved replies in the list except personal replies of other users."""
         make_saved_reply("Global Reply", "Test", scope="Global")
+        make_saved_reply("Personal Reply", "Test", scope="Personal")
         make_saved_reply("Personal Reply 1", "Test", scope="Personal", owner=AGENT1)
         make_saved_reply("Personal Reply 2", "Test", scope="Personal", owner=AGENT2)
         make_saved_reply("Team Reply", "Test", scope="Team", teams=[TEAM_A])
@@ -306,7 +277,7 @@ class TestHDSavedReply(IntegrationTestCase):
         # Admin should see all replies
         frappe.set_user(ADMIN_AGENT)
         replies = frappe.get_list("HD Saved Reply", pluck="name")
-        self.assertEqual(len(replies), 4)
+        self.assertEqual(len(replies), 3)
 
     def test_permission_query_includes_global_scope(self):
         """Permission query should include global scope when enabled."""

@@ -44,7 +44,7 @@
                 value: 'Sunday',
               },
             ]"
-            :class="{ 'border-red-500': errors.workday }"
+            :class="{ 'border-outline-red-3': errors.workday }"
             @blur="validateField('workday')"
           />
           <ErrorMessage :message="errors.workday" class="mt-2" />
@@ -58,7 +58,7 @@
             :placeholder="__('Start Time')"
             :label="__('Start Time')"
             v-model="workDayData.start_time"
-            :class="{ 'border-red-500': errors.start_time }"
+            :class="{ 'border-outline-red-3': errors.start_time }"
             @blur="validateField('start_time')"
           />
           <ErrorMessage :message="errors.start_time" class="mt-2" />
@@ -72,7 +72,7 @@
             :placeholder="__('End Time')"
             :label="__('End Time')"
             v-model="workDayData.end_time"
-            :class="{ 'border-red-500': errors.end_time }"
+            :class="{ 'border-outline-red-3': errors.end_time }"
             @blur="validateTimeRange"
           />
           <ErrorMessage :message="errors.end_time" class="mt-2" />
@@ -115,6 +115,7 @@
 <script setup lang="ts">
 import { ref, defineModel, reactive, watch } from "vue";
 import { Dialog, FormControl, Button, toast } from "frappe-ui";
+import { __ } from "@/translation";
 
 const isConfirmingDelete = ref(false);
 const props = defineProps({
@@ -242,7 +243,7 @@ const validateForm = () => {
 
 const onSave = () => {
   if (!validateForm()) {
-    toast.error("Please fix the errors in the form");
+    toast.error(__("Please fix the errors in the form"));
     return;
   }
 
@@ -257,7 +258,7 @@ const onSave = () => {
           ...workDayData,
         };
         props.workDaysList.splice(itemIndex, 1, updatedItem);
-        toast.success("Workday updated");
+        toast.success(__("Workday updated successfully."));
       }
     } else {
       const isDuplicate = props.workDaysList.some(
@@ -266,17 +267,17 @@ const onSave = () => {
 
       if (isDuplicate) {
         errors.workday = "This workday already exists";
-        toast.error("A workday with this name already exists");
+        toast.error(__("A workday with this name already exists"));
         return;
       }
 
       const newWorkDay = { ...workDayData };
       props.workDaysList.push(newWorkDay);
-      toast.success("Workday added");
+      toast.success(__("Workday added successfully."));
     }
     dialog.value.show = false;
   } catch (error) {
-    toast.error(`Failed to save workday: ${error}`);
+    toast.error(__(`Failed to save workday: ${error}`));
   }
 };
 

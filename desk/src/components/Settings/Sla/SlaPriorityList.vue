@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-md border px-2 border-gray-300 text-sm">
+  <div class="rounded-md border px-2 border-outline-gray-2 text-sm">
     <div
       class="grid p-2 px-4 items-center"
       :style="{
@@ -10,16 +10,16 @@
       <div
         v-for="column in columns"
         :key="column.key"
-        class="text-gray-600 overflow-hidden whitespace-nowrap text-ellipsis"
+        class="text-ink-gray-5 overflow-hidden whitespace-nowrap text-ellipsis"
         :class="{
-          'ml-2':
+          'ms-2':
             column.key === 'priority' ||
             column.key === 'response_time' ||
             column.key === 'resolution_time',
         }"
       >
         {{ column.label }}
-        <span v-if="column.isRequired" class="text-red-500">*</span>
+        <span v-if="column.isRequired" class="text-ink-red-3">*</span>
       </div>
     </div>
     <hr v-if="slaData.priorities?.length !== 0" />
@@ -32,7 +32,7 @@
     />
     <div
       v-if="slaData.priorities?.length === 0"
-      class="text-center p-4 text-gray-600"
+      class="text-center p-4 text-ink-gray-5"
     >
       {{ __("No priorities in the list") }}
     </div>
@@ -61,17 +61,17 @@
 </template>
 
 <script setup lang="ts">
-import { Button, createResource, toast } from "frappe-ui";
-import SlaPriorityListItem from "./SlaPriorityListItem.vue";
-import { computed, provide, reactive } from "vue";
 import {
   slaActiveScreen,
   slaData,
   slaDataErrors,
   validateSlaData,
 } from "@/stores/sla";
-import { watchDebounced } from "@vueuse/core";
 import { getGridTemplateColumnsForTable } from "@/utils";
+import { watchDebounced } from "@vueuse/core";
+import { Button, createResource, toast } from "frappe-ui";
+import { computed, provide, reactive } from "vue";
+import SlaPriorityListItem from "./SlaPriorityListItem.vue";
 import { __ } from "@/translation";
 
 createResource({
@@ -79,6 +79,9 @@ createResource({
   params: {
     doctype: "HD Ticket Priority",
     fields: ["name"],
+    filters: {
+      disabled: 0,
+    },
     order_by: "integer_value desc",
   },
   auto: true,

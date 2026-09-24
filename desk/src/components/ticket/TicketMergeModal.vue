@@ -5,18 +5,53 @@
   >
     <template #body-content>
       <div class="flex flex-col gap-4">
-        <!-- //// Neoffice — was one English sentence cut in three by the
-             //// interpolation. A fragment cannot be translated: French says
-             //// "Tous les commentaires ... du ticket #12 seront déplacés", so the
-             //// ticket number sits somewhere else in the sentence. One {0} message
-             //// now, split back on the TRANSLATED text so the bold number survives
-             //// without a v-html. -->
         <p class="text-p-base text-ink-gray-8">
-          {{ warning.before
-          }}<span class="whitespace-nowrap font-semibold"
-            >#{{ ticket.name }}</span
-          >{{ warning.after }}
+          {{
+            __(
+              "All comments and emails from both tickets will be merged into the selected ticket"
+            )
+          }}
+          <span class="whitespace-nowrap font-semibold">
+            #{{ ticket.name
+            }}<Popover
+              trigger="hover"
+              :hoverDelay="0.25"
+              :placement="isRtl ? 'left' : 'right'"
+              class="!inline-flex align-middle ms-1 -mt-1"
+            >
+              <template #target>
+                <FeatherIcon name="info" class="size-4 cursor-pointer" />
+              </template>
+
+              <template #body-main>
+                <div
+                  class="text-sm text-ink-gray-6 p-2.5 bg-surface-white rounded-md max-w-[30rem] whitespace-pre-wrap leading-5"
+                >
+                  <span class="text-p-base">
+                    {{
+                      __("Tickets must meet the following conditions:")
+                    }}</span
+                  >
+                  <ul class="list-disc pl-4 mt-1 space-y-1">
+                    <li
+                      v-for="(condition, index) in mergeConditions"
+                      :key="index"
+                    >
+                      {{ __(condition.text) }}
+                      <code
+                        v-if="condition.code"
+                        class="bg-surface-gray-2 rounded-md px-1 py-0.5"
+                      >
+                        {{ __(condition.code) }}
+                      </code>
+                    </li>
+                  </ul>
+                </div>
+              </template>
+            </Popover>
+          </span>
         </p>
+
         <Link
           class="form-control"
           doctype="HD Ticket"
@@ -37,13 +72,13 @@
         />
         <!-- banner -->
         <div
-          class="flex items-center gap-2 rounded-md p-2 ring-1 ring-gray-200"
+          class="flex items-center gap-2 rounded-md p-2 ring-1 ring-outline-gray-modals"
         >
           <TriangleAlert
             class="h-6 w-5 w-min-5 w-max-5 min-h-5 max-w-5 text-yellow-500"
           />
 
-          <div class="text-wrap text-sm text-gray-700">
+          <div class="text-wrap text-sm text-ink-gray-7">
             {{ __("This action is irreversible.") }}
           </div>
         </div>
@@ -66,12 +101,18 @@
 
 <script setup lang="ts">
 import { Link } from "@/components";
+import { __ } from "@/translation";
 import { HDTicket } from "@/types/doctypes";
-import { Dialog, createListResource, createResource, toast } from "frappe-ui";
-import { computed, ref, watch } from "vue";
+import {
+  Dialog,
+  createListResource,
+  createResource,
+  Popover,
+  toast,
+} from "frappe-ui";
+import { ref, watch } from "vue";
 import LucideMerge from "~icons/lucide/merge";
 import TriangleAlert from "~icons/lucide/triangle-alert";
-import { __ } from "@/translation";
 // interface P
 interface Props {
   ticket: HDTicket;
@@ -83,17 +124,32 @@ interface E {
 }
 
 const props = defineProps<Props>();
-
-//// Neoffice — one message, {0} where the ticket number goes; the halves come back
-//// from the translation so each language keeps its own word order.
-const warning = computed(() => {
-  const [before, after] = __(
-    "All comments and emails of the ticket {0} will be moved to the selected ticket."
-  ).split("{0}");
-  return { before, after: after ?? "" };
-});
 const emit = defineEmits<E>();
 const showDialog = defineModel<boolean>();
+
+const isRtl = document.documentElement.dir === "rtl";
+
+const mergeConditions = [
+  {
+    text: "Ticket must be Open or Paused.",
+    code: "status_category in ['Open', 'Paused']",
+  },
+  {
+    text: "Ticket must not already be merged.",
+    code: "is_merged === 0",
+  },
+  {
+    text: "Source and target tickets which are to be merged cannot be the same.",
+  },
+  {
+    text: "If source ticket has a customer, target must belong to the same customer.",
+    code: "customer === source.customer",
+  },
+  {
+    text: "If source ticket has a raised_by, target must share the same raised_by.",
+    code: "raised_by === source.raised_by",
+  },
+];
 
 interface Filter {
   status_category: [string, string[] | string];
@@ -132,11 +188,11 @@ const mergeTicket = createResource({
     };
   },
   validate({ source, target }) {
-    if (!source) throw { message: __('Category is required') };
-    if (!target) throw { message: __('Ticket to merged with is required') };
+    if (!source) throw { message: __("Category is required") };
+    if (!target) throw { message: __("Ticket to merged with is required") };
   },
   onSuccess: () => {
-    toast.success("Ticket merged successfully");
+    toast.success(__("Ticket merged successfully."));
     emit("update");
 
     showDialog.value = false;

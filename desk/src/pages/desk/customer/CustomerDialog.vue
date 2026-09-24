@@ -2,7 +2,7 @@
   <Dialog :options="options">
     <template #body-main>
       <div class="flex flex-col items-center gap-4 p-6">
-        <div class="text-xl font-medium text-gray-900">
+        <div class="text-xl font-medium text-ink-gray-9">
           {{ customer.doc?.name }}
         </div>
         <Avatar
@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { __ } from "@/translation";
 import {
   Avatar,
   createDocumentResource,
@@ -46,7 +47,6 @@ import {
   toast,
 } from "frappe-ui";
 import { computed } from "vue";
-import { __ } from "@/translation";
 
 const props = defineProps({
   name: {
@@ -72,10 +72,10 @@ const customer = createDocumentResource({
   auto: true,
   setValue: {
     onSuccess() {
-      toast.success("Customer updated");
+      toast.success(__("Customer updated successfully."));
     },
     onError() {
-      toast.error("Error updating customer");
+      toast.error(__("Error updating customer"));
     },
   },
 });

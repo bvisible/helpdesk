@@ -31,17 +31,18 @@ from helpdesk.utils import (
 
 @frappe.whitelist()
 # flake8: noqa
-def new(doc, attachments=[]):
+def new(doc: dict, attachments: list[dict] = []):
     doc["doctype"] = "HD Ticket"
     doc["via_customer_portal"] = bool(frappe.session.user)
     doc["attachments"] = attachments
+    doc["raised_by"] = frappe.session.user
     d = frappe.get_doc(doc).insert()
     return d
 
 
 @frappe.whitelist()
-def get_one(name, is_customer_portal=False):
-    check_permissions("HD Ticket", None, doc=name)
+def get_one(name: str, is_customer_portal: bool = False):
+    frappe.has_permission("HD Ticket", "read", name, throw=True)
     QBContact = frappe.qb.DocType("Contact")
     QBTicket = frappe.qb.DocType("HD Ticket")
 
@@ -171,6 +172,8 @@ def get_assignee(_assign: str):
 
 
 def get_communications(ticket: str):
+    if not frappe.has_permission("HD Ticket", "read", ticket):
+        return []
     QBCommunication = frappe.qb.DocType("Communication")
     communications = (
         frappe.qb.from_(QBCommunication)
@@ -185,6 +188,8 @@ def get_communications(ticket: str):
             QBCommunication.recipients,
             QBCommunication.subject,
             QBCommunication.delivery_status,
+            QBCommunication.sent_or_received,
+            QBCommunication.user,
         )
         .where(QBCommunication.reference_doctype == "HD Ticket")
         .where(QBCommunication.reference_name == ticket)
@@ -193,7 +198,8 @@ def get_communications(ticket: str):
     )
     for c in communications:
         c.attachments = get_attachments("Communication", c.name)
-        c.user = get_user_info_for_avatar(c.sender)
+        user_id = c.user if c.sent_or_received == "Sent" and c.user else c.sender
+        c.user = get_user_info_for_avatar(user_id)
     return communications
 
 
@@ -239,6 +245,8 @@ def get_history(ticket: str):
 
 
 def get_views(ticket: str):
+    if not frappe.has_permission("HD Ticket", "read", ticket):
+        return []
     QBViewLog = frappe.qb.DocType("View Log")
     views = (
         frappe.qb.from_(QBViewLog)
@@ -321,7 +329,7 @@ def get_attachments(doctype, name):
 
 @frappe.whitelist()
 @agent_only
-def merge_ticket(source: int, target: int):
+def merge_ticket(source: str, target: str):
     # check if source and target exists
     if not frappe.db.exists("HD Ticket", source):
         frappe.throw(_("Source ticket does not exist"))
@@ -382,7 +390,7 @@ def merge_ticket(source: int, target: int):
     c.save()
 
 
-def duplicate_list_retain_timestamp(doctype, activities: list, target: int, controller):
+def duplicate_list_retain_timestamp(doctype, activities: list, target: str, controller):
     for activity in activities:
         attachments = get_attachments(
             "HD Ticket Comment",
@@ -565,7 +573,7 @@ def get_ticket_customizations():
 
 @frappe.whitelist()
 # TODO: make it bette, on mount fetch only once and cache it
-def get_navigation_tickets(ticket: str, current_view: str = None):
+def get_navigation_tickets(ticket: str, current_view: str | None = None):
     """
     Get a list of tickets to navigate
     """
@@ -583,7 +591,7 @@ def get_navigation_tickets(ticket: str, current_view: str = None):
         )
 
         # Extract just the ticket IDs
-        ticket_ids = [int(ticket), *tickets]
+        ticket_ids = [ticket, *tickets]
         # print("\n\n", ticket_ids, "\n\n")
         return ticket_ids
 
@@ -603,7 +611,7 @@ def get_navigation_filters(ticket: str, current_view: str = None):
                 filters = (
                     json.loads(_filters) if isinstance(_filters, str) else _filters
                 )
-            except (json.JSONDecodeError, TypeError):
+            except json.JSONDecodeError, TypeError:
                 filters = []
 
     if not filters:
@@ -620,7 +628,7 @@ def get_navigation_filters(ticket: str, current_view: str = None):
                     if isinstance(default_view, str)
                     else default_view
                 )
-            except (json.JSONDecodeError, TypeError):
+            except json.JSONDecodeError, TypeError:
                 filters = []
 
     # Base filters - exclude the current ticket
@@ -634,6 +642,9 @@ def get_navigation_filters(ticket: str, current_view: str = None):
     else:
         final_filters = base_filters
     final_filters = handle_at_me_support(final_filters)
+
+    # Remove custom filter "__assigned_on" as it is not available in any doctype
+    final_filters.pop("__assigned_on", None)
 
     return final_filters
 
@@ -655,6 +666,7 @@ def get_navigation_order_by(view):
 
 @frappe.whitelist()
 def get_ticket_contact(ticket: str):
+    frappe.has_permission("HD Ticket", "read", ticket, throw=True)
     if not frappe.db.exists("HD Ticket", ticket):
         return None
     contact = frappe.db.get_value("HD Ticket", ticket, "contact")
@@ -678,11 +690,13 @@ def get_ticket_contact(ticket: str):
 
 @frappe.whitelist()
 def get_recent_similar_tickets(ticket: str):
+    frappe.has_permission("HD Ticket", "read", str(ticket), throw=True)
     if not frappe.db.exists("HD Ticket", ticket):
         return {"recent_tickets": [], "similar_tickets": []}
 
     recent_tickets = get_recent_tickets(ticket)
-    similar_tickets = get_similar_tickets(ticket)
+    # Update this with TextBlob or SQLite Vector Search
+    similar_tickets = []
     # print('\n\n',recent_tickets,'\n\n')
     return {"recent_tickets": recent_tickets, "similar_tickets": similar_tickets}
 
@@ -725,54 +739,9 @@ def get_recent_tickets(ticket: str):
     return org_tickets + user_tickets
 
 
-def get_similar_tickets(ticket: str):
-    doc = frappe.get_doc("HD Ticket", ticket)
-
-    # Separate search terms
-    subject_search = ""
-    desc_search = ""
-    relevance_threshold = 70  # Minimum relevance percentage to consider
-
-    if doc.subject:
-        subject_search = doc.subject.strip()
-
-    if doc.description:
-        soup = BeautifulSoup(doc.description, "html.parser")
-        text = soup.get_text()
-        if text:
-            desc_search = text.strip()
-
-    tickets = frappe.db.sql(
-        """
-        SELECT `name`, `subject`, `status`, `creation`,
-            (MATCH(subject) AGAINST(%(subject_search)s WITH QUERY EXPANSION)) as `raw_relevance`
-        FROM `tabHD Ticket`
-        WHERE (MATCH(subject) AGAINST(%(subject_search)s WITH QUERY EXPANSION))
-            AND name != %(ticket)s
-            AND creation > DATE_SUB(NOW(), INTERVAL 90 DAY)
-        ORDER BY `raw_relevance` DESC, creation DESC
-        LIMIT 4
-        """,
-        {
-            "subject_search": subject_search,
-            "ticket": ticket,
-        },
-        as_dict=1,
-    )
-
-    max_relevance = max((t["raw_relevance"] for t in tickets), default=0)
-    for t in tickets:
-        t["relevance"] = (
-            round((t["raw_relevance"] / max_relevance) * 100) if max_relevance else 0
-        )
-
-    tickets = [t for t in tickets if t["relevance"] > relevance_threshold]
-
-    return tickets
-
-
 @frappe.whitelist()
 def get_ticket_activities(ticket: str):
+    frappe.has_permission("HD Ticket", "read", ticket, throw=True)
     activities = {
         "comments": get_comments(ticket),
         "communications": get_communications(ticket),
@@ -785,6 +754,7 @@ def get_ticket_activities(ticket: str):
 
 @frappe.whitelist()
 def get_ticket_assignees(ticket: str):
+    frappe.has_permission("HD Ticket", "read", ticket, throw=True)
     assignees = frappe.db.get_value("HD Ticket", ticket, "_assign") or "[]"
     return assignees
 
@@ -810,7 +780,7 @@ def show_banner_next_day(ticket):
 
 
 @frappe.whitelist()
-def show_outside_hours_banner(ticket_name: str | int):
+def show_outside_hours_banner(ticket_name: str):
     show_banner_settings = frappe.db.get_single_value(
         "HD Settings", "enable_outside_hours_banner"
     )

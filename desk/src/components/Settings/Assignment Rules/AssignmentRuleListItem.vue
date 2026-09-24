@@ -1,10 +1,10 @@
 <template>
   <div
-    class="grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-gray-50 rounded"
+    class="grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-surface-menu-bar rounded"
   >
     <div
       @click="assignmentRulesActiveScreen = { screen: 'view', data: data }"
-      class="w-full pl-2 col-span-7 h-14 flex flex-col justify-center"
+      class="w-full ps-2 col-span-7 h-14 flex flex-col justify-center"
     >
       <div class="text-base text-ink-gray-7 font-medium">{{ data.name }}</div>
       <div
@@ -16,7 +16,7 @@
     </div>
     <div class="col-span-3">
       <select
-        class="w-full h-7 text-base hover:bg-surface-gray-3 rounded-md p-0 pl-2 pr-5 bg-transparent -ml-2 border-0 text-ink-gray-8 focus-visible:!ring-0 bg-none truncate"
+        class="w-full h-7 text-base hover:bg-surface-gray-3 rounded-md p-0 ps-2 pe-5 bg-transparent -ms-2 border-0 text-ink-gray-8 focus-visible:!ring-0 bg-none truncate"
         v-model="data.priority"
         @update:modelValue="onPriorityChange"
         @change="onPriorityChange"
@@ -30,7 +30,7 @@
         </option>
       </select>
     </div>
-    <div class="flex justify-between items-center w-full pr-2 col-span-2">
+    <div class="flex justify-between items-center w-full pe-2 col-span-2">
       <div>
         <Switch
           size="sm"
@@ -58,7 +58,7 @@
         <FormControl
           :label="__('New Assignment Rule Name')"
           type="text"
-          v-model="duplicateDialog.name"
+          v-model="duplicateDialog.newName"
         />
       </div>
     </template>
@@ -78,6 +78,7 @@
 <script setup lang="ts">
 import { assignmentRulesActiveScreen } from "@/stores/assignmentRules";
 import { AssignmentRuleListResourceSymbol } from "@/types";
+import { AssignmentRule } from "@/types/doctypes";
 import { ConfirmDelete } from "@/utils";
 import {
   Button,
@@ -85,7 +86,6 @@ import {
   Dialog,
   Dropdown,
   FormControl,
-  Select,
   Switch,
   toast,
 } from "frappe-ui";
@@ -111,6 +111,7 @@ const priorityOptions = [
 
 const duplicateDialog = ref({
   show: false,
+  newName: "",
   name: "",
 });
 
@@ -124,9 +125,9 @@ const deleteAssignmentRule = () => {
       name: props.data.name,
     },
     onSuccess: () => {
-      assignmentRulesListData.reload();
+      assignmentRulesListData?.reload();
       isConfirmingDelete.value = false;
-      toast.success(__("Assignment rule deleted"));
+      toast.success(__("Assignment rule deleted successfully."));
     },
     auto: true,
   });
@@ -138,7 +139,8 @@ const dropdownOptions = [
     onClick: () => {
       duplicateDialog.value = {
         show: true,
-        name: props.data.name + " (Copy)",
+        newName: props.data.name + " (Copy)",
+        name: props.data.name,
       };
     },
     icon: "copy",
@@ -151,22 +153,37 @@ const dropdownOptions = [
 
 const duplicate = () => {
   createResource({
-    url: "helpdesk.api.assignment_rule.duplicate_assignment_rule",
+    url: "frappe.client.get",
     params: {
-      docname: props.data.name,
-      new_name: duplicateDialog.value.name,
+      doctype: "Assignment Rule",
+      name: duplicateDialog.value.name,
     },
-    onSuccess: (data) => {
-      assignmentRulesListData.reload();
-      toast.success(__("Assignment rule duplicated"));
-      duplicateDialog.value.show = false;
-      duplicateDialog.value.name = "";
-      assignmentRulesActiveScreen.value = {
-        screen: "view",
-        data: {
-          name: data.name,
+    onSuccess: (data: AssignmentRule) => {
+      createResource({
+        url: "frappe.client.insert",
+        params: {
+          doc: {
+            ...data,
+            name: duplicateDialog.value.newName,
+          },
         },
-      };
+        auto: true,
+        onSuccess(newAssignmentRuleData: AssignmentRule) {
+          assignmentRulesListData?.reload();
+          toast.success(__("Assignment rule duplicated successfully."));
+          duplicateDialog.value = {
+            show: false,
+            newName: "",
+            name: "",
+          };
+          setTimeout(() => {
+            assignmentRulesActiveScreen.value = {
+              screen: "view",
+              data: newAssignmentRuleData,
+            };
+          }, 250);
+        },
+      });
     },
     auto: true,
   });
@@ -184,7 +201,11 @@ const onToggle = () => {
   setAssignmentRuleValue("disabled", !props.data.disabled, "status");
 };
 
-const setAssignmentRuleValue = (key, value, fieldName = undefined) => {
+const setAssignmentRuleValue = (
+  key: string,
+  value: any,
+  fieldName?: string
+) => {
   createResource({
     url: "frappe.client.set_value",
     params: {
@@ -194,8 +215,10 @@ const setAssignmentRuleValue = (key, value, fieldName = undefined) => {
       value: value,
     },
     onSuccess: () => {
-      assignmentRulesListData.reload();
-      toast.success(__("Assignment rule {0} updated", fieldName || key));
+      assignmentRulesListData?.reload();
+      toast.success(
+        __("Assignment rule {0} updated successfully.", fieldName || key)
+      );
     },
     auto: true,
   });

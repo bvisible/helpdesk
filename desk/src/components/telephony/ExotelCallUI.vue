@@ -2,11 +2,11 @@
   <div>
     <div
       v-show="showSmallCallPopup"
-      class="ml-2 flex cursor-pointer select-none items-center justify-between gap-1 rounded-full bg-surface-gray-7 px-2 py-1 mt-1 text-base !text-ink-gray-2"
+      class="ms-2 flex cursor-pointer select-none items-center justify-between gap-1 rounded-full bg-surface-gray-7 px-2 py-1 mt-1 text-base !text-ink-gray-2"
       @click="toggleCallPopup"
     >
       <div
-        class="flex justify-center items-center size-5 rounded-full bg-surface-gray-6 shrink-0 mr-1"
+        class="flex justify-center items-center size-5 rounded-full bg-surface-gray-6 shrink-0 me-1"
       >
         <Avatar
           v-if="contact?.image"
@@ -100,9 +100,15 @@ import MinimizeIcon from "./Icons/MinimizeIcon.vue";
 
 const telephonyStore = useTelephonyStore();
 
-const onCallStarted = inject<() => void>("onCallStarted");
-const onCallEnded = inject<() => void>("onCallEnded");
-const onCallFailed = inject<() => void>("onCallFailed");
+const onCallStarted = inject<(() => void) | undefined>(
+  "onCallStarted",
+  undefined
+);
+const onCallEnded = inject<(() => void) | undefined>("onCallEnded", undefined);
+const onCallFailed = inject<(() => void) | undefined>(
+  "onCallFailed",
+  undefined
+);
 
 const callPopupHeader = ref(null);
 const showCallPopup = ref(false);

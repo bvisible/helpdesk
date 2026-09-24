@@ -4,7 +4,7 @@
       <div>
         <Combobox nullable @update:model-value="onSelection">
           <div class="relative">
-            <div class="pl-4.5 absolute inset-y-0 left-0 flex items-center">
+            <div class="ps-4.5 absolute inset-y-0 start-0 flex items-center">
               <LucideSearch class="h-4 w-4" />
             </div>
             <ComboboxInput
@@ -13,13 +13,13 @@
                   'Search tickets, emails, comments, or #234 to navigate to ticket'
                 )
               "
-              class="pl-11.5 pr-4.5 w-full border-none bg-transparent py-3 text-base text-gray-800 placeholder:text-gray-500 focus:ring-0"
+              class="ps-11.5 pe-4.5 w-full border-none bg-transparent py-3 text-base text-ink-gray-8 placeholder:text-ink-gray-4 focus:ring-0"
               autocomplete="off"
               @input="onInput"
             />
           </div>
           <ComboboxOptions
-            class="max-h-96 overflow-auto border-t border-gray-100"
+            class="max-h-96 overflow-auto border-t border-outline-gray-1"
             static
             :hold="true"
           >
@@ -30,7 +30,7 @@
             >
               <div
                 v-if="!group.hideTitle"
-                class="px-4.5 mb-2.5 text-base text-gray-600"
+                class="px-4.5 mb-2.5 text-base text-ink-gray-5"
               >
                 {{ group.title }}
               </div>
@@ -56,6 +56,8 @@
   </Dialog>
 </template>
 <script setup>
+import { useDevice } from "@/composables";
+import { useShortcut } from "@/composables/shortcuts";
 import { isCustomerPortal } from "@/utils";
 import {
   Combobox,
@@ -63,23 +65,20 @@ import {
   ComboboxOption,
   ComboboxOptions,
 } from "@headlessui/vue";
-import { useDevice } from "@/composables";
-import { useShortcut } from "@/composables/shortcuts";
 
+import { __ } from "@/translation";
 import { Dialog } from "frappe-ui";
 import { computed, h, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import LucideBookOpen from "~icons/lucide/book-open";
-import { showCommentBox, showEmailBox } from "@/pages/ticket/modalStates";
 import LucideTicket from "~icons/lucide/ticket";
 import CPGroup from "./CPGroup.vue";
-import { __ } from "@/translation";
 const router = useRouter();
 const { isMac } = useDevice();
 
 // Reactive data
-const show = defineModel();
+const show = defineModel({ default: false });
 const query = ref("");
 
 // Computed properties

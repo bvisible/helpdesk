@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-[382px] flex-col border-l gap-4">
+  <div class="flex w-[382px] flex-col border-s gap-4">
     <!-- Ticket ID -->
     <div class="flex items-center justify-between border-b px-5 py-3">
       <span class="cursor-copy text-lg font-semibold">{{ __("Ticket details") }}</span>
@@ -36,9 +36,9 @@
         class="flex items-center text-base leading-5"
         v-for="field in ticketBasicInfo"
       >
-        <span class="w-[126px] text-sm text-gray-600">{{ field.label }}</span>
+        <span class="w-[126px] text-sm text-ink-gray-5">{{ field.label }}</span>
         <span
-          class="text-base text-gray-800 flex-1"
+          class="text-base text-ink-gray-8 flex-1"
           :class="!field.value && 'text-ink-gray-4'"
         >
           {{ field.value || "—" }}
@@ -51,11 +51,11 @@
         :key="data.label"
         class="flex items-center text-base"
       >
-        <div class="w-[126px] text-gray-600 text-sm">{{ data.title }}</div>
+        <div class="w-[126px] text-ink-gray-5 text-sm">{{ data.title }}</div>
         <div
-          class="break-words text-base text-gray-800 flex items-center gap-2"
+          class="break-words text-base text-ink-gray-8 flex items-center gap-2"
         >
-          <Tooltip :text="dayjs(data.value).long()">
+          <Tooltip :text="dateFormat(data.value, dateTooltipFormat)">
             <Badge :label="data.label" :theme="data.theme" variant="subtle" />
           </Tooltip>
           <!-- SLA explanation icon -->
@@ -80,20 +80,32 @@
     <!-- feedback component -->
     <TicketFeedback
       v-if="ticket.data.feedback_rating"
-      class="border-b text-base text-gray-600"
+      class="border-b text-base text-ink-gray-5"
       :ticket="ticket.data"
     />
     <div class="flex flex-col gap-4 pt-0 px-5 py-3 overflow-y-scroll">
       <div
         class="flex items-center text-base leading-5"
         v-for="field in ticketAdditionalInfo"
+        :key="field.fieldname"
       >
-        <span class="w-[126px] text-sm text-gray-600">{{ field.label }}</span>
+        <span class="w-[126px] text-sm text-ink-gray-5">{{ field.label }}</span>
         <span
-          class="text-base text-gray-800 flex-1"
+          class="text-base text-ink-gray-8 flex-1"
           :class="!field.value && 'text-ink-gray-4'"
         >
-          {{ field.value || "—" }}
+          <template
+            v-if="
+              field.value &&
+              (field.fieldtype === 'Date' || field.fieldtype === 'Datetime') &&
+              dayjs(field.value).isValid()
+            "
+          >
+            {{ dateFormat(field.value, dateTooltipFormat) }}
+          </template>
+          <template v-else>
+            {{ field.value || "—" }}
+          </template>
         </span>
       </div>
     </div>
@@ -104,7 +116,7 @@
 import { dayjs } from "@/dayjs";
 import { ITicket } from "@/pages/ticket/symbols";
 import { Field } from "@/types";
-import { formatTime } from "@/utils";
+import { dateFormat, dateTooltipFormat, formatTime } from "@/utils";
 import { Avatar, Tooltip } from "frappe-ui";
 import { computed, inject } from "vue";
 import { __ } from "@/translation";
@@ -215,15 +227,18 @@ const ticketBasicInfo = computed(() => [
 const ticketAdditionalInfo = computed(() => {
   const fields = [
     {
-      label: __('Subject'),
+      fieldname: "subject",
+      label: __("Subject"),
       value: ticket.data.subject,
     },
     {
+      fieldname: "team",
       label: "Team",
       value: ticket.data.agent_group || "-",
     },
     {
-      label: __('Priority'),
+      fieldname: "priority",
+      label: __("Priority"),
       value: ticket.data.priority,
     },
   ];
@@ -233,10 +248,24 @@ const ticketAdditionalInfo = computed(() => {
         !field.hide_from_customer &&
         ["subject", "team", "priority"].indexOf(field.fieldname) === -1
     )
-    .map((field: Field) => ({
-      label: field.label,
-      value: ticket.data[field.fieldname],
-    }));
+    .map((field: Field) => {
+      const option = {
+        label: field.label,
+        value: ticket.data[field.fieldname],
+      };
+      if (field.fieldtype === "Date") {
+        option.value = dayjs(option.value).format(
+          window.date_format.toUpperCase()
+        );
+      }
+      if (field.fieldtype === "Datetime") {
+        // window.time_format
+        option.value = dayjs(option.value).format(
+          `${window.date_format.toUpperCase()} ${window.time_format}`
+        );
+      }
+      return option;
+    });
 
   return [...fields, ...custom_fields];
 });

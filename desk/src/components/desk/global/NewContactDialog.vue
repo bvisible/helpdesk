@@ -8,11 +8,11 @@
             :key="field.label"
             class="flex flex-col gap-1"
           >
-            <span class="mb-2 block text-sm leading-4 text-gray-700">
+            <span class="mb-2 block text-sm leading-4 text-ink-gray-7">
               {{ field.label }}
               <span
                 v-if="field.required"
-                class="place-self-center text-red-500"
+                class="place-self-center text-ink-red-3"
               >
                 *
               </span>
@@ -34,7 +34,7 @@
             />
             <ErrorMessage :message="error[field.error]" />
           </div>
-          <div class="flex justify-end space-x-2">
+          <div class="flex justify-end gap-x-2">
             <Button
               :label="__('Create')"
               :loading="contactResource.loading"
@@ -182,7 +182,7 @@ const contactResource = createResource({
       phone: "",
       selectedCustomer: null,
     };
-    toast.success(__("Contact created"));
+    toast.success(__("Contact created successfully."));
     emit("contactCreated");
   },
 });

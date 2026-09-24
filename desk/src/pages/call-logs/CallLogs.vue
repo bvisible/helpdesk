@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-gray-900">{{ __("Call Logs") }}</div>
+        <div class="text-lg font-medium text-ink-gray-9">{{ __("Call Logs") }}</div>
       </template>
       <template #right-header>
         <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->

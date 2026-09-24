@@ -1,10 +1,13 @@
 <template>
-  <div class="flex gap-1">
+  <div
+    v-if="ticketsToNavigate.data?.length > 1"
+    class="flex gap-1 rtl:flex-row-reverse"
+  >
     <Tooltip
       :text="
         getPreviousTicket()
-          ? `Go to previous ticket: #${getPreviousTicket()}`
-          : 'No previous ticket'
+          ? __(`Go to previous ticket (Shift + <)`)
+          : __('No previous ticket')
       "
       :disabled="disableLeftCondition"
     >
@@ -18,8 +21,8 @@
     <Tooltip
       :text="
         getNextTicket()
-          ? `Go to next ticket: #${getNextTicket()}`
-          : 'No next ticket'
+          ? __(`Go to next ticket (Shift + >)`)
+          : __('No next ticket')
       "
       :disabled="disableRightCondition"
     >

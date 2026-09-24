@@ -20,16 +20,16 @@ from helpdesk.utils import (
 def get_list_data(
     doctype: str,
     # flake8: noqa
-    filters={},
-    default_filters={},
+    filters: dict = {},
+    default_filters: dict = {},
     order_by: str = "modified desc",
-    page_length=20,
-    columns=None,
-    rows=None,
-    show_customer_portal_fields=False,
-    view=None,
-    is_default=False,
-):
+    page_length: int = 20,
+    columns: list = [],
+    rows: list = [],
+    show_customer_portal_fields: bool = False,
+    view: dict | None = None,
+    is_default: bool = False,
+) -> dict:
     is_custom = False
 
     rows = frappe.parse_json(rows or "[]")
@@ -44,6 +44,7 @@ def get_list_data(
     label_field = view.get("label_field") if view else None
 
     handle_at_me_support(filters)
+    handle_assigned_on_filter(filters, doctype)
 
     _list = get_controller(doctype)
     default_rows = []
@@ -104,6 +105,8 @@ def get_list_data(
         rows.append(group_by_field)
 
     rows.append("name") if "name" not in rows else rows
+    if doctype == "HD Ticket":
+        rows.append("_seen") if "_seen" not in rows else rows
     data = (
         frappe.get_list(
             doctype,
@@ -245,7 +248,9 @@ def get_list_data(
 # //// first caller's language to every user of the site for a full hour.
 @frappe.whitelist()
 def get_filterable_fields(
-    doctype: str, show_customer_portal_fields=False, ignore_team_restrictions=False
+    doctype: str,
+    show_customer_portal_fields: bool = False,
+    ignore_team_restrictions: bool = False,
 ):
     return translate_labels(
         _get_filterable_fields(
@@ -377,6 +382,12 @@ def _get_filterable_fields(
         },
         {"fieldname": "creation", "fieldtype": "Datetime", "label": "Created On"},
         {"fieldname": "modified", "fieldtype": "Datetime", "label": "Last Updated On"},
+        {
+            "fieldname": "__assigned_on",
+            "fieldtype": "Date",
+            "label": "Assigned on",
+            "name": "__assigned_on",
+        },
     ]
     for field in standard_fields:
         if field.get("fieldname") not in [r.get("fieldname") for r in res]:
@@ -385,7 +396,7 @@ def _get_filterable_fields(
 
 
 @frappe.whitelist()
-def sort_options(doctype: str, show_customer_portal_fields=False):
+def sort_options(doctype: str, show_customer_portal_fields: bool = False):
     fields = frappe.get_meta(doctype).fields
     fields = [field for field in fields if field.fieldtype not in no_value_fields]
     fields = [
@@ -418,7 +429,7 @@ def sort_options(doctype: str, show_customer_portal_fields=False):
 
 
 @frappe.whitelist()
-def get_quick_filters(doctype: str, show_customer_portal_fields=False):
+def get_quick_filters(doctype: str, show_customer_portal_fields: bool = False):
     meta = frappe.get_meta(doctype)
     fields = [field for field in meta.fields if field.in_standard_filter]
     quick_filters = []
@@ -551,8 +562,88 @@ def handle_at_me_support(filters):
     return filters
 
 
+def handle_assigned_on_filter(filters, doctype):
+    """
+    Handle the custom __assigned_on filter by querying ToDo table
+    and returning ticket names that match the assignment date criteria.
+    """
+    if "__assigned_on" not in filters:
+        return filters
+
+    assigned_on_filter = filters.pop("__assigned_on")
+
+    # Build ToDo query based on the operator and value
+    ToDo = frappe.qb.DocType("ToDo")
+    query = (
+        frappe.qb.from_(ToDo)
+        .select(ToDo.reference_name)
+        .distinct()
+        .where(ToDo.reference_type == doctype)
+        .where(ToDo.allocated_to == frappe.session.user)
+        .where(ToDo.status == "Open")
+    )
+
+    # Apply date filter based on operator
+    query = apply_datetime_filter(query, ToDo.creation, assigned_on_filter)
+
+    ticket_names = [row[0] for row in query.run()]
+
+    if ticket_names:
+        # Merge with existing name filter if present
+        if "name" in filters:
+            existing_filter = filters["name"]
+            if isinstance(existing_filter, list) and existing_filter[0] == "in":
+                # Intersection of both filters
+                ticket_names = list(set(ticket_names) & set(existing_filter[1]))
+        filters["name"] = ["in", ticket_names]
+    else:
+        # No matching tickets, add impossible filter
+        filters["name"] = ["in", []]
+
+    return filters
+
+
+def apply_datetime_filter(query, field, filter_value):
+    """Apply datetime filter to query based on operator."""
+    if isinstance(filter_value, list):
+        operator, value = filter_value[0], filter_value[1]
+    else:
+        operator, value = "=", filter_value
+
+    if operator == "=":
+        query = query.where(field == value)
+    elif operator == "!=":
+        query = query.where(field != value)
+    elif operator == ">":
+        query = query.where(field > value)
+    elif operator == "<":
+        query = query.where(field < value)
+    elif operator == ">=":
+        query = query.where(field >= value)
+    elif operator == "<=":
+        query = query.where(field <= value)
+    elif operator == "between":
+        if isinstance(value, list) and len(value) == 2:
+            query = query.where(field >= value[0]).where(field <= value[1])
+    elif operator == "timespan":
+        from frappe.utils import get_datetime, get_timespan_date_range
+
+        start, end = get_timespan_date_range(value)
+        # convert to datetime to include full start and end day
+        start_dt = get_datetime(str(start)).replace(hour=0, minute=0, second=0)
+        end_dt = get_datetime(str(end)).replace(hour=23, minute=59, second=59)
+        query = query.where(field >= start_dt).where(field <= end_dt)
+    elif operator == "is":
+        if value == "set":
+            query = query.where(field.isnotnull())
+        else:
+            query = query.where(field.isnull())
+
+    return query
+
+
 @frappe.whitelist()
-def remove_assignments(doctype, name, assignees, ignore_permissions=False):
+def remove_assignments(doctype: str, name: str, assignees: list[str]):
     assignees = frappe.parse_json(assignees)
 
     if not assignees:
@@ -565,5 +656,4 @@ def remove_assignments(doctype, name, assignees, ignore_permissions=False):
             todo=None,
             assign_to=assign_to,
             status="Cancelled",
-            ignore_permissions=ignore_permissions,
         )

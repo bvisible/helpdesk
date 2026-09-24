@@ -16,12 +16,17 @@ class HDTicketComment(HasMentions, Document):
 
     def on_update(self):
         if self.has_value_changed("content"):
-            self.notify_mentions()
+            original_content = (
+                self.get_doc_before_save().content
+                if self.get_doc_before_save()
+                else None
+            )
+            self.notify_mentions(original_content=original_content)
 
     def after_insert(self):
         event = "helpdesk:ticket-comment"
         data = {"ticket_id": self.reference_ticket}
-        telemetry_event = "ticket_comment_added"
+        telemetry_event = "comment_added"
 
         room = get_doc_room("HD Ticket", self.reference_ticket)
         publish_event(
@@ -30,6 +35,7 @@ class HDTicketComment(HasMentions, Document):
             data=data,
         )
         capture_event(telemetry_event)
+        self.notify_mentions()
 
     def after_delete(self):
         event = "helpdesk:ticket-comment"
@@ -43,6 +49,12 @@ class HDTicketComment(HasMentions, Document):
 
 @frappe.whitelist()
 def toggle_reaction(comment: str, emoji: str):
+    # frappe.has_permission(doctype, perm, user=user, doc=doc, parent_doctype=parent)
+    # frappe.has_permission("Email Account", "create", throw=True)
+    ticket = frappe.get_value("HD Ticket Comment", comment, "reference_ticket")
+    frappe.has_permission("HD Ticket", "read", ticket, throw=True)
+    frappe.has_permission("HD Ticket", "write", ticket, throw=True)
+
     if not frappe.db.get_single_value("HD Settings", "enable_comment_reactions"):
         return
 
@@ -139,9 +151,9 @@ def notify_reaction(doc, emoji, user):
 
     count = len(reacting_users)
     if count == 1:
-        message = "1 person reacted to your comment"
+        message = _("1 person reacted to your comment")
     else:
-        message = "{} people reacted to your comment".format(count)
+        message = _("{} people reacted to your comment").format(count)
 
     existing = frappe.db.get_value(
         "HD Notification",

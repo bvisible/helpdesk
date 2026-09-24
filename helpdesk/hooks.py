@@ -7,6 +7,7 @@ app_color = "grey"
 app_email = "hello@frappe.io"
 app_license = "AGPLv3"
 required_apps = ["telephony"]
+require_type_annotated_api_methods = True
 
 add_to_apps_screen = [
     {
@@ -18,11 +19,14 @@ add_to_apps_screen = [
     }
 ]
 
+get_site_info = "helpdesk.activation.get_site_info"
+
 after_install = "helpdesk.setup.install.after_install"
 after_migrate = [
     "helpdesk.search.build_index_in_background",
     "helpdesk.search.download_corpus",
 ]
+
 
 # Full Text Search
 # ------------------
@@ -36,6 +40,9 @@ scheduler_events = {
     ],
     "daily": [
         "helpdesk.helpdesk.doctype.hd_ticket.hd_ticket.close_tickets_after_n_days"
+    ],
+    "hourly_long": [
+        "helpdesk.helpdesk.doctype.hd_ticket.hd_ticket.update_sla_status_in_ticket"
     ],
 }
 
@@ -104,12 +111,28 @@ permission_query_conditions = {
 # Override standard doctype classes
 override_doctype_class = {
     "Email Account": "helpdesk.overrides.email_account.CustomEmailAccount",
+    # //// Neoffice — upstream's "Customer": "helpdesk.integrations.erpnext.customer.CustomCustomer"
+    # //// is left out. neoffice_theme already overrides the Customer class
+    # //// (NeofficeCustomer: the duplicate-contact fix, the e-mail required at creation),
+    # //// and frappe keeps ONE override per doctype: the last app installed wins, in
+    # //// silence. On a bench where helpdesk is installed after the theme (measured on the
+    # //// dev instance), upstream's class would have erased ours. What it adds only runs
+    # //// when ERPNext HD Settings is enabled, which it is not by default; the
+    # //// ERP -> helpdesk mirror is ours (overrides/customer.py), through doc_events,
+    # //// which several apps can register without erasing one another. Restore it only
+    # //// once NeofficeCustomer inherits from it, or the reverse.
+    "User Permission": "helpdesk.integrations.erpnext.user_permission.CustomUserPermission",
+    "DocShare": "helpdesk.integrations.erpnext.doc_share.CustomDocShare",
 }
 
 ignore_links_on_delete = [
     "HD Notification",
     "HD Ticket Comment",
 ]
+
+doctype_list_js = {
+    "Customer": "public/erpnext/customer_list.js",
+}
 
 # setup wizard
 # setup_wizard_requires = "assets/helpdesk/js/setup_wizard.js"
