@@ -11,6 +11,9 @@ from frappe.desk.form.assign_to import add as assign
 from frappe.desk.form.assign_to import clear as clear_all_assignments
 from frappe.desk.form.assign_to import get as get_assignees
 from frappe.model.document import Document
+
+# //// Neoffice — added: tickets take their number from a counter of their own (see autoname).
+from frappe.model.naming import getseries
 from frappe.permissions import add_permission, update_permission_property
 from frappe.query_builder import DocType, Order
 from frappe.utils import add_to_date, getdate, now_datetime
@@ -43,6 +46,9 @@ from helpdesk.utils import (
 from ..hd_notification.utils import clear as clear_notifications
 from ..hd_service_level_agreement.utils import get_sla
 
+# //// Neoffice — added: the tabSeries key ticket numbers are drawn from (see HDTicket.autoname).
+TICKET_COUNTER = "HD Ticket"
+
 
 class HDTicket(Document):
     @property
@@ -68,6 +74,29 @@ class HDTicket(Document):
         )
 
     def autoname(self):
+        # //// Neoffice ▼▼▼ — tickets are numbered on a counter of their own. Upstream's
+        # //// ".####" (patch set_hd_ticket_naming_series) draws from the EMPTY-prefix
+        # //// series, which every other empty-prefix naming of the site moves too: LMS
+        # //// Course Chapter / Course Lesson ("format:{####} {title}") and ERPNext Quality
+        # //// Goal Objective ("format:{####}"). Measured on 2026-09-24, that series stood at
+        # //// 10 557 on the hub, 16 949 on the dev instance and 105 on a client, against last
+        # //// tickets #33, #4 and #1: the next ticket became #10558, the number the customer
+        # //// reads in the acknowledgement, and every later one came after a gap. Same
+        # //// zero-padded format as upstream. The counter starts right after the highest
+        # //// ticket, seeded once per site (INSERT IGNORE: two first tickets arriving at
+        # //// once cannot seed it twice). frappe clears self.name before calling this,
+        # //// except in an import, where an explicit name is kept, as upstream did.
+        if not self.name:
+            if not frappe.db.sql("SELECT 1 FROM `tabSeries` WHERE name=%s", (TICKET_COUNTER,)):
+                top = frappe.db.sql(
+                    "SELECT IFNULL(MAX(CAST(name AS UNSIGNED)), 0) FROM `tabHD Ticket`"
+                )[0][0]
+                frappe.db.sql(
+                    "INSERT IGNORE INTO `tabSeries` (name, current) VALUES (%s, %s)",
+                    (TICKET_COUNTER, int(top)),
+                )
+            self.name = getseries(TICKET_COUNTER, 4)
+        # //// Neoffice ▲▲▲
         return self.name
 
     def before_insert(self):
