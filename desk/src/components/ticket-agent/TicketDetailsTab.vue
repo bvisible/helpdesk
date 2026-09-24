@@ -123,11 +123,11 @@
                       {{ formatDate(t.creation as string) + " · " }}
                       <span class="">{{ "#" + t.name }}</span>
                     </p>
-                    <!-- //// Neoffice — the badge printed the stored status ("Closed"...) as is; translated at display, the value still picks the colour (same pass as 71a5669d9) -->
                     <span
                       class="text-xs px-2 py-0.5 font-base shrink-0 rounded-sm"
                       :class="getStatusColor(t.status as string)"
                     >
+                      <!-- //// Neoffice — the badge printed the stored status ("Closed"...) as is; translated at display, the value still picks the colour (same pass as 71a5669d9) -->
                       {{ __(t.status as string) }}
                     </span>
                   </div>
