@@ -111,7 +111,38 @@
           handlePageLength(count);
         }
       "
-    />
+    >
+      <!-- //// Neoffice — frappe-ui's ListFooter (0.1.278) writes "Load More" and "of"
+           //// in plain English, so every list of a French site ended on "3 of 3". Its
+           //// right side is rendered here through __(): "3 sur 3", "Charger plus". The
+           //// button keeps upstream's condition (showLoadMore) and its action. -->
+      <template #right>
+        <div class="flex items-center">
+          <template
+            v-if="
+              list?.data?.row_count &&
+              list?.data?.total_count &&
+              list.data.row_count < list.data.total_count
+            "
+          >
+            <Button
+              :label="__('Load More')"
+              @click="handlePageLength(defaultParams.page_length_count, true)"
+            />
+            <div class="mx-3 h-[80%] border-l" />
+          </template>
+          <div class="text-base text-ink-gray-5">
+            {{
+              __(
+                "{0} of {1}",
+                String(list?.data?.row_count || 0),
+                String(list?.data?.total_count || 0)
+              )
+            }}
+          </div>
+        </div>
+      </template>
+    </ListFooter>
   </div>
   <!-- Empty State -->
   <EmptyState
