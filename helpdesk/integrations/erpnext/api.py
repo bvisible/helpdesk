@@ -78,6 +78,20 @@ def sync_all_customers():
         fields=["name", "customer_name", "image"],
     )
     for erp in unlinked_erp:
+        # //// Neoffice ▼▼▼ — an HD Customer that already points at this Customer IS
+        # //// its pair: take it. Our one-way mirror (helpdesk/overrides/customer.py)
+        # //// writes exactly those while this integration is off — erpnext_customer
+        # //// set, and no back-link, since the hd_customer field only exists once the
+        # //// integration is enabled. Upstream's branches below skip them (the name is
+        # //// taken), so on a site the mirror filled, switching the integration on left
+        # //// every Customer unlinked and in_sync() False for good.
+        paired_hd = frappe.db.get_value(
+            "HD Customer", {"erpnext_customer": erp.name}, "name"
+        )
+        if paired_hd:
+            set_links(erp.name, paired_hd)
+            continue
+        # //// Neoffice ▲▲▲
         existing_hd = frappe.db.get_value(
             "HD Customer",
             {"name": erp.name, "erpnext_customer": ["is", "not set"]},
