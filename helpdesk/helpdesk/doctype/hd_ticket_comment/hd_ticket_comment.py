@@ -59,8 +59,12 @@ def toggle_reaction(comment: str, emoji: str):
         return
 
     if emoji not in PRESET_EMOJIS:
+        # //// Neoffice — upstream wrote it in plain English (an f-string); one msgid now, so the
+        # //// French catalogue reaches it (same pass as 71a5669d9)
         frappe.throw(
-            f"Invalid emoji. Only preset emojis are allowed: {', '.join(PRESET_EMOJIS)}"
+            _("Invalid emoji. Only preset emojis are allowed: {0}").format(
+                ", ".join(PRESET_EMOJIS)
+            )
         )
 
     if not frappe.db.exists("HD Ticket Comment", comment):

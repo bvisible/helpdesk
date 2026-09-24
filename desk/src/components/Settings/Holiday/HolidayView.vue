@@ -23,9 +23,9 @@
       <div v-if="!holidayData.loading" class="h-full">
         <div class="flex items-center gap-2 mt-2">
           <span class="text-sm">
-            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-            {{ __("There are in total") }} <b>{{ holidayData.holidays.length }}</b> holidays
-            in this list</span
+            <!-- //// Neoffice — one sentence cut around the bold count: only its first fragment went through __() and the rest stayed in plain English. One msgid with {0} where the count goes, halves read back from the translation (holidaysTotalNote; same pattern as MergeCategoryModal, 71a5669d9) -->
+            {{ holidaysTotalNote.before }}<b>{{ holidayData.holidays.length }}</b
+            >{{ holidaysTotalNote.after }}</span
           >
         </div>
         <hr class="mb-8 mt-2" />
@@ -216,7 +216,8 @@ import {
   TabButtons,
   toast,
 } from "frappe-ui";
-import { inject, onMounted, onUnmounted, ref, watch } from "vue";
+//// Neoffice — `computed` added for holidaysTotalNote below.
+import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
 import HolidaysTableView from "./HolidaysTableView.vue";
 import RecurringHolidaysList from "./RecurringHolidaysList.vue";
 
@@ -245,6 +246,14 @@ const dialog = ref({
 
 const isDirty = ref(false);
 const initialData = ref(null);
+//// Neoffice — one message, {0} where the bold holiday count goes; the halves are read back from
+//// the translation so each language keeps its own word order (see the template).
+const holidaysTotalNote = computed(() => {
+  const [before, after] = __(
+    "There are in total {0} holidays in this list"
+  ).split("{0}");
+  return { before, after: after ?? "" };
+});
 const holidayListView = ref("calendar");
 
 const showConfirmDialog = ref(false);

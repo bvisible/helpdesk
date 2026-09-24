@@ -207,6 +207,14 @@ def _pot_declarations():
         _("Last Updated On"),
         _("Assigned to"),
         _("First Response"),
+        # //// Neoffice — added after the upstream merge of 2026-09-24: api/doc.py's standard_fields
+        # //// gained "Assigned on", and setup/default_views.py creates standard HD Views whose names
+        # //// are persisted and translated where the SPA shows them (same reasons as above).
+        _("Assigned on"),
+        _("SLA Alerts"),
+        _("Recently Assigned Tickets"),
+        _("Pending Tickets"),
+        _("My Feedback"),
     ]
 
 
@@ -549,16 +557,20 @@ def format_time_difference(dt, context="ago"):
         past_label = "overdue"
     else:
         diff = now - dt
-        past_label = "0m"
+        # //// Neoffice — the unit letters are shown in the home page's reason texts: wrapped so
+        # //// a translation can change them (French writes "j" for days), same pass as 71a5669d9.
+        # //// "overdue" above stays English: it is a sentinel the callers compare, never shown.
+        past_label = _("{0}m").format(0)
 
     total_seconds = diff.total_seconds()
 
     if total_seconds < 0:
         return past_label
 
+    # //// Neoffice — unit letters wrapped (see past_label above)
     if total_seconds < 3600:
-        return f"{int(total_seconds // 60)}m"
+        return _("{0}m").format(int(total_seconds // 60))
     elif total_seconds < 86400:
-        return f"{int(total_seconds // 3600)}h"
+        return _("{0}h").format(int(total_seconds // 3600))  # //// Neoffice — wrapped, see above
     else:
-        return f"{int(total_seconds // 86400)}d"
+        return _("{0}d").format(int(total_seconds // 86400))  # //// Neoffice — wrapped, see above

@@ -13,7 +13,8 @@
         }"
         target="_blank"
       >
-        <span class="text-xs underline">(View All)</span>
+        <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+        <span class="text-xs underline">{{ __("(View All)") }}</span>
       </RouterLink>
     </div>
     <dl

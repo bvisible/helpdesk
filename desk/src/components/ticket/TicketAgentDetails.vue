@@ -66,7 +66,10 @@ const firstResponseBadge = computed(() => {
     }
     handleFirstResponseInterval(responseBy);
     firstResponse = {
-      label: `Due in ${formatTime(firstResponseSeconds.value)}`,
+      //// Neoffice — upstream wrote these SLA labels in plain English (template literals); one msgid
+      //// each, {0} for the duration, so the French catalogue reaches them (same pass as 71a5669d9).
+      //// formatTime's own output stays as is: getTimeInSeconds parses its unit letters back.
+      label: __("Due in {0}", formatTime(firstResponseSeconds.value)),
       color: "orange",
       date: props.ticket.response_by,
     };
@@ -76,12 +79,16 @@ const firstResponseBadge = computed(() => {
     )
   ) {
     firstResponse = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(props.ticket.first_responded_on).diff(
-          dayjs(props.ticket.creation),
-          "s"
+      //// Neoffice — SLA label wrapped (see the note in the "Due in" branch above)
+      label: __(
+        "Fulfilled in {0}",
+        formatTime(
+          dayjs(props.ticket.first_responded_on).diff(
+            dayjs(props.ticket.creation),
+            "s"
+          )
         )
-      )}`,
+      ), //// Neoffice — end of the wrapped "Fulfilled in {0}" label
       color: "green",
       date: props.ticket.first_responded_on,
     };
@@ -109,7 +116,8 @@ const resolutionBadge = computed(() => {
   ) {
     let timeLeft = dayjs(props.ticket.resolution_by).diff(dayjs(), "s");
     resolution = {
-      label: `${formatTime(timeLeft)} left (On Hold)`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponseBadge)
+      label: __("{0} left (On Hold)", formatTime(timeLeft)),
       color: "blue",
       date: props.ticket.on_hold_since,
     };
@@ -123,15 +131,18 @@ const resolutionBadge = computed(() => {
     handleResolutionInterval(resolutionBy);
 
     resolution = {
-      label: `Due in ${formatTime(resolutionSeconds.value)}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponseBadge)
+      label: __("Due in {0}", formatTime(resolutionSeconds.value)),
       color: "orange",
       date: props.ticket.resolution_by,
     };
   } else if (props.ticket.agreement_status === "Fulfilled") {
+    //// Neoffice — duration computed before the __() call: inside it, the .vue extractor would
+    //// read the "s" argument of dayjs() as a translation context of "Fulfilled in {0}".
+    const fulfilledIn = formatTime(dayjs(props.ticket.resolution_time, "s"));
     resolution = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(props.ticket.resolution_time, "s")
-      )}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponseBadge)
+      label: __("Fulfilled in {0}", fulfilledIn),
       color: "green",
       date: props.ticket.resolution_date,
     };
@@ -176,7 +187,9 @@ const sections = computed(() => [
   // //// Neoffice — see the marker above: label wrapped in __()
   {
     label: __('Source'),
-    value: props.ticket.via_customer_portal ? "Portal" : "Mail",
+    //// Neoffice — upstream wrote the source in plain English; shown as is, compared nowhere:
+    //// wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    value: props.ticket.via_customer_portal ? __("Portal") : __("Mail"),
   },
 ]);
 

@@ -34,11 +34,12 @@
                 />
                 <div class="text-wrap text-xs text-ink-gray-7">
                   {{ selectedService.info }}
+                  <!-- //// Neoffice — upstream wrote the link text in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9; "here" is already the link msgid of TicketSettings / Notification) -->
                   <a
                     :href="selectedService.link"
                     target="_blank"
                     class="text-ink-blue-2 underline"
-                    >here</a
+                    >{{ __("here") }}</a
                   >.
                 </div>
               </div>

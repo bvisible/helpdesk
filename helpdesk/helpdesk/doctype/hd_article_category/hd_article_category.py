@@ -19,10 +19,12 @@ class HDArticleCategory(Document):
             "HD Article Category",
             {"category_name": "General", "name": ("!=", self.name)},
         ):
+            # //// Neoffice — upstream passed self.name as _()'s second argument, which is `lang`:
+            # //// the message was looked up in a "language" named after the category and always
+            # //// came back English. The msgid has no placeholder, so the argument is dropped.
             frappe.throw(
                 _(
-                    "General is a reserved category name. Please use a different name to proceed.",
-                    self.name,
+                    "General is a reserved category name. Please use a different name to proceed."
                 )
             )
 

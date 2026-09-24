@@ -1,5 +1,6 @@
 <template>
-  <Dialog v-model="showSubjectDialog" :options="{ title: 'Rename Subject' }">
+  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+  <Dialog v-model="showSubjectDialog" :options="{ title: __('Rename Subject') }">
     <template #body-content>
       <div class="flex flex-col flex-1 gap-3">
         <FormControl

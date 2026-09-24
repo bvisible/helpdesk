@@ -139,6 +139,8 @@
 <script setup lang="ts">
 import { FieldCriteriaState } from "@/types";
 import { computed } from "vue";
+//// Neoffice — import added for the placeholder / checkbox label wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps<{
   isNew: boolean;
@@ -161,16 +163,21 @@ const filteredChildFieldValues = computed(() => {
   );
 });
 
+//// Neoffice — upstream wrote these placeholders in plain English (template literals); one msgid
+//// each, so the French catalogue reaches them (same pass as 71a5669d9). {0} is the field's
+//// label (translated like everywhere else it is shown) or the selected parent value (data).
 const parentPlaceholder = computed(() => {
-  if (!state.value.selectedParentField) return "Search values";
+  if (!state.value.selectedParentField) return __("Search values");
   let label = props.parentFields.find(
     (f) => f.value === state.value.selectedParentField
   )?.label;
-  return `Search ${label} values`;
+  //// Neoffice — see the note above parentPlaceholder
+  return __("Search {0} values", __(label));
 });
+//// Neoffice — see the note above parentPlaceholder
 const childPlaceholder = computed(() => {
-  if (!state.value.currentParentSelection) return "Search values";
-  return `Search ${state.value.currentParentSelection} values`;
+  if (!state.value.currentParentSelection) return __("Search values");
+  return __("Search {0} values", state.value.currentParentSelection);
 });
 
 function handleParentValueClick(value: string) {
@@ -218,14 +225,17 @@ const toggleAllChildValues = computed({
   },
 });
 
+//// Neoffice — upstream built "N value(s) selected" from English fragments; one msgid per form
+//// now, so the French catalogue reaches it (same pass as 71a5669d9).
 const toggleCheckboxLabel = computed(() => {
   const parent = state.value.currentParentSelection;
-  if (!parent) return "Select All";
+  if (!parent) return __("Select All");
   const selectedCount = getSelectedChildValueCount(parent);
-  if (selectedCount === 0) return "Select All";
-  return `${selectedCount} ${
-    selectedCount === 1 ? "value" : "values"
-  } selected`;
+  //// Neoffice — see the note above toggleCheckboxLabel
+  if (selectedCount === 0) return __("Select All");
+  return selectedCount === 1
+    ? __("{0} value selected", String(selectedCount))
+    : __("{0} values selected", String(selectedCount));
 });
 
 function handleSelectAllChildValues(value: boolean) {

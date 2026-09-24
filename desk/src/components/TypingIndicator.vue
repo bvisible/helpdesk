@@ -18,6 +18,8 @@ import { useTyping } from "@/composables/realtime";
 import { useUserStore } from "@/stores/user";
 import { computed, h, onBeforeUnmount } from "vue";
 import UserAvatar from "./UserAvatar.vue";
+//// Neoffice — import added for the sentences below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps({
   ticketId: {
@@ -28,6 +30,18 @@ const props = defineProps({
 
 const { typingUsers, cleanup } = useTyping(props.ticketId);
 
+//// Neoffice — upstream glued English fragments (" is typing", " and ", " are typing") between the
+//// bold names, which no translation can reorder. Each sentence is one msgid now, with {0} / {1}
+//// where the bold parts go: the TRANSLATED text is split on those placeholders and the styled
+//// nodes are put back in their place, so each language keeps its own word order.
+function typingSentence(message: string, parts: ReturnType<typeof h>[]) {
+  return message.split(/(\{\d+\})/).map((piece) => {
+    const slot = piece.match(/^\{(\d+)\}$/);
+    if (slot) return parts[Number(slot[1])];
+    return piece ? h("span", { class: "text-ink-gray-5" }, piece) : null;
+  });
+}
+
 const typingMessage = computed(() => {
   const count = typingUsers.length;
   if (count === 0) return null;
@@ -37,32 +51,36 @@ const typingMessage = computed(() => {
   console.log(typingUsers);
 
   if (count === 1) {
+    //// Neoffice — one msgid per sentence (see typingSentence above)
     return h("div", { class: "flex items-center gap-1" }, [
       h(UserAvatar, { name: typingUsers[0], size: "sm" }),
-      h("span", { class: "text-ink-gray-6 font-medium" }, firstUser),
-      h("span", { class: "text-ink-gray-5" }, " is typing"),
+      ...typingSentence(__("{0} is typing"), [
+        h("span", { class: "text-ink-gray-6 font-medium" }, firstUser),
+      ]),
     ]);
   } else if (count === 2) {
+    //// Neoffice — one msgid per sentence (see typingSentence above)
     return h("div", { class: "flex items-center gap-1" }, [
-      h("span", { class: "text-ink-gray-6 font-medium" }, firstUser),
-      h("span", { class: "text-ink-gray-5" }, " and "),
-      h(
-        "span",
-        { class: "text-ink-gray-6 font-medium" },
-        getUser(typingUsers[1])?.full_name
-      ),
-      h("span", { class: "text-ink-gray-5" }, " are typing"),
+      ...typingSentence(__("{0} and {1} are typing"), [
+        h("span", { class: "text-ink-gray-6 font-medium" }, firstUser),
+        h(
+          "span",
+          { class: "text-ink-gray-6 font-medium" },
+          getUser(typingUsers[1])?.full_name
+        ),
+      ]),
     ]);
   } else {
+    //// Neoffice — one msgid per sentence (see typingSentence above); "N others" is its own msgid
     return h("div", { class: "flex items-center gap-1" }, [
-      h("span", { class: "text-ink-gray-6 font-medium" }, firstUser),
-      h("span", { class: "text-ink-gray-5" }, " and "),
-      h(
-        "span",
-        { class: "text-ink-gray-6 font-medium" },
-        `${count - 1} others`
-      ),
-      h("span", { class: "text-ink-gray-5" }, " are typing"),
+      ...typingSentence(__("{0} and {1} are typing"), [
+        h("span", { class: "text-ink-gray-6 font-medium" }, firstUser),
+        h(
+          "span",
+          { class: "text-ink-gray-6 font-medium" },
+          __("{0} others", String(count - 1))
+        ),
+      ]),
     ]);
   }
 });

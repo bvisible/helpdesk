@@ -210,7 +210,8 @@ const emojiList = ["👍", "👎", "❤️", "🎉", "👀", "✅"];
 
 const dropdownOptions = computed(() => [
   {
-    label: "Edit",
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    label: __("Edit"),
     onClick: () => handleEditMode(),
     icon: "edit-2",
     condition: () => !isTicketMergedComment.value,

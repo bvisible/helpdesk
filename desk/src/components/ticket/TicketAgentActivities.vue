@@ -1,5 +1,6 @@
 <template>
-  <ActivityHeader :title="title" />
+  <!-- //// Neoffice — passes the tab identity: ActivityHeader showed the call actions on `title == 'Calls'`, a translated label -->
+  <ActivityHeader :title="title" :tab="tab" />
   <FadedScrollableDiv
     class="flex flex-col flex-1 overflow-y-auto"
     :mask-length="20"

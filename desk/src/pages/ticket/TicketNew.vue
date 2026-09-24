@@ -265,7 +265,9 @@ const ticket = createResource({
     const toVerify = [...fields, "subject", "description"];
     for (const field of toVerify) {
       if (!params.doc[field.fieldname || field]) {
-        return `${field.label || field} is required`;
+        //// Neoffice — upstream wrote it in plain English (a template literal); one msgid with {0}
+        //// for the field label, translated like the label itself (same pass as 71a5669d9)
+        return __("{0} is required", __(field.label || field));
       }
     }
   },

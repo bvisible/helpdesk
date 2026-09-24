@@ -136,11 +136,15 @@ type RoleOption = {
 const roleToLabel = (role: Role) => {
   switch (role) {
     case "Agent":
-      return "Agent";
+      //// Neoffice — upstream wrote the role labels in plain English; wrapped so the French catalogue
+      //// reaches them (same pass as 71a5669d9). The Role values stay the identity sent to the server.
+      return __("Agent");
     case "Agent Manager":
-      return "Manager";
+      //// Neoffice — label translated, value kept (see above)
+      return __("Manager");
     case "System Manager":
-      return "Admin";
+      //// Neoffice — label translated, value kept (see above)
+      return __("Admin");
     default:
       const x: never = role;
       throw new Error(`Invalid role: ${x}`);
@@ -215,19 +219,24 @@ const inviteByEmailResource = createResource({
     resetInputValues();
     let emailsStr = emailsToStr(data.invited_emails);
     if (emailsStr.trim() !== "") {
-      toast.success(`${emailsStr} invited successfully`);
+      //// Neoffice — upstream wrote these toasts in plain English (template literals); one msgid each
+      //// now, so the French catalogue reaches them (same pass as 71a5669d9)
+      toast.success(__("{0} invited successfully", emailsStr));
     }
     emailsStr = emailsToStr(data.disabled_user_emails);
     if (emailsStr.trim() !== "") {
-      toast.info(`${emailsStr} already present and disabled`);
+      //// Neoffice — same as above: one msgid, {0} for the addresses
+      toast.info(__("{0} already present and disabled", emailsStr));
     }
     emailsStr = emailsToStr(data.pending_invite_emails);
     if (emailsStr.trim() !== "") {
-      toast.info(`${emailsStr} already invited`);
+      //// Neoffice — same as above: one msgid, {0} for the addresses
+      toast.info(__("{0} already invited", emailsStr));
     }
     emailsStr = emailsToStr(data.accepted_invite_emails);
     if (emailsStr.trim() !== "") {
-      toast.info(`${emailsStr} already present`);
+      //// Neoffice — same as above: one msgid, {0} for the addresses
+      toast.info(__("{0} already present", emailsStr));
     }
     pendingInvitesResource.reload();
     updateOnboardingStep("invite_your_team");
@@ -250,7 +259,8 @@ const cancelInviteResource = createResource({
   url: "frappe.core.api.user_invitation.cancel_invitation",
   method: "PATCH",
   onSuccess() {
-    toast.success("Invitation cancelled successfully");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.success(__("Invitation cancelled successfully"));
     pendingInvitesResource.fetch();
   },
 });

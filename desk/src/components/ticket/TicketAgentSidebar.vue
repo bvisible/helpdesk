@@ -3,10 +3,11 @@
     <div
       class="flex h-10.5 items-center border-b px-5 py-2.5 text-lg font-medium text-ink-gray-9 justify-between"
     >
+      <!-- //// Neoffice — the copy message was a plain-English template literal; one msgid now, the one TicketSLA uses (same pass as 71a5669d9) -->
       <span
         class="cursor-copy text-lg font-semibold"
         @click="
-          copyToClipboard(ticket.name, `'${ticket.name}' copied to clipboard`)
+          copyToClipboard(ticket.name, __('Ticket #{0} copied to clipboard', ticket.name))
         "
         >#{{ ticket.name }}
       </span>

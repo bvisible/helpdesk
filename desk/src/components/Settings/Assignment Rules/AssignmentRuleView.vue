@@ -167,12 +167,10 @@
               "
             >
               <span class="text-p-sm">
-                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-                {{ __("Conditions for this rule were created from") }}
-                <a :href="deskUrl" target="_blank" class="underline">desk</a>
-                which are not compatible with this UI, you will need to recreate
-                the conditions here if you want to manage and add new conditions
-                from this UI.
+                <!-- //// Neoffice — one sentence cut around the link: only its first fragment went through __() and the rest stayed in plain English. One msgid with {0} where the link goes, halves read back from the translation (deskConditionsNote; same pattern as MergeCategoryModal, 71a5669d9) -->
+                {{ deskConditionsNote.before
+                }}<a :href="deskUrl" target="_blank" class="underline">desk</a
+                >{{ deskConditionsNote.after }}
               </span>
               <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
@@ -250,12 +248,10 @@
               "
             >
               <span class="text-p-sm">
-                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-                {{ __("Conditions for this rule were created from") }}
-                <a :href="deskUrl" target="_blank" class="underline">desk</a>
-                which are not compatible with this UI, you will need to recreate
-                the conditions here if you want to manage and add new conditions
-                from this UI.
+                <!-- //// Neoffice — same sentence as above: one msgid with {0} for the link (deskConditionsNote) -->
+                {{ deskConditionsNote.before
+                }}<a :href="deskUrl" target="_blank" class="underline">desk</a
+                >{{ deskConditionsNote.after }}
               </span>
               <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Button
@@ -329,7 +325,8 @@ import {
   Switch,
   toast,
 } from "frappe-ui";
-import { onMounted, onUnmounted, provide, ref, watch } from "vue";
+//// Neoffice — `computed` added for deskConditionsNote below.
+import { computed, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import {
   assignmentRuleData,
   assignmentRulesActiveScreen,
@@ -372,6 +369,14 @@ const useNewUIForUnassignCondition = ref(true);
 const isAssignConditionOld = ref(false);
 const isUnassignConditionOld = ref(false);
 const deskUrl = `${window.location.origin}/app/assignment-rule/${assignmentRulesActiveScreen.value.data?.name}`;
+//// Neoffice — one message, {0} where the desk link goes; the halves are read back from the
+//// translation so each language keeps its own word order (see the template).
+const deskConditionsNote = computed(() => {
+  const [before, after] = __(
+    "Conditions for this rule were created from {0} which are not compatible with this UI, you will need to recreate the conditions here if you want to manage and add new conditions from this UI."
+  ).split("{0}");
+  return { before, after: after ?? "" };
+});
 
 const getAssignmentRuleData = createResource({
   url: "frappe.client.get",
@@ -387,7 +392,8 @@ const getAssignmentRuleData = createResource({
       assignConditionJson = JSON.parse(data.assign_condition_json || "[]");
     } catch (error) {
       toast.error(
-        "Assignment conditions are invalid or corrupt, recreate the conditions."
+        //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+        __("Assignment conditions are invalid or corrupt, recreate the conditions.")
       );
       assignConditionJson = [];
     }
@@ -395,7 +401,8 @@ const getAssignmentRuleData = createResource({
       unassignConditionJson = JSON.parse(data.unassign_condition_json || "[]");
     } catch (error) {
       toast.error(
-        "Unassignment conditions are invalid or corrupt, recreate the conditions."
+        //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+        __("Unassignment conditions are invalid or corrupt, recreate the conditions.")
       );
       unassignConditionJson = [];
     }

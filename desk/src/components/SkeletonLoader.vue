@@ -108,6 +108,8 @@
 
 <script setup>
 import { useSlots } from "vue";
+//// Neoffice — import added for the default empty-state wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps({
   variants: {
@@ -127,12 +129,17 @@ const props = defineProps({
 
 const slots = useSlots();
 
+//// Neoffice — upstream wrote these in plain English and the template translated them with
+//// __(variable), which the POT extractor cannot see: wrapped here so they reach the French
+//// catalogue (same pass as 71a5669d9). This runs in setup, and the template still re-translates.
 const defaultEmptyStateMsg = {
-  title: "No tickets found",
-  message:
-    "Dashboard charts will appear here once you start receiving or creating tickets.",
-  filterMessage:
-    "Based on the selected filters no tickets found. Try adjusting the date range or filters applied.",
+  title: __("No tickets found"),
+  message: __(
+    "Dashboard charts will appear here once you start receiving or creating tickets."
+  ),
+  filterMessage: __(
+    "Based on the selected filters no tickets found. Try adjusting the date range or filters applied."
+  ),
 };
 
 function getEmptyState(index) {

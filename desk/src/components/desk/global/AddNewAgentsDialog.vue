@@ -31,7 +31,8 @@
               }
             "
           >
-            Add
+            <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+            {{ __("Add") }}
           </Button>
         </form>
         <div
@@ -83,6 +84,8 @@ import { useAuthStore } from "@/stores/auth";
 import { createResource, Dialog, FeatherIcon, Input, toast } from "frappe-ui";
 import { useOnboarding } from "frappe-ui/frappe";
 import { ref } from "vue";
+//// Neoffice — import added for the toast wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps({
   show: Boolean,
@@ -180,7 +183,8 @@ const sentInvitesResource = createResource({
       updateOnboardingStep("invite_agents");
     }
 
-    toast.success("Invites sent successfully!");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.success(__("Invites sent successfully!"));
 
     close();
   },

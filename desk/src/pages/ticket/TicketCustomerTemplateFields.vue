@@ -73,7 +73,8 @@ const slaData = computed(() => {
         //// Neoffice — see the block marker above: __() i18n wrap
         title: __('Expected First Response'),
         showSla: ticket.data.first_responded_on,
-        label: responseSla,
+        //// Neoffice — the badge printed the raw state ("Fulfilled" / "Failed"); translated at display, the value still drives the colour
+        label: responseSla === "Fulfilled" ? __("Fulfilled") : __("Failed"),
         theme: responseSla === "Fulfilled" ? "green" : "red",
         value: ticket.data.response_by,
       },
@@ -91,7 +92,8 @@ const slaData = computed(() => {
       //// Neoffice — see the block marker above: __() i18n wrap
       title: __('Expected First Response'),
       showSla: ticket.data.first_responded_on,
-      label: responseSla,
+      //// Neoffice — see above: state translated at display, the value still drives the colour
+      label: responseSla === "Fulfilled" ? __("Fulfilled") : __("Failed"),
       theme: responseSla === "Fulfilled" ? "green" : "red",
       value: ticket.data.response_by,
     },
@@ -99,7 +101,8 @@ const slaData = computed(() => {
       //// Neoffice — see the block marker above: __() i18n wrap
       title: __('Expected Resolution'),
       showSla: ticket.data.resolution_date,
-      label: resolutionSla,
+      //// Neoffice — see above: state translated at display, the value still drives the colour
+      label: resolutionSla === "Fulfilled" ? __("Fulfilled") : __("Failed"),
       theme: resolutionSla === "Fulfilled" ? "green" : "red",
       value: ticket.data.resolution_by,
     },

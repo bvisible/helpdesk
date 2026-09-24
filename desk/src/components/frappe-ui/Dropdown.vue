@@ -9,7 +9,8 @@
         <MenuButton as="template">
           <slot v-if="$slots.default" v-bind="{ open, togglePopover }" />
           <Button v-else :active="open" v-bind="button">
-            {{ button ? button?.label || null : "Options" }}
+            <!-- //// Neoffice — upstream wrote the fallback label in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+            {{ button ? button?.label || null : __("Options") }}
           </Button>
         </MenuButton>
       </template>

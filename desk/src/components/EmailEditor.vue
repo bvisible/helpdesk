@@ -32,11 +32,12 @@
       </div>
       <div class="mx-6 md:mx-5 flex items-center gap-2 border-y py-2.5">
         <span class="text-p-xs text-ink-gray-4">{{ __("To") }}:</span>
+        <!-- //// Neoffice — upstream wrote the error message in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
         <MultiSelectInput
           v-model="toEmailsClone"
           class="flex-1"
           :validate="validateEmailWithZod"
-          :error-message="(value) => `${value} is an invalid email address`"
+          :error-message="(value) => __('{0} is an invalid email address', value)"
         />
         <div class="flex gap-1.5">
           <Button
@@ -67,12 +68,13 @@
         :class="cc || showCC ? 'border-b' : ''"
       >
         <span class="text-xs text-ink-gray-4">{{ __("Cc:") }}</span>
+        <!-- //// Neoffice — upstream wrote the error message in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
         <MultiSelectInput
           ref="ccInput"
           v-model="ccEmailsClone"
           class="flex-1"
           :validate="validateEmailWithZod"
-          :error-message="(value) => `${value} is an invalid email address`"
+          :error-message="(value) => __('{0} is an invalid email address', value)"
         />
       </div>
       <div
@@ -81,12 +83,13 @@
         :class="bcc || showBCC ? 'border-b' : ''"
       >
         <span class="text-xs text-ink-gray-4">{{ __("Bcc:") }}</span>
+        <!-- //// Neoffice — upstream wrote the error message in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
         <MultiSelectInput
           ref="bccInput"
           v-model="bccEmailsClone"
           class="flex-1"
           :validate="validateEmailWithZod"
-          :error-message="(value) => `${value} is an invalid email address`"
+          :error-message="(value) => __('{0} is an invalid email address', value)"
         />
       </div>
     </template>

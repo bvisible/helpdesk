@@ -210,7 +210,9 @@ function updateField(fieldname: string, value: string, callback = () => {}) {
 
 function handleDeleteTicket() {
   $dialog({
-    title: __(`Delete ticket #${ticket?.value?.name}`),
+    //// Neoffice — upstream passed a template literal to __(): a msgid built at run time never
+    //// reaches the catalogue. One msgid with {0} now (same pass as 71a5669d9).
+    title: __("Delete ticket #{0}", ticket?.value?.name),
     message: __(
       "Are you sure you want to delete this ticket? This is an irreversible action and cannot be undone."
     ),

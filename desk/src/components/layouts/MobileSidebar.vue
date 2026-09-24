@@ -140,7 +140,8 @@ const { pinnedViews, publicViews } = useView();
 const { currentTheme, toggleTheme } = useTheme();
 
 const themeMenuItem = computed(() => ({
-  label: "Toggle theme",
+  //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+  label: __("Toggle theme"),
   icon: currentTheme.value === "dark" ? LucideSun : LucideMoon,
   onClick: () => toggleTheme(),
 }));

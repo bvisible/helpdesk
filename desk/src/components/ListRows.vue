@@ -12,11 +12,12 @@
               class="flex items-end gap-1 w-full"
             >
               <span>{{ __(group.group.label) }}</span>
+              <!-- //// Neoffice — upstream glued the count to " Article" + "s" in plain English; one msgid per form now, so the French catalogue reaches it (same pass as 71a5669d9) -->
               <span class="text-xs text-ink-gray-5"
                 >{{
-                  group.rows.length +
-                  " Article" +
-                  (group.rows.length > 1 ? "s" : "")
+                  group.rows.length > 1
+                    ? __("{0} Articles", group.rows.length)
+                    : __("{0} Article", group.rows.length)
                 }}
               </span>
             </div>

@@ -6,11 +6,12 @@
     >
       <!-- Source -->
       <div class="flex items-center gap-1">
+        <!-- //// Neoffice — upstream wrote the copy message in plain English (a template literal); one msgid now, so the French catalogue reaches it (same pass as 71a5669d9) -->
         <p
           @click="
             copyToClipboard(
               ticket.doc.name,
-              `Ticket #${ticket.doc.name} copied to clipboard`
+              __('Ticket #{0} copied to clipboard', ticket.doc.name)
             )
           "
           class="cursor-copy"
@@ -22,14 +23,16 @@
           v-if="!ticket.doc.via_customer_portal"
           class="text-ink-gray-5 flex items-center"
         >
-          <span class="me-[4px]">via</span>
+          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+          <span class="me-[4px]">{{ __("via") }}</span>
           <EmailIcon class="size-4 inline-block me-1" />
           <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <span>{{ __("Email") }}</span>
         </div>
         <!-- Via Portal -->
         <div v-else class="text-ink-gray-5 flex items-center">
-          <span class="me-[4px]">via</span>
+          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+          <span class="me-[4px]">{{ __("via") }}</span>
           <GlobeIcon class="size-4 inline-block me-1" />
           <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <span>{{ __("Portal") }}</span>
@@ -92,6 +95,8 @@ import {
 } from "@/utils";
 import { Badge, dayjs, Tooltip } from "frappe-ui";
 import { computed, inject } from "vue";
+//// Neoffice — import added for the SLA labels below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const ticket = inject(TicketSymbol)!;
 
@@ -114,7 +119,10 @@ const firstResponse = computed(() => {
   ) {
     let responseBy = formatTimeShort(ticket.value.doc.response_by as string);
     return {
-      label: `Due in ${responseBy}`,
+      //// Neoffice — upstream wrote every SLA label of this file in plain English (template
+      //// literals); one msgid each, {0} for the duration, so the French catalogue reaches them
+      //// (same pass as 71a5669d9). Seen on screen: "Overdue by 14d 23h", "Failed by 12h 34m".
+      label: __("Due in {0}", responseBy),
       color: "orange",
       date: ticket.value.doc.response_by,
     };
@@ -139,7 +147,8 @@ const firstResponse = computed(() => {
             ticket.value.doc.creation
           );
     return {
-      label: `Fulfilled in ${fulfilled}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponse)
+      label: __("Fulfilled in {0}", fulfilled),
       color: "green",
       date: ticket.value.doc.first_responded_on,
     };
@@ -150,7 +159,8 @@ const firstResponse = computed(() => {
         ticket.value.doc.response_by as string
       );
       return {
-        label: `Overdue by ${responseBy}`,
+        //// Neoffice — SLA label wrapped (see the note in firstResponse)
+        label: __("Overdue by {0}", responseBy),
         color: "red",
         date: ticket.value.doc.response_by,
       };
@@ -163,7 +173,8 @@ const firstResponse = computed(() => {
           ticket.value.doc.response_by
         );
     return {
-      label: `Failed by ${failed}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponse)
+      label: __("Failed by {0}", failed),
       color: "red",
       date: ticket.value.doc.response_by,
     };
@@ -181,7 +192,8 @@ const resolutionBy = computed(() => {
     )
   ) {
     return {
-      label: `On Hold`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponse)
+      label: __("On Hold"),
       color: "blue",
       date: ticket.value.doc?.on_hold_since,
     };
@@ -195,7 +207,8 @@ const resolutionBy = computed(() => {
     );
 
     return {
-      label: `Overdue by ${overdue}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponse)
+      label: __("Overdue by {0}", overdue),
       color: "red",
       date: ticket.value.doc?.resolution_by,
     };
@@ -207,7 +220,8 @@ const resolutionBy = computed(() => {
       ticket.value.doc?.resolution_by as string
     );
     return {
-      label: `Due in ${resolutionBy}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponse)
+      label: __("Due in {0}", resolutionBy),
       color: "purple",
       date: ticket.value.doc?.resolution_by,
     };
@@ -232,7 +246,8 @@ const resolutionBy = computed(() => {
             ticket.value.doc?.creation
           );
     return {
-      label: `Fulfilled in ${fulfilled}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponse)
+      label: __("Fulfilled in {0}", fulfilled),
       color: "green",
       date: ticket.value.doc?.resolution_date,
     };
@@ -244,7 +259,8 @@ const resolutionBy = computed(() => {
           ticket.value.doc?.resolution_date
         );
     return {
-      label: `Failed by ${failed}`,
+      //// Neoffice — SLA label wrapped (see the note in firstResponse)
+      label: __("Failed by {0}", failed),
       color: "red",
       date: ticket.value.doc?.resolution_by,
     };
@@ -264,27 +280,32 @@ function formatTimeShort(date: string, end?: string): string {
   let hours = duration.hours();
   let minutes = duration.minutes();
 
+  //// Neoffice — upstream wrote the unit letters in plain English (y, mo, d, h, m); one msgid per
+  //// shape so a translation can change them (French writes "j" for days), same pass as 71a5669d9
   if (years > 0) {
-    return `${years}y ${months}mo`;
+    return __("{0}y {1}mo", years, months);
   } else if (months > 0) {
-    return `${months}mo ${days}d`;
+    return __("{0}mo {1}d", months, days); //// Neoffice — see above
   } else if (days > 0) {
-    return `${days}d ${hours}h`;
+    return __("{0}d {1}h", days, hours); //// Neoffice — see above
   } else if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return __("{0}h {1}m", hours, minutes); //// Neoffice — see above
   } else {
-    return `${minutes}m`;
+    return __("{0}m", minutes); //// Neoffice — see above
   }
 }
 
+//// Neoffice — upstream wrote both copy messages in plain English (template literals); one msgid
+//// each now, so the French catalogue reaches them (same pass as 71a5669d9)
 useShortcut({ meta: true, shift: true, key: "." }, () => {
-  copyToClipboard(window.location.href, `Ticket URL copied to clipboard`);
+  copyToClipboard(window.location.href, __("Ticket URL copied to clipboard"));
 });
 
 useShortcut({ meta: true, key: "." }, () => {
   copyToClipboard(
     ticket.value.doc.name,
-    `Ticket #${ticket.value.doc.name} copied to clipboard`
+    //// Neoffice — see the note above the first shortcut
+    __("Ticket #{0} copied to clipboard", ticket.value.doc.name)
   );
 });
 </script>

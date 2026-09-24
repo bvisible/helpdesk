@@ -214,6 +214,8 @@ import { LoadingIndicator, Popover } from "frappe-ui";
 import { nextTick } from "vue";
 import LucideCheckSquare from "~icons/lucide/check-square";
 import LucideSquare from "~icons/lucide/square";
+//// Neoffice — import added for the "N values" wrap below; called inside a method, at run time (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 export default {
   name: "Autocomplete",
@@ -342,7 +344,9 @@ export default {
 
       if (option.length === 0) return "";
       if (option.length === 1) return this.getLabel(option[0]);
-      return `${option.length} values`;
+      //// Neoffice — upstream wrote it in plain English (a template literal); one msgid now, so the
+      //// French catalogue reaches it (same pass as 71a5669d9)
+      return __("{0} values", option.length);
       // in case of `multiple`, option is an array of values
       // so the display value should be comma separated labels
       // return option

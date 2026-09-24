@@ -38,8 +38,9 @@
                 class="flex flex-col gap-2"
                 v-if="telephonyAgent.doc && exotel.doc?.enabled"
               >
+                <!-- //// Neoffice — upstream wrote the labels and placeholders of these Exotel fields in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
                 <FormControl
-                  label="Exotel number"
+                  :label="__('Exotel number')"
                   type="text"
                   required
                   v-model="telephonyAgent.doc.exotel_number"
@@ -59,48 +60,53 @@
                 <ErrorMessage :message="exotelErrors.mobileNo" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — see the Exotel number field above: label and placeholder wrapped -->
                 <FormControl
-                  label="Account SID"
+                  :label="__('Account SID')"
                   required
                   v-model="exotel.doc.account_sid"
-                  placeholder="Account SID"
+                  :placeholder="__('Account SID')"
                 />
                 <ErrorMessage :message="exotelErrors.accountSid" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — see the Exotel number field above: label and placeholder wrapped -->
                 <FormControl
-                  label="Webhook Verify Token"
+                  :label="__('Webhook Verify Token')"
                   required
                   v-model="exotel.doc.webhook_verify_token"
-                  placeholder="Webhook Verify Token"
+                  :placeholder="__('Webhook Verify Token')"
                 />
                 <ErrorMessage :message="exotelErrors.webhookVerifyToken" />
               </div>
 
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — see the Exotel number field above: label and placeholder wrapped -->
                 <FormControl
-                  label="API Key"
+                  :label="__('API Key')"
                   required
                   v-model="exotel.doc.api_key"
-                  placeholder="API Key"
+                  :placeholder="__('API Key')"
                 />
                 <ErrorMessage :message="exotelErrors.apiKey" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — see the Exotel number field above: label and placeholder wrapped -->
                 <Password
-                  label="API Token"
+                  :label="__('API Token')"
                   required
                   v-model="exotel.doc.api_token"
-                  placeholder="API Token"
+                  :placeholder="__('API Token')"
                 />
                 <ErrorMessage :message="exotelErrors.apiToken" />
               </div>
               <div class="flex flex-col gap-2">
+                <!-- //// Neoffice — see the Exotel number field above: label and placeholder wrapped -->
                 <FormControl
-                  label="Subdomain"
+                  :label="__('Subdomain')"
                   required
                   v-model="exotel.doc.subdomain"
-                  placeholder="Subdomain"
+                  :placeholder="__('Subdomain')"
                 />
                 <ErrorMessage :message="exotelErrors.subdomain" />
               </div>
@@ -247,7 +253,9 @@ async function save() {
   if (isDirty.value.twilio) {
     promises.push(
       twilio.save.submit().catch((er) => {
-        const error = __(`Twilio error: {0}`, er?.messages?.[0]);
+        //// Neoffice — plain quotes instead of backticks: in a .vue script only a quoted literal
+        //// reaches the catalogue (the msgid was missing from fr.po).
+        const error = __("Twilio error: {0}", er?.messages?.[0]);
         toast.error(error || __("Failed to save Twilio settings"));
       })
     );
@@ -255,7 +263,8 @@ async function save() {
   if (isDirty.value.exotel) {
     promises.push(
       exotel.save.submit().catch((er) => {
-        const error = __(`Exotel error: {0}`, er?.messages?.[0]);
+        //// Neoffice — plain quotes instead of backticks (see the Twilio error above)
+        const error = __("Exotel error: {0}", er?.messages?.[0]);
         toast.error(error || __("Failed to save Exotel settings"));
       })
     );

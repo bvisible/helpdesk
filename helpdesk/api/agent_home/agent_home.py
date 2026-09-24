@@ -3,6 +3,8 @@ from datetime import date, timedelta
 
 import frappe
 from dateutil.relativedelta import relativedelta
+# //// Neoffice — added import: _() for the reason texts sent to the home page (see below).
+from frappe import _
 from frappe.query_builder import DocType
 from frappe.query_builder.functions import Avg, Count, Function
 from frappe.utils import add_months, today
@@ -558,18 +560,23 @@ def _get_upcoming_sla_tickets(limit=10):
         if agreement_status == "Resolution Due":
             due_time = ticket.get("resolution_by")
             time_until = format_time_difference(due_time, context="until")
+            # //// Neoffice — upstream wrote the reason texts in plain English (f-strings) and the
+            # //// home page prints them as they come: one msgid each now, so the French catalogue
+            # //// reaches them (same pass as 71a5669d9). "overdue" stays the sentinel that
+            # //// format_time_difference returns; the page colours on seconds_until_due.
             reason_text = (
-                f"Resolution due in {time_until}"
+                _("Resolution due in {0}").format(time_until)
                 if time_until != "overdue"
-                else "Resolution overdue"
+                else _("Resolution overdue")  # //// Neoffice — wrapped, see above
             )
         else:
             due_time = ticket.get("response_by")
             time_until = format_time_difference(due_time, context="until")
+            # //// Neoffice — reason texts wrapped (see the resolution branch above)
             reason_text = (
-                f"Response due in {time_until}"
+                _("Response due in {0}").format(time_until)
                 if time_until != "overdue"
-                else "Response overdue"
+                else _("Response overdue")  # //// Neoffice — wrapped, see above
             )
 
         # Calculate seconds until due for frontend urgency coloring
@@ -636,7 +643,8 @@ def _get_new_tickets(limit=10):
     for ticket in tickets:
         ticket["reason"] = {
             "type": "new_tickets",
-            "text": "Recently assigned",
+            # //// Neoffice — shown on the home page as is: wrapped (same pass as 71a5669d9)
+            "text": _("Recently assigned"),
         }
 
     total_count = get_ticket_count(filters=filters)
@@ -675,7 +683,8 @@ def _get_pending_response_tickets(limit=10):
         time_ago = format_time_difference(t.get("last_customer_response"))
         t["reason"] = {
             "type": "pending",
-            "text": f"Pending for {time_ago}",
+            # //// Neoffice — shown on the home page as is: one msgid (was an f-string), same pass as 71a5669d9
+            "text": _("Pending for {0}").format(time_ago),
         }
 
     return tickets, total_count

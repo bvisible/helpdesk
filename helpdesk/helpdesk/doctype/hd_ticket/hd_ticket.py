@@ -874,9 +874,10 @@ class HDTicket(Document):
                 doc.attached_to_name = self.name
                 doc.save()
 
-    def send_reply_email_to_agent(
-        self, message: str = "Please check the latest update on the portal."
-    ):
+    # //// Neoffice — the default message was plain English and, as a default argument, fixed at
+    # //// import: it could never follow the language. Resolved at call time through _() instead.
+    def send_reply_email_to_agent(self, message: str | None = None):
+        message = message or _("Please check the latest update on the portal.")
         assigned_agents = self.get_assigned_agents()
         if not assigned_agents:
             return

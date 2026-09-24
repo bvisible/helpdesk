@@ -38,6 +38,8 @@ import {
   FormControl,
 } from "frappe-ui";
 import { computed, h } from "vue";
+//// Neoffice — import added for the Yes / No and placeholder wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 type Value = string | number | boolean;
 
@@ -80,12 +82,15 @@ const component = computed(() => {
   } else if (props.field.fieldtype === "Check") {
     return h(Autocomplete, {
       options: [
+        //// Neoffice — upstream wrote the labels in plain English; wrapped so the French catalogue
+        //// reaches them (same pass as 71a5669d9). The values 1 / 0 are what gets saved.
         {
-          label: "Yes",
+          label: __("Yes"),
           value: 1,
         },
         {
-          label: "No",
+          //// Neoffice — see above: label translated, value kept
+          label: __("No"),
           value: 0,
         },
       ],
@@ -117,7 +122,9 @@ const apiOptions = createResource({
 
 const transValue = computed(() => {
   if (props.field.fieldtype === "Check") {
-    return props.value ? "Yes" : "No";
+    //// Neoffice — shown as is by Autocomplete (no option has this value): translated like the
+    //// option labels above (same pass as 71a5669d9)
+    return props.value ? __("Yes") : __("No");
   }
   return props.value;
 });
@@ -126,15 +133,19 @@ const placeholder = computed(() => {
   if (props.field.placeholder) {
     return props.field.placeholder;
   }
+  //// Neoffice — upstream wrote these placeholders in plain English; wrapped so the French
+  //// catalogue reaches them (same pass as 71a5669d9)
   if (props.field.fieldtype === "Data" && !props.field.url_method) {
-    return "Type something";
+    return __("Type something");
   } else if (
     props.field.fieldtype === "Select" ||
     props.field.fieldtype === "Link"
   ) {
-    return "Select an option";
+    //// Neoffice — see above
+    return __("Select an option");
   }
-  return "Type something";
+  //// Neoffice — see above
+  return __("Type something");
 });
 
 function emitUpdate(fieldname: Field["fieldname"], value: Value) {

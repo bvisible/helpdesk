@@ -14,8 +14,9 @@
         <div class="flex gap-2">
           <FileUploader @success="(file) => updateImage(file)">
             <template #default="{ uploading, openFileSelector }">
+              <!-- //// Neoffice — upstream wrote both labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
               <Button
-                :label="customer.doc?.image ? 'Change photo' : 'Upload photo'"
+                :label="customer.doc?.image ? __('Change photo') : __('Upload photo')"
                 :loading="uploading"
                 @click="openFileSelector"
               />

@@ -8,8 +8,9 @@
         icon-right="chevron-down"
       >
         <div class="w-full truncate">
+          <!-- //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
           {{
-            options?.find((option) => option.value == model)?.label || "Select"
+            options?.find((option) => option.value == model)?.label || __("Select")
           }}
         </div>
       </Button>

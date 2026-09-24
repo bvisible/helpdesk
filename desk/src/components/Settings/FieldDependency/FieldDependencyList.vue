@@ -43,6 +43,7 @@
         </div>
 
         <!-- Empty State -->
+        <!-- //// Neoffice — upstream wrote title and description in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
         <EmptyState
           v-if="
             !fieldDependenciesList.loading &&
@@ -50,8 +51,8 @@
           "
           variant="badge"
           :icon="FieldDependencyIcon"
-          title="No field dependency found"
-          description="Add one to get started."
+          :title="__('No field dependency found')"
+          :description="__('Add one to get started.')"
         />
 
         <div

@@ -20,7 +20,8 @@
         />
         <div class="flex flex-col items-center justify-center gap-1">
           <div class="text-xl font-medium">
-            {{ contact?.full_name ?? "Unknown" }}
+            <!-- //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+            {{ contact?.full_name ?? __("Unknown") }}
           </div>
           <div class="text-sm text-ink-gray-5">
             {{ contact?.mobile_no || contact?.phone }}
@@ -31,15 +32,13 @@
             {{ counterUp?.updatedTime }}
           </div>
         </CountUpTimer>
+        <!-- //// Neoffice — upstream wrote the status texts in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9). The compared values ("initiating", "ringing") stay. -->
         <div v-if="!onCall" class="my-1 text-base">
           {{
-            callStatus == "initiating"
-              ? "Initiating call..."
-              : callStatus == "ringing"
-              ? "Ringing..."
-              : calling
-              ? "Calling..."
-              : "Incoming call..."
+            callStatus == "initiating" ? __("Initiating call...")
+            : callStatus == "ringing" ? __("Ringing...")
+            : calling ? __("Calling...")
+            : __("Incoming call...")
           }}
         </div>
         <div v-if="onCall" class="flex gap-2">
@@ -116,7 +115,8 @@
         class="relative flex !h-5 !w-5 items-center justify-center"
       />
       <div class="max-w-[120px] truncate">
-        {{ contact?.full_name ?? "Unknown" }}
+        <!-- //// Neoffice — fallback wrapped (see the call popup above) -->
+        {{ contact?.full_name ?? __("Unknown") }}
       </div>
     </div>
     <div v-if="onCall" class="flex items-center gap-2">
@@ -136,7 +136,8 @@
     </div>
     <div v-else-if="calling" class="flex items-center gap-3">
       <div class="my-1">
-        {{ callStatus == "ringing" ? "Ringing..." : "Calling..." }}
+        <!-- //// Neoffice — status texts wrapped (see the call popup above) -->
+        {{ callStatus == "ringing" ? __("Ringing...") : __("Calling...") }}
       </div>
       <Button
         variant="solid"
@@ -180,6 +181,8 @@ import { Call, Device } from "@twilio/voice-sdk";
 import { useDraggable, useWindowSize } from "@vueuse/core";
 import { Avatar, call, toast } from "frappe-ui";
 import { inject, ref, watch } from "vue";
+//// Neoffice — import added for the toast wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 import LucidePhone from "~icons/lucide/phone";
 import CountUpTimer from "./CountUpTimer.vue";
 import MinimizeIcon from "./Icons/MinimizeIcon.vue";
@@ -423,7 +426,8 @@ async function makeOutgoingCall(number) {
   } else {
     onCallFailed && onCallFailed();
     log.value = "Unable to make call.";
-    toast.error("Unable to make call.");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("Unable to make call."));
   }
 }
 

@@ -31,13 +31,15 @@
             callStatus == 'Call ended' || callStatus == 'No answer',
         }"
       >
-        <span>{{ callStatus }}</span>
+        <!-- //// Neoffice — shows callStatusLabel: callStatus is compared above and below ('In progress', 'Call ended', 'No answer'), so it stays English and only its display is translated -->
+        <span>{{ callStatusLabel }}</span>
         <span v-if="callStatus == 'Call ended'">
           <span> · </span>
           <span>{{ callDuration }}</span>
         </span>
       </div>
-      <div v-else>{{ callStatus }}</div>
+      <!-- //// Neoffice — translated display of callStatus (see above) -->
+      <div v-else>{{ callStatusLabel }}</div>
     </div>
     <div v-show="showCallPopup" v-bind="$attrs">
       <div
@@ -69,7 +71,8 @@
           />
           <div class="flex flex-col items-center justify-center gap-1">
             <div class="text-xl font-medium">
-              {{ contact?.full_name ?? "Unknown" }}
+              <!-- //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+              {{ contact?.full_name ?? __("Unknown") }}
             </div>
             <div class="text-sm text-ink-gray-5">
               {{ contact?.mobile_no || contact?.phone }}
@@ -81,7 +84,8 @@
             </div>
           </CountUpTimer>
           <div class="my-1 text-base">
-            {{ callStatus }}
+            <!-- //// Neoffice — translated display of callStatus (see callStatusLabel) -->
+            {{ callStatusLabel }}
           </div>
         </div>
       </div>
@@ -93,7 +97,9 @@ import { globalStore } from "@/stores/globalStore";
 import { useTelephonyStore } from "@/stores/telephony";
 import { useDraggable, useWindowSize } from "@vueuse/core";
 import { Avatar, Button, call, toast } from "frappe-ui";
-import { inject, onBeforeUnmount, ref, watch } from "vue";
+//// Neoffice — `computed` and __ added for callStatusLabel below (same pass as 71a5669d9).
+import { computed, inject, onBeforeUnmount, ref, watch } from "vue";
+import { __ } from "@/translation";
 import CountUpTimer from "./CountUpTimer.vue";
 import AvatarIcon from "./Icons/AvatarIcon.vue";
 import MinimizeIcon from "./Icons/MinimizeIcon.vue";
@@ -136,6 +142,20 @@ watch([width, height], () => {
 });
 
 const callStatus = ref("");
+//// Neoffice — callStatus doubles as an identity (the template compares it with 'In progress',
+//// 'Call ended', 'No answer'), so its English values stay; this map translates it only where it
+//// is shown, with literal msgids the catalogue can see (same pass as 71a5669d9).
+const callStatusLabel = computed(
+  () =>
+    ({
+      "Calling...": __("Calling..."),
+      "Ringing...": __("Ringing..."),
+      "In progress": __("In progress"),
+      "No answer": __("No answer"),
+      "Call ended": __("Call ended"),
+      "Incoming call": __("Incoming call"),
+    })[callStatus.value] ?? callStatus.value
+);
 const phoneNumber = ref("");
 const callData = ref(null);
 const counterUp = ref(null);
@@ -172,7 +192,8 @@ function makeOutgoingCall(number) {
       onCallStarted && onCallStarted();
     })
     .catch((err) => {
-      const error = err?.messages?.[0] || "Something went wrong";
+      //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+      const error = err?.messages?.[0] || __("Something went wrong");
       toast.error(error);
       onCallFailed && onCallFailed();
     });

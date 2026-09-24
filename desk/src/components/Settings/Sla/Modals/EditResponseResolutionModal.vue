@@ -1,8 +1,9 @@
 <template>
+  <!-- //// Neoffice — upstream wrote the dialog title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
   <Dialog
     v-model="dialog"
     :options="{
-      title: 'Edit response and resolution',
+      title: __('Edit response and resolution'),
     }"
   >
     <template #body-content>
@@ -80,10 +81,11 @@
     <template #actions>
       <div class="flex justify-between">
         <div>
+          <!-- //// Neoffice — upstream wrote both labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
           <Button
             variant="subtle"
             :theme="isConfirmingDelete ? 'red' : 'gray'"
-            :label="isConfirmingDelete ? 'Confirm Delete' : 'Delete'"
+            :label="isConfirmingDelete ? __('Confirm Delete') : __('Delete')"
             @click="deleteItem"
             icon-left="trash-2"
           />
@@ -118,6 +120,8 @@ import { inject, ref } from "vue";
 import { formatTimeHMS } from "../utils";
 import DurationPicker from "@/components/frappe-ui/DurationPicker.vue";
 import { slaData } from "@/stores/sla";
+//// Neoffice — import added for the toast wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const dialog = defineModel<boolean>();
 const emit = defineEmits(["onDefaultPriorityChange"]);
@@ -141,19 +145,23 @@ const priorityData = ref({
 
 const validateForm = () => {
   if (!priorityData.value.priority) {
-    toast.error("Please select a priority");
+    //// Neoffice — upstream wrote these three toasts in plain English; wrapped so the French
+    //// catalogue reaches them (same pass as 71a5669d9)
+    toast.error(__("Please select a priority"));
     return false;
   }
 
   const resolutionTime = parseInt(priorityData.value.resolution_time);
   if (isNaN(resolutionTime) || resolutionTime <= 0) {
-    toast.error("Resolution time must be a positive number");
+    //// Neoffice — see above
+    toast.error(__("Resolution time must be a positive number"));
     return false;
   }
 
   const responseTime = parseInt(priorityData.value.response_time);
   if (isNaN(responseTime) || responseTime <= 0) {
-    toast.error("Response time must be a positive number");
+    //// Neoffice — see above
+    toast.error(__("Response time must be a positive number"));
     return false;
   }
 

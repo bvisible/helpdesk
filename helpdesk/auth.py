@@ -1,6 +1,8 @@
 import json
 
 import frappe
+# //// Neoffice — added import: _() for the permission message below.
+from frappe import _
 
 ALLOWED_PATHS = [
     "/api/method/ping",
@@ -102,7 +104,11 @@ def authenticate():
 
     if path in ALLOWED_PATHS:
         return
-    frappe.throw(f"Access not allowed for this URL: {path}", frappe.PermissionError)
+    # //// Neoffice — upstream wrote it in plain English (an f-string); one msgid now, so the French
+    # //// catalogue reaches it (same pass as 71a5669d9)
+    frappe.throw(
+        _("Access not allowed for this URL: {0}").format(path), frappe.PermissionError
+    )
 
 
 def is_server_script_path(path):

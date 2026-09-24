@@ -35,6 +35,7 @@
     <template #bottom-left>
       <span class="flex">
         <slot name="bottom-left" />
+        <!-- //// Neoffice — upstream wrote the upload error in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
         <FileUploader
           :upload-args="{
             folder: 'Home/Helpdesk',
@@ -43,7 +44,7 @@
           @success="
             (f: File) => $emit('update:attachments', [...attachments, f])
           "
-          @failure="() => toast.error('Error uploading file')"
+          @failure="() => toast.error(__('Error uploading file'))"
         >
           <template #default="{ openFileSelector }">
             <Button theme="gray" variant="ghost" @click="openFileSelector()">

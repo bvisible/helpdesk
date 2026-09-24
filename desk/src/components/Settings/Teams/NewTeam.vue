@@ -150,13 +150,16 @@ const validateData = (key?: string) => {
 
     switch (field) {
       case "name":
+        //// Neoffice — upstream wrote these field errors in plain English; wrapped so the French
+        //// catalogue reaches them (same pass as 71a5669d9). Nothing compares them: shown only.
         teamData.value.name?.length == 0
-          ? (errors.value.name = "Name is required")
+          ? (errors.value.name = __("Name is required"))
           : (errors.value.name = "");
         break;
       case "agents":
+        //// Neoffice — see above
         teamData.value.agents.length == 0
-          ? (errors.value.agents = "At least one team member is required")
+          ? (errors.value.agents = __("At least one team member is required"))
           : (errors.value.agents = "");
         break;
     }

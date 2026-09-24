@@ -1,3 +1,8 @@
+//// Neoffice — added import: upstream wrote every validation message of this file in plain
+//// English; they are shown under the Twilio / Exotel fields, never compared, so each one is
+//// wrapped in __() (same pass as 71a5669d9). They run when a form is validated, not at import.
+import { __ } from "@/translation";
+
 export const isDocDirty = (doc: any, originalDoc: any) => {
   if (!doc || !originalDoc) return false;
   return JSON.stringify(doc) !== JSON.stringify(originalDoc);
@@ -6,7 +11,7 @@ export const isDocDirty = (doc: any, originalDoc: any) => {
 export const validateTwilio = (twilio, telephonyAgent, twilioErrors) => {
   if (telephonyAgent.default_medium === "Twilio" && !twilio.enabled) {
     twilioErrors.value.default_medium =
-      "Enable Twilio to set it as default medium";
+      __("Enable Twilio to set it as default medium"); //// Neoffice — __(), see the import
   } else {
     twilioErrors.value.default_medium = "";
   }
@@ -16,21 +21,21 @@ export const validateTwilio = (twilio, telephonyAgent, twilioErrors) => {
   }
 
   if (!twilio.account_sid) {
-    twilioErrors.value.accountSid = "Account SID is required";
+    twilioErrors.value.accountSid = __("Account SID is required"); //// Neoffice — __(), see the import
   } else {
     twilioErrors.value.accountSid = "";
   }
 
   if (!twilio.auth_token) {
-    twilioErrors.value.authToken = "Auth Token is required";
+    twilioErrors.value.authToken = __("Auth Token is required"); //// Neoffice — __(), see the import
   } else {
     twilioErrors.value.authToken = "";
   }
 
   if (!telephonyAgent.twilio_number) {
-    twilioErrors.value.number = "Number is required";
+    twilioErrors.value.number = __("Number is required"); //// Neoffice — __(), see the import
   } else if (!validatePhone(telephonyAgent.twilio_number)) {
-    twilioErrors.value.number = "Please enter a valid phone number";
+    twilioErrors.value.number = __("Please enter a valid phone number"); //// Neoffice — __(), see the import
   } else {
     twilioErrors.value.number = "";
   }
@@ -39,7 +44,7 @@ export const validateTwilio = (twilio, telephonyAgent, twilioErrors) => {
 export const validateExotel = (exotel, telephonyAgent, exotelErrors) => {
   if (telephonyAgent.default_medium === "Exotel" && !exotel.enabled) {
     exotelErrors.value.default_medium =
-      "Enable Exotel to set it as default medium";
+      __("Enable Exotel to set it as default medium"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.default_medium = "";
   }
@@ -49,47 +54,47 @@ export const validateExotel = (exotel, telephonyAgent, exotelErrors) => {
   }
 
   if (!exotel.account_sid) {
-    exotelErrors.value.accountSid = "Account SID is required";
+    exotelErrors.value.accountSid = __("Account SID is required"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.accountSid = "";
   }
 
   if (!exotel.webhook_verify_token) {
-    exotelErrors.value.webhookVerifyToken = "Webhook Verify Token is required";
+    exotelErrors.value.webhookVerifyToken = __("Webhook Verify Token is required"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.webhookVerifyToken = "";
   }
 
   if (!exotel.subdomain) {
-    exotelErrors.value.subdomain = "Subdomain is required";
+    exotelErrors.value.subdomain = __("Subdomain is required"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.subdomain = "";
   }
 
   if (!exotel.api_key) {
-    exotelErrors.value.apiKey = "API Key is required";
+    exotelErrors.value.apiKey = __("API Key is required"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.apiKey = "";
   }
 
   if (!exotel.api_token) {
-    exotelErrors.value.apiToken = "API Token is required";
+    exotelErrors.value.apiToken = __("API Token is required"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.apiToken = "";
   }
 
   if (!telephonyAgent.exotel_number) {
-    exotelErrors.value.number = "Number is required";
+    exotelErrors.value.number = __("Number is required"); //// Neoffice — __(), see the import
   } else if (!validatePhone(telephonyAgent.exotel_number)) {
-    exotelErrors.value.number = "Please enter a valid phone number";
+    exotelErrors.value.number = __("Please enter a valid phone number"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.number = "";
   }
 
   if (!telephonyAgent.mobile_no) {
-    exotelErrors.value.mobileNo = "Personal number is required";
+    exotelErrors.value.mobileNo = __("Personal number is required"); //// Neoffice — __(), see the import
   } else if (!validatePhone(telephonyAgent.mobile_no)) {
-    exotelErrors.value.mobileNo = "Please enter a valid phone number";
+    exotelErrors.value.mobileNo = __("Please enter a valid phone number"); //// Neoffice — __(), see the import
   } else {
     exotelErrors.value.mobileNo = "";
   }

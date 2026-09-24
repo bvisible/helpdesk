@@ -91,7 +91,8 @@
         v-for="field in ticketAdditionalInfo"
         :key="field.fieldname"
       >
-        <span class="w-[126px] text-sm text-ink-gray-5">{{ field.label }}</span>
+        <!-- //// Neoffice — the template's custom field labels arrive in English from the doctype; translated at render like TicketField / UniInput do (same pass as 71a5669d9) -->
+        <span class="w-[126px] text-sm text-ink-gray-5">{{ __(field.label) }}</span>
         <span
           class="text-base text-ink-gray-8 flex-1"
           :class="!field.value && 'text-ink-gray-4'"
@@ -160,9 +161,12 @@ function firstResponseData() {
     dayjs().isBefore(dayjs(ticket.data.response_by))
   ) {
     firstResponse = {
-      label: `Due in ${formatTime(
-        dayjs(ticket.data.response_by).diff(dayjs(), "s")
-      )}`,
+      //// Neoffice — upstream wrote these SLA labels in plain English (template literals); one msgid
+      //// each, {0} for the duration, so the French catalogue reaches them (same pass as 71a5669d9)
+      label: __(
+        "Due in {0}",
+        formatTime(dayjs(ticket.data.response_by).diff(dayjs(), "s"))
+      ),
       color: "orange",
     };
   } else if (
@@ -171,12 +175,16 @@ function firstResponseData() {
     )
   ) {
     firstResponse = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(ticket.data.first_responded_on).diff(
-          dayjs(ticket.data.creation),
-          "s"
+      //// Neoffice — SLA label wrapped (see the "Due in" branch above)
+      label: __(
+        "Fulfilled in {0}",
+        formatTime(
+          dayjs(ticket.data.first_responded_on).diff(
+            dayjs(ticket.data.creation),
+            "s"
+          )
         )
-      )}`,
+      ), //// Neoffice — end of the wrapped "Fulfilled in {0}" label
       color: "green",
     };
   } else {
@@ -196,16 +204,20 @@ function resolutionData() {
     dayjs().isBefore(ticket.data.resolution_by)
   ) {
     resolution = {
-      label: `Due in ${formatTime(
-        dayjs(ticket.data.resolution_by).diff(dayjs(), "s")
-      )}`,
+      //// Neoffice — SLA label wrapped (see firstResponseData)
+      label: __(
+        "Due in {0}",
+        formatTime(dayjs(ticket.data.resolution_by).diff(dayjs(), "s"))
+      ),
       color: "orange",
     };
   } else if (ticket.data.agreement_status === "Fulfilled") {
+    //// Neoffice — duration computed before the __() call: inside it, the .vue extractor would
+    //// read the "s" argument of dayjs() as a translation context of "Fulfilled in {0}".
+    const fulfilledIn = formatTime(dayjs(ticket.data.resolution_time, "s"));
     resolution = {
-      label: `Fulfilled in ${formatTime(
-        dayjs(ticket.data.resolution_time, "s")
-      )}`,
+      //// Neoffice — SLA label wrapped (see firstResponseData)
+      label: __("Fulfilled in {0}", fulfilledIn),
       color: "green",
     };
   } else {
@@ -225,7 +237,8 @@ const ticketBasicInfo = computed(() => [
     value: ticket.data.name,
   },
   {
-    label: "Status",
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    label: __("Status"),
     value: ticket.data.status,
     bold: true,
   },
@@ -241,7 +254,8 @@ const ticketAdditionalInfo = computed(() => {
     },
     {
       fieldname: "team",
-      label: "Team",
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+      label: __("Team"),
       value: ticket.data.agent_group || "-",
     },
     {

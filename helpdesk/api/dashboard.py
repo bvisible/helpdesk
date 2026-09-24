@@ -282,6 +282,17 @@ class HelpdeskDashboard:
         )
 
         result = query.run(as_dict=True)
+        # //// Neoffice — upstream's series names were plain English, and frappe-ui's chart shows a
+        # //// series name as its legend while reading row[series.name]. The SQL aliases stay English
+        # //// (no translated text inside SQL); the row keys and the series names are swapped for the
+        # //// translated labels together, so the French catalogue reaches the legend (same pass as
+        # //// 71a5669d9).
+        legend = {
+            open_status: _("Open"),
+            closed_status: _("Closed"),
+            sla_fulfilled_status: _("SLA Fulfilled"),
+        }
+        result = [{legend.get(key, key): value for key, value in row.items()} for row in result]
         avg_tickets = self.get_avg_tickets_per_day()
         subtitle = _("Average tickets per day is around {0}").format(
             "{:.0f}".format(avg_tickets)
@@ -291,20 +302,23 @@ class HelpdeskDashboard:
             result,
             _("Ticket Trend"),
             subtitle,
-            {"key": "date", "type": "time", "title": "Date", "timeGrain": "day"},
+            # //// Neoffice — axis titles are shown on the chart: wrapped (same pass as 71a5669d9)
+            {"key": "date", "type": "time", "title": _("Date"), "timeGrain": "day"},
             _("Tickets"),
+            # //// Neoffice — translated legend labels, the same strings as the row keys above
             [
-                {"name": closed_status, "type": "bar"},
-                {"name": open_status, "type": "bar"},
+                {"name": legend[closed_status], "type": "bar"},
+                {"name": legend[open_status], "type": "bar"},
                 {
-                    "name": sla_fulfilled_status,
+                    "name": legend[sla_fulfilled_status],  # //// Neoffice — see above
                     "type": "line",
                     "showDataPoints": True,
                     "axis": "y2",
                 },
             ],
             stacked=True,
-            y2Axis={"title": "% SLA", "yMin": 0, "yMax": 100},
+            # //// Neoffice — axis title wrapped (see above)
+            y2Axis={"title": _("% SLA"), "yMin": 0, "yMax": 100},
         )
 
     def get_feedback_trend_data(self):
@@ -343,6 +357,9 @@ class HelpdeskDashboard:
         )
 
         result = query.run(as_dict=True)
+        # //// Neoffice — legend labels translated after the query (see get_ticket_trend_data)
+        legend = {rating: _("Rating"), rated_tickets: _("Rated Tickets")}
+        result = [{legend.get(key, key): value for key, value in row.items()} for row in result]
 
         # Avg rating query
         avg_query = (
@@ -369,12 +386,14 @@ class HelpdeskDashboard:
             result,
             _("Feedback Trend"),
             subtitle,
-            {"key": "date", "type": "time", "title": "Date", "timeGrain": "day"},
+            # //// Neoffice — axis title wrapped (see get_ticket_trend_data)
+            {"key": "date", "type": "time", "title": _("Date"), "timeGrain": "day"},
             _("Rated Tickets"),
+            # //// Neoffice — translated legend labels, the same strings as the row keys above
             [
-                {"name": rated_tickets, "type": "bar"},
+                {"name": legend[rated_tickets], "type": "bar"},
                 {
-                    "name": rating,
+                    "name": legend[rating],  # //// Neoffice — see above
                     "type": "line",
                     "showDataPoints": True,
                     "axis": "y2",
@@ -454,8 +473,9 @@ def get_team_chart_data(
             result,
             _("Tickets by Team"),
             _("Total tickets by team"),
-            {"key": "team", "type": "category", "title": "Team", "timeGrain": "day"},
-            "Tickets",
+            # //// Neoffice — axis titles wrapped (same pass as 71a5669d9)
+            {"key": "team", "type": "category", "title": _("Team"), "timeGrain": "day"},
+            _("Tickets"),
             [{"name": "count", "type": "bar"}],
         )
 
@@ -487,8 +507,9 @@ def get_ticket_type_chart_data(
             result,
             _("Tickets by Type"),
             _("Total tickets by type"),
-            {"key": "type", "type": "category", "title": "Type", "timeGrain": "day"},
-            "Tickets",
+            # //// Neoffice — axis titles wrapped (same pass as 71a5669d9)
+            {"key": "type", "type": "category", "title": _("Type"), "timeGrain": "day"},
+            _("Tickets"),
             [{"name": "count", "type": "bar"}],
         )
 
@@ -520,13 +541,14 @@ def get_ticket_priority_chart_data(
             result,
             _("Tickets by Priority"),
             _("Total tickets by priority"),
+            # //// Neoffice — axis titles wrapped (same pass as 71a5669d9)
             {
                 "key": "priority",
                 "type": "category",
-                "title": "Priority",
+                "title": _("Priority"),  # //// Neoffice — wrapped, see above
                 "timeGrain": "day",
             },
-            "Tickets",
+            _("Tickets"),  # //// Neoffice — wrapped, see above
             [{"name": "count", "type": "bar"}],
         )
 
@@ -546,7 +568,8 @@ def get_ticket_channel_chart_data(
     )
 
     for row in result:
-        row.channel = "Portal" if row.channel == 1 else "Email"
+        # //// Neoffice — the pie's slice labels: wrapped so the French catalogue reaches them (same pass as 71a5669d9)
+        row.channel = _("Portal") if row.channel == 1 else _("Email")
 
     return get_pie_chart_config(
         result,

@@ -179,11 +179,8 @@
                   </div>
                   <span class="px-1 leading-none text-sm text-ink-gray-5">
                     &middot;
-                    {{
-                      item.doctype == "Communication"
-                        ? __("Email")
-                        : item.doctype.replace("HD ", "")
-                    }}
+                    <!-- //// Neoffice — upstream printed the doctype name minus its "HD " prefix, in English; translated at display, with a literal msgid for the comment doctype (same pass as 71a5669d9). item.doctype stays the identity compared in the script -->
+                    {{ item.doctype == "Communication" ? __("Email") : item.doctype == "HD Ticket Comment" ? __("Ticket Comment") : __(item.doctype.replace("HD ", "")) }}
                   </span>
                   <span class="px-1 leading-none text-sm text-ink-gray-5">
                     &middot; #{{ getTicketNumber(item) }}

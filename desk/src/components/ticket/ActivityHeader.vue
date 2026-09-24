@@ -5,8 +5,9 @@
     <div class="flex h-8 items-center text-xl font-semibold text-ink-gray-8">
       {{ title }}
     </div>
+    <!-- //// Neoffice — branches on the tab identity: `title` is the translated tab label, so `title == 'Calls'` hid the call actions on every non-English site (the mobile page translates its labels already) -->
     <Dropdown
-      v-if="title == 'Calls'"
+      v-if="tab === 'call'"
       :options="callActions"
       @click.stop
       placement="right"
@@ -45,6 +46,12 @@ defineProps({
   title: {
     type: String,
     required: true,
+  },
+  //// Neoffice — added prop: the TicketTab identity ("activity", "email", "comment", "call"),
+  //// so the header no longer branches on its translated title.
+  tab: {
+    type: String,
+    default: "",
   },
 });
 

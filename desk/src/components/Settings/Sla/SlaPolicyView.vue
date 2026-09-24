@@ -105,12 +105,10 @@
                 v-if="!useNewUI"
               >
                 <span class="text-p-sm">
-                  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-                  {{ __("Conditions for this SLA were created from") }}
-                  <a :href="deskUrl" target="_blank" class="underline">desk</a>
-                  which are not compatible with this UI, you will need to
-                  recreate the conditions here if you want to manage and add new
-                  conditions from this UI.
+                  <!-- //// Neoffice — one sentence cut around the link: only its first fragment went through __() and the rest stayed in plain English. One msgid with {0} where the link goes, halves read back from the translation (deskConditionsNote; same pattern as MergeCategoryModal, 71a5669d9) -->
+                  {{ deskConditionsNote.before
+                  }}<a :href="deskUrl" target="_blank" class="underline">desk</a
+                  >{{ deskConditionsNote.after }}
                 </span>
                 <Button
                   :label="__('I understand, add conditions')"
@@ -280,7 +278,8 @@ import {
   Switch,
   toast,
 } from "frappe-ui";
-import { inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+//// Neoffice — `computed` added for deskConditionsNote below.
+import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import SlaAssignmentConditions from "./SlaAssignmentConditions.vue";
 import SlaHolidays from "./SlaHolidays.vue";
 import SlaPriorityList from "./SlaPriorityList.vue";
@@ -308,6 +307,14 @@ const isOldSla = ref(false);
 
 const slaPolicyList = inject(SlaPolicyListResourceSymbol);
 const deskUrl = `${window.location.origin}/app/hd-service-level-agreement/${slaActiveScreen.value.data?.name}`;
+//// Neoffice — one message, {0} where the desk link goes; the halves are read back from the
+//// translation so each language keeps its own word order (see the template).
+const deskConditionsNote = computed(() => {
+  const [before, after] = __(
+    "Conditions for this SLA were created from {0} which are not compatible with this UI, you will need to recreate the conditions here if you want to manage and add new conditions from this UI."
+  ).split("{0}");
+  return { before, after: after ?? "" };
+});
 
 const getSlaData = createResource({
   url: "frappe.client.get",
@@ -321,7 +328,8 @@ const getSlaData = createResource({
       condition_json = JSON.parse(data.condition_json || "[]");
     } catch (error) {
       toast.error(
-        "Assignment conditions are invalid or corrupt, recreate the conditions."
+        //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+        __("Assignment conditions are invalid or corrupt, recreate the conditions.")
       );
       condition_json = [];
     }

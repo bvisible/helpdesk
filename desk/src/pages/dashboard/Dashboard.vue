@@ -118,6 +118,7 @@
             </div>
 
             <!-- chart with no data -->
+            <!-- //// Neoffice — upstream built the title in plain English (a template literal), which SkeletonLoader could only pass to __() as a run-time msgid; one msgid with {0} for the chart title now (same pass as 71a5669d9) -->
             <SkeletonLoader
               v-else
               :variants="['bar-chart', 'empty-state']"
@@ -125,7 +126,7 @@
               :has-applied-filter="hasAppliedFilter"
               :empty-states="[
                 {
-                  title: `No ${(chart?.title).toLowerCase()} available.`,
+                  title: __('No {0} available.', (chart?.title).toLowerCase()),
                 },
               ]"
             />
@@ -143,6 +144,7 @@
             </div>
 
             <!-- chart with no data -->
+            <!-- //// Neoffice — upstream built the title in plain English (a template literal), which SkeletonLoader could only pass to __() as a run-time msgid; one msgid with {0} for the chart title now (same pass as 71a5669d9) -->
             <SkeletonLoader
               v-else
               :variants="['bar-chart', 'empty-state']"
@@ -150,7 +152,7 @@
               :has-applied-filter="hasAppliedFilter"
               :empty-states="[
                 {
-                  title: `No ${(chart?.title).toLowerCase()} available.`,
+                  title: __('No {0} available.', (chart?.title).toLowerCase()),
                 },
               ]"
             />
@@ -267,30 +269,38 @@ const colors = [
   "#15CCEF",
   "#A6B1B9",
 ];
+//// Neoffice — upstream wrote these in plain English and SkeletonLoader translated them with
+//// __(variable), which the POT extractor cannot see: wrapped here, in setup, so they reach the
+//// French catalogue (same pass as 71a5669d9)
 const emptyStates = [
   {
-    title: "No ticket activity",
-    message: "Ticket trends will appear here once tickets are created.",
+    title: __("No ticket activity"),
+    message: __("Ticket trends will appear here once tickets are created."),
   },
   {
-    title: "No feedback data",
-    message: "Feedback insights will appear once responses are collected.",
+    //// Neoffice — see above
+    title: __("No feedback data"),
+    message: __("Feedback insights will appear once responses are collected."),
   },
   {
-    title: "No team data",
-    message: "Tickets will be grouped by team once available.",
+    //// Neoffice — see above
+    title: __("No team data"),
+    message: __("Tickets will be grouped by team once available."),
+  },
+  //// Neoffice — see above
+  {
+    title: __("No ticket type data"),
+    message: __("Tickets will be categorized by type once created."),
   },
   {
-    title: "No ticket type data",
-    message: "Tickets will be categorized by type once created.",
+    //// Neoffice — see above
+    title: __("No priority data"),
+    message: __("Ticket priorities will be reflected here once assigned."),
   },
   {
-    title: "No priority data",
-    message: "Ticket priorities will be reflected here once assigned.",
-  },
-  {
-    title: "No channel data",
-    message: "Tickets will be grouped by channel once received.",
+    //// Neoffice — see above
+    title: __("No channel data"),
+    message: __("Tickets will be grouped by channel once received."),
   },
 ];
 
@@ -520,7 +530,9 @@ function formatter(range: string) {
     return preset.value;
   }
   let [from, to] = range.split(",");
-  return `${formatRange(from)} to ${formatRange(to)}`;
+  //// Neoffice — upstream wrote the range in plain English (a template literal); one msgid now, so
+  //// the French catalogue reaches it (same pass as 71a5669d9)
+  return __("{0} to {1}", formatRange(from), formatRange(to));
 }
 
 function formatRange(date: string) {

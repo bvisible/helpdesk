@@ -76,8 +76,9 @@
             <PlayIcon class="size-3" />
           </template>
         </Badge>
+        <!-- //// Neoffice — statusLabelMap holds English labels (module level, call-logs/utils.ts): translated here, where it is shown (same pass as 71a5669d9) -->
         <Badge
-          :label="statusLabelMap[activity.status]"
+          :label="__(statusLabelMap[activity.status])"
           :theme="statusColorMap[activity.status]"
         />
       </div>

@@ -46,7 +46,8 @@ import { Avatar, Badge, Button, FeatherIcon, usePageMeta } from "frappe-ui";
 import { computed, h, ref } from "vue";
 import CallLogDetailModal from "./CallLogDetailModal.vue";
 import CallLogModal from "./CallLogModal.vue";
-import { statusColorMap, statusLabelMap } from "./utils";
+//// Neoffice — statusLabel added: the status label translated when it is shown (utils.ts).
+import { statusColorMap, statusLabel } from "./utils";
 import { PhoneIcon } from "@/components/icons";
 //// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
 import { __ } from "@/translation";
@@ -73,12 +74,15 @@ const options = computed(() => {
           return h(Avatar, {
             shape: "circle",
             image: row._caller?.image || "Unknown",
-            label: row._caller?.label || "Unknown",
+            //// Neoffice — upstream wrote the fallback name in plain English; wrapped so the French
+            //// catalogue reaches it (same pass as 71a5669d9). The `image` fallback is not text.
+            label: row._caller?.label || __("Unknown"),
             size: "sm",
           });
         },
         custom: ({ row }) => {
-          return h("span", row._caller?.label || "Unknown");
+          //// Neoffice — see above
+          return h("span", row._caller?.label || __("Unknown"));
         },
       },
       receiver: {
@@ -86,12 +90,14 @@ const options = computed(() => {
           return h(Avatar, {
             shape: "circle",
             image: row._receiver?.image || "Unknown",
-            label: row._receiver?.label || "Unknown",
+            //// Neoffice — see the caller column above
+            label: row._receiver?.label || __("Unknown"),
             size: "sm",
           });
         },
         custom: ({ row }) => {
-          return h("span", row._receiver?.label || "Unknown");
+          //// Neoffice — see the caller column above
+          return h("span", row._receiver?.label || __("Unknown"));
         },
       },
       type: {
@@ -107,7 +113,9 @@ const options = computed(() => {
       status: {
         custom: ({ row }) => {
           return h(Badge, {
-            label: statusLabelMap[row.status],
+            //// Neoffice — statusLabel() translates the status when it is shown, and declares every
+            //// label to the extractor (call-logs/utils.ts; same pass as 71a5669d9)
+            label: statusLabel(row.status),
             variant: "subtle",
             theme: statusColorMap[row.status],
           });

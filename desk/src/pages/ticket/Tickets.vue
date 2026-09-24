@@ -175,7 +175,9 @@ const options = computed(() => ({
     agreement_status: {
       custom: ({ item }) => {
         return h(Badge, {
-          label: item,
+          //// Neoffice — the stored Select value ("Resolution Due", "Failed"...) was shown as is;
+          //// translated at display, the value itself still keys slaStatusColorMap below
+          label: __(item),
           theme: slaStatusColorMap[item],
           variant: "outline",
         });
@@ -449,7 +451,9 @@ const viewActions = (view) => {
           label: __("Duplicate"),
           icon: h(FeatherIcon, { name: "copy" }),
           onClick: () => {
-            viewDialog.view.label = _view.label + " (New)";
+            //// Neoffice — upstream glued " (New)" in plain English to the proposed view name; one
+            //// msgid now, so the French catalogue reaches it (same pass as 71a5669d9)
+            viewDialog.view.label = __("{0} (New)", _view.label);
             viewDialog.view.icon = _view.icon;
             viewDialog.view.name = _view.name;
             viewDialog.mode = "duplicate";

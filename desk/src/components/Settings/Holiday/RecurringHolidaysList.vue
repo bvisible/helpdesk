@@ -56,13 +56,14 @@
     :label="__('Add Recurring Holiday')"
     icon-left="plus"
   />
+  <!-- //// Neoffice — the dialog titles were plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
   <Dialog
     v-model="dialog"
     :options="{
       size: 'md',
       title: recurringHolidayData.isEditing
-        ? 'Edit Recurring Holiday'
-        : 'Add Recurring Holiday',
+        ? __('Edit Recurring Holiday')
+        : __('Add Recurring Holiday'),
     }"
   >
     <template #body-content>
@@ -133,13 +134,14 @@
       </div>
     </template>
     <template #actions>
+      <!-- //// Neoffice — the button labels were plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
       <Button
         variant="solid"
         @click="saveHoliday"
         class="w-full"
         v-if="props.holidayData.from_date && props.holidayData.to_date"
         :label="
-          recurringHolidayData.isEditing ? 'Update Holiday' : 'Add Holiday'
+          recurringHolidayData.isEditing ? __('Update Holiday') : __('Add Holiday')
         "
         :icon-left="recurringHolidayData.isEditing ? 'edit-2' : 'plus'"
       />
@@ -304,14 +306,16 @@ const editHoliday = (holiday: any) => {
 
 const saveHoliday = () => {
   if (!recurringHolidayData.value.day) {
-    toast.error("Please select a day of the week");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("Please select a day of the week"));
     return;
   }
 
   const { all, first, second, third, fourth, fifth } =
     recurringHolidayData.value.repetition;
   if (!all && !first && !second && !third && !fourth && !fifth) {
-    toast.error("Please select at least one repetition option");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("Please select at least one repetition option"));
     return;
   }
 
@@ -322,7 +326,8 @@ const saveHoliday = () => {
       props.holidays[holidayData.editIndex] = { ...holidayData };
       updateWeeklyOffDates();
     } else {
-      toast.error("Error: Unable to find the holiday to update");
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+      toast.error(__("Error: Unable to find the holiday to update"));
       return;
     }
   } else {
@@ -334,7 +339,8 @@ const saveHoliday = () => {
     );
 
     if (isDuplicate) {
-      toast.error("Holiday with the same day and repetition already exists");
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+      toast.error(__("Holiday with the same day and repetition already exists"));
       return;
     }
 

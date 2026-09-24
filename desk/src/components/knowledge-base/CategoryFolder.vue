@@ -15,9 +15,13 @@
       <p class="text-base font-medium text-ink-gray-8 truncate">
         {{ category?.category_name }}
       </p>
+      <!-- //// Neoffice — upstream glued the count to "article(s)" in plain English; one msgid per form now, so the French catalogue reaches it (same pass as 71a5669d9). Upstream's own singular test is kept as is. -->
       <span class="truncate text-xs md:text-sm text-ink-gray-5">
-        {{ category?.article_count }}
-        {{ category?.article_count % 2 === 1 ? "article" : "articles" }}
+        {{
+          category?.article_count % 2 === 1
+            ? __("{0} article", category?.article_count)
+            : __("{0} articles", category?.article_count)
+        }}
       </span>
     </div>
   </router-link>

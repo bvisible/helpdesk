@@ -1,5 +1,6 @@
 <template>
-  <Dialog v-model="showDialog" :options="{ title: 'Move To', actions }">
+  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+  <Dialog v-model="showDialog" :options="{ title: __('Move To'), actions }">
     <template #body-content>
       <div class="flex flex-col flex-1 gap-3">
         <!-- //// Neoffice — placeholder and label wrapped in __(): upstream showed them in English on every non-English site -->

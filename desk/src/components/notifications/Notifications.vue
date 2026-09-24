@@ -58,14 +58,17 @@
               >
                 {{ n.user_from }}
               </span>
+              <!-- //// Neoffice — upstream wrote these in plain English; wrapped with the msgids MobileNotifications.vue already uses, so the French catalogue reaches them (same pass as 71a5669d9) -->
               <span v-if="n.notification_type === 'Mention'"
-                >mentioned you in ticket</span
+                >{{ __("mentioned you in ticket") }}</span
               >
+              <!-- //// Neoffice — see above -->
               <span v-if="n.notification_type === 'Assignment'"
-                >assigned you a ticket</span
+                >{{ __("assigned you a ticket") }}</span
               >
+              <!-- //// Neoffice — see above -->
               <span v-if="n.notification_type === 'Reaction'">
-                {{ n.message || "has reopened the ticket" }}
+                {{ n.message || __("has reopened the ticket") }}
               </span>
             </span>
             <span class="font-medium text-ink-gray-9"

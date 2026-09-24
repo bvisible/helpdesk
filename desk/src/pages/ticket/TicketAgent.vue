@@ -77,6 +77,8 @@ import {
 import { computed, onBeforeUnmount, onMounted, provide, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { showCommentBox, showEmailBox } from "./modalStates";
+//// Neoffice — import added for the update toast below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const telephonyStore = useTelephonyStore();
 const { $socket } = globalStore();
@@ -177,7 +179,12 @@ onMounted(() => {
   $socket.on("ticket_update", (data: TicketUpdateData) => {
     if (data.ticket_id === ticket.value?.name) {
       // Notify the user about the update
-      toast.info(`User ${data.user} updated ${data.field} to ${data.value}`);
+      //// Neoffice — upstream wrote the toast in plain English (a template literal); one msgid now,
+      //// so the French catalogue reaches it (same pass as 71a5669d9). The field arrives as the
+      //// sender's English label (TicketDetailsTab, TicketHeader), translated here for the reader.
+      toast.info(
+        __("User {0} updated {1} to {2}", data.user, __(data.field), data.value)
+      );
     }
   });
 

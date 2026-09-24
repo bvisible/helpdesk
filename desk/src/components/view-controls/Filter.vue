@@ -43,7 +43,8 @@
             <div v-if="isMobileView" class="flex flex-col gap-2">
               <div class="-mb-2 flex w-full items-center justify-between">
                 <div class="text-base text-ink-gray-5">
-                  {{ i == 0 ? "Where" : "And" }}
+                  <!-- //// Neoffice — upstream wrote the row prefixes in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+                  {{ i == 0 ? __("Where") : __("And") }}
                 </div>
                 <Button
                   class="flex"
@@ -85,7 +86,8 @@
             <div v-else class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-2 flex-1">
                 <div class="w-13 ps-2 text-end text-base text-ink-gray-5">
-                  {{ i == 0 ? "Where" : "And" }}
+                  <!-- //// Neoffice — row prefixes wrapped (see the mobile row above) -->
+                  {{ i == 0 ? __("Where") : __("And") }}
                 </div>
                 <div id="fieldname" class="!min-w-[140px]">
                   <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
@@ -254,9 +256,9 @@ function getOperators(fieldtype, fieldname) {
         { label: __('Not Equals'), value: "not equals" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -265,7 +267,7 @@ function getOperators(fieldtype, fieldname) {
     options = [
       { label: __('Like'), value: "like" }, //// Neoffice — __(), see getOperators()
       { label: __('Not Like'), value: "not like" },
-      { label: "Is", value: "is" },
+      { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
     ];
   }
   if (typeNumber.includes(fieldtype)) {
@@ -275,9 +277,9 @@ function getOperators(fieldtype, fieldname) {
         { label: __('Not Equals'), value: "not equals" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: "<", value: "<" },
         { label: ">", value: ">" },
         { label: "<=", value: "<=" },
@@ -290,9 +292,9 @@ function getOperators(fieldtype, fieldname) {
       ...[
         { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -303,9 +305,9 @@ function getOperators(fieldtype, fieldname) {
         { label: __('Not Equals'), value: "not equals" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -317,9 +319,9 @@ function getOperators(fieldtype, fieldname) {
       ...[
         { label: __('Like'), value: "like" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         { label: __('Not In'), value: "not in" }, //// Neoffice — __(), see getOperators()
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -328,7 +330,7 @@ function getOperators(fieldtype, fieldname) {
       ...[
         { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
@@ -343,7 +345,7 @@ function getOperators(fieldtype, fieldname) {
       ...[
         { label: __('Equals'), value: "equals" }, //// Neoffice — __(), see getOperators()
         { label: __('Not Equals'), value: "not equals" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
@@ -386,7 +388,9 @@ function getValueControl(f) {
     return h(FormControl, {
       type: "select",
       options: _options.map((o) => ({
-        label: o,
+        //// Neoffice — value / label split: the value ("Yes", "No", a Select option) is what the
+        //// filter stores and what is compared below; only the label is translated
+        label: __(o),
         value: o,
       })),
     });

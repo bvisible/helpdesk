@@ -51,7 +51,8 @@
                 </button>
               </div>
             </div>
-            <div class="text-xs text-ink-gray-5 mt-1">Hrs</div>
+            <!-- //// Neoffice — upstream wrote the unit labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+            <div class="text-xs text-ink-gray-5 mt-1">{{ __("Hrs") }}</div>
           </div>
 
           <!-- Minutes -->
@@ -86,7 +87,8 @@
                 </button>
               </div>
             </div>
-            <div class="text-xs text-ink-gray-5 mt-1">Min</div>
+            <!-- //// Neoffice — unit label wrapped (see Hrs above) -->
+            <div class="text-xs text-ink-gray-5 mt-1">{{ __("Min") }}</div>
           </div>
 
           <!-- Seconds -->
@@ -120,7 +122,8 @@
                 </button>
               </div>
             </div>
-            <div class="text-xs text-ink-gray-5 mt-1">Sec</div>
+            <!-- //// Neoffice — unit label wrapped (see Hrs above) -->
+            <div class="text-xs text-ink-gray-5 mt-1">{{ __("Sec") }}</div>
           </div>
         </div>
       </div>
@@ -131,6 +134,8 @@
 <script setup>
 import { Popover } from "frappe-ui";
 import { computed, ref, watch } from "vue";
+//// Neoffice — import added for the formatted duration below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps({
   modelValue: {
@@ -186,7 +191,9 @@ watch(
 const formattedValue = computed(() => {
   const hrs = hoursValue.value;
   const mins = minutesValue.value;
-  return `${hrs} hours ${mins} minutes`;
+  //// Neoffice — upstream wrote it in plain English (a template literal); one msgid now, so the
+  //// French catalogue reaches it (same pass as 71a5669d9)
+  return __("{0} hours {1} minutes", hrs, mins);
 });
 
 // Handle popover open/close

@@ -103,7 +103,10 @@ import { computed, h, nextTick, ref, watch } from "vue";
 import { formatDate } from "@vueuse/core";
 import dayjs from "dayjs";
 import { timeAgo } from "@/utils";
-import { statusColorMap, statusLabelMap } from "./utils";
+//// Neoffice — statusLabel added: the status label translated when it is shown (utils.ts).
+import { statusColorMap, statusLabel } from "./utils";
+//// Neoffice — import added for the type / status wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 import { useAuthStore } from "@/stores/auth";
 
 const show = defineModel();
@@ -145,7 +148,15 @@ const detailFields = computed(() => {
         class: "h-3.5 w-3.5",
       }),
       name: "type",
-      value: data.type.label + " Call",
+      //// Neoffice — upstream glued " Call" in plain English to the type identity ("Incoming",
+      //// "Outgoing"); one msgid per known type, so the French catalogue reaches it (same pass as
+      //// 71a5669d9). Any other type keeps upstream's shape through "{0} Call".
+      value:
+        data.type.label === "Incoming"
+          ? __("Incoming Call")
+          : data.type.label === "Outgoing"
+          ? __("Outgoing Call")
+          : __("{0} Call", data.type.label),
     },
     {
       icon: ContactsIcon,
@@ -234,7 +245,9 @@ function getCallLogDetail(row, log, columns = []) {
     };
   } else if (row === "status") {
     return {
-      label: statusLabelMap[log.status],
+      //// Neoffice — statusLabel() translates the status when it is shown, and declares every
+      //// label to the extractor (call-logs/utils.ts; same pass as 71a5669d9)
+      label: statusLabel(log.status),
       color: statusColorMap[log.status],
     };
   } else if (["modified", "creation"].includes(row)) {

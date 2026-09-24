@@ -1,2 +1,0 @@
-import{_ as o}from"./TicketCommunication.vue_vue_type_script_setup_true_lang-58df5306.js";import"./EmailContent.vue_vue_type_script_setup_true_lang-67048dbb.js";import"./index-a8396d06.js";import"./dot-d2166d94.js";import"./TypingIndicator.vue_vue_type_style_index_0_scoped_cd1167c4_lang-20cff179.js";import"./more-horizontal-548e92bc.js";import"./dayjs-d1398304.js";import"./telemetry-d25265e7.js";import"./index-46e808cb.js";export{o as default};
-//# sourceMappingURL=TicketCommunication-60878582.js.map

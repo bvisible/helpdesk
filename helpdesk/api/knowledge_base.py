@@ -58,8 +58,11 @@ def create_category(title: str):
             )
         )
     category = frappe.new_doc("HD Article Category", category_name=title).insert()
+    # //// Neoffice — the placeholder title of the category's first article was plain English; it is
+    # //// shown in the knowledge base and compared nowhere: wrapped, so the agent who creates the
+    # //// category gets it in their language (same pass as 71a5669d9)
     article = frappe.new_doc(
-        "HD Article", title="New Article", category=category.name
+        "HD Article", title=_("New Article"), category=category.name
     ).insert()
     return {"article": article.name, "category": category.name}
 

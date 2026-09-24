@@ -209,10 +209,11 @@
                   class="h-4 w-4 text-ink-gray-5"
                 />
 
+                <!-- //// Neoffice — upstream glued the count to "views" in plain English; one msgid now, so the French catalogue reaches it (same pass as 71a5669d9) -->
                 <span
                   v-if="!editable && !isCustomerPortal && isMobileView"
                   class="text-p-xs text-ink-gray-4 items-center"
-                  >{{ views }} views</span
+                  >{{ __("{0} views", views) }}</span
                 >
               </div>
             </div>
@@ -446,9 +447,11 @@ const toggleStatus = debounce(() => {
     },
     {
       onSuccess: () => {
+        //// Neoffice — upstream wrote both toasts in plain English; wrapped so the French catalogue
+        //// reaches them (same pass as 71a5669d9). `status` stays the stored value.
         if (status === "Published")
-          toast.success("Article published successfully.");
-        else toast.success("Article unpublished successfully.");
+          toast.success(__("Article published successfully."));
+        else toast.success(__("Article unpublished successfully."));
         article.reload();
       },
     }
@@ -468,7 +471,9 @@ function handleMoveToCategory(category: string) {
       onSuccess: () => {
         article.reload();
         moveToModal.value = false;
-        toast.success(__(`Article has been successfully moved.`));
+        //// Neoffice — plain quotes instead of backticks: in a .vue script only a quoted literal
+        //// reaches the catalogue (the msgid was missing from fr.po).
+        toast.success(__("Article has been successfully moved."));
       },
       onError: (error: Error) => {
         let msg = error?.messages?.[0] || error.message;

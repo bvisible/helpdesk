@@ -40,8 +40,9 @@
         </div>
         <Dropdown :options="filterOptions" placement="right">
           <template #default="{ open }">
+            <!-- //// Neoffice — the button showed the stored scope ("Personal", "Team"...) as its label; it shows the translated label of the matching option now -->
             <Button
-              :label="activeFilter"
+              :label="filterOptions.find((o) => o.value === activeFilter)?.label || activeFilter"
               class="flex items-center justify-between w-fit p-4"
             >
               <template #suffix>
@@ -268,7 +269,8 @@ const dropdownOptions = (savedReply: SavedReply) => [
         show: true,
         name: savedReply.name,
         title: savedReply.title,
-        newTitle: `${savedReply.title} (Copy)`,
+        //// Neoffice — upstream built the default title in plain English; one msgid now, so the French catalogue reaches it (same pass as 71a5669d9)
+        newTitle: __("{0} (Copy)", savedReply.title),
       };
     },
     icon: "copy",

@@ -277,7 +277,12 @@ export async function copyToClipboard(
 }
 
 export const ClearFormattingUtility = {
-  label: "Clear formatting",
+  //// Neoffice — upstream wrote the label in plain English. A getter, not a __() in the literal:
+  //// this object is built at import, before the catalogue arrives; the getter translates when
+  //// the editor toolbar reads the label (same pass as 71a5669d9).
+  get label() {
+    return __("Clear formatting");
+  },
   icon: LucideBrushCleaning,
   action: (editor) => {
     editor.chain().focus().unsetAllMarks().clearNodes().cleanStyles().run();
@@ -680,7 +685,9 @@ export function ConfirmDelete({ isConfirmingDelete, onConfirmDelete }) {
       label: __('Delete'),
       component: (props) =>
         TemplateOption({
-          option: "Delete",
+          //// Neoffice — TemplateOption renders `option` as the menu text (the label above is not
+          //// shown): wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+          option: __("Delete"),
           icon: "trash-2",
           active: props.active,
           variant: "grey",
@@ -697,7 +704,8 @@ export function ConfirmDelete({ isConfirmingDelete, onConfirmDelete }) {
       label: __('Confirm Delete'),
       component: (props) =>
         TemplateOption({
-          option: "Confirm Delete",
+          //// Neoffice — rendered text, wrapped (see Delete above)
+          option: __("Confirm Delete"),
           icon: "trash-2",
           active: props.active,
           variant: "danger",

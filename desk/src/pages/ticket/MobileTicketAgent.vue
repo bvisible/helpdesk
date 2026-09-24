@@ -357,8 +357,10 @@ const ticketFields = computed(() => {
         fieldname: f.fieldname,
         fieldtype: fieldMeta?.fieldtype,
         options: fieldMeta?.options || "",
+        //// Neoffice — upstream built the placeholder in plain English (a template literal); one msgid
+        //// with {0} for the field label, translated like the label itself (same pass as 71a5669d9)
         placeholder:
-          f.placeholder || `Enter ${fieldMeta?.label || f.fieldname}`,
+          f.placeholder || __("Enter {0}", __(fieldMeta?.label || f.fieldname)),
         readonly: Boolean(fieldMeta.read_only),
         disabled: Boolean(fieldMeta.read_only),
         url_method: f.url_method || "",
@@ -577,7 +579,9 @@ const _activities = computed(() => {
         if (
           nextActivity &&
           nextActivity.user === currentActivity.user &&
-          nextActivity.content !== "viewed this" &&
+          //// Neoffice — `content` holds the translated "viewed this" (historyProps above), so the
+          //// English literal never matched on a French site and views were grouped with changes
+          nextActivity.content !== __("viewed this") &&
           !nextActivity.content.includes("assigned") &&
           !nextActivity.content.includes("unassigned")
         ) {

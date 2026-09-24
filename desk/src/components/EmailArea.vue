@@ -11,7 +11,8 @@
       <!-- email design for mobile -->
       <div v-if="isMobileView" class="flex items-center gap-2 text-sm">
         <div class="leading-tight">
-          <p>{{ sender.full_name || "Guest" }}</p>
+          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+          <p>{{ sender.full_name || __("Guest") }}</p>
           <Tooltip :text="dateFormat(creation, dateTooltipFormat)">
             <p class="text-xs md:text-sm text-ink-gray-5">
               {{ timeAgo(creation) }}
@@ -24,7 +25,8 @@
       </div>
       <!-- email design for desktop -->
       <div v-else class="flex items-center gap-1">
-        <span>{{ sender.full_name || "Guest" }}</span>
+        <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+        <span>{{ sender.full_name || __("Guest") }}</span>
         <span
           class="sm:flex hidden text-sm text-ink-gray-5"
           v-if="sender.name"
@@ -61,12 +63,13 @@
               <ReplyAllIcon class="text-ink-gray-7" />
             </template>
           </Button>
+          <!-- //// Neoffice — upstream wrote the option label in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
           <Dropdown
             v-if="showSplitOption"
             :placement="'right'"
             :options="[
               {
-                label: 'Split Ticket',
+                label: __('Split Ticket'),
                 icon: LucideSplit,
                 onClick: () => (showSplitModal = true),
               },

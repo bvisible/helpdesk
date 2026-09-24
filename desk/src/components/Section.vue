@@ -18,7 +18,8 @@
             :class="{ 'rotate-90': opened }"
           />
           <span>
-            {{ label || "Untitled" }}
+            <!-- //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+            {{ label || __("Untitled") }}
           </span>
           <FeatherIcon
             v-if="collapsible && collapseIconPosition === 'right'"

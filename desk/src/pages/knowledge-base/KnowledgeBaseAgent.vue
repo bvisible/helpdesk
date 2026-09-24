@@ -420,7 +420,9 @@ const options = computed(() => {
       },
     },
     emptyState: {
-      title: "No articles found",
+      //// Neoffice — literal __(): EmptyState translates the title at render, but only a literal
+      //// __() puts the msgid in the catalogue (same pass as 71a5669d9)
+      title: __("No articles found"),
       icon: h(LucideBookOpen, {
         class: "h-10 w-10",
       }),

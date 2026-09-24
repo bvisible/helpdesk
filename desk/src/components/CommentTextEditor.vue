@@ -128,6 +128,8 @@ import {
 } from "@/utils";
 import { useStorage } from "@vueuse/core";
 import { storeToRefs } from "pinia";
+//// Neoffice — import added for the "Sending..." wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const { updateOnboardingStep } = useOnboarding("helpdesk");
 const { agents: agentsList, dropdown } = storeToRefs(useAgentStore());
@@ -180,8 +182,10 @@ onBeforeUnmount(() => {
   cleanup();
 });
 
+//// Neoffice — upstream wrote "Sending..." in plain English; wrapped so the French catalogue
+//// reaches it (same pass as 71a5669d9). The label itself arrives translated from the caller.
 const label = computed(() => {
-  return loading.value ? "Sending..." : props.label;
+  return loading.value ? __("Sending...") : props.label;
 });
 
 function removeAttachment(attachment) {

@@ -30,14 +30,12 @@
             </div>
             <!-- Count Text -->
             <span class="text-ink-gray-7">
-              {{
-                selectedCount === 1
-                  ? selectedOptions[0]?.label
-                  : `${selectedCount} ${selectionText}`
-              }}
+              <!-- //// Neoffice — upstream glued the count to "items" in plain English; one msgid now, so the French catalogue reaches it (same pass as 71a5669d9). A caller's own selectionText still wins. -->
+              {{ selectedCount === 1 ? selectedOptions[0]?.label : selectionText ? `${selectedCount} ${selectionText}` : __("{0} items", selectedCount) }}
             </span>
           </template>
-          <span v-else class="text-ink-gray-6">{{ placeholder }}</span>
+          <!-- //// Neoffice — the default placeholder is translated here, at render: as a withDefaults value its __() ran before the catalogue arrived -->
+          <span v-else class="text-ink-gray-6">{{ placeholder ?? __("Select options...") }}</span>
         </div>
         <template #suffix>
           <LucideChevronDown
@@ -57,10 +55,11 @@
         <div
           class="flex h-7 items-center text-sm font-medium text-ink-gray-6 justify-between"
         >
+          <!-- //// Neoffice — default label translated here, at render (see the placeholder above) -->
           <input
             ref="inputRef"
             v-model="filterText"
-            :placeholder="label"
+            :placeholder="label ?? __('Options')"
             class="px-2 flex-1 bg-transparent border-none outline-none text-sm focus:border-none focus:ring-0 text-ink-gray-6 placeholder-ink-gray-4"
             @click.stop
             @keydown="handleInputKeydown"
@@ -227,11 +226,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  // //// Neoffice — labels wrapped in __() (71a5669d9 "fix(i18n): 341
-  // //// visible strings of the SPA never went through __()").
-  placeholder: __('Select options...'),
-  label: __('Options'),
-  selectionText: "items",
+  // //// Neoffice — placeholder / label / selectionText defaults removed: withDefaults is
+  // //// compiled into the component definition, so the __() we had put here (71a5669d9) ran
+  // //// before the catalogue arrived and stayed English. The template translates them.
   options: () => [],
 });
 

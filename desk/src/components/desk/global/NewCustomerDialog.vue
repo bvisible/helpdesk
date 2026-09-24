@@ -1,8 +1,9 @@
 <template>
   <div>
+    <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
     <Dialog
       v-model="model"
-      :options="{ title: 'Add New Customer', size: 'sm' }"
+      :options="{ title: __('Add New Customer'), size: 'sm' }"
     >
       <template #body-content>
         <div class="space-y-4">
@@ -17,11 +18,12 @@
           </div>
           <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           <div class="space-y-1">
+            <!-- //// Neoffice — the placeholder's "eg:" is English too; wrapped with its sample domains (same pass as 71a5669d9) -->
             <Input
               v-model="state.domain"
               :label="__('Domain')"
               type="text"
-              placeholder="eg: tesla.com, mycompany.com"
+              :placeholder="__('eg: tesla.com, mycompany.com')"
             />
           </div>
           <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
@@ -75,7 +77,8 @@ const customerResource = createResource({
 
 function addCustomer() {
   if (!state.customer) {
-    toast.error("Customer name is required");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("Customer name is required"));
     return;
   }
   customerResource.submit({

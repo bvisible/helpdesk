@@ -82,7 +82,8 @@ const breadcrumbs = computed(() => {
 
 usePageMeta(() => {
   return {
-    title: `${categoryTitle?.value}` + " - " + "Knowledge Base",
+    //// Neoffice — the page title glued a plain-English "Knowledge Base" to the category; one msgid now (same pass as 71a5669d9)
+    title: __("{0} - Knowledge Base", categoryTitle?.value),
   };
 });
 </script>

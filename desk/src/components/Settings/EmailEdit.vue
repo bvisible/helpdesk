@@ -21,11 +21,12 @@
             <div class="text-wrap text-xs text-ink-gray-7 flex flex-col gap-1">
               <span>
                 {{ info.description }}
+                <!-- //// Neoffice — upstream wrote the link text in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9; "here" is already the link msgid of TicketSettings / Notification) -->
                 <a
                   :href="info.link"
                   target="_blank"
                   class="text-ink-blue-2 underline"
-                  >here</a
+                  >{{ __("here") }}</a
                 >.
               </span>
               <span v-if="deskEditUrl" class="flex items-center gap-1">

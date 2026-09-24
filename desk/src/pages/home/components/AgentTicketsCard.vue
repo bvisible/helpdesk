@@ -32,7 +32,9 @@ const props = defineProps({
   },
 });
 
-const currentDuration = ref(__("Last month"));
+//// Neoffice — the English key: it is sent lowercased as `period` to the server, which does not
+//// know the translated label (see CardBase's durationOptions); CardBase translates it for display.
+const currentDuration = ref("Last month");
 
 const chartColor = {
   lineColor: "#5597F3",

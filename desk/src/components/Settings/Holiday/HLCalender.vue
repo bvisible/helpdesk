@@ -107,12 +107,13 @@
                           }
                         "
                       />
+                      <!-- //// Neoffice — upstream wrote both labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
                       <Button
                         class="w-full flex !justify-start"
                         icon-left="trash-2"
                         variant="ghost"
                         :label="
-                          isConfirmingDelete ? 'Confirm Delete' : 'Delete'
+                          isConfirmingDelete ? __('Confirm Delete') : __('Delete')
                         "
                         :theme="isConfirmingDelete ? 'red' : 'gray'"
                         @click="
@@ -160,6 +161,8 @@ import dayjs from "dayjs";
 import { Popover, useDatePicker } from "frappe-ui";
 import { ref, watch } from "vue";
 import AddHolidayModal from "./Modals/AddHolidayModal.vue";
+//// Neoffice — import added for the recurring-holiday wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const dialog = ref({
   show: false,
@@ -307,8 +310,10 @@ const getHolidayDescription = (date: Date): string => {
     return holidayDate === editDate;
   });
 
+  //// Neoffice — upstream wrote the suffix in plain English (a template literal); one msgid now,
+  //// so the French catalogue reaches it (same pass as 71a5669d9)
   const text = holiday?.weekly_off
-    ? `${htmlToText(holiday?.description || "")}: Recurring holiday`
+    ? __("{0}: Recurring holiday", htmlToText(holiday?.description || ""))
     : htmlToText(holiday?.description || "");
 
   return text;

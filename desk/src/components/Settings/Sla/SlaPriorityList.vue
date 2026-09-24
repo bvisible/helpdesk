@@ -122,7 +122,8 @@ const addRow = () => {
   );
 
   if (availablePriorities.length === 0) {
-    toast.error("All available priorities have already been added");
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    toast.error(__("All available priorities have already been added"));
     return;
   }
 

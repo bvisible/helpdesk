@@ -86,11 +86,12 @@
       </div>
     </template>
     <template #actions>
+      <!-- //// Neoffice — upstream wrote both labels in plain English (one a template literal); wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
       <Button
         class="w-full"
         variant="solid"
         :label="
-          targetTicket ? `Merge with ticket #${targetTicket} ` : 'Select Ticket'
+          targetTicket ? __('Merge with ticket #{0}', targetTicket) : __('Select Ticket')
         "
         :loading="mergeTicket.loading"
         :icon-left="targetTicket && LucideMerge"
@@ -130,24 +131,31 @@ const showDialog = defineModel<boolean>();
 
 const isRtl = document.documentElement.dir === "rtl";
 
+//// Neoffice — upstream wrote these rules in plain English and the template translated them with
+//// __(condition.text), which the POT extractor cannot see: wrapped here, in setup, so they reach
+//// the French catalogue (same pass as 71a5669d9). `code` is a technical expression, kept as is.
 const mergeConditions = [
   {
-    text: "Ticket must be Open or Paused.",
+    text: __("Ticket must be Open or Paused."),
     code: "status_category in ['Open', 'Paused']",
   },
   {
-    text: "Ticket must not already be merged.",
+    //// Neoffice — see above
+    text: __("Ticket must not already be merged."),
     code: "is_merged === 0",
   },
   {
-    text: "Source and target tickets which are to be merged cannot be the same.",
+    //// Neoffice — see above
+    text: __("Source and target tickets which are to be merged cannot be the same."),
   },
   {
-    text: "If source ticket has a customer, target must belong to the same customer.",
+    //// Neoffice — see above
+    text: __("If source ticket has a customer, target must belong to the same customer."),
     code: "customer === source.customer",
   },
   {
-    text: "If source ticket has a raised_by, target must share the same raised_by.",
+    //// Neoffice — see above
+    text: __("If source ticket has a raised_by, target must share the same raised_by."),
     code: "raised_by === source.raised_by",
   },
 ];

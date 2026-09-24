@@ -1,5 +1,6 @@
 <template>
-  <Dialog :options="{ title: `Split ticket` }" v-model="showDialog">
+  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+  <Dialog :options="{ title: __('Split ticket') }" v-model="showDialog">
     <template #body-content>
       <div class="flex flex-col gap-4">
         <p class="text-p-base text-ink-gray-8">

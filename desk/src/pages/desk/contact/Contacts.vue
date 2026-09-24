@@ -101,7 +101,8 @@ function openContact(id: string): void {
 }
 
 function handleContactUpdated(): void {
-  toast.success("Contact updated successfully.");
+  //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+  toast.success(__("Contact updated successfully."));
   listViewRef.value?.reload();
 }
 usePageMeta(() => {

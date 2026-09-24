@@ -97,7 +97,8 @@
       </Dropdown>
     </div>
   </div>
-  <Dialog v-model="show" :options="{ size: '3xl', title: 'Nested conditions' }">
+  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+  <Dialog v-model="show" :options="{ size: '3xl', title: __('Nested conditions') }">
     <template #body-content>
       <CFConditions
         :conditions="props.condition"
@@ -197,7 +198,9 @@ const dropdownOptions = computed(() => {
     label: __('Remove'),
     component: (props) =>
       TemplateOption({
-        option: "Remove",
+        //// Neoffice — TemplateOption renders `option` as the menu text (the label above is not
+        //// shown): wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+        option: __("Remove"),
         icon: "trash-2",
         active: props.active,
         variant: "danger",
@@ -213,7 +216,8 @@ const dropdownOptions = computed(() => {
     label: __('Remove group'),
     component: (props) =>
       TemplateOption({
-        option: "Remove group",
+        //// Neoffice — rendered text, wrapped (see Remove above)
+        option: __("Remove group"),
         icon: "trash-2",
         active: props.active,
         variant: "danger",
@@ -278,7 +282,9 @@ function getValueControl() {
     return h(FormControl, {
       type: "select",
       options: _options.map((o) => ({
-        label: o,
+        //// Neoffice — value / label split: the value ("Yes", "No", a Select option) is what the
+        //// condition stores; only the label is translated
+        label: __(o),
         value: o,
       })),
     });
@@ -350,10 +356,10 @@ function getOperators() {
         { label: __('Not Equals'), value: "!=" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -362,7 +368,7 @@ function getOperators() {
       //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
       { label: __('Like'), value: "like" },
       { label: __('Not Like'), value: "not like" },
-      { label: "Is", value: "is" },
+      { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
     ];
   }
   if (typeNumber.includes(fieldtype)) {
@@ -373,10 +379,10 @@ function getOperators() {
         { label: __('Not Equals'), value: "!=" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: "<", value: "<" },
         { label: ">", value: ">" },
         { label: "<=", value: "<=" },
@@ -390,10 +396,10 @@ function getOperators() {
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -405,10 +411,10 @@ function getOperators() {
         { label: __('Not Equals'), value: "!=" },
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -422,10 +428,10 @@ function getOperators() {
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Like'), value: "like" },
         { label: __('Not Like'), value: "not like" },
-        { label: "In", value: "in" },
+        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Not In'), value: "not in" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
       ]
     );
   }
@@ -435,7 +441,7 @@ function getOperators() {
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
@@ -451,7 +457,7 @@ function getOperators() {
         //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
         { label: __('Equals'), value: "==" },
         { label: __('Not Equals'), value: "!=" },
-        { label: "Is", value: "is" },
+        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },

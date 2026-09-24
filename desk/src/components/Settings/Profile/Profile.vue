@@ -169,13 +169,14 @@
               {{ __("Change timezone of the application.") }}
             </span>
           </div>
+          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
           <Autocomplete
             :model-value="user.doc?.time_zone"
             @update:modelValue="updateTimezone"
             class="w-40"
             :options="timezoneOptions"
             size="sm"
-            placeholder="Select Timezone"
+            :placeholder="__('Select Timezone')"
           />
         </div>
       </div>

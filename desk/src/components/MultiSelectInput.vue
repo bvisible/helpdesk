@@ -97,6 +97,8 @@ import {
 import { watchDebounced } from "@vueuse/core";
 import { Popover, createResource } from "frappe-ui";
 import { computed, nextTick, ref } from "vue";
+//// Neoffice — import added for the error-message wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const props = defineProps({
   validate: {
@@ -105,7 +107,9 @@ const props = defineProps({
   },
   errorMessage: {
     type: Function,
-    default: (value) => `${value} is an Invalid value`,
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it
+    //// (same pass as 71a5669d9). __() runs when the message is built, not at module load.
+    default: (value) => __("{0} is an Invalid value", value),
   },
 });
 

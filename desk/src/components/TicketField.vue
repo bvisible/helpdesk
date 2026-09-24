@@ -9,13 +9,14 @@
     <div
       class="-m-0.5 min-h-[28px] flex-1 items-center overflow-hidden p-0.5 text-base"
     >
+      <!-- //// Neoffice — upstream built the placeholder in plain English (a template literal); one msgid with {0} for the field label, translated like the label above (same pass as 71a5669d9) -->
       <component
         :is="component"
         :key="field.fieldname"
         :readonly="field.readonly"
         :disabled="field.disabled"
         class="form-control"
-        :placeholder="field.placeholder || `Add ${field.label}`"
+        :placeholder="field.placeholder || __('Add {0}', __(field.label))"
         :model-value="transValue"
         autocomplete="off"
         v-on="
@@ -52,6 +53,8 @@ import {
   Tooltip,
 } from "frappe-ui";
 import { computed, h } from "vue";
+//// Neoffice — import added for the Yes / No wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 interface P {
   field: Field;
@@ -100,12 +103,15 @@ const component = computed(() => {
   } else if (props.field.fieldtype === "Check") {
     return h(Autocomplete, {
       options: [
+        //// Neoffice — upstream wrote the labels in plain English; wrapped so the French catalogue
+        //// reaches them (same pass as 71a5669d9). The values 1 / 0 are what gets saved.
         {
-          label: "Yes",
+          label: __("Yes"),
           value: 1,
         },
         {
-          label: "No",
+          //// Neoffice — see above: label translated, value kept
+          label: __("No"),
           value: 0,
         },
       ],
@@ -136,7 +142,9 @@ const component = computed(() => {
 const transValue = computed(() => {
   const fieldtype = props.field.fieldtype;
   if (fieldtype === "Check") {
-    return props.value ? "Yes" : "No";
+    //// Neoffice — shown as is by Autocomplete (no option has this value): translated like the
+    //// option labels above (same pass as 71a5669d9)
+    return props.value ? __("Yes") : __("No");
   } else if (fieldtype === "Date") {
     if (!props.value) return props.value;
     return dayjs(props.value).format(window.date_format.toUpperCase());

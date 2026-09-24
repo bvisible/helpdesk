@@ -148,7 +148,8 @@ const dropdownOptions = [
     onClick: () => {
       duplicateDialog.value = {
         show: true,
-        newName: props.data.name + " (Copy)",
+        //// Neoffice — upstream built the default name in plain English; one msgid now, so the French catalogue reaches it (same pass as 71a5669d9)
+        newName: __("{0} (Copy)", props.data.name),
         name: props.data.name,
       };
     },

@@ -45,7 +45,8 @@
     >
       <!-- Ticket Info (custom fields) -->
       <div v-if="Boolean(customFields.length)">
-        <Section label="Ticket Info" :opened="true">
+        <!-- //// Neoffice — upstream wrote the section label in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+        <Section :label="__('Ticket Info')" :opened="true">
           <template #header="{ opened, toggle }">
             <div
               class="flex gap-2.5 items-center justify-between sticky top-0 bg-surface-white z-10 px-4 py-4 cursor-pointer"
@@ -162,6 +163,8 @@ import Section from "../Section.vue";
 import TicketField from "../TicketField.vue";
 import AssignTo from "./AssignTo.vue";
 import TicketContact from "./TicketContact.vue";
+//// Neoffice — import added for the section and placeholder wraps below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 
 const ticket = inject(TicketSymbol)!;
 const assignees = inject(AssigneeSymbol)!;
@@ -245,8 +248,11 @@ const sections = computed(() => {
   const _sections = [];
   if (recentTickets.length) {
     _sections.push({
-      label: "Recent Tickets",
-      tooltipMessage: "Tickets recently raised by this contact/customer",
+      //// Neoffice — upstream wrote label and tooltip in plain English; the template translated the
+      //// label with __(variable), which the POT extractor cannot see, and not the tooltip at all:
+      //// wrapped here (same pass as 71a5669d9)
+      label: __("Recent Tickets"),
+      tooltipMessage: __("Tickets recently raised by this contact/customer"),
       hideLabel: false,
       opened: true,
       tickets: recentTickets,
@@ -254,8 +260,9 @@ const sections = computed(() => {
   }
   if (similarTickets.length) {
     _sections.push({
-      label: "Similar Tickets",
-      tooltipMessage: "Tickets with similar queries",
+      //// Neoffice — see above
+      label: __("Similar Tickets"),
+      tooltipMessage: __("Tickets with similar queries"),
       hideLabel: false,
       opened: true,
       tickets: similarTickets,
@@ -285,9 +292,11 @@ function getFieldInFormat(fieldTemplate, fieldMeta) {
     fieldtype: fieldMeta?.fieldtype,
     doctype: fieldMeta?.options || "",
     options: fieldMeta?.options || "",
+    //// Neoffice — upstream built the placeholder in plain English (a template literal); one msgid
+    //// with {0} for the field label, translated like the label itself (same pass as 71a5669d9)
     placeholder:
       fieldTemplate.placeholder ||
-      `Enter ${fieldMeta?.label || fieldTemplate.fieldname}`,
+      __("Enter {0}", __(fieldMeta?.label || fieldTemplate.fieldname)),
     readonly: Boolean(fieldMeta.read_only),
     disabled: Boolean(fieldMeta.read_only),
     url_method: fieldTemplate.url_method || "",

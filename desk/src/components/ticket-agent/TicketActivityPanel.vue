@@ -95,14 +95,18 @@ const tabs: ComputedRef<TabObject[]> = computed(() => {
       label: __('Activity'),
       icon: ActivityIcon,
     },
+    //// Neoffice — upstream wrote these tab labels in plain English; wrapped so the French catalogue
+    //// reaches them (same pass as 71a5669d9). `name` stays the tab identity (URL hash, filters),
+    //// and ActivityHeader now branches on it instead of on this label.
     {
       name: "email",
-      label: "Emails",
+      label: __("Emails"),
       icon: EmailIcon,
     },
     {
       name: "comment",
-      label: "Comments",
+      //// Neoffice — see above: label translated, name kept
+      label: __("Comments"),
       icon: CommentIcon,
     },
   ];
@@ -110,7 +114,8 @@ const tabs: ComputedRef<TabObject[]> = computed(() => {
   if (isCallingEnabled.value) {
     _tabs.push({
       name: "call",
-      label: "Calls",
+      //// Neoffice — see above: label translated, name kept
+      label: __("Calls"),
       icon: PhoneIcon,
     });
   }
@@ -180,7 +185,9 @@ const _activities = computed(() => {
     return {
       type: "history",
       key: h.creation,
-      content: h.action ? h.action : "viewed this",
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it
+      //// (same pass as 71a5669d9). The grouping below compares against the same __() value.
+      content: h.action ? h.action : __("viewed this"),
       creation: h.creation,
       user: h.user.name + " ",
     };
@@ -220,7 +227,8 @@ const _activities = computed(() => {
         if (
           nextActivity &&
           nextActivity.user === currentActivity.user &&
-          nextActivity.content !== "viewed this" &&
+          //// Neoffice — compared with the translated text, since `content` holds the translated "viewed this" now
+          nextActivity.content !== __("viewed this") &&
           !nextActivity.content.includes("assigned") &&
           !nextActivity.content.includes("unassigned")
         ) {

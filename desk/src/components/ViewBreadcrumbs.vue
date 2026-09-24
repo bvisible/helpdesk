@@ -9,10 +9,11 @@
     <span class="mx-0.5 text-base text-ink-gray-4" aria-hidden="true"> / </span>
     <Dropdown :options="options">
       <template #default="{ open }">
+        <!-- //// Neoffice — translated at render: the default label "List" comes from useView.ts, where it is translated at import, before the catalogue arrives. A label that is already translated, or a view's own name, comes back unchanged -->
         <Button
           variant="ghost"
           class="text-lg font-medium text-nowrap truncate max-w-[200px] sm:max-w-none"
-          :label="currentView.label"
+          :label="__(currentView.label)"
         >
           <template #prefix>
             <component
@@ -45,12 +46,14 @@
 
       <template #item-label="{ item }">
         <div class="flex items-center min-w-0 max-w-[50vw]">
-          <span class="truncate">{{ item.label }}</span>
+          <!-- //// Neoffice — view names translated at display: the standard views (SLA Alerts, Pending Tickets...) are stored in English; a view's own name comes back unchanged -->
+          <span class="truncate">{{ __(item.label) }}</span>
+          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
           <Badge
             v-if="item.is_standard"
             class="ms-1 flex-shrink-0"
             size="sm"
-            label="Standard"
+            :label="__('Standard')"
           />
         </div>
       </template>

@@ -66,6 +66,8 @@
 
 <script setup lang="ts">
 import { VNode, computed } from "vue";
+//// Neoffice — import added for the default description wrap below (same pass as 71a5669d9).
+import { __ } from "@/translation";
 interface Props {
   title: string;
   icon?: VNode | string;
@@ -84,9 +86,13 @@ const props = withDefaults(defineProps<Props>(), {
 const descriptionText = computed(() =>
   props.description !== undefined && props.description !== ""
     ? props.description
-    : `Create new ${props.title
-        .split(" ")[1]
-        .toLocaleLowerCase()} using the Create button.`
+    //// Neoffice — upstream wrote this sentence in plain English (a template literal); one msgid
+    //// now, so the French catalogue reaches it (same pass as 71a5669d9). {0} is a word cut out
+    //// of the title, which the caller has usually translated already: a translation may drop it.
+    : __(
+        "Create new {0} using the Create button.",
+        props.title.split(" ")[1].toLocaleLowerCase()
+      )
 );
 </script>
 

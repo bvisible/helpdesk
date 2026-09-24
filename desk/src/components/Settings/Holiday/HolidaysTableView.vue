@@ -103,7 +103,8 @@ const holidays = computed(() => {
 
 const columns = [
   {
-    label: "Date",
+    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    label: __("Date"),
     key: "holiday_date",
   },
   {

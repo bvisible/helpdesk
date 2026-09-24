@@ -89,15 +89,16 @@
           />
         </div>
         <!-- Empty State -->
+        <!-- //// Neoffice — upstream wrote title and description in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
         <EmptyState
           v-if="!agents.loading && !agents.data?.length"
           variant="badge"
           :icon="AgentIcon"
-          title="No agent found"
+          :title="__('No agent found')"
           :description="
             activeFilter.length
-              ? 'Change your search terms or filters'
-              : 'Add one to get started.'
+              ? __('Change your search terms or filters')
+              : __('Add one to get started.')
           "
         />
         <!-- Agent List -->
@@ -137,13 +138,14 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
+                <!-- //// Neoffice — the button printed the role identifier ("Agent", "Manager") as is; translated only where it is shown, the comparisons below keep the value (same pass as 71a5669d9) -->
                 <Dropdown
                   v-if="isManager"
                   class="flex justify-end items-center"
                   :options="getRoles(agent.name)"
-                  :label="getUserRole(agent.name)"
+                  :label="__(getUserRole(agent.name))"
                   :button="{
-                    label: getUserRole(agent.name),
+                    label: __(getUserRole(agent.name)),
                     iconRight: 'chevron-down',
                     iconLeft:
                       getUserRole(agent.name) === 'Agent'
@@ -187,7 +189,10 @@
 import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import { Avatar, Button, call, Dropdown, FeatherIcon, toast } from "frappe-ui";
-import { h, onUnmounted } from "vue";
+//// Neoffice — `computed` added: activeFilterLabel below (our value/label split, 559991121)
+//// used it without importing it, so the built chunk called a free `computed` and the
+//// Agents settings screen threw a ReferenceError as soon as it opened.
+import { computed, h, onUnmounted } from "vue";
 import LucideCheck from "~icons/lucide/check";
 import { activeFilter, useAgents } from "./agents";
 import AgentIcon from "../icons/AgentIcon.vue";
@@ -206,7 +211,9 @@ function getRoles(agent: string) {
   const agentRole = getUserRole(agent);
   const roles = [
     {
-      label: "Agent",
+      //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it
+      //// (same pass as 71a5669d9). `role` below stays the identity sent to the server.
+      label: __("Agent"),
       component: (props) =>
         RoleOption({
           role: "Agent",
@@ -221,7 +228,8 @@ function getRoles(agent: string) {
   ];
   if (isManager) {
     roles.unshift({
-      label: "Manager",
+      //// Neoffice — see the note above: label translated, `role` kept as the identity
+      label: __("Manager"),
       component: (props) =>
         RoleOption({
           role: "Manager",
@@ -258,7 +266,8 @@ function RoleOption({ active, role, onClick, selected, icon = null }) {
               "aria-hidden": true,
             })
           : null,
-        h("span", { class: "whitespace-nowrap" }, role),
+        //// Neoffice — `role` is the identity ("Agent", "Manager"); translated only for display
+        h("span", { class: "whitespace-nowrap" }, __(role)),
       ]),
       selected
         ? h(LucideCheck, {
@@ -280,7 +289,9 @@ function updateRole(agent: string, newRole: string) {
     new_role: newRole,
   }).then(() => {
     updateUserRoleCache(agent, newRole);
-    toast.success(__(`Role updated to ${newRole} successfully.`));
+    //// Neoffice — upstream passed a template literal to __(): a msgid built at run time never
+    //// reaches the catalogue. One msgid with {0} now (same pass as 71a5669d9).
+    toast.success(__("Role updated to {0} successfully.", __(newRole)));
   });
 }
 

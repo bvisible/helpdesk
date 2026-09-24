@@ -16,8 +16,11 @@ export const newArticle = createResource({
     };
   },
   validate({ doc }) {
-    if (!doc.title) throw "Title is required";
-    if (!doc.content) throw "Content is required";
+    //// Neoffice — upstream wrote these validation messages in plain English (shown to the person who
+    //// submits); wrapped so the French catalogue reaches them (same pass as 71a5669d9). They run at
+    //// submit time, not at import.
+    if (!doc.title) throw __("Title is required");
+    if (!doc.content) throw __("Content is required");
   },
 });
 
@@ -37,7 +40,8 @@ export const deleteArticles = createResource({
     };
   },
   validate({ articles }) {
-    if (!articles) throw "Articles are required";
+    //// Neoffice — validation message wrapped (see newArticle above)
+    if (!articles) throw __("Articles are required");
   },
 });
 
@@ -50,14 +54,16 @@ export const newCategory = createResource({
     };
   },
   validate({ title }) {
-    if (!title) throw "Title is required";
+    //// Neoffice — validation message wrapped (see newArticle above)
+    if (!title) throw __("Title is required");
   },
 });
 
 export const updateCategoryTitle = createResource({
   url: "frappe.client.set_value",
   validate({ name, value }) {
-    if (!value) throw "Title is required";
+    //// Neoffice — validation message wrapped (see newArticle above)
+    if (!value) throw __("Title is required");
   },
 });
 

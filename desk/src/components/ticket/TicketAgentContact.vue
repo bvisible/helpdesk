@@ -8,7 +8,8 @@
         </div>
       </Tooltip>
       <div class="flex gap-1.5">
-        <Tooltip :text="`Call ${contact.name}`" v-if="isCallingEnabled">
+        <!-- //// Neoffice — upstream wrote the tooltip in plain English (a template literal); one msgid now, so the French catalogue reaches it (same pass as 71a5669d9) -->
+        <Tooltip :text="__('Call {0}', contact.name)" v-if="isCallingEnabled">
           <Button @click="callContact">
             <template #icon>
               <PhoneIcon class="size-4" />
