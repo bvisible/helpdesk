@@ -441,8 +441,24 @@ def build_index_if_not_exists():
         build_index()
 
 
-@filelock("helpdesk_corpus_download", timeout=1, is_global=True)
+# //// Neoffice — download_corpus no longer lets a busy lock fail its caller.
+# //// Upstream calls it from after_migrate AND from the scheduler's "all" tick,
+# //// behind a bench-wide lock with one second of patience: a migrate that
+# //// overlapped a tick did all its work, then exited 1 on LockTimeoutError
+# //// (seen twice on one site, four minutes apart, same code). A held lock only
+# //// means another process is already doing the same idempotent download.
+# //// To offer upstream.
 def download_corpus():
+    from frappe.utils.file_lock import LockTimeoutError
+
+    try:
+        _download_corpus()
+    except LockTimeoutError:
+        pass  # someone else holds the lock and is fetching the same corpus
+
+
+@filelock("helpdesk_corpus_download", timeout=1, is_global=True)
+def _download_corpus():
     from nltk import data, download
 
     try:
