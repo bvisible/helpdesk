@@ -21,7 +21,8 @@ import "./index.css";
 import { router } from "./router";
 import { telemetryPlugin } from "frappe-ui/frappe";
 import { isCustomerPortal } from "@/utils";
-import { translationPlugin } from "./translation";
+//// Neoffice — translationsReady added: the app mounts once the catalogue is there (see below).
+import { translationPlugin, translationsReady } from "./translation";
 import CircleAlert from "~icons/lucide/circle-alert";
 import { initSocket } from "./socket";
 
@@ -98,10 +99,14 @@ if (import.meta.env.DEV) {
     if (window.lang) document.documentElement.lang = window.lang;
     socket = initSocket();
     app.config.globalProperties.$socket = socket;
-    app.mount("#app");
+    //// Neoffice — mounted once the catalogue is there (bounded wait, translation.ts):
+    //// the first screen used to render before it and keep its English.
+    translationsReady.then(() => app.mount("#app"));
   });
 } else {
   socket = initSocket();
   app.config.globalProperties.$socket = socket;
-  app.mount("#app");
+  //// Neoffice — mounted once the catalogue is there (bounded wait, translation.ts):
+  //// the first screen used to render before it and keep its English.
+  translationsReady.then(() => app.mount("#app"));
 }

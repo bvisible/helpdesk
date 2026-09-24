@@ -55,11 +55,16 @@ const route = useRoute();
 const failed = ref(false);
 const showCommandPalette = ref(false);
 
-const surfaceApp = {
-  name: "helpdesk",
-  title: __('Helpdesk'),
-  logo: "/assets/helpdesk/desk/favicon.svg",
-};
+// A computed, like contextNav below and for the same reason: set once in setup, the
+// title stayed "Helpdesk" whenever the catalogue landed after the component was created.
+const surfaceApp = computed(() => {
+  void translationsVersion.value;
+  return {
+    name: "helpdesk",
+    title: __("Helpdesk"),
+    logo: "/assets/helpdesk/desk/favicon.svg",
+  };
+});
 
 // fixed links carry icon COMPONENTS — map labels to lucide strings instead
 //// Neoffice — keyed on the ROUTE name, not the label: the labels are translated
