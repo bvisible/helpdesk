@@ -68,6 +68,19 @@ class CustomEmailAccount(EmailAccount):
                 email_server = self.get_incoming_server(
                     in_receive=True, email_sync_rule=email_sync_rule
                 )
+                # //// Neoffice — a connection that failed is not a folder error.
+                # //// Upstream carries on after get_incoming_server(in_receive=True),
+                # //// which swallows a timeout or a refused login (it counts the
+                # //// failure in no_failed, and disables the account past six in a
+                # //// row) and still returns an EmailServer that never got its
+                # //// `imap`. The next line then logged "'EmailServer' object has no
+                # //// attribute 'imap'" as "Error while connecting", every 2 minutes
+                # //// of a provider outage — 11 times on 2026-09-23, reopening a
+                # //// fleet issue (#429) about an error that does not say what
+                # //// failed. Stop here: the framework has already counted it.
+                connection = "imap" if self.use_imap else "pop"
+                if not email_server or not getattr(email_server, connection, None):
+                    return []
                 if self.use_imap:
                     # process all given imap folder
                     for folder in self.imap_folder:
