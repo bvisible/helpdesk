@@ -611,7 +611,9 @@ def get_navigation_filters(ticket: str, current_view: str = None):
                 filters = (
                     json.loads(_filters) if isinstance(_filters, str) else _filters
                 )
-            except json.JSONDecodeError, TypeError:
+            # //// Neoffice — parenthesized: upstream develop wrote `except A, B:`, Python
+            # //// 3.14-only syntax (PEP 758) that fails to compile on the fleet's Python 3.12.
+            except (json.JSONDecodeError, TypeError):
                 filters = []
 
     if not filters:
@@ -628,7 +630,9 @@ def get_navigation_filters(ticket: str, current_view: str = None):
                     if isinstance(default_view, str)
                     else default_view
                 )
-            except json.JSONDecodeError, TypeError:
+            # //// Neoffice — parenthesized: upstream develop wrote `except A, B:`, Python
+            # //// 3.14-only syntax (PEP 758) that fails to compile on the fleet's Python 3.12.
+            except (json.JSONDecodeError, TypeError):
                 filters = []
 
     # Base filters - exclude the current ticket
