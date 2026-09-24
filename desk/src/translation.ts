@@ -1,5 +1,15 @@
 import { createResource } from "frappe-ui";
 import type { App } from "vue";
+//// Neoffice — added: a signal for the catalogue's arrival (translationsVersion below).
+import { ref } from "vue";
+
+//// Neoffice — bumped every time the catalogue lands (from the local cache, then from
+//// the server). __() reads window.translatedMessages, which Vue cannot watch, so a
+//// label computed before the fetch returned stayed in English for good: the menu of
+//// NeoCockpitHDSidebar.vue showed Home, Knowledge Base, Customers, Contacts on a French
+//// site, the catalogue arriving after layoutSettings.ts was imported. A computed that
+//// reads this ref re-runs once the translations are there.
+export const translationsVersion = ref(0);
 
 function getTranslatedMessage(message: string): string {
   const translatedMessages = (("translatedMessages" in window
@@ -30,6 +40,8 @@ function fetchTranslations() {
     auto: true,
     transform(data: Record<string, string>) {
       (window as any).translatedMessages = data;
+      //// Neoffice — added: wakes the computeds that translated too early (see above).
+      translationsVersion.value++;
     },
   });
 }

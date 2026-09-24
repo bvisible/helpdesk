@@ -48,7 +48,7 @@ import {
 import { isCustomerPortal } from "@/utils";
 import { useRouter, useRoute } from "vue-router";
 import { ref, computed } from "vue";
-import { __ } from "@/translation";
+import { __, translationsVersion } from "@/translation";
 
 const router = useRouter();
 const route = useRoute();
@@ -66,6 +66,10 @@ const surfaceApp = {
 //// (layoutSettings wraps them in __()), so a French desk looked every icon up under
 //// "Clients" / "Base de Connaissances" and fell back to the generic circle.
 const ICONS: Record<string, string> = {
+  // Home and Dashboard came with the upstream merge of 2026-09-24; unmapped, they
+  // showed the generic circle.
+  Home: "lucide-home",
+  Dashboard: "lucide-layout-dashboard",
   TicketsAgent: "lucide-ticket",
   TicketsCustomer: "lucide-ticket",
   AgentKnowledgeBase: "lucide-book-open",
@@ -82,6 +86,12 @@ function navigate(r: string) {
 }
 
 const contextNav = computed(() => {
+  // The labels were translated once, when layoutSettings.ts was first imported, and
+  // that usually happens before the catalogue arrives: the menu stayed in English on
+  // a French site. Reading translationsVersion re-runs this computed once the
+  // catalogue lands, and __() translates what was left in English. A label that was
+  // already translated is not a msgid, so __() gives it back unchanged.
+  void translationsVersion.value;
   const currentName = route.name as string;
   const links = isCustomerPortal.value
     ? customerPortalSidebarOptions
@@ -89,7 +99,7 @@ const contextNav = computed(() => {
   return [
     {
       items: links.map((item: { label: string; to: string }) => ({
-        label: item.label,
+        label: __(item.label),
         icon: ICONS[item.to] || "lucide-circle",
         active:
           currentName === item.to ||
