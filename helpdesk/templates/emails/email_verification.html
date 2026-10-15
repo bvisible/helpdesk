@@ -1,4 +1,6 @@
-{% import "templates/emails/macros.html" as utils %} {% block content %}
+{#- //// Neoffice — the import names the app: "templates/emails/macros.html" is also a file of the suite app, installed after
+    the helpdesk, so it wins the search and has no `signature` macro: this e-mail failed with an undefined macro (15.10). -#}
+{% import "helpdesk/templates/emails/macros.html" as utils %} {% block content %}
 
 <td class="text-base leading-6 text-gray-900">
   <div class="from-markdown bg-white p-8">
