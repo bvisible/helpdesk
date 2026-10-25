@@ -324,6 +324,8 @@ const telephonyStore = useTelephonyStore();
 const { isCallingEnabled } = storeToRefs(telephonyStore);
 
 const ticketStatusStore = useTicketStatusStore();
+//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket status
+const { statusLabel } = ticketStatusStore;
 const router = useRouter();
 const { $dialog } = globalStore();
 
@@ -502,7 +504,8 @@ const dropdownOptions = computed(() =>
   ticketStatusStore.statuses.data
     ?.filter((o: HDTicketStatus) => o.enabled)
     .map((o: HDTicketStatus) => ({
-      label: o.label_agent,
+      //// Neoffice — the label is translated, the VALUE (what HD Ticket.status stores) stays raw
+      label: statusLabel(o.label_agent),
       value: o.label_agent,
       onClick: () => ticket.value.setValue.submit({ status: o.label_agent }),
       icon: () =>

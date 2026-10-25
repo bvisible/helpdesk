@@ -117,7 +117,9 @@ const { isManager, userId } = useAuthStore();
 const listViewRef = ref(null);
 const showExportModal = ref(false);
 
-const { getStatus } = useTicketStatusStore();
+//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket
+//// status, used by the status column below.
+const { getStatus, statusLabel } = useTicketStatusStore();
 
 const listSelections = ref(new Set());
 
@@ -187,9 +189,15 @@ const options = computed(() => ({
     status: {
       custom: ({ item }) => {
         const status = getStatus(item);
-        const label = isCustomerPortal.value
-          ? status?.["label_customer"]
-          : status?.["label_agent"];
+        //// Neoffice — the STATUS LABEL is displayed, so it goes through statusLabel(), not a
+        //// bare __(): the msgid "Open" is translated by several installed apps, some as the
+        //// verb, and the last app installed wins for the whole site. The VALUE stays raw: it
+        //// is what HD Ticket.status stores and the filters send back.
+        const label = statusLabel(
+          isCustomerPortal.value
+            ? status?.["label_customer"]
+            : status?.["label_agent"]
+        );
         return h(
           "div",
           { class: "flex items-center gap-1.5 justify-start w-full" },

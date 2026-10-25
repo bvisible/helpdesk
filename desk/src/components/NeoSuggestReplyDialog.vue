@@ -9,8 +9,11 @@
      untouched — see nora/api/helpdesk_reply.py, which has no send path at all.
 -->
 <template>
-  <Dialog v-model="show" :options="{ size: '2xl' }">
-    <template #body>
+  <!-- //// Neoffice — frappe-ui 1.0 (upstream v1.31.0): the Dialog takes v-model:open and a
+       //// size prop, and a `bare` dialog renders its default slot with no chrome. The 0.1 form
+       //// (`v-model` + `:options` + the #body slot) rendered an empty bar. -->
+  <Dialog v-model:open="show" size="2xl" bare>
+    <template #default>
       <!-- //// Neoffice — .neo-suggest-dialog: CommunicationArea closes the
            editor on an outside click, and this dialog is teleported to
            <body>. The class is what puts it in the `ignore` list of that

@@ -25,7 +25,8 @@ import { slaData } from "@/stores/sla";
 import { useTicketStatusStore } from "@/stores/ticketStatus";
 import { HDTicketStatus } from "@/types/doctypes";
 
-const { statuses } = useTicketStatusStore();
+//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket status
+const { statuses, statusLabel } = useTicketStatusStore();
 
 const openStatuses: ComputedRef<HDTicketStatus[]> = computed(() => {
   return (
@@ -33,7 +34,8 @@ const openStatuses: ComputedRef<HDTicketStatus[]> = computed(() => {
       ?.filter((s: HDTicketStatus) => s.category === "Open")
       ?.map((s: HDTicketStatus) => {
         return {
-          label: s.label_agent,
+          //// Neoffice — label translated, value (what the SLA stores) raw
+          label: statusLabel(s.label_agent),
           value: s.label_agent,
         };
       }) || []

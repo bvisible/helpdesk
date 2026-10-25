@@ -131,6 +131,37 @@
           @update:model-value="(count) => handlePageLength(count)"
         />
       </template>
+      <!-- //// Neoffice — frappe-ui's ListFooter writes "Load More" and "of" in plain
+           //// English, so every list of a French site ended on "3 of 3". Its right side is
+           //// rendered here through __(): "3 sur 3", "Charger plus". The button keeps the
+           //// footer's condition (more rows than loaded) and its action. Re-applied on
+           //// v1.31.0 next to upstream's new #left slot. -->
+      <template #right>
+        <div class="flex items-center">
+          <template
+            v-if="
+              list?.data?.row_count &&
+              list?.data?.total_count &&
+              list.data.row_count < list.data.total_count
+            "
+          >
+            <Button
+              :label="__('Load More')"
+              @click="handlePageLength(defaultParams.page_length_count, true)"
+            />
+            <div class="mx-3 h-[80%] border-l" />
+          </template>
+          <div class="text-base text-ink-gray-5">
+            {{
+              __(
+                "{0} of {1}",
+                String(list?.data?.row_count || 0),
+                String(list?.data?.total_count || 0)
+              )
+            }}
+          </div>
+        </div>
+      </template>
     </ListFooter>
   </div>
   <!-- Empty State -->
@@ -597,7 +628,10 @@ function handleFieldClick(e: MouseEvent, column, row, item) {
   e.stopPropagation();
   e.preventDefault();
 
-  if (column.label == "Status" && options.value.doctype === "HD Ticket") {
+  //// Neoffice — was `column.label == "Status"`: the label is what the screen shows, and it is
+  //// translated ("Statut"), so on a French site the status cell filtered on the raw value.
+  //// `key` is the stable field name.
+  if (column.key === "status" && options.value.doctype === "HD Ticket") {
     item = getStatus(item)?.label_agent;
   }
 

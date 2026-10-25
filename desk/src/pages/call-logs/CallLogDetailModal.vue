@@ -103,6 +103,8 @@ import { Avatar, Tooltip, createResource, dayjs } from "frappe-ui";
 import { computed, h, nextTick, ref, watch } from "vue";
 import { formatDate } from "@vueuse/core";
 import { timeAgo } from "@/utils";
+//// Neoffice — added: __() import for the status label below
+import { __ } from "@/translation";
 import { statusColorMap, statusLabelMap, statusTextColorMap } from "./utils";
 import { useAuthStore } from "@/stores/auth";
 
@@ -234,7 +236,8 @@ function getCallLogDetail(row, log, columns = []) {
     };
   } else if (row === "status") {
     return {
-      label: statusLabelMap[log.status],
+      //// Neoffice — statusLabelMap holds English labels: translated where shown, as CallArea.vue does
+      label: __(statusLabelMap[log.status]),
       color: statusColorMap[log.status],
     };
   } else if (["modified", "creation"].includes(row)) {

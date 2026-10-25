@@ -278,7 +278,8 @@ import { computed, inject } from "vue";
 
 const settingsData = inject(HDSettingsSymbol);
 
-const { statuses } = useTicketStatusStore();
+//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket status
+const { statuses, statusLabel } = useTicketStatusStore();
 
 const bannerMsg = createResource({
   url: "helpdesk.helpdesk.doctype.hd_settings.helpers.get_banner_msg",
@@ -327,7 +328,8 @@ const autoUpdateTicketStatusList = computed(() => {
   return (
     statuses.data?.map((s: HDTicketStatus) => {
       return {
-        label: s.label_agent,
+        //// Neoffice — label translated, value raw (same rule as above)
+        label: statusLabel(s.label_agent),
         value: s.label_agent,
       };
     }) || []
@@ -343,7 +345,8 @@ const autoCloseTicketStatusList = computed(() => {
       )
       ?.map((s: HDTicketStatus) => {
         return {
-          label: s.label_agent,
+          //// Neoffice — label translated, value raw (same rule as above)
+          label: statusLabel(s.label_agent),
           value: s.label_agent,
         };
       }) || []
