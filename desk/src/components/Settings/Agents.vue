@@ -60,6 +60,7 @@
                 <span class="whitespace-nowrap">
                   {{ item.label }}
                 </span>
+                <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
                 <LucideCheck
                   v-if="activeFilter === item.value"
                   class="size-4 text-ink-gray-7"
@@ -186,6 +187,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import { __ } from "@/translation";
 import { Avatar, Button, call, Dropdown, toast } from "frappe-ui";
+//// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
 import { computed, h, onUnmounted } from "vue";
 import AgentIcon from "../icons/AgentIcon.vue";
 import { activeFilter, useAgents } from "./agents";
@@ -207,9 +209,11 @@ function roleLabel(role: string) {
 
 function getRoles(agent: string) {
   const agentRole = getUserRole(agent);
+  //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
   const role = (value: string, icon: string) => ({
     label: roleLabel(value),
     icon,
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     selected: agentRole === value,
     onClick: () => updateRole(agent, value),
   });
@@ -251,6 +255,7 @@ function getOptions(agent) {
       condition: () => agent.is_active,
     },
     {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Enable Agent"),
       icon: "lucide-check-circle",
       onClick: async () => {
@@ -273,6 +278,7 @@ const dropdownOptions = [
     },
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Active"),
     value: "Active",
     onClick: () => {
@@ -281,6 +287,7 @@ const dropdownOptions = [
     },
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Inactive"),
     value: "Inactive",
     onClick: () => {
@@ -290,6 +297,7 @@ const dropdownOptions = [
   },
 ];
 
+//// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
 const activeFilterLabel = computed(
   () =>
     dropdownOptions.find((option) => option.value === activeFilter.value)

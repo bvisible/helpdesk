@@ -8,6 +8,7 @@ import { __ } from "@/translation";
 export const getRepetitionText = (repetition: any) => {
   if (repetition.all) return __("Every week");
 
+  //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
   const ordinals: string[] = [];
   if (repetition.first) ordinals.push(__("first"));
   if (repetition.second) ordinals.push(__("second"));
@@ -15,8 +16,10 @@ export const getRepetitionText = (repetition: any) => {
   if (repetition.fourth) ordinals.push(__("fourth"));
   if (repetition.fifth) ordinals.push(__("fifth"));
 
+  //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
   if (ordinals.length === 0) return "";
 
+  //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
   const last = ordinals.pop() as string;
   const list = ordinals.length ? `${ordinals.join(", ")} ${__("and")} ${last}` : last;
   return __("Every {0} week", list);

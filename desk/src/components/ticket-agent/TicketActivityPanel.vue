@@ -82,16 +82,19 @@ const tabs: ComputedRef<TabObject[]> = computed(() => {
   const _tabs: TabObject[] = [
     {
       value: "activity",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Activity"),
       iconLeft: ActivityIcon,
     },
     {
       value: "email",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Emails"),
       iconLeft: EmailIcon,
     },
     {
       value: "comment",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Comments"),
       iconLeft: CommentIcon,
     },
@@ -100,12 +103,14 @@ const tabs: ComputedRef<TabObject[]> = computed(() => {
   if (isCallingEnabled.value) {
     _tabs.push({
       value: "call",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Calls"),
       iconLeft: PhoneIcon,
     });
   }
   _tabs.push({
     value: "analytics",
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Analytics"),
     iconLeft: LucideChartNoAxesColumn,
   });

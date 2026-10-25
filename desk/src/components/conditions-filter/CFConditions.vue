@@ -81,6 +81,7 @@ const isGroupCondition = (condition) => {
 const dropdownOptions = computed(() => {
   const options = [
     {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Add condition"),
       onClick: () => {
         const conjunction = getConjunction();
@@ -90,6 +91,7 @@ const dropdownOptions = computed(() => {
   ];
   if (props.level < 3) {
     options.push({
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Add condition group"),
       onClick: () => {
         const conjunction = getConjunction();

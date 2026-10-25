@@ -141,6 +141,7 @@ const ticketRoutingOptions = [
     value: "Round Robin",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Assign by workload"),
     value: "Load Balancing",
   },

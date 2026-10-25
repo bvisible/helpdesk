@@ -110,6 +110,7 @@
                   </span>
                 </p>
                 <!-- //// Neoffice — statusLabel() instead of the raw status: the default statuses get their own qualified msgid (see stores/ticketStatus.ts) -->
+                <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
                 <p
                   class="px-1.5 py-[3px] text-sm rounded-sm max-w-[80px] text-center truncate h-5"
                   :class="getStatusColor(ticket.status)"
@@ -147,6 +148,7 @@ const contact = inject(TicketContactSymbol);
 const recentSimilarTickets = inject(RecentSimilarTicketsSymbol);
 const dateFormat = window.date_format;
 
+//// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
 const { getStatus, colorMap, statusLabel } = useTicketStatusStore();
 
 function getStatusColor(status: string) {

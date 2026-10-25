@@ -91,6 +91,7 @@
             @click="dialog = false"
             :label="__('Cancel')"
           />
+          <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
           <Button variant="solid" @click="onSave" :label="__('Save')" />
         </div>
       </div>
@@ -144,12 +145,14 @@ const validateForm = () => {
 
   const resolutionTime = parseInt(priorityData.value.resolution_time);
   if (isNaN(resolutionTime) || resolutionTime <= 0) {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     toast.error(__("Resolution time must be a positive number"));
     return false;
   }
 
   const responseTime = parseInt(priorityData.value.response_time);
   if (isNaN(responseTime) || responseTime <= 0) {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     toast.error(__("Response time must be a positive number"));
     return false;
   }

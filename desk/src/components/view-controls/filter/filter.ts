@@ -133,6 +133,7 @@ export function useFilter(): Filter {
     getOperators,
     getDefaultOperator,
     getSelectOptions,
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     timespanOptions: buildTimespanOptions(),
   };
 }
@@ -220,15 +221,19 @@ function getOperators(fieldtype: string, fieldname?: string) {
     { label: __("Not Equals"), value: "not equals" },
   ];
   const like = [
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     { label: __("Like"), value: "like" },
     { label: __("Not Like"), value: "not like" },
   ];
   const inclusion = [
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     { label: __("In"), value: "in" },
     { label: __("Not In"), value: "not in" },
   ];
+  //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
   const is = [{ label: __("Is"), value: "is" }];
   const comparison = [
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     { label: __("Less Than"), value: "<" },
     { label: __("Greater Than"), value: ">" },
     { label: __("Less Than or Equal To"), value: "<=" },
@@ -251,6 +256,7 @@ function getOperators(fieldtype: string, fieldname?: string) {
       ...equality,
       ...is,
       ...comparison,
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       { label: __("Between"), value: "between" },
       { label: __("Timespan"), value: "timespan" },
     ];

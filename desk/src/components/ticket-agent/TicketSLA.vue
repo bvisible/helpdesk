@@ -73,12 +73,15 @@ const cards = computed<SLACard[]>(() =>
     {
       title: __("First Response"),
       metric: firstResponse.value,
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       fulfilledLabel: __("Fulfilled"),
       actualLabel: __("Responded on"),
     },
     {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       title: __("Resolution"),
       metric: resolution.value,
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       fulfilledLabel: __("Fulfilled"),
       actualLabel: __("Resolved on"),
     },
@@ -101,6 +104,7 @@ function cardDetails(card: SLACard) {
   }
   if (metric.state === "hold") {
     rows.push({
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("On hold since"),
       value: fmt(ticket.value.doc.on_hold_since as string),
       danger: false,
@@ -117,6 +121,7 @@ function cardDetails(card: SLACard) {
   }
   if (metric.delay) {
     rows.push({
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: metric.delayInWorkingHours
         ? __("Delay (working hours)")
         : __("Delay"),
@@ -125,6 +130,7 @@ function cardDetails(card: SLACard) {
     });
     if (metric.calendarDelay) {
       rows.push({
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         label: __("Delay (total)"),
         value: `+${metric.calendarDelay}`,
         danger: true,
@@ -133,6 +139,7 @@ function cardDetails(card: SLACard) {
   }
   if (metric.fulfilledIn) {
     rows.push({
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Fulfilled in"),
       value: metric.fulfilledIn,
       danger: false,

@@ -69,6 +69,7 @@
             </span>
           </Tooltip>
           <!-- SLA explanation icon -->
+          <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
           <Tooltip
             v-if="
               dayjsLocal(data.value).diff(dayjsLocal(), 'day', true) > 4 &&
@@ -144,6 +145,7 @@ import { useTicketStatusStore } from "@/stores/ticketStatus";
 const emit = defineEmits(["open"]);
 
 const ticket = inject(ITicket);
+//// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
 const { statusLabel } = useTicketStatusStore();
 
 interface SLARow {
@@ -168,6 +170,7 @@ const slaData = computed(() =>
       value: ticket.data.first_responded_on || ticket.data.response_by,
     },
     {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       title: __("Resolution"),
       name: "Resolution",
       metric: resolution.value,
@@ -177,6 +180,7 @@ const slaData = computed(() =>
     .filter((row): row is SLARow => Boolean(row.metric))
     .map((row) => ({
       title: row.title,
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       name: row.name,
       value: row.value,
       label: slaLabel(row.metric),
@@ -193,6 +197,7 @@ const ticketBasicInfo = computed(() => [
     value: ticket.data.name,
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Status"),
     value: statusLabel(ticket.data.status),
     bold: true,
@@ -204,16 +209,19 @@ const ticketAdditionalInfo = computed(() => {
   const fields = [
     {
       fieldname: "subject",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Subject"),
       value: ticket.data.subject,
     },
     {
       fieldname: "team",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Team"),
       value: ticket.data.agent_group || "-",
     },
     {
       fieldname: "priority",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Priority"),
       value: ticket.data.priority,
     },

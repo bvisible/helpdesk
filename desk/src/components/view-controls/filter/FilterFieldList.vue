@@ -72,6 +72,7 @@ interface E {
   (event: "back"): void;
 }
 
+//// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
 const props = withDefaults(defineProps<P>(), {
   showShortcutHint: false,
 });

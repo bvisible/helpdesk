@@ -71,6 +71,7 @@
             :placeholder="__('condition')"
             class="w-full"
           />
+          <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
           <component
             v-else
             :is="getValueControl()"
@@ -178,6 +179,7 @@ const dropdownOptions = computed(() => {
 
   if (!props.isGroup && props.level < 4) {
     options.push({
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Turn into a group"),
       icon: () => h(GroupIcon),
       onClick: () => {
@@ -188,6 +190,7 @@ const dropdownOptions = computed(() => {
 
   if (props.isGroup) {
     options.push({
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       label: __("Ungroup conditions"),
       icon: () => h(UnGroupIcon),
       onClick: () => {
@@ -197,6 +200,7 @@ const dropdownOptions = computed(() => {
   }
 
   options.push({
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Remove"),
     icon: "lucide-trash-2",
     theme: "red",
@@ -207,6 +211,7 @@ const dropdownOptions = computed(() => {
   });
 
   options.push({
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Remove group"),
     icon: "lucide-trash-2",
     theme: "red",
@@ -252,10 +257,12 @@ function getValueControl() {
       type: "select",
       options: [
         {
+          //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
           label: __("Set"),
           value: "set",
         },
         {
+          //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
           label: __("Not Set"),
           value: "not set",
         },
@@ -277,6 +284,7 @@ function getValueControl() {
           }));
     return h(FormControl, {
       type: "select",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       options: _options,
     });
   } else if (typeLink.includes(fieldtype)) {
@@ -342,6 +350,7 @@ function getOperators() {
   if (typeString.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "==" },
         { label: __("Not Equals"), value: "!=" },
         { label: __("Like"), value: "like" },
@@ -354,6 +363,7 @@ function getOperators() {
   }
   if (fieldname === "_assign") {
     options = [
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       { label: __("Like"), value: "like" },
       { label: __("Not Like"), value: "not like" },
       { label: __("Is"), value: "is" },
@@ -362,6 +372,7 @@ function getOperators() {
   if (typeNumber.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "==" },
         { label: __("Not Equals"), value: "!=" },
         { label: __("Like"), value: "like" },
@@ -379,6 +390,7 @@ function getOperators() {
   if (typeSelect.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "==" },
         { label: __("Not Equals"), value: "!=" },
         { label: __("In"), value: "in" },
@@ -390,6 +402,7 @@ function getOperators() {
   if (typeLink.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "==" },
         { label: __("Not Equals"), value: "!=" },
         { label: __("Like"), value: "like" },
@@ -401,11 +414,13 @@ function getOperators() {
     );
   }
   if (typeCheck.includes(fieldtype)) {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     options.push(...[{ label: __("Equals"), value: "==" }]);
   }
   if (["Duration"].includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Like"), value: "like" },
         { label: __("Not Like"), value: "not like" },
         { label: __("In"), value: "in" },
@@ -417,6 +432,7 @@ function getOperators() {
   if (typeDate.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "==" },
         { label: __("Not Equals"), value: "!=" },
         { label: __("Is"), value: "is" },
@@ -424,6 +440,7 @@ function getOperators() {
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
         { label: "<=", value: "<=" },
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Between"), value: "between" },
       ]
     );
@@ -431,6 +448,7 @@ function getOperators() {
   if (typeRating.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "==" },
         { label: __("Not Equals"), value: "!=" },
         { label: __("Is"), value: "is" },

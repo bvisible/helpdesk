@@ -112,6 +112,7 @@ const onSave = () => {
     errors.value.description = __("Please enter a description");
   }
   if (!dialog.value.holiday_date) {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     errors.value.holiday_date = __("Please enter a valid date");
   }
 

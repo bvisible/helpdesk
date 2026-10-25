@@ -248,6 +248,7 @@ function getOperators(fieldtype, fieldname) {
   if (typeString.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "equals" },
         { label: __("Not Equals"), value: "not equals" },
         { label: __("Like"), value: "like" },
@@ -261,6 +262,7 @@ function getOperators(fieldtype, fieldname) {
   if (fieldname === "_assign") {
     // TODO: make equals and not equals work
     options = [
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       { label: __("Like"), value: "like" },
       { label: __("Not Like"), value: "not like" },
       { label: __("Is"), value: "is" },
@@ -269,6 +271,7 @@ function getOperators(fieldtype, fieldname) {
   if (typeNumber.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "equals" },
         { label: __("Not Equals"), value: "not equals" },
         { label: __("Like"), value: "like" },
@@ -286,6 +289,7 @@ function getOperators(fieldtype, fieldname) {
   if (typeSelect.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "equals" },
         { label: __("Not Equals"), value: "not equals" },
         { label: __("In"), value: "in" },
@@ -297,6 +301,7 @@ function getOperators(fieldtype, fieldname) {
   if (typeLink.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "equals" },
         { label: __("Not Equals"), value: "not equals" },
         { label: __("Like"), value: "like" },
@@ -308,11 +313,13 @@ function getOperators(fieldtype, fieldname) {
     );
   }
   if (typeCheck.includes(fieldtype)) {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     options.push(...[{ label: __("Equals"), value: "equals" }]);
   }
   if (["Duration"].includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Like"), value: "like" },
         { label: __("Not Like"), value: "not like" },
         { label: __("In"), value: "in" },
@@ -324,6 +331,7 @@ function getOperators(fieldtype, fieldname) {
   if (typeDate.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "equals" },
         { label: __("Not Equals"), value: "not equals" },
         { label: __("Is"), value: "is" },
@@ -331,6 +339,7 @@ function getOperators(fieldtype, fieldname) {
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
         { label: "<=", value: "<=" },
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Between"), value: "between" },
         { label: __("Timespan"), value: "timespan" },
       ]
@@ -339,6 +348,7 @@ function getOperators(fieldtype, fieldname) {
   if (typeRating.includes(fieldtype)) {
     options.push(
       ...[
+        //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
         { label: __("Equals"), value: "equals" },
         { label: __("Not Equals"), value: "not equals" },
         { label: __("Is"), value: "is" },
@@ -361,10 +371,12 @@ function getValueControl(f) {
       type: "select",
       options: [
         {
+          //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
           label: __("Set"),
           value: "set",
         },
         {
+          //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
           label: __("Not Set"),
           value: "not set",
         },
@@ -372,6 +384,7 @@ function getValueControl(f) {
     });
   } else if (operator == "timespan") {
     return h(Combobox, {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       options: getTimespanOptions(),
       trigger: "button",
       modelValue: f.value,
@@ -393,6 +406,7 @@ function getValueControl(f) {
           }));
     return h(FormControl, {
       type: "select",
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       options: _options,
     });
   } else if (typeLink.includes(fieldtype)) {

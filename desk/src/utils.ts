@@ -964,14 +964,17 @@ export function handleInviteUserSuccess(
   }
   emailsStr = emailsToStr(data.disabled_user_emails);
   if (emailsStr.trim() !== "") {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     toast.info(__("{0} already present and disabled", emailsStr));
   }
   emailsStr = emailsToStr(data.pending_invite_emails);
   if (emailsStr.trim() !== "") {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     toast.info(__("{0} already invited", emailsStr));
   }
   emailsStr = emailsToStr(data.accepted_invite_emails);
   if (emailsStr.trim() !== "") {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     toast.info(__("{0} already present", emailsStr));
   }
 }

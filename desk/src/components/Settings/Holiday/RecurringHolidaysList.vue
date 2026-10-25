@@ -102,26 +102,31 @@
                 recurringHolidayData.repetition.fourth
               "
             />
+            <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
             <Checkbox
               v-model="recurringHolidayData.repetition.first"
               :label="__('Every first week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
             <Checkbox
               v-model="recurringHolidayData.repetition.second"
               :label="__('Every second week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
             <Checkbox
               v-model="recurringHolidayData.repetition.third"
               :label="__('Every third week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
             <Checkbox
               v-model="recurringHolidayData.repetition.fourth"
               :label="__('Every fourth week')"
               :disabled="recurringHolidayData.repetition.all"
             />
+            <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
             <Checkbox
               v-model="recurringHolidayData.repetition.fifth"
               :label="__('Every fifth week')"
@@ -200,6 +205,7 @@ const columns = [
     key: "day",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Repetition"),
     key: "repetition",
   },
@@ -212,26 +218,32 @@ const workDays = ref([
     value: "Monday",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Tuesday"),
     value: "Tuesday",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Wednesday"),
     value: "Wednesday",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Thursday"),
     value: "Thursday",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Friday"),
     value: "Friday",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Saturday"),
     value: "Saturday",
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Sunday"),
     value: "Sunday",
   },
@@ -310,6 +322,7 @@ const saveHoliday = () => {
   const { all, first, second, third, fourth, fifth } =
     recurringHolidayData.value.repetition;
   if (!all && !first && !second && !third && !fourth && !fifth) {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     toast.error(__("Please select at least one repetition option"));
     return;
   }
@@ -321,6 +334,7 @@ const saveHoliday = () => {
       props.holidays[holidayData.editIndex] = { ...holidayData };
       updateWeeklyOffDates();
     } else {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       toast.error(__("Error: Unable to find the holiday to update"));
       return;
     }
@@ -333,6 +347,7 @@ const saveHoliday = () => {
     );
 
     if (isDuplicate) {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       toast.error(__("Holiday with the same day and repetition already exists"));
       return;
     }

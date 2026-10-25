@@ -83,6 +83,7 @@ const firstResponseBadge = computed(() => {
             "s"
           )
         )
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       ),
       color: "green",
     };
@@ -164,6 +165,7 @@ const sections = computed(() => [
     badgeColor: firstResponseBadge.value.color,
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Resolution"),
     tooltipValue: dateFormat(
       props.ticket.resolution_date || props.ticket.resolution_by,
@@ -173,6 +175,7 @@ const sections = computed(() => [
     badgeColor: resolutionBadge.value.color,
   },
   {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     label: __("Source"),
     value: props.ticket.via_customer_portal ? __("Portal") : __("Mail"),
   },

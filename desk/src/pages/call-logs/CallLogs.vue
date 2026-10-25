@@ -65,6 +65,7 @@ const options = computed(() => {
     selectable: true,
     showSelectBanner: true,
     emptyState: {
+      //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
       title: __("No Call Logs Found"),
       icon: PhoneIcon,
     },
@@ -74,11 +75,13 @@ const options = computed(() => {
           return h(Avatar, {
             shape: "circle",
             image: row._caller?.image || "Unknown",
+            //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
             label: row._caller?.label || __("Unknown"),
             size: "sm",
           });
         },
         custom: ({ row }) => {
+          //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
           return h("span", row._caller?.label || __("Unknown"));
         },
       },
@@ -87,11 +90,13 @@ const options = computed(() => {
           return h(Avatar, {
             shape: "circle",
             image: row._receiver?.image || "Unknown",
+            //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
             label: row._receiver?.label || __("Unknown"),
             size: "sm",
           });
         },
         custom: ({ row }) => {
+          //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
           return h("span", row._receiver?.label || __("Unknown"));
         },
       },
@@ -110,6 +115,7 @@ const options = computed(() => {
       status: {
         custom: ({ row }) => {
           return h(Badge, {
+            //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
             label: __(statusLabelMap[row.status]),
             variant: "subtle",
             theme: statusColorMap[row.status],
@@ -143,6 +149,7 @@ function openCallLog(id: string): void {
 
 usePageMeta(() => {
   return {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     title: __("Call Logs"),
   };
 });

@@ -287,36 +287,43 @@ const emptyStateByChart: Record<string, ChartEmptyState> = {
     message: __("Ticket trends will appear here once tickets are created."),
   },
   feedback_trend: {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     chartTitle: __("Feedback Trend"),
     title: __("No feedback data"),
     message: __("Feedback insights will appear once responses are collected."),
   },
   tickets_by_team: {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     chartTitle: __("Tickets by Team"),
     title: __("No team data"),
     message: __("Tickets will be grouped by team once available."),
   },
   tickets_by_type: {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     chartTitle: __("Tickets by Type"),
     title: __("No ticket type data"),
     message: __("Tickets will be categorized by type once created."),
   },
   tickets_by_priority: {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     chartTitle: __("Tickets by Priority"),
     title: __("No priority data"),
     message: __("Ticket priorities will be reflected here once assigned."),
   },
   tickets_by_channel: {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     chartTitle: __("Tickets by Channel"),
     title: __("No channel data"),
     message: __("Tickets will be grouped by channel once received."),
   },
   top_tags: {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     chartTitle: __("Top Tags"),
     title: __("No tags used yet"),
     message: __("The most used tags will be ranked here once tickets are tagged."),
   },
   tag_trend: {
+    //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
     chartTitle: __("Tag Trend"),
     title: __("No tag activity"),
     message: __("Daily tag volume will appear here once tickets are tagged."),

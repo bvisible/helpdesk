@@ -109,6 +109,7 @@
             @click="dialog.show = false"
             :label="__('Cancel')"
           />
+          <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
           <Button variant="solid" @click="onSave" :label="__('Save')" />
         </div>
       </div>

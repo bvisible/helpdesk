@@ -5,6 +5,7 @@
   >
     <template #content>
       <form @submit.prevent="onSubmit" class="flex flex-col gap-5">
+        <!-- //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site) -->
         <FormControl
           type="textarea"
           :required="true"

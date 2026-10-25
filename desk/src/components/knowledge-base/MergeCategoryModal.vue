@@ -38,6 +38,7 @@
   </Dialog>
 </template>
 <script setup lang="ts">
+//// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
 import { computed, ref } from "vue";
 import { Dialog } from "frappe-ui";
 import { Link } from "@/components";

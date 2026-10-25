@@ -360,9 +360,11 @@ class HelpdeskDashboard:
             [legend[closed_status], legend[open_status]],
             y2=legend[sla_fulfilled_status],
             seriesConfig={
+                # //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
                 legend[sla_fulfilled_status]: {"type": "line", "showDataPoints": True}
             },
             stacked=True,
+            # //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
             y2Axis={"title": _("% SLA"), "min": 0, "max": 100},
         )
 
@@ -442,6 +444,7 @@ class HelpdeskDashboard:
             legend[rated_tickets],
             y2=legend[rating],
             seriesConfig={
+                # //// Neoffice — i18n of the v1.31.0 merge: __() wrap or label/value split (upstream shows this string in English on every non-English site)
                 legend[rating]: {"type": "line", "showDataPoints": True, "color": "#48BB74"}
             },
             y2Axis={"title": _("Rating"), "min": 0, "max": 5},
