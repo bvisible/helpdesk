@@ -30,9 +30,29 @@ def get_or_create_contact(invitation: Document, user: Document) -> str | None:
         return invitation.contact
 
     create_contact(user)
-    return frappe.db.get_value(
+    # //// Neoffice — the lookup is kept in a variable: see the creation below.
+    contact = frappe.db.get_value(
         "Contact", {"user": user.name}, "name"
     ) or frappe.db.get_value("Contact", {"email_id": user.name}, "name")
+    if contact:
+        return contact
+
+    # //// Neoffice — our frappe's create_contact() only UPDATES a contact that already exists
+    # //// and never creates one (a known divergence of the fork, see its own marker), where
+    # //// upstream's creates it. An invitation to an e-mail address with no contact yet then
+    # //// left the accepted user with no contact and no membership of the customer: the
+    # //// invited person got in and saw nothing of their company. Create the contact here.
+    doc = frappe.get_doc(
+        {
+            "doctype": "Contact",
+            "first_name": user.first_name or user.name.split("@")[0],
+            "last_name": user.last_name,
+            "user": user.name,
+            "email_ids": [{"email_id": user.email or user.name, "is_primary": 1}],
+        }
+    )
+    doc.insert(ignore_permissions=True)
+    return doc.name
 
 
 def create_agent(user: Document) -> None:

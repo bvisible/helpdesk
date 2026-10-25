@@ -50,6 +50,23 @@ Decisions taken in this merge:
   (`openPalette()`); `roots/AgentRoot.vue`: `useOnboarding` now comes from `@framework/ui`.
 - `EmailEditor.vue`: rebuilt on upstream's v1.31.0 editor; the NORA button and dialog re-applied
   in its toolbar (same behaviour as before).
+- **Found by the first run of the suite and by the first look on the dev instance** (not by the
+  merge, which was clean on all of them): `api/doc.py` came out of the three-way merge with the
+  cached `_get_filterable_fields` defined twice, one copy calling itself (no conflict, the file
+  compiled; the upstream test `test_user_without_read_access_is_refused_even_when_cached` caught it);
+  `NeoSuggestReplyDialog.vue` rendered an empty bar on frappe-ui 1.0 (`v-model:open` + `size` +
+  `bare` default slot instead of `v-model` + `:options` + `#body`); the SLA texts were English
+  template literals (`useSLA.ts`); the list footer, the status column and a click on a status cell
+  lost their translation or their key (`ListViewBuilder.vue`, `Tickets.vue`, `SlaStatusList.vue`).
+- **Contacts and invitations**: our frappe's `create_contact()` never creates a Contact (a known
+  divergence of the fork), so upstream's `after_accept` left an invited user with no contact and no
+  membership: `hooks/user_invitation.py` creates the contact itself when none exists.
+- **Permissions shadowed by a custom set**: where `Custom DocPerm` rows exist, frappe ignores the
+  JSON. Our instances carry such a set, and HD Ticket's had no `Agent` row (agents went through an
+  `All` row, which upstream removes from the JSON and frappe's migrate then drops from the custom
+  set): patch `keep_agent_roles_on_shadowed_doctypes` copies the standard Agent / Agent Manager rows
+  back. Patch `clear_dangling_contact_users` runs before upstream's member migration, which aborts
+  the whole migrate on a contact whose user was deleted.
 - `package.json`: our `[skip-build]` guard + `build:force`, plus upstream's `test:e2e` scripts;
   `desk/package.json`: our `NODE_OPTIONS` prefixes (JSON cannot carry a marker), plus upstream's
   `postinstall: patch-package`. `.gitignore`: upstream's, our weld repair is spent.

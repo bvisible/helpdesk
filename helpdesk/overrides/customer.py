@@ -132,8 +132,9 @@ def sync_to_hd_customer(doc, method=None):
             domain = _customer_domain(doc.name)
             if domain:
                 updates["domain"] = domain
-        if not existing.image and doc.get("image"):
-            updates["image"] = doc.image
+        # the picture is seeded when the mirror is created (below), not refreshed here: with the
+        # two-way integration off, a change of the ERP customer must not reach the HD customer
+        # (upstream test test_fields_not_synced_to_hd_when_sync_disabled)
         if updates:
             frappe.db.set_value("HD Customer", existing.name, updates, update_modified=False)
         return

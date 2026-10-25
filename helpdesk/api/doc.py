@@ -286,8 +286,12 @@ def get_filterable_fields(
     doctype: str,
     show_customer_portal_fields: bool = False,
     ignore_team_restrictions: bool = False,
-    # //// Neoffice — see the block marker above: whitelisted wrapper translates
 ):
+    # //// Neoffice — removed the merge's second, self-calling `_get_filterable_fields`; this wrapper
+    # //// is upstream v1.31.0's with our translation added: the permission check stays OUTSIDE the cache (a cached answer must
+    # never skip it), the cached body is _get_filterable_fields below
+    check_permissions(doctype, None)
+    # //// Neoffice — see the block marker above: the whitelisted wrapper translates
     return translate_labels(
         _get_filterable_fields(
             doctype, show_customer_portal_fields, ignore_team_restrictions
@@ -295,16 +299,8 @@ def get_filterable_fields(
     )
 
 
-@redis_cache()
-def _get_filterable_fields(
-    doctype: str, show_customer_portal_fields=False, ignore_team_restrictions=False
-):
-    check_permissions(doctype, None)
-    return _get_filterable_fields(
-        doctype, show_customer_portal_fields, ignore_team_restrictions
-    )
-
-
+# //// Neoffice — the cached body below is upstream's; the self-calling copy the merge left
+# //// next to it is removed.
 @redis_cache()
 def _get_filterable_fields(
     doctype: str,
