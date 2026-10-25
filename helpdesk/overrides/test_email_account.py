@@ -212,6 +212,13 @@ class TestParkedMailTicketComment(FrappeTestCase):
         parked mail never creates, so every pull fetches it again."""
         self.account.enable_incoming = 1
         self.account.use_imap = 1
+        # //// Neoffice — the account is `frappe.get_last_doc("Email Account")`. On a site that also
+        # //// carries erpnext, the last one created is one of ERPNext's standard accounts (Sales,
+        # //// Jobs, Support...), which has no server: get_incoming_server() then raises "Email
+        # //// Server is required", the pull swallows it and the test sees no parked mail at all.
+        # //// The test mocks the server's folder and messages, so any host name will do.
+        if not self.account.email_server:
+            self.account.email_server = "imap.example.com"
         self.account.email_sync_option = "ALL"
         self.account.set(
             "imap_folder", [{"folder_name": "INBOX", "append_to": "HD Ticket"}]
