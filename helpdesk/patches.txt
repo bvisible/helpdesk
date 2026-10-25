@@ -65,6 +65,9 @@ helpdesk.patches.migrate_hd_notifications_to_notification_log
 helpdesk.patches.relabel_comment_search_index
 helpdesk.patches.mark_old_assignment_notifications_read
 helpdesk.patches.sync_customer_manager_roles
+# //// Neoffice — after every upstream patch and after frappe's own sync: agents lose all rights on
+# //// HD Ticket where a Custom DocPerm set shadows the standard one and had no Agent row (see the patch)
+helpdesk.patches.keep_agent_roles_on_shadowed_doctypes
 # //// Neoffice — backfill HD Customer from existing ERPNext Customer/Contact data;
 # //// skips per-record errors and no-ops if the erpnext_customer column is absent
 # //// (3890d1177 "feat(customers): HD Customer mirrors the ERP customer, instead of ignoring it")
