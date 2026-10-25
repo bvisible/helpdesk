@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-md border px-2 border-outline-gray-2 text-sm">
+  <div class="rounded-5 border px-2 border-outline-gray-2 text-sm">
     <div
       class="grid p-2 px-4 items-center gap-2"
       :style="{
@@ -25,32 +25,32 @@
           :key="column.key"
           class="w-full overflow-hidden whitespace-nowrap text-ellipsis"
         >
-          <!-- //// Neoffice — placeholder wrapped in __(): upstream showed this string in English on every non-English site -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <input
             v-if="column.key === 'description'"
             :type="'text'"
             :placeholder="__('Description')"
             v-model="holiday[column.key]"
-            class="!bg-surface-white w-full text-base px-0 focus:!ring-0 border-none hover:bg-surface-white outline-none no-underline focus:!outline-none"
+            class="!bg-surface-base w-full text-base px-0 focus:!ring-0 border-none hover:bg-surface-base outline-none no-underline focus:!outline-none"
           />
           <div v-else>
             {{ dayjs(holiday[column.key]).format("DD MMM YYYY") }}
           </div>
         </div>
         <div class="flex justify-end">
-          <Dropdown placement="right" :options="dropdownOptions(holiday)">
-            <Button
-              icon="more-horizontal"
-              variant="ghost"
-              @click="isConfirmingDelete = false"
-            />
+          <Dropdown
+            align="end"
+            :options="dropdownOptions(holiday)"
+            @update:open="(open) => open && (isConfirmingDelete = false)"
+          >
+            <Button icon="lucide-more-horizontal" variant="ghost" />
           </Dropdown>
         </div>
       </div>
       <hr v-if="index !== holidays.length - 1" />
     </div>
+    <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
     <div v-if="holidays?.length === 0" class="text-center p-4 text-ink-gray-5">
-      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       {{ __("No items in the list") }}
     </div>
   </div>
@@ -59,13 +59,12 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import dayjs from "dayjs";
 import { ConfirmDelete, getFormattedDate } from "@/utils";
 import { holidayData } from "@/stores/holidayList";
-import AddHolidayModal from "./Modals/AddHolidayModal.vue";
-import { Dropdown } from "frappe-ui";
-//// Neoffice — __ for the Edit and Description labels below, which upstream hardcoded in English.
+//// Neoffice — added: __() import for the wraps below
 import { __ } from "@/translation";
+import AddHolidayModal from "./Modals/AddHolidayModal.vue";
+import { dayjs, Dropdown } from "frappe-ui";
 
 const isConfirmingDelete = ref(false);
 
@@ -75,12 +74,12 @@ interface Holiday {
   weekly_off?: number;
 }
 
+//// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
 const dropdownOptions = (holiday: Holiday) => [
   {
-    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
-    label: __('Edit'),
+    label: __("Edit"),
     onClick: () => editHoliday(holiday),
-    icon: "edit",
+    icon: "lucide-edit",
   },
   ...ConfirmDelete({
     onConfirmDelete: () => deleteHoliday(holiday),
@@ -101,15 +100,14 @@ const holidays = computed(() => {
   });
 });
 
+//// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
 const columns = [
   {
-    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
     label: __("Date"),
     key: "holiday_date",
   },
   {
-    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
-    label: __('Description'),
+    label: __("Description"),
     key: "description",
   },
 ];

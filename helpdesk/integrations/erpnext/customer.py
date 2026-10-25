@@ -1,91 +1,18 @@
 import frappe
-from erpnext.selling.doctype.customer.customer import Customer
+from frappe.model.document import Document
 
 from helpdesk.integrations.erpnext.utils import (
     cascade_rename,
     in_cascade,
+    map_source_to_target_values,
     set_links,
     should_sync,
+    sync_related_fields,
     validate_rename_conflict,
 )
 
 
-class CustomCustomer(Customer):
-    def after_insert(self):
-        super().after_insert()
-
-        if not should_sync():
-            return
-
-        if self.flags.get("ignore_erpnext_sync"):
-            return
-
-        hd_customer_exists = frappe.db.exists(
-            "HD Customer", {"erpnext_customer": self.name}
-        )
-        if not hd_customer_exists:
-            hd_doc = frappe.get_doc(
-                {
-                    "doctype": "HD Customer",
-                    "customer_name": self.customer_name,
-                    "erpnext_customer": self.name,
-                    "image": self.image,
-                }
-            )
-            hd_doc.flags.ignore_erpnext_sync = True
-            hd_doc.insert(ignore_permissions=True)
-            set_links(self.name, hd_doc.name)
-
-    def on_update(self):
-        super().on_update()
-
-        if not should_sync():
-            return
-
-        if self.flags.get("ignore_erpnext_sync"):
-            return
-
-        if self.has_value_changed("image"):
-            frappe.db.set_value(
-                "HD Customer",
-                {"erpnext_customer": self.name},
-                "image",
-                self.image,
-            )
-
-    def before_rename(self, olddn, newdn, merge=False):
-        super().before_rename(olddn, newdn, merge)
-        validate_rename_conflict("Customer", olddn, newdn, merge)
-
-    def after_rename(self, olddn, newdn, merge=False):
-        super().after_rename(olddn, newdn, merge)
-        cascade_rename("Customer", olddn, newdn, merge)
-
-    def on_trash(self):
-        super().on_trash()
-
-        if in_cascade() or not should_sync():
-            return
-
-        hd_customer = frappe.db.get_value(
-            "HD Customer", {"erpnext_customer": self.name}, "name"
-        )
-        if hd_customer:
-            # Clear the back-link first so HDCustomer.on_trash won't try to
-            # delete this Customer again (it's already being deleted).
-            frappe.db.set_value("HD Customer", hd_customer, "erpnext_customer", None)
-            frappe.delete_doc("HD Customer", hd_customer, ignore_permissions=True)
-
-
-# //// Neoffice ▼▼▼ — the same behaviour as CustomCustomer, as doc_events.
-# //// The class above is no longer registered in override_doctype_class (see
-# //// hooks.py): neoffice_theme overrides the Customer class too, and frappe keeps
-# //// one override per doctype, the last app installed winning in silence. Doc
-# //// events never erase one another, so the integration keeps working next to the
-# //// theme's class. Upstream made the same move later (main 1.30:
-# //// helpdesk.integrations.erpnext.customer.after_insert & co. in doc_events):
-# //// at that merge, take upstream's functions and drop these.
-def after_insert(doc, method=None):
+def after_insert(doc: Document, method: str | None = None):
     if not should_sync() or doc.flags.get("ignore_erpnext_sync"):
         return
 
@@ -97,7 +24,7 @@ def after_insert(doc, method=None):
             "doctype": "HD Customer",
             "customer_name": doc.customer_name,
             "erpnext_customer": doc.name,
-            "image": doc.image,
+            **map_source_to_target_values(doc),
         }
     )
     hd_doc.flags.ignore_erpnext_sync = True
@@ -105,28 +32,26 @@ def after_insert(doc, method=None):
     set_links(doc.name, hd_doc.name)
 
 
-def on_update(doc, method=None):
+def on_update(doc: Document, method: str | None = None):
     if not should_sync() or doc.flags.get("ignore_erpnext_sync"):
         return
 
-    if doc.has_value_changed("image"):
-        frappe.db.set_value(
-            "HD Customer",
-            {"erpnext_customer": doc.name},
-            "image",
-            doc.image,
-        )
+    sync_related_fields(doc)
 
 
-def before_rename(doc, method, olddn, newdn, merge=False):
+def before_rename(
+    doc: Document, method: str | None, olddn: str, newdn: str, merge: bool = False
+):
     validate_rename_conflict("Customer", olddn, newdn, merge)
 
 
-def after_rename(doc, method, olddn, newdn, merge=False):
+def after_rename(
+    doc: Document, method: str | None, olddn: str, newdn: str, merge: bool = False
+):
     cascade_rename("Customer", olddn, newdn, merge)
 
 
-def on_trash(doc, method=None):
+def on_trash(doc: Document, method: str | None = None):
     if in_cascade() or not should_sync():
         return
 
@@ -134,10 +59,7 @@ def on_trash(doc, method=None):
         "HD Customer", {"erpnext_customer": doc.name}, "name"
     )
     if hd_customer:
-        # Clear the back-link first so HDCustomer.on_trash won't try to
+        # Clear the back-link first so HD Customer's on_trash won't try to
         # delete this Customer again (it's already being deleted).
         frappe.db.set_value("HD Customer", hd_customer, "erpnext_customer", None)
         frappe.delete_doc("HD Customer", hd_customer, ignore_permissions=True)
-
-
-# //// Neoffice ▲▲▲

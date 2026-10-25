@@ -1,20 +1,19 @@
 <template>
   <TwilioCallUI ref="twilio" />
   <ExotelCallUI ref="exotel" />
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
   <Dialog
-    v-model="show"
-    :options="{
-      title: 'Make call',
-      actions: [
-        {
-          label: `Call using ${callMedium}`,
-          variant: 'solid',
-          onClick: makeCallUsing,
-        },
-      ],
-    }"
+    v-model:open="show"
+    :title="__('Make call')"
+    :actions="[
+      {
+        label: __('Call using {0}', callMedium),
+        variant: 'solid',
+        onClick: makeCallUsing,
+      },
+    ]"
   >
-    <template #body-content>
+    <template #default>
       <div class="flex flex-col gap-4">
         <FormControl type="text" v-model="mobileNumber" :label="__('Mobile Number')" />
         <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
@@ -25,10 +24,11 @@
           :options="['Twilio', 'Exotel']"
         />
         <div class="flex flex-col gap-1">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormControl
             type="checkbox"
             v-model="isDefaultMedium"
-            :label="`Make ${callMedium} as default calling medium`"
+            :label="__('Make {0} as default calling medium', callMedium)"
           />
 
           <div v-if="isDefaultMedium" class="text-sm text-ink-gray-4">
@@ -48,6 +48,8 @@ import TwilioCallUI from "./TwilioCallUI.vue";
 import ExotelCallUI from "./ExotelCallUI.vue";
 import { useTelephonyStore } from "@/stores/telephony";
 import { storeToRefs } from "pinia";
+//// Neoffice — added: __() import for the wraps below
+import { __ } from "@/translation";
 
 const telephonyStore = useTelephonyStore();
 const { defaultCallingMedium, isExotelEnabled, isTwilioEnabled } =
@@ -117,8 +119,9 @@ async function setCallingMedium() {
 
   telephonyStore.setDefaultCallingMedium(callMedium.value);
   telephonyStore.fetchCallIntegrationStatus();
+  //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
   toast.success(
-    `Default calling medium set successfully to ${callMedium.value}`
+    __("Default calling medium set successfully to {0}", callMedium.value)
   );
 }
 

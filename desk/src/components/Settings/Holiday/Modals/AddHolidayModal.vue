@@ -1,33 +1,36 @@
 <template>
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
   <Dialog
-    v-model="dialog.show"
-    :options="{
-      size: 'sm',
-      title: dialog.editing ? 'Edit Holiday' : 'Add Holiday',
-    }"
+    v-model:open="dialog.show"
+    size="sm"
+    :title="dialog.editing ? __('Edit Holiday') : __('Add Holiday')"
     @after-leave="resetForm"
   >
-    <template #body-content>
+    <template #default>
       <div class="flex flex-col gap-4 mt-4">
-        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div class="flex flex-col gap-1.5">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormLabel :label="__('Date')" required />
-          <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <DatePicker
-            :value="dayjs(dialog.holiday_date).format('MM-DD-YYYY')"
-            @update:model-value="dialog.holiday_date = $event"
-            :formatter="(date) => getFormattedDate(date)"
+            :model-value="dayjs(dialog.holiday_date).format('YYYY-MM-DD')"
+            @update:model-value="
+              (value) => {
+                dialog.holiday_date = value;
+                errors.holiday_date = '';
+              }
+            "
+            :format="getDateFormat()"
             variant="subtle"
             :placeholder="__('Date')"
             class="w-full"
             id="holiday_date"
             required
-            @change="errors.holiday_date = ''"
           />
           <ErrorMessage :message="errors.holiday_date" />
         </div>
-        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
         <div class="flex flex-col gap-1.5">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormControl
             :type="'textarea'"
             size="sm"
@@ -54,7 +57,7 @@
         <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           variant="solid"
-          icon-left="plus"
+          icon-left="lucide-plus"
           :label="__('Add Holiday')"
           @click="onSave"
         />
@@ -64,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { getFormattedDate } from "@/utils";
+import { getDateFormat, getFormattedDate } from "@/utils";
 import {
   Dialog,
   FormControl,
@@ -73,10 +76,12 @@ import {
   toast,
   ErrorMessage,
   DatePicker,
+  dayjs,
 } from "frappe-ui";
 import { ref } from "vue";
-import dayjs from "dayjs";
 import { holidayData } from "@/stores/holidayList";
+//// Neoffice — added: __() import for the wraps below
+import { __ } from "@/translation";
 
 interface ModelType {
   show: boolean;
@@ -102,11 +107,12 @@ const resetForm = () => {
 };
 
 const onSave = () => {
+  //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
   if (dialog.value.description?.trim() === "") {
-    errors.value.description = "Please enter a description";
+    errors.value.description = __("Please enter a description");
   }
   if (!dialog.value.holiday_date) {
-    errors.value.holiday_date = "Please enter a valid date";
+    errors.value.holiday_date = __("Please enter a valid date");
   }
 
   if (errors.value.holiday_date || errors.value.description) {
@@ -118,10 +124,13 @@ const onSave = () => {
   const toDate = dayjs(holidayData.value.to_date).startOf("day");
 
   if (holidayDate.isBefore(fromDate) || holidayDate.isAfter(toDate)) {
+    //// Neoffice — wrapped in __(): one message with two holes instead of an untranslatable template literal
     toast.error(
-      `Holiday date must be between ${getFormattedDate(
-        holidayData.value.from_date
-      )} and ${getFormattedDate(holidayData.value.to_date)}`
+      __(
+        "Holiday date must be between {0} and {1}",
+        getFormattedDate(holidayData.value.from_date),
+        getFormattedDate(holidayData.value.to_date)
+      )
     );
     return;
   }
@@ -139,7 +148,8 @@ const onSave = () => {
       getFormattedDate(holidayExists.holiday_date) !==
         getFormattedDate(dialog.value.editing.holiday_date)
     ) {
-      toast.error("Holiday already exists");
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
+      toast.error(__("Holiday already exists"));
       return;
     }
     const holidayIndex = holidayData.value.holidays.indexOf(
@@ -156,7 +166,8 @@ const onSave = () => {
         getFormattedDate(dialog.value.holiday_date)
     );
     if (index !== -1) {
-      toast.error("Holiday already exists");
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
+      toast.error(__("Holiday already exists"));
       return;
     }
     holidayData.value.holidays.push({

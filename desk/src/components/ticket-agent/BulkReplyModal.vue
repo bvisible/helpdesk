@@ -1,12 +1,6 @@
 <template>
-  <Dialog
-    v-model="open"
-    :options="{
-      title: __('Bulk Reply'),
-      size: '2xl',
-    }"
-  >
-    <template #body-content>
+  <Dialog v-model:open="open" :title="__('Reply')" size="2xl">
+    <template #default>
       <div class="flex flex-col gap-4">
         <p class="text-p-sm">
           <CompactEditor
@@ -15,7 +9,6 @@
             v-model:attachments="attachments"
             :show-signature="true"
             :show-attachments="true"
-            :type="'Email'"
             :placeholder="__('Write your reply...')"
             :min-height="'min-h-[200px]'"
             :max-height="'max-h-[300px]'"
@@ -79,10 +72,10 @@ function clearDraft() {
   editorRef.value?.reset();
 }
 
-async function handleFileUpload(file: File) {
+async function handleFileUpload(file: File, options?: any) {
   const uploads = await Promise.all(
     Array.from(props.selections).map((ticketId) =>
-      uploadFunction(file, "HD Ticket", ticketId)
+      uploadFunction(file, "HD Ticket", ticketId, true, options)
     )
   );
 

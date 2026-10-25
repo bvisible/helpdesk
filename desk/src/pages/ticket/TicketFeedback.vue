@@ -1,42 +1,42 @@
 <template>
   <Dialog
-    :model-value="open"
-    :options="{
-      title: __('Rate this ticket'),
-      actions: [
-        {
-          disabled: !preset,
-          label: __('Submit'),
-          theme: 'gray',
-          variant: 'solid',
-          onClick: () =>
-            setValue.submit({
-              fieldname: {
-                status: 'Closed',
-                feedback: preset,
-                feedback_extra: text,
-              },
-            }),
-        },
-      ],
-    }"
-    @update:model-value="() => $emit('update:open', !open)"
+    :open="open"
+    :title="__('Rate this ticket')"
+    :actions="[
+      {
+        disabled: !preset,
+        label: __('Submit'),
+        theme: 'gray',
+        variant: 'solid',
+        onClick: () =>
+          setValue.submit({
+            fieldname: {
+              status: 'Closed',
+              feedback: preset,
+              feedback_extra: text,
+            },
+          }),
+      },
+    ]"
+    @update:open="() => $emit('update:open', !open)"
   >
-    <template #body-content>
+    <template #default>
       <div class="space-y-4 text-base text-ink-gray-7">
-        <div class="space-y-2">
-          <span> {{ __("Select a rating") }} </span>
-          <span class="text-ink-red-3"> * </span>
-          <StarRating
-            :static="false"
-            :rating="rating"
+        <div class="flex flex-col gap-2">
+          <div>
+            <span> {{ __("Select a rating") }} </span>
+            <span class="text-ink-red-6"> * </span>
+          </div>
+          <Rating
             v-model="rating"
-            @update:model-value="rating = $event"
+            :max="5"
+            size="sm"
+            @update:model-value="onSelectRating"
           />
         </div>
         <div v-if="options.data?.length" class="space-y-2">
           <span> {{ __("Pick an option") }} </span>
-          <span class="text-ink-red-3"> * </span>
+          <span class="text-ink-red-6"> * </span>
           <div class="flex flex-wrap gap-2">
             <Button
               v-for="o in options.data"
@@ -62,9 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { StarRating } from "@/components";
-import { createListResource, createResource } from "frappe-ui";
-import { inject, ref, watch } from "vue";
+import { createListResource, createResource, Rating } from "frappe-ui";
+import { inject, ref } from "vue";
 import { ITicket } from "./symbols";
 import { __ } from "@/translation";
 
@@ -103,15 +102,15 @@ const setValue = createResource({
     ticket.reload();
   },
 });
-watch(rating, (r) => {
+function onSelectRating(r: number) {
   preset.value = null;
   text.value = "";
   options.update({
     filters: {
-      rating: r,
+      rating: r / 5,
       disabled: 0,
     },
   });
   options.reload();
-});
+}
 </script>

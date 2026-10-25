@@ -2,32 +2,25 @@
   <div class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-ink-gray-9">
+        <div class="text-lg-medium text-ink-gray-9">
           {{ __(dashboardTitle) }}
         </div>
       </template>
       <template #right-header>
         <!-- Segmented pill toggle: only visible to managers -->
         <div v-if="isManager">
-          <TabButtons v-model="activeTab" :buttons="tabButtons" />
+          <TabButtons v-model="activeTab" :options="tabButtons" />
         </div>
       </template>
     </LayoutHeader>
 
-    <div class="p-5 w-full overflow-y-scroll">
+    <div class="px-4 py-4 w-full overflow-y-scroll">
       <!-- Filters -->
-      <div class="mb-4 flex items-center gap-4 overflow-x-auto">
-        <Dropdown
-          v-if="!showDatePicker"
-          :options="options"
-          class="!form-control !w-48"
-          v-model="preset"
-          :placeholder="__('Select Range')"
-          @change="filters.period = preset"
-        >
+      <div class="mb-4 flex items-center gap-4 overflow-x-auto px-1 py-1">
+        <Dropdown v-if="!showDatePicker" :options="options">
           <template #default>
             <div
-              class="flex justify-between !min-w-48 items-center border border-outline-gray-2 rounded text-ink-gray-8 px-2 py-1.5 hover:border-outline-gray-3 hover:shadow-sm focus:border-outline-gray-4 focus:shadow-sm focus:ring-0 focus-visible:ring-0 transition-colors h-7 cursor-pointer"
+              class="flex justify-between !min-w-48 items-center border border-outline-gray-2 rounded-4 text-ink-gray-8 px-2 py-1.5 hover:border-outline-gray-3 hover:shadow-sm focus:border-outline-gray-4 focus:shadow-sm focus:ring-0 focus-visible:ring-0 transition-colors h-7 cursor-pointer"
             >
               <div class="flex items-center">
                 <LucideCalendar class="size-4 text-ink-gray-5 me-2" />
@@ -41,46 +34,58 @@
           v-else
           class="!w-48"
           ref="datePickerRef"
-          v-model="filters.period"
+          v-model="periodRange"
           variant="outline"
           :placeholder="__('Period')"
-          @update:model-value="
-            (e:string) => {
-              showDatePicker = false;
-              preset = formatter(e);
-            }
-          "
-          :formatter="formatRange"
+          :format="'MMM D'"
+          @update:open="onPickerToggle"
         >
           <template #prefix>
-            <LucideCalendar class="size-4 text-ink-gray-5 me-2" />
+            <!-- ms-px: TextInput anchors the prefix to the wrapper, which sits
+                 outside the input's 1px border, so it lands 1px left of the
+                 preset trigger's icon. -->
+            <LucideCalendar class="size-4 text-ink-gray-5 ms-px me-2" />
           </template>
         </DateRangePicker>
         <Link
           v-if="isManager && !viewMyStats"
-          class="form-control w-48"
+          class="w-48"
           doctype="HD Team"
+          variant="outline"
           :placeholder="__('Team')"
           v-model="filters.team"
-          :page-length="5"
-          :hide-me="true"
         >
           <template #prefix>
-            <LucideUsers class="size-4 text-ink-gray-5 me-2" />
+            <LucideUsers class="size-4 text-ink-gray-5 me-1" />
+          </template>
+          <!-- One line per row: the filter only needs the name. -->
+          <template #item-label="{ item }">
+            <div class="truncate">{{ item.label }}</div>
           </template>
         </Link>
         <Link
           v-if="isManager && !viewMyStats"
-          class="form-control w-48"
+          class="w-48"
           doctype="HD Agent"
+          variant="outline"
           :placeholder="__('Agent')"
           v-model="filters.agent"
-          :page-length="5"
           :filters="agentFilter"
-          :hide-me="true"
         >
           <template #prefix>
-            <LucideUser class="size-4 text-ink-gray-5 me-2" />
+            <LucideUser class="size-4 text-ink-gray-5 me-1" />
+          </template>
+          <!-- One line per row: the filter only needs the name. -->
+          <template #item-label="{ item }">
+            <div class="truncate">{{ item.label }}</div>
+          </template>
+          <!-- An empty list means an empty team, not a failed search. -->
+          <template #empty>
+            {{
+              filters.team && !teamMembers.data?.length
+                ? __("No agents in this team")
+                : __("No results")
+            }}
           </template>
         </Link>
       </div>
@@ -88,18 +93,15 @@
 
       <!-- Number Cards -->
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4 px-1"
         v-if="!numberCards.loading"
       >
         <Tooltip
-          v-for="(config, index) in numberCards.data"
-          :text="config.tooltip"
+          v-for="({ tooltip, ...card }, index) in numberCards.data"
+          :key="index"
+          :text="tooltip"
         >
-          <NumberChart
-            :key="index"
-            class="border rounded-md min-h-[114px]"
-            :config="config"
-          />
+          <NumberCard v-bind="card" />
         </Tooltip>
       </div>
       <div
@@ -108,53 +110,65 @@
       >
         <!-- Trend Charts -->
         <div
-          class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4"
+          class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4 px-1"
           v-if="!trendData.loading"
         >
           <template v-for="(chart, index) in trendData.data" :key="index">
             <!-- has data -->
-            <div v-if="!isChartEmpty(chart)" class="border rounded-md min-h-80">
+            <ChartCard v-if="!isChartEmpty(chart)" class="h-80">
               <component :is="getChartType(chart)" />
-            </div>
+            </ChartCard>
 
             <!-- chart with no data -->
-            <!-- //// Neoffice — upstream built the title in plain English (a template literal), which SkeletonLoader could only pass to __() as a run-time msgid; one msgid with {0} for the chart title now (same pass as 71a5669d9) -->
             <SkeletonLoader
               v-else
               :variants="['bar-chart', 'empty-state']"
               :bar-chart-count="1"
               :has-applied-filter="hasAppliedFilter"
-              :empty-states="[
-                {
-                  title: __('No {0} available.', (chart?.title).toLowerCase()),
-                },
-              ]"
+              :empty-states="chartEmptyState(chart)"
             />
           </template>
         </div>
         <!-- Master Data Charts -->
         <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-4"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-4 px-1"
           v-if="!masterData.loading"
         >
           <template v-for="(chart, index) in masterData.data" :key="index">
             <!-- has data -->
-            <div v-if="!isChartEmpty(chart)" class="border rounded-md min-h-80">
+            <ChartCard v-if="!isChartEmpty(chart)" class="h-80">
               <component :is="getChartType(chart)" />
-            </div>
+            </ChartCard>
 
             <!-- chart with no data -->
-            <!-- //// Neoffice — upstream built the title in plain English (a template literal), which SkeletonLoader could only pass to __() as a run-time msgid; one msgid with {0} for the chart title now (same pass as 71a5669d9) -->
             <SkeletonLoader
               v-else
               :variants="['bar-chart', 'empty-state']"
               :bar-chart-count="1"
               :has-applied-filter="hasAppliedFilter"
-              :empty-states="[
-                {
-                  title: __('No {0} available.', (chart?.title).toLowerCase()),
-                },
-              ]"
+              :empty-states="chartEmptyState(chart)"
+            />
+          </template>
+        </div>
+
+        <!-- Tag Charts: org level insight, an agent cannot act on their own tag mix -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-4 px-1"
+          v-if="isManager && !tagData.loading"
+        >
+          <template v-for="(chart, index) in tagData.data" :key="index">
+            <!-- has data -->
+            <ChartCard v-if="!isChartEmpty(chart)" class="h-80">
+              <component :is="getChartType(chart)" />
+            </ChartCard>
+
+            <!-- chart with no data -->
+            <SkeletonLoader
+              v-else
+              :variants="['bar-chart', 'empty-state']"
+              :bar-chart-count="1"
+              :has-applied-filter="hasAppliedFilter"
+              :empty-states="chartEmptyState(chart)"
             />
           </template>
         </div>
@@ -184,7 +198,7 @@
         <div>
           <SkeletonLoader
             :variants="['bar-chart', 'empty-state']"
-            :bar-chart-count="6"
+            :bar-chart-count="emptyStates.length"
             :empty-states="emptyStates"
             :has-applied-filter="hasAppliedFilter"
           />
@@ -195,31 +209,29 @@
 </template>
 
 <script setup lang="ts">
-import { Link } from "@/components";
+import { useScreenSize } from "@/composables/screen";
 import { useAuthStore } from "@/stores/auth";
+import { __ } from "@/translation";
+import { Link } from "@framework/ui";
+import { useStorage } from "@vueuse/core";
 import {
-  AxisChart,
   DateRangePicker,
-  DonutChart,
   Dropdown,
   TabButtons,
-  NumberChart,
+  Tooltip,
   createResource,
   dayjs,
   usePageMeta,
-  Tooltip,
 } from "frappe-ui";
-const { isMobileView } = useScreenSize();
+import { BarChart, ChartCard, DonutChart, NumberCard } from "frappe-ui/charts";
 import { computed, h, onMounted, reactive, ref, watch } from "vue";
-import { __ } from "@/translation";
 import LucideBuilding2 from "~icons/lucide/building-2";
 import LucideUser from "~icons/lucide/user";
-import { useScreenSize } from "@/composables/screen";
-import { useStorage } from "@vueuse/core";
+const { isMobileView } = useScreenSize();
 
 interface NumberCardData {
   title: string;
-  value: number;
+  value: number | null;
   delta: number | null;
   deltaSuffix: string;
   suffix?: string;
@@ -242,7 +254,7 @@ const filters = reactive<Filters>({
 interface ChartData {
   data: ChartValues[];
   title: string;
-  type: "axis" | "pie";
+  type: "bar" | "donut";
 }
 
 interface ChartValues {
@@ -257,58 +269,92 @@ const dashboardTitle = computed(() => {
   return viewMyStats.value ? __("My Dashboard") : __("Organization Dashboard");
 });
 
-const colors = [
-  "#318AD8",
-  "#F683AE",
-  "#48BB74",
-  "#F56B6B",
-  "#FACF7A",
-  "#44427B",
-  "#5FD8C4",
-  "#F8814F",
-  "#15CCEF",
-  "#A6B1B9",
-];
-//// Neoffice — upstream wrote these in plain English and SkeletonLoader translated them with
-//// __(variable), which the POT extractor cannot see: wrapped here, in setup, so they reach the
-//// French catalogue (same pass as 71a5669d9)
-const emptyStates = [
-  {
+interface ChartEmptyState {
+  // header of the card, shown untranslated only when the chart itself is missing
+  chartTitle: string;
+  chartSubtitle?: string;
+  title: string;
+  message: string;
+}
+
+// Chart key (stable, untranslated identifier from the dashboard APIs) → empty state copy.
+//// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
+//// (SkeletonLoader calls __() on these again at display time, which is harmless: it only adds the literal msgids to the extraction).
+const emptyStateByChart: Record<string, ChartEmptyState> = {
+  ticket_trend: {
+    chartTitle: __("Ticket Trend"),
     title: __("No ticket activity"),
     message: __("Ticket trends will appear here once tickets are created."),
   },
-  {
-    //// Neoffice — see above
+  feedback_trend: {
+    chartTitle: __("Feedback Trend"),
     title: __("No feedback data"),
     message: __("Feedback insights will appear once responses are collected."),
   },
-  {
-    //// Neoffice — see above
+  tickets_by_team: {
+    chartTitle: __("Tickets by Team"),
     title: __("No team data"),
     message: __("Tickets will be grouped by team once available."),
   },
-  //// Neoffice — see above
-  {
+  tickets_by_type: {
+    chartTitle: __("Tickets by Type"),
     title: __("No ticket type data"),
     message: __("Tickets will be categorized by type once created."),
   },
-  {
-    //// Neoffice — see above
+  tickets_by_priority: {
+    chartTitle: __("Tickets by Priority"),
     title: __("No priority data"),
     message: __("Ticket priorities will be reflected here once assigned."),
   },
-  {
-    //// Neoffice — see above
+  tickets_by_channel: {
+    chartTitle: __("Tickets by Channel"),
     title: __("No channel data"),
     message: __("Tickets will be grouped by channel once received."),
   },
-];
+  top_tags: {
+    chartTitle: __("Top Tags"),
+    title: __("No tags used yet"),
+    message: __("The most used tags will be ranked here once tickets are tagged."),
+  },
+  tag_trend: {
+    chartTitle: __("Tag Trend"),
+    title: __("No tag activity"),
+    message: __("Daily tag volume will appear here once tickets are tagged."),
+  },
+};
+
+const managerOnlyCharts = ["top_tags", "tag_trend"];
+
+// whole dashboard empty: no chart payload to read titles from, so fall back to ours
+const emptyStates = computed(() =>
+  Object.entries(emptyStateByChart)
+    .filter(([key]) => isManager || !managerOnlyCharts.includes(key))
+    .map(([, state]) => state)
+);
+
+function chartEmptyState(chart: any) {
+  const state = emptyStateByChart[chart?.key] ?? {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
+    title: __("No {0} available", String(chart?.title).toLowerCase()),
+  };
+  return [
+    { ...state, chartTitle: chart?.title, chartSubtitle: chart?.subtitle },
+  ];
+}
 
 const tabButtons = computed(() => {
   if (isMobileView.value) {
     return [
-      { value: "organization", icon: h(LucideBuilding2, { class: "size-4" }) },
-      { value: "my_stats", icon: h(LucideUser, { class: "size-4" }) },
+      {
+        value: "organization",
+        label: __("My Organization"),
+        icon: h(LucideBuilding2, { class: "size-4" }),
+      },
+      {
+        value: "my_stats",
+        label: __("My Stats"),
+        icon: h(LucideUser, { class: "size-4" }),
+      },
     ];
   }
   return [
@@ -325,18 +371,18 @@ const tabButtons = computed(() => {
   ];
 });
 
-const hasAppliedFilter = computed(() => {
-  return (
+const hasAppliedFilter = computed(() =>
+  Boolean(
     filters.agent ||
-    filters.team ||
-    (filters.period && filters.period !== getLastXDays(30))
-  );
-});
+      filters.team ||
+      (filters.period && filters.period !== getLastXDays(30))
+  )
+);
 
 const isEmpty = computed(() => {
   if (!numberCards.data || !trendData.data || !masterData.data) return false;
   return (
-    (numberCards.data as NumberCardData[]).every((d) => d.value === 0) &&
+    (numberCards.data as NumberCardData[]).every((d) => !d.value) &&
     (trendData.data as ChartData[]).every((d) => !d.data?.length) &&
     (masterData.data as ChartData[]).every((d) => !d.data?.length)
   );
@@ -351,9 +397,11 @@ const parseFilters = (filters: Filters) => {
   };
 };
 
+// No `cache` key here: a static cache key makes frappe-ui return the same
+// resource instance across navigations, still bound to the previous mount's
+// `filters` closure, so reloads after navigating back send stale params.
 const numberCards = createResource({
   url: "helpdesk.api.dashboard.get_dashboard_data",
-  cache: ["Analytics", "NumberCards"],
   makeParams: () => ({
     dashboard_type: "number_card",
     filters: parseFilters(filters),
@@ -362,7 +410,6 @@ const numberCards = createResource({
 
 const masterData = createResource({
   url: "helpdesk.api.dashboard.get_dashboard_data",
-  cache: ["Analytics", "MasterCharts"],
   makeParams: () => ({
     dashboard_type: "master",
     filters: parseFilters(filters),
@@ -371,9 +418,16 @@ const masterData = createResource({
 
 const trendData = createResource({
   url: "helpdesk.api.dashboard.get_dashboard_data",
-  cache: ["Analytics", "TrendCharts"],
   makeParams: () => ({
     dashboard_type: "trend",
+    filters: parseFilters(filters),
+  }),
+});
+
+const tagData = createResource({
+  url: "helpdesk.api.dashboard.get_dashboard_data",
+  makeParams: () => ({
+    dashboard_type: "tags",
     filters: parseFilters(filters),
   }),
 });
@@ -440,25 +494,17 @@ const loading = computed(() => {
   return numberCards.loading || masterData.loading || trendData.loading;
 });
 
-function getChartType(chart: any) {
-  chart.colors = colors;
-  if (chart["type"] === "axis") {
-    return h(AxisChart, {
-      config: chart,
-    });
-  }
-  if (chart["type"] === "pie") {
-    return h(DonutChart, {
-      config: chart,
-    });
-  }
+// api already sends the frappe-ui props for each chart
+function getChartType({ type, key, ...props }: any) {
+  return h(type === "donut" ? DonutChart : BarChart, props);
 }
 
+// include today, so last 7 days is today and the 6 days before
 function getLastXDays(range: number = 30): string {
   const today = new Date();
   const lastXDate = new Date(today);
 
-  lastXDate.setDate(today.getDate() - range);
+  lastXDate.setDate(today.getDate() - (range - 1));
   return `${dayjs(lastXDate).format("YYYY-MM-DD")},${dayjs(today).format(
     "YYYY-MM-DD"
   )}`;
@@ -468,16 +514,36 @@ const showDatePicker = ref(false);
 const datePickerRef = ref(null);
 const preset = ref(__("Last 30 Days"));
 
+// frappe-ui v1 DateRangePicker models a [from, to] tuple; filters.period and
+// the API keep the legacy "from,to" string, so convert at the picker boundary.
+const periodRange = computed({
+  get: (): string[] => (filters.period ? filters.period.split(",") : []),
+  set: (range: string[]) => {
+    showDatePicker.value = false;
+    filters.period = range?.length ? range.join(",") : "";
+    preset.value = formatter(filters.period);
+  },
+});
+
+// dismissing the calendar without a range would otherwise leave an empty
+// field where the preset menu used to be, with no way back to it
+function onPickerToggle(open: boolean) {
+  if (!open && !filters.period) {
+    showDatePicker.value = false;
+    preset.value = formatter("");
+  }
+}
+
 const options = computed(() => [
   {
     group: __("Presets"),
     hideLabel: true,
-    items: [
+    options: [
       {
         label: __("Today"),
         onClick: () => {
           preset.value = __("Today");
-          filters.period = getLastXDays(0);
+          filters.period = getLastXDays(1);
         },
       },
       {
@@ -530,9 +596,7 @@ function formatter(range: string) {
     return preset.value;
   }
   let [from, to] = range.split(",");
-  //// Neoffice — upstream wrote the range in plain English (a template literal); one msgid now, so
-  //// the French catalogue reaches it (same pass as 71a5669d9)
-  return __("{0} to {1}", formatRange(from), formatRange(to));
+  return `${formatRange(from)} to ${formatRange(to)}`;
 }
 
 function formatRange(date: string) {
@@ -554,6 +618,7 @@ watch(
     numberCards.reload();
     masterData.reload();
     trendData.reload();
+    if (isManager) tagData.reload();
   },
   { deep: true }
 );
@@ -567,6 +632,7 @@ onMounted(() => {
   numberCards.reload();
   masterData.reload();
   trendData.reload();
+  if (isManager) tagData.reload();
 });
 
 usePageMeta(() => {
@@ -578,7 +644,7 @@ usePageMeta(() => {
 
 <style scoped>
 :deep(.form-control button) {
-  @apply text-base rounded h-7 py-1.5 border border-outline-gray-2 bg-surface-white placeholder-ink-gray-4 hover:border-outline-gray-3 hover:shadow-sm focus:bg-surface-white focus:border-outline-gray-4 focus:shadow-sm focus:ring-0 focus-visible:ring-0 text-ink-gray-8 transition-colors w-full dark:[color-scheme:dark];
+  @apply text-base rounded-4 h-7 py-1.5 border border-outline-gray-2 bg-surface-base placeholder-ink-gray-4 hover:border-outline-gray-3 hover:shadow-sm focus:bg-surface-base focus:border-outline-gray-4 focus:shadow-sm focus:ring-0 focus-visible:ring-0 text-ink-gray-8 transition-colors w-full dark:[color-scheme:dark];
 }
 :deep(.form-control button > div) {
   overflow: hidden;

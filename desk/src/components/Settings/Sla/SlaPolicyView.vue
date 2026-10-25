@@ -6,12 +6,18 @@
   >
     <template #header-actions>
       <div class="flex gap-4 items-center">
-        <div
-          class="flex items-center justify-between gap-2 cursor-pointer"
-          @click="toggleEnabled"
-        >
-          <Switch size="sm" v-model="slaData.enabled" />
-          <span class="text-sm text-ink-gray-7 font-medium">
+        <div class="flex items-center justify-between gap-2">
+          <Switch
+            size="sm"
+            :model-value="Boolean(slaData.enabled)"
+            @update:model-value="(value) => (slaData.enabled = value)"
+          />
+          <!-- on the label only: on the wrapper it would undo the switch's
+               own toggle -->
+          <span
+            class="cursor-pointer text-sm-medium text-ink-gray-7"
+            @click="toggleEnabled"
+          >
             {{ __("Enabled") }}
           </span>
         </div>
@@ -28,31 +34,52 @@
     <template #content>
       <div
         v-if="slaData.loading"
-        class="flex items-center justify-center h-[stretch] absolute w-[stretch] left-0 top-5.5"
+        class="flex items-center justify-center absolute inset-x-0 top-5.5 bottom-0"
       >
         <LoadingIndicator class="w-4" />
       </div>
       <div v-if="!slaData.loading">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <FormControl
-              :type="'text'"
-              size="sm"
-              variant="subtle"
-              :placeholder="__('Name')"
-              :label="__('Name')"
-              v-model="slaData.service_level"
-              required
-              @change="validateSlaData('service_level')"
-              :disabled="Boolean(slaActiveScreen.data)"
-              maxlength="50"
-            />
-            <ErrorMessage :message="slaDataErrors.service_level" class="mt-2" />
+          <div class="space-y-5">
+            <div>
+              <FormControl
+                :type="'text'"
+                size="sm"
+                variant="subtle"
+                :placeholder="__('Name')"
+                :label="__('Name')"
+                v-model="slaData.service_level"
+                required
+                @change="validateSlaData('service_level')"
+                :disabled="Boolean(slaActiveScreen.data)"
+                maxlength="50"
+              />
+              <ErrorMessage
+                :message="slaDataErrors.service_level"
+                class="mt-2"
+              />
+            </div>
+            <div class="space-y-1.5" v-if="!slaData.default_sla">
+              <FormLabel :label="__('Rank')" for="rank" />
+              <FormControl
+                id="rank"
+                type="number"
+                min="0"
+                variant="subtle"
+                v-model="slaData.rank"
+                :description="
+                  __(
+                    'When more than one policy matches, the lower rank is applied first. 0 means unranked, and is applied last.'
+                  )
+                "
+              />
+            </div>
           </div>
           <FormControl
             :type="'textarea'"
             size="sm"
             variant="subtle"
+            :rows="8"
             :placeholder="__('Description')"
             :label="__('Description')"
             v-model="slaData.description"
@@ -62,7 +89,7 @@
         <hr class="my-8" />
         <div>
           <div class="flex flex-col gap-1">
-            <span class="text-lg font-semibold text-ink-gray-8">{{
+            <span class="text-md-semibold text-ink-gray-8">{{
               __("Assignment Conditions")
             }}</span>
             <span class="text-p-sm text-ink-gray-6">
@@ -75,37 +102,37 @@
                 :label="__('Set as default SLA')"
                 :model-value="slaData.default_sla"
                 @update:model-value="toggleDefaultSla"
-                class="text-ink-gray-6 text-base font-medium"
+                class="text-ink-gray-6 text-base-medium"
               />
               <div
                 v-if="isOldSla && slaActiveScreen.data && !slaData.default_sla"
               >
-                <Popover trigger="hover" :hoverDelay="0.25" placement="top-end">
-                  <template #target>
+                <HoverCard :hoverDelay="250" side="top" align="end">
+                  <template #trigger>
                     <div
                       class="text-sm text-ink-gray-6 flex gap-1 cursor-default"
                     >
                       {{ __("Old Conditions") }}
-                      <FeatherIcon name="info" class="size-4" />
+                      <LucideInfo class="size-4" />
                     </div>
                   </template>
-                  <template #body-main>
+                  <template #default>
                     <div
-                      class="text-sm text-ink-gray-6 p-2 bg-surface-white rounded-md max-w-96 text-wrap whitespace-pre-wrap leading-5"
+                      class="text-sm text-ink-gray-6 p-2 bg-surface-base rounded-5 max-w-96 text-wrap whitespace-pre-wrap leading-5"
                     >
                       <code>{{ slaData.condition }}</code>
                     </div>
                   </template>
-                </Popover>
+                </HoverCard>
               </div>
             </div>
             <div class="mt-5" v-if="!slaData.default_sla">
               <div
-                class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-outline-gray-2 rounded-md p-3 py-4"
+                class="flex flex-col gap-3 items-center text-center text-ink-gray-7 text-sm mb-2 border border-outline-gray-2 rounded-5 p-3 py-4"
                 v-if="!useNewUI"
               >
+                <!-- //// Neoffice — wrapped in __(): one sentence cut around the link, one msgid with {0} where the link goes, halves read back from the translation (deskConditionsNote; same pattern as AssignmentRuleView.vue) -->
                 <span class="text-p-sm">
-                  <!-- //// Neoffice — one sentence cut around the link: only its first fragment went through __() and the rest stayed in plain English. One msgid with {0} where the link goes, halves read back from the translation (deskConditionsNote; same pattern as MergeCategoryModal, 71a5669d9) -->
                   {{ deskConditionsNote.before
                   }}<a :href="deskUrl" target="_blank" class="underline">desk</a
                   >{{ deskConditionsNote.after }}
@@ -127,7 +154,7 @@
         <hr class="my-8" />
         <div>
           <div class="flex flex-col gap-1">
-            <span class="text-lg font-semibold text-ink-gray-8">
+            <span class="text-md-semibold text-ink-gray-8">
               {{ __("Valid From") }}
             </span>
             <span class="text-p-sm text-ink-gray-6">
@@ -143,8 +170,8 @@
                 placeholder="11/01/2025"
                 class="w-full"
                 id="from_date"
-                @change="validateSlaData('start_date')"
-                :formatter="(date) => getFormattedDate(date)"
+                @update:model-value="validateSlaData('start_date')"
+                :format="getDateFormat()"
               >
                 <template #prefix>
                   <LucideCalendar class="size-4" />
@@ -160,8 +187,8 @@
                 placeholder="25/12/2025"
                 class="w-full"
                 id="to_date"
-                @change="validateSlaData('end_date')"
-                :formatter="(date) => getFormattedDate(date)"
+                @update:model-value="validateSlaData('end_date')"
+                :format="getDateFormat()"
               >
                 <template #prefix>
                   <LucideCalendar class="size-4" />
@@ -174,7 +201,7 @@
         <hr class="my-8" />
         <div>
           <div class="flex flex-col gap-1">
-            <span class="text-lg font-semibold text-ink-gray-8">
+            <span class="text-md-semibold text-ink-gray-8">
               {{ __("Response and Resolution") }}
             </span>
             <span class="text-p-sm text-ink-gray-6">
@@ -196,10 +223,8 @@
               :checked="!slaData.apply_sla_for_resolution"
               type="radio"
             />
-            <div class="select-none text-ink-gray-6 text-sm font-medium">
-              //// Neoffice — wrapped in __() by the i18n pass inside this block, which upstream
-              //// keeps commented out; delete this marker if the block is ever restored
-              {{ __("Apply SLA for response time") }}
+            <div class="select-none text-ink-gray-6 text-sm-medium">
+              Apply SLA for response time
             </div>
           </div>
           <div
@@ -211,10 +236,8 @@
               :checked="slaData.apply_sla_for_resolution"
               type="radio"
             />
-            <div class="select-none text-ink-gray-6 text-sm font-medium">
-              //// Neoffice — wrapped in __() by the i18n pass inside this block, which upstream
-              //// keeps commented out; delete this marker if the block is ever restored
-              {{ __("Apply SLA for response time and resolution time") }}
+            <div class="select-none text-ink-gray-6 text-sm-medium">
+              Apply SLA for response time and resolution time
             </div>
           </div>
         </div> -->
@@ -226,7 +249,7 @@
         <hr class="my-8" />
         <div>
           <div class="flex flex-col gap-1">
-            <span class="text-lg font-semibold text-ink-gray-8">
+            <span class="text-md-semibold text-ink-gray-8">
               {{ __("Status Details") }}
             </span>
             <span class="text-p-sm text-ink-gray-6">
@@ -256,6 +279,7 @@
 </template>
 
 <script setup lang="ts">
+import LucideInfo from "~icons/lucide/info";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import {
   resetSlaDataErrors,
@@ -264,7 +288,7 @@ import {
   slaDataErrors,
   validateSlaData,
 } from "@/stores/sla";
-import { convertToConditions, getFormattedDate } from "@/utils";
+import { convertToConditions, getDateFormat } from "@/utils";
 import {
   Badge,
   Button,
@@ -273,25 +297,32 @@ import {
   DatePicker,
   ErrorMessage,
   FormLabel,
+  HoverCard,
   LoadingIndicator,
-  Popover,
   Switch,
   toast,
 } from "frappe-ui";
-//// Neoffice — `computed` added for deskConditionsNote below.
-import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import {
+  computed,
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+} from "vue";
 import SlaAssignmentConditions from "./SlaAssignmentConditions.vue";
 import SlaHolidays from "./SlaHolidays.vue";
 import SlaPriorityList from "./SlaPriorityList.vue";
 import SlaStatusList from "./SlaStatusList.vue";
 import { disableSettingModalOutsideClick } from "../settingsModal";
-import { useOnboarding } from "frappe-ui/frappe";
+import { useOnboarding } from "@framework/ui";
 import { __ } from "@/translation";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import { SlaPolicyListResourceSymbol } from "@/types";
 import { HDServiceLevelAgreement } from "@/types/doctypes";
 
-const { updateOnboardingStep } = useOnboarding("helpdesk");
+const { updateOnboardingStep } = useOnboarding("helpdesk") ?? {};
 
 const showConfirmDialog = ref({
   show: false,
@@ -307,8 +338,8 @@ const isOldSla = ref(false);
 
 const slaPolicyList = inject(SlaPolicyListResourceSymbol);
 const deskUrl = `${window.location.origin}/app/hd-service-level-agreement/${slaActiveScreen.value.data?.name}`;
-//// Neoffice — one message, {0} where the desk link goes; the halves are read back from the
-//// translation so each language keeps its own word order (see the template).
+//// Neoffice — wrapped in __(): one message, {0} where the desk link goes; the halves are read back
+//// from the translation so each language keeps its own word order (see the template).
 const deskConditionsNote = computed(() => {
   const [before, after] = __(
     "Conditions for this SLA were created from {0} which are not compatible with this UI, you will need to recreate the conditions here if you want to manage and add new conditions from this UI."
@@ -327,9 +358,11 @@ const getSlaData = createResource({
     try {
       condition_json = JSON.parse(data.condition_json || "[]");
     } catch (error) {
+      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
       toast.error(
-        //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
-        __("Assignment conditions are invalid or corrupt, recreate the conditions.")
+        __(
+          "Assignment conditions are invalid or corrupt, recreate the conditions."
+        )
       );
       condition_json = [];
     }
@@ -421,12 +454,8 @@ const saveSla = () => {
 };
 
 const createSla = () => {
-  const defaultTicketStatus = slaData.value.default_ticket_status
-    ? slaData.value.default_ticket_status?.value
-    : null;
-  const ticketReopenStatus = slaData.value.reopen_ticket_status
-    ? slaData.value.reopen_ticket_status?.value
-    : null;
+  const defaultTicketStatus = slaData.value.default_ticket_status || null;
+  const ticketReopenStatus = slaData.value.reopen_ticket_status || null;
   slaPolicyList?.insert.submit(
     {
       ...slaData.value,
@@ -447,19 +476,15 @@ const createSla = () => {
           doctype: "HD Service Level Agreement",
           name: data.name,
         });
-        updateOnboardingStep("setup_sla", true);
+        updateOnboardingStep?.("setup_sla", true);
       },
     }
   );
 };
 
 const updateSla = () => {
-  const defaultTicketStatus = slaData.value.default_ticket_status
-    ? slaData.value.default_ticket_status?.value
-    : null;
-  const ticketReopenStatus = slaData.value.reopen_ticket_status
-    ? slaData.value.reopen_ticket_status?.value
-    : null;
+  const defaultTicketStatus = slaData.value.default_ticket_status || null;
+  const ticketReopenStatus = slaData.value.reopen_ticket_status || null;
   slaPolicyList?.setValue.submit(
     {
       ...slaData.value,
@@ -487,16 +512,12 @@ const updateSla = () => {
 };
 
 const toggleEnabled = () => {
-  if (slaData.value.default_sla) {
-    toast.error(__("SLA set as default cannot be disabled"));
-    return;
-  }
   slaData.value.enabled = !slaData.value.enabled;
 };
 
-const toggleDefaultSla = () => {
-  slaData.value.default_sla = !slaData.value.default_sla;
-  if (slaData.value.default_sla) {
+const toggleDefaultSla = (value: boolean) => {
+  slaData.value.default_sla = value;
+  if (value) {
     slaData.value.enabled = true;
   }
 };

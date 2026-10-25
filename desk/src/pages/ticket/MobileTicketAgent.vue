@@ -2,9 +2,7 @@
   <div class="flex flex-col">
     <LayoutHeader v-if="ticket.doc?.name">
       <template #left-header>
-        <div class="max-w-[60vw]">
-          <Breadcrumbs :items="breadcrumbs" />
-        </div>
+        <Breadcrumbs :items="breadcrumbs" />
       </template>
       <template #right-header>
         <div class="absolute end-0 pe-2">
@@ -20,8 +18,8 @@
                   />
                 </template>
                 <template #suffix>
-                  <FeatherIcon
-                    :name="open ? 'chevron-up' : 'chevron-down'"
+                  <component
+                    :is="open ? LucideChevronUp : LucideChevronDown"
                     class="h-4"
                   />
                 </template>
@@ -32,12 +30,48 @@
       </template>
     </LayoutHeader>
     <header
-      class="flex h-12 items-center justify-between py-[7px] px-3 border-b"
+      class="flex h-12 items-center justify-between gap-2 py-[7px] px-3 border-b"
       v-if="ticket.doc?.name"
     >
       <!-- left side -->
-      <div class="flex items-center gap-2 max-w-[50%]">
-        <AssignTo :hide-label="true" />
+      <div class="flex min-w-0 flex-1 items-center gap-2">
+        <!-- the width lives on the wrapper: a Combobox with its own #trigger
+             slot drops the class it is handed -->
+        <div class="min-w-0 flex-1">
+          <Link
+            doctype="HD Team"
+            :hide-clear-button="true"
+            :model-value="ticket.doc.agent_group"
+            @update:model-value="(val) => updateField('agent_group', val)"
+          >
+            <!-- Same trigger styling as AssignTo so the header controls match -->
+            <template #trigger>
+              <Button
+                variant="outline"
+                class="!flex !justify-start w-full active:!bg-inherit hover:shadow-sm [&>span]:w-full"
+              >
+                <div class="flex items-center min-h-5 gap-2 w-full">
+                  <span
+                    class="truncate"
+                    :class="
+                      ticket.doc.agent_group
+                        ? 'text-ink-gray-7'
+                        : 'text-ink-gray-5'
+                    "
+                  >
+                    {{ ticket.doc.agent_group || __("Team") }}
+                  </span>
+                </div>
+                <template #suffix>
+                  <LucideChevronDown class="h-4 w-4 ms-auto text-ink-gray-5" />
+                </template>
+              </Button>
+            </template>
+          </Link>
+        </div>
+        <div class="min-w-0 flex-1">
+          <AssignTo :hide-label="true" />
+        </div>
       </div>
       <!-- right side -->
       <div class="flex items-center gap-2">
@@ -47,17 +81,46 @@
         />
       </div>
     </header>
-    <div v-if="ticket.doc?.name" class="flex flex-1 overflow-x-hidden">
-      <div class="flex flex-1 flex-col overflow-x-hidden">
-        <div class="flex-1 flex flex-col">
+    <div
+      v-if="ticket.doc?.name"
+      :key="ticketId"
+      class="flex min-h-0 flex-1 overflow-x-hidden"
+    >
+      <div class="flex min-h-0 flex-1 flex-col overflow-x-hidden">
+        <div class="flex min-h-0 flex-1 flex-col">
           <Tabs
-            :modelValue="tabIndex"
-            :tabs="tabs"
+            :modelValue="activeTab"
             @update:modelValue="changeTabTo"
-            class="[&_[role='tab']]:px-0 [&_[role='tablist']]:px-5 [&_[role='tablist']]:gap-7.5"
+            class="flex flex-col flex-1 overflow-hidden"
           >
-            <template #tab-panel="{ tab }">
-              <div v-if="tab.name === 'details'">
+            <div class="flex shrink-0">
+              <!-- Scroll here so the active underline isn't clipped. -->
+              <div class="min-w-0 flex-1 overflow-x-auto hide-scrollbar">
+                <TabList size="md" class="w-max min-w-full px-3 py-1.5">
+                  <TabTrigger
+                    v-for="tab in visibleTabs"
+                    :key="tab.value"
+                    :value="tab.value"
+                    :label="tab.label"
+                    :icon-left="tab.iconLeft"
+                  />
+                </TabList>
+              </div>
+              <!-- own border, so the tab underline runs on beneath it -->
+              <div
+                v-if="activeTab === 'call'"
+                class="flex items-center border-b border-outline-gray-1 pe-3"
+              >
+                <TicketCallActions />
+              </div>
+            </div>
+            <TabPanel
+              v-for="tab in visibleTabs"
+              :key="tab.value"
+              :value="tab.value"
+              class="min-h-0 flex-1 flex-col overflow-auto data-[state=active]:flex"
+            >
+              <div v-if="tab.value === 'details'">
                 <!-- ticket contact info -->
                 <TicketAgentContact
                   v-if="contact.data"
@@ -68,16 +131,34 @@
                 <!-- feedback component -->
                 <TicketFeedback
                   v-if="ticket.doc?.feedback_rating"
-                  class="border-b px-6 py-3 text-base text-ink-gray-5"
+                  class="border-b px-6 py-3 text-base text-gray-600"
                   :ticket="ticket.doc"
                 />
-                <!-- SLA Section -->
-                <h3 class="px-6 pt-3 font-semibold text-base">
-                  {{ __("SLA") }}
-                </h3>
-                <TicketAgentDetails :ticket="ticket.doc" />
+                <!-- SLA Section, hidden when no policy is attached -->
+                <template v-if="ticket.doc?.sla">
+                  <h3 class="px-6 pt-3 text-base-semibold">
+                    {{ __("SLA") }}
+                  </h3>
+                  <div class="px-6 py-3">
+                    <TicketSLA />
+                  </div>
+                </template>
+                <div
+                  class="flex items-center border-b px-6 py-3 text-base leading-5"
+                >
+                  <div class="w-[126px] text-sm text-ink-gray-5">
+                    {{ __("Source") }}
+                  </div>
+                  <div>
+                    {{
+                      ticket.doc?.via_customer_portal
+                        ? __("Portal")
+                        : __("Mail")
+                    }}
+                  </div>
+                </div>
                 <!-- Ticket Fields -->
-                <h3 class="px-6 pt-3 font-semibold text-base">
+                <h3 class="px-6 pt-3 text-base-semibold">
                   {{ __("Details") }}
                 </h3>
                 <TicketAgentFields
@@ -91,25 +172,18 @@
               </div>
 
               <!-- Rest Activities -->
-              <!-- //// Neoffice — passes the TicketTab identity: TicketAgentActivities used to branch its empty state on the translated tab title and none of the branches ever matched (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
-              <TicketAgentActivities
+              <TicketTimeline
                 v-else
-                ref="ticketAgentActivitiesRef"
-                :activities="filterActivities(tab.name)"
-                :title="tab.label"
-                :tab="tab.name"
-                :ticket-status="ticket.doc?.status"
-                @update="() => reloadTicket(props.ticketId)"
-                @email:reply="
-                  (e) => {
-                    communicationAreaRef.replyToEmail(e);
-                  }
-                "
+                ref="timelineRef"
+                :ticket-id="String(ticket.doc?.name)"
+                :tab="tab.value"
+                :tab-label="tab.label"
+                @email:reply="(e) => communicationAreaRef?.replyToEmail(e)"
               />
-            </template>
+            </TabPanel>
           </Tabs>
           <CommunicationArea
-            class="sticky bottom-0 z-50 bg-surface-white"
+            class="bg-surface-base"
             ref="communicationAreaRef"
             v-model="ticket.doc"
             :ticketId="ticket.doc?.name"
@@ -120,8 +194,7 @@
             @update="
               () => {
                 reloadTicket(props.ticketId);
-                tabIndex !== 0 &&
-                  ticketAgentActivitiesRef?.scrollToLatestActivity();
+                timelineRef[0]?.reload();
               }
             "
           />
@@ -129,11 +202,11 @@
       </div>
     </div>
 
-    <Dialog v-model="showSubjectDialog">
-      <template #body-title>
+    <Dialog v-model:open="showSubjectDialog">
+      <template #title>
         <h3>{{ __("Rename") }}</h3>
       </template>
-      <template #body-content>
+      <template #default>
         <FormControl
           v-model="subjectInput"
           :type="'text'"
@@ -171,6 +244,8 @@
 </template>
 
 <script setup lang="ts">
+import LucideChevronUp from "~icons/lucide/chevron-up";
+import LucideChevronDown from "~icons/lucide/chevron-down";
 import { __ } from "@/translation";
 import {
   Breadcrumbs,
@@ -179,7 +254,10 @@ import {
   Dialog,
   Dropdown,
   FormControl,
+  TabList,
+  TabPanel,
   Tabs,
+  TabTrigger,
   toast,
 } from "frappe-ui";
 import {
@@ -191,10 +269,11 @@ import {
   PropType,
   provide,
   ref,
+  watch,
   watchEffect,
 } from "vue";
 
-import { CommunicationArea, LayoutHeader } from "@/components";
+import { CommunicationArea, LayoutHeader, Link } from "@/components";
 import {
   ActivityIcon,
   CommentIcon,
@@ -203,37 +282,39 @@ import {
   IndicatorIcon,
   PhoneIcon,
 } from "@/components/icons";
-import { TicketAgentActivities } from "@/components/ticket";
+import TicketCallActions from "@/components/ticket/TicketCallActions.vue";
+import TicketTimeline from "@/components/ticket-agent/timeline/TicketTimeline.vue";
 
 import CustomActions from "@/components/CustomActions.vue";
 import AssignTo from "@/components/ticket-agent/AssignTo.vue";
 import SetContactPhoneModal from "@/components/ticket/SetContactPhoneModal.vue";
-import TicketAgentDetails from "@/components/ticket/TicketAgentDetails.vue";
+import TicketSLA from "@/components/ticket-agent/TicketSLA.vue";
 import TicketAgentFields from "@/components/ticket/TicketAgentFields.vue";
 import {
+  createToast,
   parseField,
   setupCustomizations,
 } from "@/composables/formCustomisation";
 import { useScreenSize } from "@/composables/screen";
 import { useActiveTabManager } from "@/composables/useActiveTabManager";
-import { reloadTicket, useTicket } from "@/composables/useTicket";
+import {
+  reloadTicket,
+  revalidateTicket,
+  useTicket,
+} from "@/composables/useTicket";
 import { globalStore } from "@/stores/globalStore";
 import { getMeta } from "@/stores/meta";
 import { useTelephonyStore } from "@/stores/telephony";
 import { useTicketStatusStore } from "@/stores/ticketStatus";
-import { useUserStore } from "@/stores/user";
 import {
-  ActivitiesSymbol,
   AssigneeSymbol,
   Customizations,
   CustomizationSymbol,
-  FeedbackActivity,
   RecentSimilarTicketsSymbol,
   Resource,
   TabObject,
   TicketContactSymbol,
   TicketSymbol,
-  TicketTab,
 } from "@/types";
 import { HDTicketStatus } from "@/types/doctypes";
 import { storeToRefs } from "pinia";
@@ -243,16 +324,10 @@ const telephonyStore = useTelephonyStore();
 const { isCallingEnabled } = storeToRefs(telephonyStore);
 
 const ticketStatusStore = useTicketStatusStore();
-//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket
-//// status, used by the status dropdown below.
-const { statusLabel } = ticketStatusStore;
-const { getUser } = useUserStore();
 const router = useRouter();
 const { $dialog } = globalStore();
 
-const ticketAgentActivitiesRef = ref<InstanceType<
-  typeof TicketAgentActivities
-> | null>(null);
+const timelineRef = ref<InstanceType<typeof TicketTimeline>[]>([]);
 const communicationAreaRef = ref<InstanceType<typeof CommunicationArea> | null>(
   null
 );
@@ -261,7 +336,7 @@ const subjectInput = ref(null);
 const showPhoneModal = ref(false);
 const customActions = ref([]);
 
-type ticketId = string;
+type ticketId = string | number;
 
 const props = defineProps({
   ticketId: {
@@ -274,7 +349,6 @@ const ticketComposable = computed(() => useTicket(props.ticketId));
 const ticket = computed(() => ticketComposable.value.ticket);
 const assignees = computed(() => ticketComposable.value.assignees);
 const contact = computed(() => ticketComposable.value.contact);
-const activities = computed(() => ticketComposable.value.activities);
 
 const customizations: Resource<Customizations> = createResource({
   url: "helpdesk.helpdesk.doctype.hd_ticket.api.get_ticket_customizations",
@@ -296,7 +370,7 @@ const customizationCtx = computed(() => ({
   toast,
   $dialog,
   updateField,
-  createToast: toast.create,
+  createToast,
 }));
 
 watchEffect(async () => {
@@ -314,8 +388,8 @@ const mobileCustomActions = computed(() => {
 
   for (const action of customActions.value) {
     if (action.group) {
-      // Grouped action (with or without buttonLabel) — flatten its items
-      for (const item of action.items || []) {
+      // Grouped action (with or without buttonLabel) — flatten its options
+      for (const item of action.options || []) {
         items.push({ label: item.label, onClick: item.onClick });
       }
     } else {
@@ -326,7 +400,7 @@ const mobileCustomActions = computed(() => {
 
   if (!items.length) return [];
 
-  return [{ group: "Actions", hideLabel: true, items }];
+  return [{ group: "Actions", hideLabel: true, options: items }];
 });
 
 const ticketFields = computed(() => {
@@ -357,10 +431,8 @@ const ticketFields = computed(() => {
         fieldname: f.fieldname,
         fieldtype: fieldMeta?.fieldtype,
         options: fieldMeta?.options || "",
-        //// Neoffice — upstream built the placeholder in plain English (a template literal); one msgid
-        //// with {0} for the field label, translated like the label itself (same pass as 71a5669d9)
         placeholder:
-          f.placeholder || __("Enter {0}", __(fieldMeta?.label || f.fieldname)),
+          f.placeholder || `Enter ${fieldMeta?.label || f.fieldname}`,
         readonly: Boolean(fieldMeta.read_only),
         disabled: Boolean(fieldMeta.read_only),
         url_method: f.url_method || "",
@@ -397,10 +469,6 @@ provide(
   RecentSimilarTicketsSymbol,
   computed(() => ticketComposable.value.recentSimilarTickets)
 );
-provide(
-  ActivitiesSymbol,
-  computed(() => ticketComposable.value.activities)
-);
 provide("communicationArea", communicationAreaRef);
 provide("makeCall", () => {
   if (!contact.value.data?.mobile_no && !contact.value.data?.phone) {
@@ -431,204 +499,68 @@ const breadcrumbs = computed(() => {
 });
 
 const dropdownOptions = computed(() =>
-  ticketStatusStore.statuses.data?.map((o: HDTicketStatus) => ({
-    //// Neoffice — the STATUS LABEL is displayed, so it goes through __(); the
-    //// VALUE stays raw because it is what HD Ticket.status stores and what the
-    //// filters send back. A default label ('Open', 'Replied') is in the merged
-    //// catalogue and turns French; a label an instance renamed is absent from it
-    //// and __() returns it unchanged, which is right — it is already in their
-    //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
-    label: statusLabel(o.label_agent),
-    value: o.label_agent,
-    onClick: () => ticket.value.setValue.submit({ status: o.label_agent }),
-    icon: () =>
-      h(IndicatorIcon, {
-        class: o.parsed_color,
-      }),
-  }))
+  ticketStatusStore.statuses.data
+    ?.filter((o: HDTicketStatus) => o.enabled)
+    .map((o: HDTicketStatus) => ({
+      label: o.label_agent,
+      value: o.label_agent,
+      onClick: () => ticket.value.setValue.submit({ status: o.label_agent }),
+      icon: () =>
+        h(IndicatorIcon, {
+          class: o.parsed_color,
+        }),
+    }))
 );
 
 const tabs: ComputedRef<TabObject[]> = computed(() => {
   const _tabs = [
     {
-      name: "details",
+      value: "details",
       label: __("Details"),
-      icon: DetailsIcon,
+      iconLeft: DetailsIcon,
       condition: () => isMobileView.value,
     },
     {
-      name: "activity",
+      value: "activity",
       label: __("Activity"),
-      icon: ActivityIcon,
+      iconLeft: ActivityIcon,
     },
     {
-      name: "email",
+      value: "email",
       label: __("Emails"),
-      icon: EmailIcon,
+      iconLeft: EmailIcon,
     },
     {
-      name: "comment",
+      value: "comment",
       label: __("Comments"),
-      icon: CommentIcon,
+      iconLeft: CommentIcon,
     },
   ];
 
   if (isCallingEnabled.value) {
     _tabs.push({
-      name: "call",
+      value: "call",
       label: __("Calls"),
-      icon: PhoneIcon,
+      iconLeft: PhoneIcon,
     });
   }
   return _tabs;
 });
 
-const { tabIndex, changeTabTo } = useActiveTabManager(tabs);
+const visibleTabs = computed(() =>
+  tabs.value.filter((tab) => !tab.condition || tab.condition())
+);
 
-const _activities = computed(() => {
-  if (!activities.value?.data) {
-    return [];
-  }
-
-  const emailProps = activities.value.data.communications.map(
-    (email, idx: number) => {
-      return {
-        subject: email.subject,
-        content: email.content,
-        sender: { name: email.user.email, full_name: email.user.name },
-        to: email.recipients,
-        type: "email",
-        key: email.creation,
-        cc: email.cc,
-        bcc: email.bcc,
-        creation: email.communication_date || email.creation,
-        attachments: email.attachments,
-        name: email.name,
-        deliveryStatus: email.delivery_status,
-        isFirstEmail: idx === 0,
-      };
-    }
-  );
-
-  const commentProps = activities.value.data.comments.map((comment) => {
-    return {
-      name: comment.name,
-      type: "comment",
-      key: comment.creation,
-      commentedBy: comment.commented_by,
-      commenter: comment.user.name,
-      creation: comment.creation,
-      content: comment.content,
-      attachments: comment.attachments,
-    };
-  });
-
-  activities.value.data.history.map((h) => {
-    if (h.action && h.owner && h.action.includes(h.owner)) {
-      h.action = h.action.replace(h.owner, "themselves");
-    }
-    return h;
-  });
-
-  const historyProps = [
-    ...activities.value.data.history,
-    ...activities.value.data.views,
-  ].map((h) => {
-    return {
-      type: "history",
-      key: h.creation,
-      content: h.action ? h.action : __("viewed this"),
-      creation: h.creation,
-      user: h.user.name + " ",
-    };
-  });
-
-  const callProps = activities.value.data.calls.map((call) => {
-    return {
-      ...call,
-      type: "call",
-      name: call.name,
-      key: call.creation,
-      call_type: call.type,
-      content: `${call.caller || "Unknown"} made a call to ${
-        call.receiver || "Unknown"
-      }`,
-      duration: call.duration ? call.duration + "s" : "0s",
-    };
-  });
-
-  const sorted = [
-    ...emailProps,
-    ...commentProps,
-    ...historyProps,
-    ...callProps,
-  ].sort(
-    (a, b) => new Date(a.creation).getTime() - new Date(b.creation).getTime()
-  );
-
-  const data = [];
-  let i = 0;
-
-  while (i < sorted.length) {
-    const currentActivity = sorted[i];
-    if (currentActivity.type === "history") {
-      currentActivity.relatedActivities = [currentActivity];
-      for (let j = i + 1; j < sorted.length + 1; j++) {
-        const nextActivity = sorted[j];
-
-        if (
-          nextActivity &&
-          nextActivity.user === currentActivity.user &&
-          //// Neoffice — `content` holds the translated "viewed this" (historyProps above), so the
-          //// English literal never matched on a French site and views were grouped with changes
-          nextActivity.content !== __("viewed this") &&
-          !nextActivity.content.includes("assigned") &&
-          !nextActivity.content.includes("unassigned")
-        ) {
-          currentActivity.relatedActivities.push(nextActivity);
-        } else {
-          data.push(currentActivity);
-          i = j - 1;
-          break;
-        }
-      }
-    } else {
-      data.push(currentActivity);
-    }
-    i++;
-  }
-
-  if (ticket.value.doc?.feedback_rating === 0) {
-    return data;
-  }
-  const feedbackActivity: FeedbackActivity[] = [
-    {
-      type: "feedback",
-      key: "feedback-activity",
-      feedback_rating: ticket.value?.doc?.feedback_rating,
-      feedback_extra: ticket.value?.doc?.feedback_extra,
-      feedback: ticket.value?.doc?.feedback,
-      sender: {
-        name: ticket.value?.doc?.raised_by,
-        full_name: ticket.value?.doc?.contact,
-      },
-    },
-  ];
-  data.push(...feedbackActivity);
-
-  return data;
-});
-
-function filterActivities(eventType: TicketTab) {
-  if (eventType === "activity") {
-    return _activities.value;
-  }
-  return _activities.value.filter((activity) => activity.type === eventType);
-}
+const { activeTab, changeTabTo } = useActiveTabManager(tabs);
 
 onMounted(() => {
   document.title = props.ticketId;
+  // Revisiting a ticket: show the cached conversation immediately and refresh it
+  // in place (mobile has no live socket refresh to keep the cache current).
+  revalidateTicket(props.ticketId);
 });
+
+watch(ticket, (ticket) => ticket.markSeen.reload(), { immediate: true });
 
 onUnmounted(() => {
   document.title = "Helpdesk";

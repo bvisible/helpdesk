@@ -13,62 +13,46 @@
         theme="gray"
         variant="solid"
         @click="goToNew()"
-        icon-left="plus"
+        icon-left="lucide-plus"
         class="rtl:flex-row-reverse"
       />
     </template>
     <template #header-bottom>
       <div class="flex items-center gap-2 justify-between">
         <div class="relative w-full">
-          <Input
+          <TextInput
             :model-value="savedRepliesSearchQuery"
-            @input="savedRepliesSearchQuery = $event"
+            @update:model-value="savedRepliesSearchQuery = $event"
             :placeholder="__('Search')"
             type="text"
-            class="bg-surface-white hover:bg-surface-white focus:ring-0 border-outline-gray-2"
-            icon-left="search"
-            debounce="300"
-            inputClass="p-4 pe-12 rtl:pr-8 "
-          />
+            :debounce="300"
+          >
+            <template #prefix>
+              <LucideSearch class="size-4" />
+            </template>
+          </TextInput>
           <Button
             v-if="savedRepliesSearchQuery"
-            icon="x"
+            icon="lucide-x"
             variant="ghost"
             @click="savedRepliesSearchQuery = ''"
             class="absolute end-1 top-1/2 -translate-y-1/2"
           />
         </div>
-        <Dropdown :options="filterOptions" placement="right">
+        <Dropdown
+          :options="filterOptions"
+          align="end"
+          @update:open="(open) => open && (isConfirmingDelete = false)"
+        >
           <template #default="{ open }">
-            <!-- //// Neoffice — the button showed the stored scope ("Personal", "Team"...) as its label; it shows the translated label of the matching option now -->
-            <Button
-              :label="filterOptions.find((o) => o.value === activeFilter)?.label || activeFilter"
-              class="flex items-center justify-between w-fit p-4"
-            >
+            <Button :label="activeFilterLabel">
               <template #suffix>
-                <FeatherIcon
-                  :name="open ? 'chevron-up' : 'chevron-down'"
+                <component
+                  :is="open ? LucideChevronUp : LucideChevronDown"
                   class="h-4"
                 />
               </template>
             </Button>
-          </template>
-          <template #item-label="{ item }">
-            <button
-              class="group flex text-ink-gray-6 gap-4 w-full justify-between items-center rounded text-base"
-              @click="item.onSelect"
-            >
-              <div class="flex items-center justify-between flex-1">
-                <span class="whitespace-nowrap">
-                  {{ item.label }}
-                </span>
-                <FeatherIcon
-                  v-if="activeFilter === item.value"
-                  name="check"
-                  class="size-4 text-ink-gray-7"
-                />
-              </div>
-            </button>
           </template>
         </Dropdown>
       </div>
@@ -80,13 +64,13 @@
       >
         <LoadingIndicator class="w-4" />
       </div>
-      <EmptyState
+      <div
         v-if="
           !savedRepliesListResource?.list?.loading &&
           !savedRepliesListResource?.data?.length
         "
         variant="badge"
-        :icon="SavedReplyIcon"
+        :icon="ZapIcon"
         :title="__('No saved replies found')"
         :description="__('Add one to get started.')"
       />
@@ -110,7 +94,7 @@
           :key="savedReply.name"
         >
           <div
-            class="grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-surface-menu-bar rounded"
+            class="grid grid-cols-12 items-center gap-4 cursor-pointer hover:bg-surface-sidebar rounded-4"
           >
             <div
               @click="
@@ -121,9 +105,7 @@
               "
               class="w-full px-2 flex flex-col justify-center h-12.5 col-span-7 min-w-0"
             >
-              <div
-                class="text-base text-ink-gray-7 font-medium w-full truncate"
-              >
+              <div class="text-base-medium text-ink-gray-7 w-full truncate">
                 {{ savedReply.title }}
               </div>
             </div>
@@ -152,14 +134,15 @@
                 />
                 {{ savedReply.scope }}
               </div>
+              <!-- the confirm state is shared, so each menu clears it on open -->
               <Dropdown
-                placement="right"
+                align="end"
                 :options="dropdownOptions(savedReply)"
+                @update:open="(open) => open && (isConfirmingDelete = false)"
               >
                 <Button
-                  icon="more-horizontal"
+                  icon="lucide-more-horizontal"
                   variant="ghost"
-                  @click="isConfirmingDelete = false"
                   class="me-2"
                 />
               </Dropdown>
@@ -174,10 +157,10 @@
     </template>
   </SettingsLayoutBase>
   <Dialog
-    :options="{ title: __('Duplicate Saved reply') }"
-    v-model="duplicateDialog.show"
+    :title="__('Duplicate Saved reply')"
+    v-model:open="duplicateDialog.show"
   >
-    <template #body-content>
+    <template #default>
       <div class="flex flex-col gap-4">
         <FormControl
           :label="__('New Saved reply Name')"
@@ -200,35 +183,31 @@
 </template>
 
 <script setup lang="ts">
-//// Neoffice — removed import { __ } from "@/translation" from upstream's
-//// position here (34afea6c1 "Merge upstream develop up to 2026-06-02"):
-//// upstream had added its own __ import for this file's i18n work too; the
-//// merge kept ours below rather than importing __ twice.
+import LucideChevronUp from "~icons/lucide/chevron-up";
+import LucideChevronDown from "~icons/lucide/chevron-down";
+import EmptyState from "@/components/EmptyState.vue";
+import { useConfigStore } from "@/stores/config";
+import { __ } from "@/translation";
+import { ConfirmDelete } from "@/utils";
 import {
   Avatar,
   Button,
   call,
   Dropdown,
-  FeatherIcon,
-  Input,
   LoadingIndicator,
+  TextInput,
   toast,
 } from "frappe-ui";
-//// Neoffice — upstream imports __ at this spot; ours sits a few lines below (the merge reordered the imports), same binding.
+import { storeToRefs } from "pinia";
 import { computed, inject, ref, Ref, watch } from "vue";
-import { ConfirmDelete } from "@/utils";
-import SettingsLayoutBase from "../../layouts/SettingsLayoutBase.vue";
-import { activeFilter } from "./savedReplies";
-import { useUserStore } from "../../../stores/user";
+import GlobeIcon from "~icons/lucide/globe";
 import UserIcon from "~icons/lucide/user";
 import UsersIcon from "~icons/lucide/users";
-import GlobeIcon from "~icons/lucide/globe";
+import { useUserStore } from "../../../stores/user";
 import { SavedReply, SavedReplyListResourceSymbol } from "../../../types";
-import SavedReplyIcon from "../../icons/SavedReplyIcon.vue";
-import { storeToRefs } from "pinia";
-import { useConfigStore } from "@/stores/config";
-//// Neoffice — added import: __() used by the i18n wraps in this file (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-import { __ } from "@/translation";
+import ZapIcon from "~icons/lucide/zap";
+import SettingsLayoutBase from "../../layouts/SettingsLayoutBase.vue";
+import { activeFilter } from "./savedReplies";
 
 const { getUser } = useUserStore();
 const { disableGlobalScopeForSavedReplies, teamRestrictionApplied } =
@@ -269,11 +248,10 @@ const dropdownOptions = (savedReply: SavedReply) => [
         show: true,
         name: savedReply.name,
         title: savedReply.title,
-        //// Neoffice — upstream built the default title in plain English; one msgid now, so the French catalogue reaches it (same pass as 71a5669d9)
-        newTitle: __("{0} (Copy)", savedReply.title),
+        newTitle: `${savedReply.title} (Copy)`,
       };
     },
-    icon: "copy",
+    icon: "lucide-copy",
   },
   ...ConfirmDelete({
     onConfirmDelete: () => deleteSavedReply(savedReply),
@@ -324,40 +302,27 @@ const duplicate = async () => {
 };
 
 const filterOptions = computed(() => {
-  const options = [
-    {
-      label: __("All"),
-      value: "All",
-      onSelect: () => {
-        applyFilter("All");
-      },
-    },
-    {
-      label: __("Personal"),
-      value: "Personal",
-      onSelect: () => {
-        applyFilter("Personal");
-      },
-    },
-    {
-      label: __("My Team"),
-      value: "Team",
-      onSelect: () => {
-        applyFilter("Team");
-      },
-    },
-    {
-      label: __("Global"),
-      value: "Global",
-      onSelect: () => {
-        applyFilter("Global");
-      },
-    },
+  const scopes = [
+    { label: __("All"), value: "All" },
+    { label: __("Personal"), value: "Personal" },
+    { label: __("My Team(s)"), value: "Team" },
+    { label: __("Global"), value: "Global" },
   ];
   if (teamRestrictionApplied.value && disableGlobalScopeForSavedReplies.value) {
-    options.pop();
+    scopes.pop();
   }
-  return options;
+  return scopes.map((scope) => ({
+    ...scope,
+    selected: activeFilter.value === scope.value,
+    onClick: () => applyFilter(scope.value),
+  }));
+});
+
+const activeFilterLabel = computed(() => {
+  return (
+    filterOptions.value.find((option) => option.value === activeFilter.value)
+      ?.label ?? activeFilter.value
+  );
 });
 
 const applyFilter = (scope: string) => {
@@ -370,18 +335,23 @@ const applyFilter = (scope: string) => {
   savedRepliesListResource.list.reload();
 };
 
-//// Neoffice — was a list of TRANSLATED labels matched against `scope`, which is
-//// the raw Select value stored on the document ("Personal" / "Team" / "Global").
-//// On a French site nothing matched and every saved reply lost its scope icon.
-//// Keyed on the stored value now, which is the only thing that is stable.
-const SCOPE_ICONS: Record<string, unknown> = {
-  Personal: UserIcon,
-  Team: UsersIcon,
-  Global: GlobeIcon,
+const getScopeIcon = (scope: string) => {
+  const icons = [
+    {
+      label: __("Personal"),
+      icon: UserIcon,
+    },
+    {
+      label: __("Team"),
+      icon: UsersIcon,
+    },
+    {
+      label: __("Global"),
+      icon: GlobeIcon,
+    },
+  ];
+  return icons.find((x) => x.label === scope)?.icon;
 };
-
-//// Neoffice — see the block marker above: keyed on the stored value
-const getScopeIcon = (scope: string) => SCOPE_ICONS[scope];
 
 watch(
   () => savedRepliesSearchQuery?.value,

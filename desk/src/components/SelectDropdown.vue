@@ -1,11 +1,14 @@
 <template>
-  <Popover :placement="props.placement">
-    <template #target="{ togglePopover }">
+  <Popover
+    bare
+    :side="splitPlacement(props.placement).side"
+    :align="splitPlacement(props.placement).align"
+  >
+    <template #trigger>
       <Button
         class="flex items-center justify-between min-w-36"
-        @click="togglePopover()"
         :class="targetClass"
-        icon-right="chevron-down"
+        icon-right="lucide-chevron-down"
       >
         <div class="w-full truncate">
           <!-- //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
@@ -15,40 +18,36 @@
         </div>
       </Button>
     </template>
-    <template #body="{ togglePopover }">
+    <template #default="{ close: closePopover }">
       <div
-        class="p-1 text-ink-gray-6 top-1 absolute w-[--reka-popper-anchor-width] bg-surface-white shadow-2xl rounded"
+        class="mt-1 p-1 text-ink-gray-6 w-[--reka-popper-anchor-width] bg-surface-base shadow-2xl rounded-4"
         :class="bodyClass"
       >
         <div class="max-h-52 overflow-y-auto">
           <div
             v-for="option in options"
             :key="option.value"
-            class="p-2 cursor-pointer hover:bg-surface-gray-3 text-base flex items-center justify-between rounded"
+            class="p-2 cursor-pointer hover:bg-surface-gray-3 text-base flex items-center justify-between rounded-4"
             @click="
               () => {
                 onChange(option.value);
-                togglePopover();
+                closePopover();
               }
             "
           >
             <div class="w-full truncate">
               {{ option.label }}
             </div>
-            <FeatherIcon
-              v-if="model == option.value"
-              name="check"
-              class="size-4 ms-2"
-            />
+            <LucideCheck v-if="model == option.value" class="size-4 ms-2" />
           </div>
         </div>
         <hr class="my-1" />
         <Button
           variant="ghost"
           :label="__('Reset')"
-          icon-left="refresh-ccw"
+          icon-left="lucide-refresh-ccw"
           class="w-full focus-visible:ring-0"
-          @click="onReset(togglePopover)"
+          @click="onReset(closePopover)"
         />
       </div>
     </template>
@@ -56,7 +55,9 @@
 </template>
 
 <script setup lang="ts">
-import { Button, FeatherIcon, Popover } from "frappe-ui";
+import { splitPlacement } from "@/utils";
+import LucideCheck from "~icons/lucide/check";
+import { Button, Popover } from "frappe-ui";
 
 const model = defineModel();
 
@@ -73,9 +74,9 @@ const props = withDefaults(defineProps<Props>(), {
   defaultValue: undefined,
 });
 
-const onReset = (togglePopover: () => void) => {
+const onReset = (closePopover: () => void) => {
   model.value = props.defaultValue !== undefined ? props.defaultValue : null;
-  togglePopover();
+  closePopover();
 };
 
 const onChange = (value: string) => {

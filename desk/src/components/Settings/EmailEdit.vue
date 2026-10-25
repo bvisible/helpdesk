@@ -12,35 +12,35 @@
               :service-name="state.service || accountData.service"
             />
           </div>
+          <!-- banner for setting up email account -->
           <div
-            class="flex items-center gap-2 rounded-md p-2 ring-1 ring-outline-gray-modals"
+            class="flex items-center gap-2 rounded-5 p-2 ring-1 ring-outline-elevation-2"
           >
             <CircleAlert
-              class="h-6 w-5 w-min-5 w-max-5 min-h-5 max-w-5 text-ink-blue-2"
+              class="h-6 w-5 w-min-5 w-max-5 min-h-5 max-w-5 text-ink-blue-5"
             />
             <div class="text-wrap text-xs text-ink-gray-7 flex flex-col gap-1">
               <span>
                 {{ info.description }}
-                <!-- //// Neoffice — upstream wrote the link text in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9; "here" is already the link msgid of TicketSettings / Notification) -->
                 <a
                   :href="info.link"
                   target="_blank"
-                  class="text-ink-blue-2 underline"
-                  >{{ __("here") }}</a
+                  class="text-ink-blue-5 underline"
+                  >here</a
                 >.
               </span>
               <span v-if="deskEditUrl" class="flex items-center gap-1">
                 <a
                   :href="deskEditUrl"
                   target="_blank"
-                  class="text-ink-blue-2 underline"
+                  class="text-ink-blue-5 underline"
                 >
                   {{ __("Open in Desk") }}
                 </a>
               </span>
             </div>
           </div>
-
+          <!-- fields -->
           <div class="flex flex-col gap-4">
             <div class="grid grid-cols-1 gap-4">
               <div
@@ -130,6 +130,7 @@
           </div>
         </div>
 
+        <!-- action buttons -->
         <div class="mt-auto flex justify-between -mb-8">
           <Button
             :label="__('Back')"
@@ -140,6 +141,7 @@
           />
           <div class="flex gap-2">
             <Button
+              v-if="hasChanges"
               :label="__('Update Account')"
               variant="solid"
               @click="updateAccount"
@@ -161,15 +163,13 @@
 </template>
 
 <script setup lang="ts">
-import { Link } from "@/components";
-import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
-import { __ } from "@/translation";
 import { EmailAccount, EmailStep } from "@/types";
 import { useStorage } from "@vueuse/core";
 import { call, toast } from "frappe-ui";
 import { computed, h, reactive, ref, watch } from "vue";
 import CircleAlert from "~icons/lucide/circle-alert";
 import EmailProviderIcon from "./EmailProviderIcon.vue";
+import { Link } from "@/components";
 import {
   customIncomingFields,
   customOutgoingFields,
@@ -181,6 +181,8 @@ import {
   services,
   validateInputs,
 } from "./emailConfig";
+import { __ } from "@/translation";
+import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 
 interface EmailAccountBaseState {
   email_account_name: string;
@@ -200,6 +202,7 @@ interface EmailAccountProviderAuthState extends EmailAccountBaseState {
 }
 
 type CustomEmailAccountState = {
+  [key: string]: string | number | boolean | undefined;
   domain?: string;
   email_server?: string;
   smtp_server?: string;
@@ -230,7 +233,7 @@ const props = withDefaults(defineProps<P>(), {
 
 const emit = defineEmits<E>();
 
-const state = reactive<EmailAccountProviderAuthState>({
+const getInitialState = (): EmailAccountProviderAuthState => ({
   email_account_name: props.accountData.email_account_name || "",
   service: props.accountData.service || "",
   email_id: props.accountData.email_id || "",
@@ -243,6 +246,8 @@ const state = reactive<EmailAccountProviderAuthState>({
   default_outgoing: props.accountData.default_outgoing || false,
   default_incoming: props.accountData.default_incoming || false,
 });
+
+const state = reactive<EmailAccountProviderAuthState>(getInitialState());
 
 const getInitialCustomState = (): CustomEmailAccountState => ({
   domain: props.accountData?.domain || "",
@@ -321,7 +326,6 @@ const loadingPull = useStorage(
   `loading-emails-${state.email_account_name}`,
   false
 );
-
 async function updateAccount() {
   const validationState = { ...state, ...customState };
   const validationService = isCustomProvider.value
@@ -329,26 +333,8 @@ async function updateAccount() {
     : currentServiceName.value;
   error.value = validateInputs(validationState, validationService, true);
   if (error.value) return;
-  const old = { ...props.accountData };
-  const updatedEmailAccount = { ...state };
 
-  const nameChanged =
-    old.email_account_name !== updatedEmailAccount.email_account_name;
-  delete old.email_account_name;
-  delete updatedEmailAccount.email_account_name;
-
-  const otherFieldsChanged = isDirty.value;
-  const values = buildUpdatePayload();
-
-  if (!nameChanged && !otherFieldsChanged) {
-    toast.create({
-      message: __("No changes made"),
-      icon: h(CircleAlert, { class: "text-ink-blue-2" }),
-    });
-    return;
-  }
-
-  if (nameChanged) {
+  if (nameChanged.value) {
     try {
       loading.value = true;
       await callRenameDoc();
@@ -357,10 +343,10 @@ async function updateAccount() {
       errorHandler();
     }
   }
-  if (otherFieldsChanged) {
+  if (isDirty.value) {
     try {
       loading.value = true;
-      await callSetValue(values);
+      await callSetValue(buildUpdatePayload());
       succesHandler();
     } catch (err) {
       errorHandler();
@@ -404,9 +390,8 @@ function buildUpdatePayload() {
 function pullEmails() {
   loadingPull.value = true;
 
-  toast.create({
-    message: __("Pulling emails, this may take a few minutes."),
-    icon: h(CircleAlert, { class: "text-ink-blue-2" }),
+  toast(__("Pulling emails, this may take a few minutes."), {
+    icon: () => h(CircleAlert, { class: "text-ink-blue-5" }),
   });
 
   call("frappe.email.doctype.email_account.email_account.pull_emails", {
@@ -424,31 +409,31 @@ function pullEmails() {
     });
 }
 
+// Compare against the initial values rather than the account itself. The form
+// normalises what the server sends (a 0 becomes false, a null becomes ""), so
+// comparing straight to the account reported every custom account as changed.
+// Renaming goes through a separate API, so it is tracked by nameChanged.
 const isDirty = computed(() => {
-  const customDirty = isCustomProvider.value
-    ? customState.domain !== props.accountData.domain ||
-      customState.email_server !== props.accountData.email_server ||
-      customState.smtp_server !== props.accountData.smtp_server ||
-      customState.incoming_port !== props.accountData.incoming_port ||
-      customState.smtp_port !== props.accountData.smtp_port ||
-      customState.use_ssl !== props.accountData.use_ssl ||
-      customState.use_starttls !== props.accountData.use_starttls
-    : false;
-
-  return (
-    customDirty ||
-    state.service !== props.accountData.service ||
-    state.email_id !== props.accountData.email_id ||
-    state.api_key !== props.accountData.api_key ||
-    state.api_secret !== props.accountData.api_secret ||
-    state.password !== props.accountData.password ||
-    state.enable_incoming !== props.accountData.enable_incoming ||
-    state.enable_outgoing !== props.accountData.enable_outgoing ||
-    state.default_outgoing !== props.accountData.default_outgoing ||
-    state.default_incoming !== props.accountData.default_incoming ||
-    state.frappe_mail_site !== props.accountData.frappe_mail_site
+  const initialState = getInitialState();
+  const baseChanged = (
+    Object.keys(initialState) as (keyof EmailAccountProviderAuthState)[]
+  ).some(
+    (field) =>
+      field !== "email_account_name" && state[field] !== initialState[field]
   );
+  if (baseChanged || !isCustomProvider.value) return baseChanged;
+
+  const initialCustomState = getInitialCustomState();
+  return (
+    Object.keys(initialCustomState) as (keyof CustomEmailAccountState)[]
+  ).some((field) => customState[field] !== initialCustomState[field]);
 });
+
+const nameChanged = computed(
+  () => state.email_account_name !== getInitialState().email_account_name
+);
+
+const hasChanges = computed(() => nameChanged.value || isDirty.value);
 
 async function callRenameDoc() {
   return call("frappe.client.rename_doc", {
@@ -557,5 +542,3 @@ function handleEditDomainClick() {
   );
 }
 </script>
-
-<style scoped></style>

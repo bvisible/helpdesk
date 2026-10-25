@@ -34,7 +34,7 @@
           </div>
           <div class="grid grid-cols-2 gap-4 mt-4" v-if="twilio.doc.enabled">
             <div class="flex flex-col gap-2">
-              <!-- //// Neoffice — upstream wrote the labels and placeholders of these Twilio fields in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <FormControl
                 :label="__('Account SID')"
                 required
@@ -44,7 +44,7 @@
               <ErrorMessage :message="twilioErrors.accountSid" />
             </div>
             <div class="flex flex-col gap-2">
-              <!-- //// Neoffice — see the Account SID field above: label and placeholder wrapped -->
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <Password
                 :label="__('Auth Token')"
                 required
@@ -53,41 +53,42 @@
               />
               <ErrorMessage :message="twilioErrors.authToken" />
             </div>
-            <!-- //// Neoffice — see the Account SID field above: label wrapped -->
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <FormControl
               v-if="twilio.doc.api_key"
               :label="__('API Key')"
               v-model="twilio.doc.api_key"
               disabled
             />
-            <!-- //// Neoffice — see the Account SID field above: label wrapped -->
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <Password
               v-if="twilio.doc.api_secret"
               :label="__('API Secret')"
               v-model="twilio.doc.api_secret"
               disabled
             />
-            <!-- //// Neoffice — see the Account SID field above: label wrapped -->
-            <Autocomplete
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+            <Combobox
               v-if="twilio.originalDoc?.account_sid && twilioApps.length > 0"
+              trigger="button"
               :label="__('TwiML App Name')"
               :model-value="twilio.doc.app_name"
-              @update:modelValue="twilio.doc.app_name = $event.value"
               :options="twilioApps"
+              @update:model-value="twilio.doc.app_name = $event"
             >
-              <template #footer="{ togglePopover }">
+              <template #footer="{ setOpen }">
                 <Button
                   :label="__('Refresh Apps')"
                   theme="gray"
                   variant="subtle"
                   class="w-full"
-                  icon-left="refresh-cw"
-                  @click="refreshApps(togglePopover)"
+                  icon-left="lucide-refresh-cw"
                   :loading="twilioAppsResource.loading"
+                  @click="refreshApps(setOpen)"
                 />
               </template>
-            </Autocomplete>
-            <!-- //// Neoffice — see the Account SID field above: label wrapped -->
+            </Combobox>
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <FormControl
               v-if="twilio.doc.twiml_sid"
               :label="__('TwiML App SID')"
@@ -98,7 +99,7 @@
               class="flex flex-col gap-1.5"
               v-if="telephonyAgent.doc && twilio.doc?.enabled"
             >
-              <!-- //// Neoffice — see the Account SID field above: label wrapped -->
+              <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
               <FormControl
                 :label="__('Twilio number')"
                 type="text"
@@ -127,22 +128,19 @@ import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import {
   Button,
   Checkbox,
+  Combobox,
   FormControl,
   createDocumentResource,
   toast,
   ErrorMessage,
   createResource,
   Badge,
-  Autocomplete,
 } from "frappe-ui";
 import { nextTick, ref, watch } from "vue";
 import { isDocDirty, validateExotel, validateTwilio } from "./utils";
 import { useAuthStore } from "@/stores/auth";
 
 import { disableSettingModalOutsideClick } from "../settingsModal";
-//// Neoffice — import added: upstream's script called __() through the window global only
-//// (same pass as 71a5669d9; ExotelSettings.vue and Telephony.vue import it).
-import { __ } from "@/translation";
 const twilioApps = ref([]);
 const auth = useAuthStore();
 
@@ -221,9 +219,7 @@ async function save() {
   if (isDirty.value.twilio) {
     promises.push(
       twilio.save.submit().catch((er) => {
-        //// Neoffice — plain quotes instead of backticks: in a .vue script only a quoted literal
-        //// reaches the catalogue (the msgid was missing from fr.po).
-        const error = __("Twilio error: {0}", er?.messages?.[0]);
+        const error = __(`Twilio error: {0}`, er?.messages?.[0]);
         toast.error(error || __("Failed to save Twilio settings"));
       })
     );
@@ -250,13 +246,11 @@ async function save() {
   telephonyStore.fetchCallIntegrationStatus();
 }
 
-function refreshApps(togglePopover) {
+function refreshApps(setOpen) {
   twilioAppsResource.submit().then(() => {
     // Close and reopen popover to fix bug where search does not work after refreshing list
-    togglePopover();
-    nextTick(() => {
-      togglePopover();
-    });
+    setOpen(false);
+    nextTick(() => setOpen(true));
   });
 }
 

@@ -31,6 +31,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: ${{ github.ref }}
 
+      # Upstream v1.31.0 links `@framework/ui` from `../../frappe/ui` (desk/package.json),
+      # i.e. the `ui/` package of the frappe app that sits NEXT TO this one in a bench,
+      # and that package reads `frappe/geo/country_info.json` (phone picker). On a bench
+      # that is apps/frappe; here it is a sparse clone of OUR frappe fork, in the parent
+      # of the workspace (actions/checkout cannot write outside the workspace).
+      - name: Frappe next to this app (ui/ and frappe/geo only)
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --filter=blob:none --sparse --branch version-15 \
+            https://github.com/bvisible/frappe.git "$GITHUB_WORKSPACE/../frappe"
+          git -C "$GITHUB_WORKSPACE/../frappe" sparse-checkout set ui frappe/geo
+          ls "$GITHUB_WORKSPACE/../frappe/ui/package.json" "$GITHUB_WORKSPACE/../frappe/frappe/geo/country_info.json"
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-wrap gap-1 bg-surface-gray-2 p-0.5 border rounded w-full"
+    class="flex flex-wrap gap-1 bg-surface-gray-2 p-0.5 border rounded-4 w-full"
   >
     <Button
       ref="emails"
@@ -16,7 +16,7 @@
         <UserAvatar :name="value" size="xs" />
       </template>
       <template #suffix>
-        <FeatherIcon class="h-3.5" name="x" @click.stop="removeValue(value)" />
+        <LucideX class="size-3.5" @click.stop="removeValue(value)" />
       </template>
     </Button>
     <div class="flex-1">
@@ -28,7 +28,7 @@
         @update:modelValue="onSelect"
       >
         <ComboboxAnchor
-          class="flex h-7 w-full items-center gap-2 rounded px-2 py-1 border border-transparent bg-surface-gray-2 hover:bg-surface-gray-2"
+          class="flex h-7 w-full items-center gap-2 rounded-4 px-2 py-1 border border-transparent bg-surface-gray-2 hover:bg-surface-gray-2"
         >
           <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <ComboboxInput
@@ -46,7 +46,7 @@
         </ComboboxAnchor>
         <ComboboxPortal>
           <ComboboxContent
-            class="z-10 mt-1 min-w-48 w-auto max-w-96 bg-surface-modal overflow-hidden rounded-lg shadow-2xl ring-1 ring-black ring-opacity-5"
+            class="z-[100] mt-1 min-w-48 w-auto max-w-96 bg-surface-elevation-2 overflow-hidden rounded-6 shadow-2xl ring-1 ring-black ring-opacity-5"
             position="popper"
             :align="'start'"
             @openAutoFocus.prevent
@@ -54,7 +54,7 @@
           >
             <ComboboxViewport class="max-h-60 overflow-auto p-1.5">
               <ComboboxEmpty
-                class="flex gap-2 rounded px-2 py-1 text-base text-ink-gray-5"
+                class="flex gap-2 rounded-4 px-2 py-1 text-base text-ink-gray-5"
               >
                 <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 {{ __("Agent not found") }}
@@ -63,11 +63,11 @@
                 v-for="agent in agentsList"
                 :key="agent.name"
                 :value="agent.name"
-                class="text-base leading-none text-ink-gray-7 rounded flex items-center px-2 py-1 relative select-none data-[highlighted]:outline-none data-[highlighted]:bg-surface-gray-3 cursor-pointer"
+                class="text-base leading-none text-ink-gray-7 rounded-4 flex items-center px-2 py-1 relative select-none data-[highlighted]:outline-none data-[highlighted]:bg-surface-gray-3 cursor-pointer"
               >
                 <UserAvatar class="me-1" :name="agent.agent_name" size="lg" />
                 <div class="flex flex-col gap-1 p-1 text-ink-gray-8">
-                  <div class="text-base font-medium">
+                  <div class="text-base-medium">
                     {{ agent.agent_name }}
                   </div>
                   <div class="text-sm text-ink-gray-5">
@@ -84,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import LucideX from "~icons/lucide/x";
 import { UserAvatar } from "@/components";
 import { useAgentStore } from "@/stores/agent";
 import { Button } from "frappe-ui";
@@ -144,12 +145,12 @@ function removeValue(value) {
 
 function removeLastValue() {
   if (query.value) return;
-  let emailRef = emails.value[emails.value.length - 1]?.rootRef;
+  let emailRef = emails.value[emails.value.length - 1]?.$el;
   if (document.activeElement === emailRef) {
     values.value.pop();
     nextTick(() => {
       if (values.value.length) {
-        emailRef = emails.value[emails.value.length - 1].rootRef;
+        emailRef = emails.value[emails.value.length - 1].$el;
         emailRef?.focus();
       } else {
         setFocus();

@@ -12,28 +12,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, type PropType } from "vue";
-import CardBase from "./CardBase.vue";
-import { createResource } from "frappe-ui";
 import { __ } from "@/translation";
-import { EChartsOption } from "echarts";
+import type { LineChart } from "@/types";
 import { buildPercentageChange } from "@/utils";
-
-interface Data {
-  percentage_change: number;
-  total: number;
-  data: { date: string; count: number }[];
-}
+import { EChartsOption } from "echarts";
+import { createResource } from "frappe-ui";
+import { computed, onMounted, ref, type PropType } from "vue";
+import CardBase from "../../../components/ChartCardBase.vue";
 
 const props = defineProps({
   data: {
-    type: Object as PropType<Data>,
+    type: Object as PropType<LineChart>,
     required: true,
   },
 });
 
-//// Neoffice — the English key: it is sent lowercased as `period` to the server, which does not
-//// know the translated label (see CardBase's durationOptions); CardBase translates it for display.
+// the untranslated key: it is lowercased straight into the API period
 const currentDuration = ref("Last month");
 
 const chartColor = {
@@ -42,14 +36,15 @@ const chartColor = {
 };
 
 const chartData = computed(() => {
-  const _data: Data = getAgentTicketsResource.fetched
+  const _data: LineChart = getAgentTicketsResource.fetched
     ? getAgentTicketsResource.data
     : props.data;
 
-  const _percentageChange = _data?.percentage_change ?? null;
+  const _percentageChange = _data?.percentage_change || 0;
   const total = _data?.total || 0;
   const dates = _data?.data?.map((item) => item.date) || [];
   const counts = _data?.data?.map((item) => item.count) || [];
+
   const percentageChange = buildPercentageChange(_percentageChange);
 
   return {

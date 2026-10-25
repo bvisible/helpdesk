@@ -23,10 +23,7 @@
     :on-search="openSearch"
     @failed="failed = true"
   />
-  <CP
-    v-if="!failed"
-    v-model="showCommandPalette"
-  />
+  <CommandPalette v-if="!failed" />
 </template>
 
 <script setup lang="ts">
@@ -39,7 +36,11 @@
  */
 import Sidebar from "@/components/layouts/Sidebar.vue";
 import NeoCockpitBridge from "@/components/NeoCockpitBridge.vue";
-import CP from "@/components/command-palette/CP.vue";
+//// Neoffice — upstream v1.31.0 replaced command-palette/CP.vue (a v-model dialog)
+//// with CommandPalette.vue, a self-contained component opened through
+//// useCommandPalette().openPalette(). The cockpit's search box calls openPalette().
+import CommandPalette from "@/components/command-palette/CommandPalette.vue";
+import { openPalette } from "@/components/command-palette/useCommandPalette";
 
 import {
   agentPortalSidebarOptions,
@@ -53,7 +54,6 @@ import { __, translationsVersion } from "@/translation";
 const router = useRouter();
 const route = useRoute();
 const failed = ref(false);
-const showCommandPalette = ref(false);
 
 // A computed, like contextNav below and for the same reason: set once in setup, the
 // title stayed "Helpdesk" whenever the catalogue landed after the component was created.
@@ -116,6 +116,6 @@ const contextNav = computed(() => {
 });
 
 function openSearch() {
-  showCommandPalette.value = true;
+  openPalette();
 }
 </script>

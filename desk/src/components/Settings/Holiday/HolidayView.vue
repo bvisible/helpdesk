@@ -60,7 +60,7 @@
         <hr class="my-8" />
         <div>
           <div class="flex flex-col gap-1">
-            <span class="text-lg font-semibold text-ink-gray-8">{{
+            <span class="text-md-semibold text-ink-gray-8">{{
               __("Valid From")
             }}</span>
             <span class="text-p-sm text-ink-gray-6">
@@ -76,8 +76,7 @@
                 placeholder="11/01/2025"
                 class="w-full"
                 id="from_date"
-                :formatter="(date) => getFormattedDate(date)"
-                :debounce="300"
+                :format="getDateFormat()"
                 @update:model-value="updateDuration('from_date')"
               >
                 <template #prefix>
@@ -98,8 +97,7 @@
                 placeholder="25/12/2025"
                 class="w-full"
                 id="to_date"
-                :formatter="(date) => getFormattedDate(date)"
-                :debounce="300"
+                :format="getDateFormat()"
                 @update:model-value="updateDuration('to_date')"
               >
                 <template #prefix>
@@ -113,7 +111,7 @@
         <hr class="my-8" />
         <div>
           <div class="flex flex-col gap-1">
-            <div class="text-lg font-semibold text-ink-gray-8">
+            <div class="text-md-semibold text-ink-gray-8">
               {{ __("Recurring Holidays") }}
             </div>
             <div class="text-p-sm text-ink-gray-6">
@@ -131,7 +129,7 @@
         <div>
           <div class="flex justify-between items-center">
             <div class="flex justify-between flex-col gap-1">
-              <span class="text-lg font-semibold text-ink-gray-8">
+              <span class="text-md-semibold text-ink-gray-8">
                 {{ __("Holidays") }}
               </span>
               <div class="text-p-sm text-ink-gray-6">
@@ -143,14 +141,16 @@
               </div>
             </div>
             <TabButtons
-              :buttons="[
+              :options="[
                 {
                   value: 'calendar',
-                  icon: 'calendar',
+                  label: __('Calendar'),
+                  icon: 'lucide-calendar',
                 },
                 {
                   value: 'list',
-                  icon: 'list',
+                  label: __('List'),
+                  icon: 'lucide-list',
                 },
               ]"
               v-model="holidayListView"
@@ -165,18 +165,18 @@
               variant="subtle"
               :label="__('Add Holiday')"
               @click="dialog.show = true"
-              icon-left="plus"
+              icon-left="lucide-plus"
             />
             <!-- Indicators -->
             <div class="flex gap-4" v-if="holidayListView === 'calendar'">
               <div class="gap-1 flex items-center">
-                <span class="bg-yellow-100 size-4 rounded-sm" />
+                <span class="bg-surface-yellow-2 size-4 rounded-1" />
                 <span class="text-sm text-ink-gray-6">{{
                   __("Holidays")
                 }}</span>
               </div>
               <div class="gap-1 flex items-center">
-                <span class="bg-surface-gray-2 size-4 rounded-sm" />
+                <span class="bg-surface-gray-2 size-4 rounded-1" />
                 <span class="text-sm text-ink-gray-6">{{
                   __("Recurring holidays")
                 }}</span>
@@ -223,9 +223,8 @@ import RecurringHolidaysList from "./RecurringHolidaysList.vue";
 
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import { slaActiveScreen } from "@/stores/sla";
-import { getFormattedDate, htmlToText } from "@/utils";
-import dayjs from "dayjs";
-import { FormLabel } from "frappe-ui";
+import { getDateFormat, htmlToText } from "@/utils";
+import { dayjs, FormLabel } from "frappe-ui";
 import {
   disableSettingModalOutsideClick,
   setActiveSettingsTab,

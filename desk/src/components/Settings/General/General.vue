@@ -2,7 +2,7 @@
   <SettingsLayoutBase :description="__('Manage general settings of your app.')">
     <template #title>
       <div class="flex items-center gap-2">
-        <h1 class="text-lg font-semibold text-ink-gray-8">
+        <h1 class="text-md-semibold text-ink-gray-8">
           {{ __("General") }}
         </h1>
         <UnsavedBadge :show="isDirty" />
@@ -26,7 +26,7 @@
     <template #content>
       <div
         v-if="settingsDataResource.loading && !settingsDataResource.data"
-        class="flex items-center justify-center h-[stretch] absolute w-[stretch] left-0 top-5.5"
+        class="flex items-center justify-center absolute inset-x-0 top-5.5 bottom-0"
       >
         <LoadingIndicator class="w-4" />
       </div>
@@ -38,12 +38,12 @@
         <WorkflowKnowledgebaseSettings />
         <hr class="my-8" />
         <div>
-          <div class="text-base font-semibold text-ink-gray-9">
+          <div class="text-base-semibold text-ink-gray-9">
             {{ __("User Signup") }}
           </div>
           <div class="flex items-center justify-between mt-6">
             <div class="flex flex-col gap-1">
-              <span class="text-base font-medium text-ink-gray-8">{{
+              <span class="text-base-medium text-ink-gray-8">{{
                 __("Disable signup")
               }}</span>
               <span class="text-p-sm text-ink-gray-6">{{
@@ -55,20 +55,18 @@
             <Switch v-model="disableSignup" />
           </div>
         </div>
-        <ERPNextIntegrationSettings />
       </div>
     </template>
   </SettingsLayoutBase>
 </template>
 
 <script setup lang="ts">
-import ERPNextIntegrationSettings from "@/components/erpnext-integration/ERPNextIntegrationSettings.vue";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
+import UnsavedBadge from "@/components/UnsavedBadge.vue";
 import { useConfigStore } from "@/stores/config";
 import { __ } from "@/translation";
 import { HDSettings, HDSettingsSymbol } from "@/types";
 import {
-  Badge,
   Button,
   createResource,
   LoadingIndicator,
@@ -76,11 +74,9 @@ import {
   toast,
 } from "frappe-ui";
 import { computed, provide, ref, watch } from "vue";
-import { disableSettingModalOutsideClick } from "../settingsModal";
 import Branding from "./components/Branding.vue";
 import TicketSettings from "./components/TicketSettings.vue";
 import WorkflowKnowledgebaseSettings from "./components/WorkflowKnowledgebaseSettings.vue";
-import UnsavedBadge from "@/components/UnsavedBadge.vue";
 
 const configStore = useConfigStore();
 
@@ -159,7 +155,6 @@ const saveSettingsResource = createResource({
         skip_email_workflow: settingsData.value.skipEmailWorkflow,
         disable_saved_replies_global_scope:
           settingsData.value.disableSavedRepliesGlobalScope,
-
         enable_outside_hours_banner:
           settingsData.value.enableOutsideHoursBanner,
         outside_working_hours_message:
@@ -257,14 +252,61 @@ const saveSettings = async () => {
   });
 };
 
-const toggleFields = [
-  "isFeedbackMandatory",
-  "enableCommentReactions",
-  "disableSavedRepliesGlobalScope",
-  "allowAnyoneToCreateTickets",
-  "preferKnowledgeBase",
-  "skipEmailWorkflow",
-] as const;
+const toggleFieldnames = {
+  isFeedbackMandatory: "is_feedback_mandatory",
+  enableCommentReactions: "enable_comment_reactions",
+  disableSavedRepliesGlobalScope: "disable_saved_replies_global_scope",
+  allowAnyoneToCreateTickets: "allow_anyone_to_create_tickets",
+  preferKnowledgeBase: "prefer_knowledge_base",
+  skipEmailWorkflow: "skip_email_workflow",
+} as const;
+const toggleFields = Object.keys(toggleFieldnames) as Array<
+  keyof typeof toggleFieldnames
+>;
+
+// Toggles save on their own, so they never carry unsaved text fields along.
+const saveTogglesResource = createResource({
+  url: "frappe.client.set_value",
+  makeParams: (values: Record<string, unknown>) => ({
+    doctype: "HD Settings",
+    name: "HD Settings",
+    fieldname: Object.fromEntries(
+      toggleFields.map((f) => [toggleFieldnames[f], values[f]])
+    ),
+  }),
+});
+let pendingToggleSave = Promise.resolve();
+
+function currentToggles() {
+  return Object.fromEntries(
+    toggleFields.map((f) => [f, settingsData.value[f]])
+  );
+}
+
+async function saveToggles(sent: Record<string, unknown>) {
+  try {
+    await saveTogglesResource.submit(sent);
+    markTogglesSaved(sent);
+    toast.success(__("Settings updated"));
+  } catch {
+    revertToggles(sent);
+  }
+}
+
+function markTogglesSaved(sent: Record<string, unknown>) {
+  const initial = JSON.parse(initialData.value!);
+  toggleFields.forEach((f) => (initial[f] = sent[f]));
+  initialData.value = JSON.stringify(initial);
+  configStore.configResource.reload();
+}
+
+// Undo only what the failed request sent; a toggle changed since keeps its queued save.
+function revertToggles(sent: Record<string, unknown>) {
+  const initial = JSON.parse(initialData.value!);
+  toggleFields
+    .filter((f) => settingsData.value[f] === sent[f])
+    .forEach((f) => (settingsData.value[f] = initial[f]));
+}
 
 // Track dirty state for non-toggle fields only
 watch(
@@ -274,7 +316,7 @@ watch(
     const initial = JSON.parse(initialData.value);
     isDirty.value = Object.keys(data).some(
       (key) =>
-        !(toggleFields as readonly string[]).includes(key) &&
+        !(toggleFields as string[]).includes(key) &&
         JSON.stringify(data[key as keyof typeof data]) !==
           JSON.stringify(initial[key])
     );
@@ -283,16 +325,16 @@ watch(
   { deep: true }
 );
 
-// auto save when any toggle field changes
+// Queue toggle saves: parallel writes to the single doc fail with a 417.
 watch(
   () => toggleFields.map((f) => settingsData.value[f]),
-  async (newVals) => {
+  (newVals) => {
     if (!initialData.value) return;
     const initial = JSON.parse(initialData.value);
-    if (newVals.some((v, i) => v !== initial[toggleFields[i]])) {
-      await saveSettingsResource.submit();
-      toast.success(__("Settings updated"));
-    }
+    if (!newVals.some((v, i) => v !== initial[toggleFields[i]])) return;
+    pendingToggleSave = pendingToggleSave.then(() =>
+      saveToggles(currentToggles())
+    );
   }
 );
 

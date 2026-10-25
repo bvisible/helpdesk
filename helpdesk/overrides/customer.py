@@ -1,5 +1,8 @@
 # //// Neoffice — added file (no upstream equivalent).
 # ////
+# //// 2026-10: HD Customer membership moved to a child table upstream (v1.31.0);
+# //// link_contact_to_hd_customer below writes it. The mirror itself is unchanged.
+# ////
 # //// Upstream keeps `HD Customer` as a doctype PARALLEL to ERPNext's `Customer`,
 # //// with no link between them. On an instance that runs both, that means the
 # //// Customers screen of the helpdesk is empty while the ERP holds hundreds of
@@ -154,47 +157,54 @@ def sync_to_hd_customer(doc, method=None):
 
 
 def link_contact_to_hd_customer(doc, method=None):
-    """Mirror a Contact's Customer link onto its HD Customer link.
+    """Make a Contact a MEMBER of the HD Customer mirroring its ERP Customer.
 
-    Upstream only ever guesses this from the email domain, in `before_insert`, and
-    only when a matching HD Customer already exists — three reasons it never fired.
-    The ERP already knows the answer: 259 of 281 contacts on the dev instance carry
-    a `Dynamic Link` to a Customer. Follow that instead of guessing.
+    Upstream (v1.31.0) keeps a customer's contacts in the `contacts` child table of
+    `HD Customer` (doctype `HD Customer Member`); the portal permission query, the
+    `HD Customer` / `HD Customer Manager` roles and the "company tickets" view all read
+    it. It used to be a Dynamic Link from the Contact to the HD Customer, which this
+    function wrote; upstream's patch `move_contact_dynamic_link_to_hd_customer` moved
+    those links into the child table, and this function now writes the child table.
+
+    Upstream only attaches a contact by hand (or by invitation). The ERP already knows
+    the answer: 259 of 281 contacts on the dev instance carry a `Dynamic Link` to a
+    Customer. Follow that instead of waiting for someone to type it again.
 
     Runs on update as well as insert: the customer link is usually added AFTER the
-    contact is created.
+    contact is created. Saving the HD Customer grants the `HD Customer` role to the
+    contact's user, as upstream does for every member.
     """
     if not frappe.db.has_column("HD Customer", "erpnext_customer"):
         return
+    if not frappe.db.exists("DocType", "HD Customer Member"):
+        # the doctype sync of this app has not run on this site yet
+        return
+    if should_sync():
+        # upstream's two-way integration owns the pairing and the members when on
+        return
+    if not doc.name or doc.flags.get("in_hd_customer_link"):
+        return
 
-    customers = [
+    customers = {
         link.link_name
         for link in (doc.get("links") or [])
         if link.link_doctype == "Customer" and link.link_name
-    ]
-    if not customers:
-        return
-
-    already = {
-        link.link_name
-        for link in (doc.get("links") or [])
-        if link.link_doctype == "HD Customer"
     }
-
-    added = False
     for customer in customers:
         mirror = frappe.db.get_value("HD Customer", {"erpnext_customer": customer}, "name")
-        if not mirror or mirror in already:
+        if not mirror:
             continue
-        doc.append("links", {"link_doctype": "HD Customer", "link_name": mirror})
-        added = True
-
-    # on_update must not re-save the whole document (infinite loop): write the new
-    # rows straight to the child table instead.
-    if added and method != "before_insert":
-        for link in doc.get("links"):
-            if link.link_doctype == "HD Customer" and not link.name:
-                link.parent = doc.name
-                link.parenttype = "Contact"
-                link.parentfield = "links"
-                link.db_insert()
+        if frappe.db.exists(
+            "HD Customer Member",
+            {"parent": mirror, "parenttype": "HD Customer", "contact_name": doc.name},
+        ):
+            continue
+        hd_customer = frappe.get_doc("HD Customer", mirror)
+        # a flag, not a guard on the document: saving the HD Customer saves the user,
+        # which may touch this contact again
+        doc.flags.in_hd_customer_link = True
+        try:
+            if hd_customer.add_contact(doc.name, "HD Customer"):
+                hd_customer.save(ignore_permissions=True)
+        finally:
+            doc.flags.in_hd_customer_link = False

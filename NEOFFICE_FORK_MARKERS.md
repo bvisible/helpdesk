@@ -11,6 +11,51 @@ picture for every file that can carry a comment; this file carries what cannot
 **Upstream**: `frappe/helpdesk` (default branch `develop`; `main` / `main-hotfix` are the
 release branches, `legacy` the archived v0 line — there is no `upstream/version-15`).
 
+### Upstream merge of 2026-10-24 — `v1.31.0` (upstream `main`, the v15-compatible line)
+
+**Merged**: tag `v1.31.0` (2026-10-14, `frappe >=15.123.1,<17.0.0`), through the pseudo-merge
+commit `1d710d6b7` that records `c778f533b` as the base: `main` and `develop` carry the same
+changes under different hashes (cherry-picks), so git's natural base (September 2025) gave 338
+conflicts; with the explicit base `c778f533b` there were 109 files (87 content, 22 deleted
+upstream). From now on the fork merges `main` / `main-hotfix` of upstream, never `develop`
+(it requires frappe 17). Upstream also moved the SPA to frappe-ui 1.0.0-rc.1 and to
+`@framework/ui` linked from `../../frappe/ui`: the build needs the `ui/` and `frappe/geo/`
+folders of OUR frappe fork next to this app (`build-frontend.yml` clones them, sparse).
+
+Decisions taken in this merge:
+
+- **Translation (the bulk of our front diff)**: files whose only change of ours was `__()` took
+  upstream's version, then ONE pass wrapped the strings upstream still writes in English
+  (357 candidates in 66 files, three agents, each literal checked against the whole SPA before it
+  became a label/value pair). `locale/fr.po` is ours plus the new msgids; `main.pot` is regenerated.
+- **Customers**: upstream now keeps a customer's contacts in the `contacts` child table of
+  `HD Customer` (`HD Customer Member`; roles `HD Customer` / `HD Customer Manager`; patch
+  `move_contact_dynamic_link_to_hd_customer`). Our mirror of the ERP Customer
+  (`overrides/customer.py`) is kept: `link_contact_to_hd_customer` now adds the Contact as a
+  MEMBER (it used to write a Dynamic Link) and `patches/mirror_erpnext_customers.py` backfills
+  members. Upstream deleted `overrides/contact.py` (the email-domain guess): the ERP link comes
+  first through our `Contact.on_update` hook. Upstream's two-way ERP integration stays OFF.
+- **hooks.py**: upstream's `doc_events` and `override_doctype_class` as they are (its Customer
+  handlers are now plain `doc_events`, as ours were); ours added: `Customer` second handler,
+  `Contact.on_update`, `HD Article` / `Wiki Document` (the KB mirror).
+- **Comments**: upstream moved `HD Ticket Comment` / `HD Notification` into the core `Comment` /
+  `Notification Log` (patches `migrate_hd_ticket_comment_to_comment`, `migrate_hd_notifications_to_notification_log`);
+  the old tables stay, nothing writes them. `hd_ticket_comment.py` took upstream's stub. Consumers
+  outside this repo (`nora` bridge, `neoffice_devops` support pre-check) are moved in the same wave.
+- `hd_ticket.py`: `TICKET_COUNTER` numbering and the acknowledgement `lang=` kept (upstream still
+  draws from the shared empty-prefix series); `get_last_received_communication` kept next to
+  upstream's `_last_threadable_communication`.
+- `www/helpdesk/index.py` boot: ours (`socketio_port`, `lang`) plus upstream's `default_country`.
+- `NeoCockpitHDSidebar.vue`: upstream replaced `command-palette/CP.vue` with `CommandPalette.vue`
+  (`openPalette()`); `roots/AgentRoot.vue`: `useOnboarding` now comes from `@framework/ui`.
+- `EmailEditor.vue`: rebuilt on upstream's v1.31.0 editor; the NORA button and dialog re-applied
+  in its toolbar (same behaviour as before).
+- `package.json`: our `[skip-build]` guard + `build:force`, plus upstream's `test:e2e` scripts;
+  `desk/package.json`: our `NODE_OPTIONS` prefixes (JSON cannot carry a marker), plus upstream's
+  `postinstall: patch-package`. `.gitignore`: upstream's, our weld repair is spent.
+  `pyproject.toml`: upstream's (`requires-python >=3.10` and `frappe >=15.123.1,<17.0.0` are now
+  upstream's own values; our lowering is spent).
+
 ### Upstream merge of 2026-09-24 — `develop` up to 2026-06-02, and why not further
 
 **Merged**: `upstream/develop` at `c778f533b` ("Merge pull request #3417 from
@@ -37,7 +82,7 @@ that overlaps our one-way `overrides/customer.py` mirror. All 211 Python modules
 import cleanly on our frappe 15.89 (measured on the hub), so the backend is not the
 obstacle; the SPA build and the customer/portal model are.
 
-**Next step**: move the fork onto `main` (the v15 release line) once the build can resolve
+**Next step (done on 2026-10-24, see above)**: move the fork onto `main` (the v15 release line) once the build can resolve
 `@framework/ui` (vendor upstream frappe's `ui/` into the build, or land #138), porting our
 divergence as a squash onto `main` (measured: 100 conflicted files, 173 hunks). From then on
 the fork merges `main` / `main-hotfix`, never `develop`.

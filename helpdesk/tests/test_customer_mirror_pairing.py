@@ -54,3 +54,51 @@ class TestCustomerMirrorPairing(FrappeTestCase):
         self.assertEqual(
             frappe.db.count("HD Customer", {"erpnext_customer": erp.name}), 1
         )
+
+
+class TestContactBecomesMember(FrappeTestCase):
+    """Upstream v1.31.0 keeps a customer's contacts in the `contacts` child table of
+    HD Customer. The mirror of the ERP Customer must fill it from the Contact's ERP link,
+    or the portal shows a contact only the tickets they raised themselves."""
+
+    def setUp(self):
+        if "erpnext" not in frappe.get_installed_apps():
+            self.skipTest("ERPNext is not installed")
+        if not frappe.db.exists("DocType", "HD Customer Member"):
+            self.skipTest("HD Customer Member is absent")
+        frappe.db.set_single_value("ERPNext HD Settings", "enabled", 0)
+
+    def test_a_contact_linked_to_the_erp_customer_joins_its_mirror(self):
+        erp = frappe.get_doc(
+            {"doctype": "Customer", "customer_name": "Member Mirror Customer"}
+        ).insert(ignore_permissions=True)
+        self.addCleanup(safe_delete, "Customer", erp.name)
+        mirror = frappe.db.get_value("HD Customer", {"erpnext_customer": erp.name}, "name")
+        self.assertTrue(mirror)
+        self.addCleanup(safe_delete, "HD Customer", mirror)
+
+        contact = frappe.get_doc(
+            {
+                "doctype": "Contact",
+                "first_name": "Member",
+                "last_name": "Mirror",
+                "email_ids": [{"email_id": "member.mirror@example.com", "is_primary": 1}],
+                "links": [{"link_doctype": "Customer", "link_name": erp.name}],
+            }
+        ).insert(ignore_permissions=True)
+        self.addCleanup(safe_delete, "Contact", contact.name)
+
+        members = frappe.get_all(
+            "HD Customer Member",
+            filters={"parent": mirror, "parenttype": "HD Customer"},
+            pluck="contact_name",
+        )
+        self.assertEqual(members, [contact.name])
+
+        # saving again must not add a second row
+        contact.reload()
+        contact.save(ignore_permissions=True)
+        self.assertEqual(
+            frappe.db.count("HD Customer Member", {"parent": mirror, "contact_name": contact.name}),
+            1,
+        )

@@ -8,7 +8,11 @@
       <div class="flex gap-4">
         <!-- Switch -->
         <div class="flex gap-2 items-center">
-          <Switch v-model="state.enabled" class="!w-fit" />
+          <Switch
+            class="!w-fit"
+            :model-value="Boolean(state.enabled)"
+            @update:model-value="(value) => (state.enabled = value)"
+          />
           <span class="text-p-base text-ink-gray-6">
             {{ __("Enabled") }}
           </span>
@@ -77,9 +81,13 @@ import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import { getMeta } from "@/stores/meta";
 import { getFieldDependencyLabel } from "@/utils";
 import { createResource, Switch, toast } from "frappe-ui";
-import { computed, onUnmounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { disableSettingModalOutsideClick } from "../settingsModal";
-import { getFieldOptions, hiddenChildFields } from "./fieldDependency";
+import {
+  clearFieldOptionsCache,
+  getFieldOptions,
+  hiddenChildFields,
+} from "./fieldDependency";
 import FieldDependencyCriteria from "./FieldDependencyCriteria.vue";
 import FieldDependencyFieldsSelection from "./FieldDependencyFieldsSelection.vue";
 import FieldDependencyValueSelection from "./FieldDependencyValueSelection.vue";
@@ -331,6 +339,12 @@ watch(
     state.childSearch = ""; // Reset child search when parent selection changes
   }
 );
+
+onMounted(() => {
+  // Drop any cached field options so newly added link/select values
+  // (e.g. a freshly created ticket type) show up on each visit.
+  clearFieldOptionsCache();
+});
 
 onUnmounted(() => {
   disableSettingModalOutsideClick.value = false;

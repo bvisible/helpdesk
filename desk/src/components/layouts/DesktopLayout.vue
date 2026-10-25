@@ -10,11 +10,10 @@
       <slot />
     </div>
     <Notifications />
-    <CommandPalette />
   </div>
 </template>
 <script setup>
-import { Notifications, CommandPalette } from "@/components";
+import { Notifications } from "@/components";
 import AppHeader from "./AppHeader.vue";
 //// Neoffice — replaces upstream's `import Sidebar from "./Sidebar.vue"`.
 //// NeoCockpitHDSidebar renders Sidebar.vue itself when the cockpit bundle

@@ -14,78 +14,57 @@
           "
         >
           <template #default="{ openFileSelector, error: _error, uploading }">
-            <div class="flex items-center justify-center gap-2">
-              <div class="group relative !size-14">
+            <div class="flex items-center justify-center gap-4">
+              <div class="group relative flex-shrink-0 size-16">
                 <Avatar
-                  class="!size-14"
+                  class="!size-16"
                   :image="user.doc?.user_image"
                   :label="fullName"
                 />
-                <Tooltip
-                  :hoverDelay="0"
-                  placement="bottom"
-                  :text="profileTooltipText"
+                <div
+                  v-if="agentStatusStore.myStatus"
+                  class="absolute -bottom-0.5 end-0 rounded-full bg-surface-elevation-2 p-1"
                 >
                   <div
-                    class="z-1 absolute top-0 left-0 flex h-9 cursor-pointer items-center justify-center rounded-full !size-14"
+                    class="size-3.5 rounded-full"
+                    :class="
+                      agentStatusStore.statusColor(agentStatusStore.myStatus)
+                    "
+                  />
+                </div>
+                <!-- one Tooltip each: it wires only its first child -->
+                <Tooltip :hoverDelay="0" side="bottom" :text="uploadTooltip">
+                  <div
+                    class="z-1 absolute top-0 left-0 flex h-9 cursor-pointer items-center justify-center rounded-full !size-16"
                     @click.stop="openFileSelector"
                   />
+                </Tooltip>
+                <Tooltip
+                  v-if="user.doc?.user_image"
+                  :hoverDelay="0"
+                  side="bottom"
+                  :text="__('Remove Photo')"
+                >
                   <div
-                    v-if="user.doc?.user_image"
-                    class="z-1 size-4 absolute -top-1 -right-1 flex cursor-pointer items-center justify-center rounded-full bg-surface-white opacity-0 duration-300 ease-in-out group-hover:opacity-100 hover:bg-surface-gray-2 outline outline-black-overlay-50"
+                    class="z-1 size-4 absolute -top-1 -right-1 flex cursor-pointer items-center justify-center rounded-full bg-surface-base opacity-0 duration-300 ease-in-out group-hover:opacity-100 [@media(hover:none)]:opacity-100 hover:bg-surface-gray-2 outline outline-black-overlay-50"
                     @click.stop="updateImage()"
-                    @mouseenter="isHoveringRemove = true"
-                    @mouseleave="isHoveringRemove = false"
                   >
-                    <FeatherIcon
-                      name="x"
-                      class="size-3.5 cursor-pointer text-ink-gray-4"
-                    />
+                    <LucideX class="size-3.5 cursor-pointer text-ink-gray-4" />
                   </div>
                 </Tooltip>
                 <div
                   v-if="uploading"
-                  class="w-full h-full top-0 left-0 absolute bg-surface-gray-7 bg-opacity-20 rounded-full flex items-center justify-center"
+                  class="w-full h-full top-0 left-0 absolute bg-surface-gray-10 bg-opacity-20 rounded-full flex items-center justify-center"
                 >
                   <LoadingIndicator class="size-4" />
                 </div>
               </div>
-              <div class="flex flex-col gap-1">
-                <div class="flex flex-col gap-1">
-                  <div v-if="!editName" class="flex items-end gap-1">
-                    <span
-                      class="text-lg sm:text-xl !font-semibold text-ink-gray-8"
-                    >
-                      {{ user?.doc?.full_name }}
-                    </span>
-                    <Button
-                      class="!px-1 !h-5"
-                      variant="ghost"
-                      @click="editFullName"
-                    >
-                      <EditIcon class="size-3.5" />
-                    </Button>
-                  </div>
-                  <div v-else class="flex items-center gap-1">
-                    <TextInput
-                      ref="fullNameRef"
-                      v-model="fullName"
-                      @keydown.enter="isNameDirty ? save() : (editName = false)"
-                      @keydown.esc.stop="editName = false"
-                    />
-                    <Button
-                      variant="outline"
-                      icon="check"
-                      :loading="user?.save?.loading"
-                      :disabled="user?.save?.loading"
-                      @click="isNameDirty ? save() : (editName = false)"
-                    />
-                  </div>
-                  <span class="text-p-sm text-ink-gray-6">
-                    {{ user?.doc?.email }}
+              <div class="flex flex-col gap-0.5 min-w-0">
+                <div v-if="!editName" class="flex items-center gap-1">
+                  <span class="text-lg font-semibold text-ink-gray-9 truncate">
+                    {{ user?.doc?.full_name }}
                   </span>
                 </div>
-                <ErrorMessage :message="__(_error)" />
               </div>
             </div>
           </template>
@@ -94,25 +73,31 @@
       <div>
         <div class="flex items-center justify-between h-7">
           <div class="flex gap-2 items-center">
-            <span class="text-base font-semibold text-ink-gray-9">
+            <span class="text-base-semibold text-ink-gray-9">
               {{ __("Account Info & Security") }}
             </span>
-            <UnsavedBadge :show="isDirty" />
           </div>
-
-          <Transition name="fade">
-            <Button
-              variant="solid"
-              v-if="isDirty"
-              :label="__('Save')"
-              :loading="user?.save?.loading"
-              @click="save()"
-          /></Transition>
         </div>
+      </div>
+
+      <div v-if="hasAgentRecord" class="flex items-center justify-between mt-6">
+        <div class="flex flex-col gap-1">
+          <span class="text-base-medium text-ink-gray-8">
+            {{ __("Availability") }}
+          </span>
+          <span class="text-p-sm text-ink-gray-6">
+            {{
+              __(
+                "Set your availability so your team knows when you're reachable."
+              )
+            }}
+          </span>
+        </div>
+        <AvailabilityMenu />
       </div>
       <div class="flex items-center justify-between mt-6">
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">
+          <span class="text-base-medium text-ink-gray-8">
             {{ __("Emails & Signature") }}
           </span>
           <span class="text-p-sm text-ink-gray-6">
@@ -130,7 +115,7 @@
       </div>
       <div class="flex items-center justify-between mt-6">
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">
+          <span class="text-base-medium text-ink-gray-8">
             {{ __("Password") }}
           </span>
           <span class="text-p-sm text-ink-gray-6">{{
@@ -138,47 +123,10 @@
           }}</span>
         </div>
         <Button
-          icon-left="lock"
+          icon-left="lucide-lock"
           :label="__('Change Password')"
           @click="showChangePasswordModal = true"
         />
-      </div>
-      <div>
-        <div class="flex items-center justify-between mt-6">
-          <div class="flex flex-col gap-1">
-            <span class="text-base font-medium text-ink-gray-8">
-              {{ __("Language") }}
-            </span>
-            <span class="text-p-sm text-ink-gray-6">
-              {{ __("Change language of the application.") }}
-            </span>
-          </div>
-          <Link
-            :model-value="user.doc?.language"
-            @update:modelValue="updateLanguage"
-            doctype="Language"
-            class="w-40"
-          />
-        </div>
-        <div class="flex items-center justify-between mt-6">
-          <div class="flex flex-col gap-1">
-            <span class="text-base font-medium text-ink-gray-8">
-              {{ __("Timezone") }}
-            </span>
-            <span class="text-p-sm text-ink-gray-6">
-              {{ __("Change timezone of the application.") }}
-            </span>
-          </div>
-          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-          <Autocomplete
-            :model-value="user.doc?.time_zone"
-            @update:modelValue="updateTimezone"
-            class="w-40"
-            :options="timezoneOptions"
-            size="sm"
-            :placeholder="__('Select Timezone')"
-          />
-        </div>
       </div>
     </template>
   </SettingsLayoutBase>
@@ -189,38 +137,39 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch, useTemplateRef } from "vue";
+import LucideX from "~icons/lucide/x";
 import {
   Avatar,
-  Badge,
   Button,
+  createDocumentResource,
   FileUploader,
   LoadingIndicator,
   toast,
-  createDocumentResource,
-  createResource,
 } from "frappe-ui";
-import { __ } from "@/translation";
+import { computed, nextTick, ref, useTemplateRef } from "vue";
+
 import { useAuthStore } from "@/stores/auth";
+import { __ } from "@/translation";
 import EditIcon from "~icons/lucide/edit";
 const emit = defineEmits(["updateStep"]);
 
-import ChangePasswordModal from "./components/ChangePasswordModal.vue";
-import { disableSettingModalOutsideClick } from "../settingsModal";
+import AvailabilityMenu from "@/components/AvailabilityMenu.vue";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
-import UnsavedBadge from "@/components/UnsavedBadge.vue";
+import { useAvailability } from "@/composables/useAvailability";
+import { useAgentStatusStore } from "@/stores/agentStatus";
+import ChangePasswordModal from "./components/ChangePasswordModal.vue";
+
+const agentStatusStore = useAgentStatusStore();
 const showChangePasswordModal = ref(false);
 
-const { userId } = useAuthStore();
+const { userId, hasAgentRecord } = useAuthStore();
 const user = createDocumentResource({ doctype: "User", name: userId });
 
-const isHoveringRemove = ref(false);
 const editName = ref(false);
 
-const profileTooltipText = computed(() => {
-  if (isHoveringRemove.value) return __("Remove Photo");
-  return user.doc?.user_image ? __("Change Photo") : __("Upload Photo");
-});
+const uploadTooltip = computed(() =>
+  user.doc?.user_image ? __("Change Photo") : __("Upload Photo")
+);
 
 const fullNameRef = useTemplateRef("fullNameRef");
 const fullName = computed({
@@ -235,16 +184,8 @@ const fullName = computed({
 
 function editFullName() {
   editName.value = true;
-  nextTick(() => fullNameRef.value?.el?.focus());
+  nextTick(() => fullNameRef.value?.focus());
 }
-
-const isDirty = computed(() => {
-  if (!user.originalDoc) return false;
-  return user.doc?.time_zone !== user.originalDoc?.time_zone ||
-    user.doc?.language !== user.originalDoc?.language
-    ? true
-    : false;
-});
 
 const isNameDirty = computed(() => {
   return (
@@ -254,17 +195,10 @@ const isNameDirty = computed(() => {
 });
 
 function save() {
-  refreshRequired.value =
-    user.doc?.language !== user.originalDoc?.language ||
-    user.doc?.time_zone !== user.originalDoc?.time_zone;
-
   user.save.submit(null, {
     onSuccess: () => {
       editName.value = false;
       toast.success(__("Profile updated successfully."));
-      if (refreshRequired.value) {
-        window.location.reload();
-      }
     },
     onError: (err: { message: string; messages: string[] }) => {
       toast.error(err.message + ": " + err.messages[0]);
@@ -273,49 +207,7 @@ function save() {
 }
 
 function updateImage(fileUrl = "") {
-  isHoveringRemove.value = false;
   user.doc.user_image = fileUrl;
   save();
 }
-
-function updateLanguage(val: string | null) {
-  if (!user.doc) return;
-  user.doc.language = val || user.originalDoc?.language;
-}
-
-function updateTimezone(val: { label: string; value: string } | null) {
-  if (!user.doc) return;
-  user.doc.time_zone = val?.value || user.originalDoc?.time_zone;
-}
-
-const timezoneOptions = ref([]);
-const timezoneData = createResource({
-  url: "frappe.core.doctype.user.user.get_timezones",
-  auto: true,
-  onSuccess(data) {
-    timezoneOptions.value = data.timezones.map((tz) => ({
-      label: tz,
-      value: tz,
-    }));
-  },
-});
-
-const language = ref(null);
-const timezone = ref(null);
-
-const refreshRequired = ref(false);
-
-watch(
-  () => user.doc,
-  (doc) => {
-    if (!doc) return;
-    if (!language.value) language.value = doc.language;
-    if (!timezone.value) timezone.value = doc.time_zone;
-  },
-  { immediate: true }
-);
-
-watch(isDirty, (val) => {
-  disableSettingModalOutsideClick.value = val;
-});
 </script>

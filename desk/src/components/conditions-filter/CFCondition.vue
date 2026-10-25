@@ -16,38 +16,41 @@
       ]"
     >
       <div :class="'text-end text-base text-ink-gray-5'">
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <div v-if="props.itemIndex == 0" class="min-w-[66px] text-start">
-          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
           {{ __("Where") }}
         </div>
         <div v-else class="min-w-[66px] flex items-start">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (label only, the conjunction value stays "and"/"or") -->
           <Button
             variant="subtle"
             class="w-max"
             @click="toggleConjunction"
-            icon-right="refresh-cw"
+            icon-right="lucide-refresh-cw"
             :disabled="props.itemIndex > 2"
-            :label="conjunction"
+            :label="conjunction == 'or' ? __('or') : __('and')"
           />
         </div>
       </div>
       <div v-if="!props.isGroup" class="flex items-center gap-2 w-full">
-        <div id="fieldname" class="w-full">
-          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-          <Autocomplete
-            :options="filterableFields.data"
-            v-model="props.condition[0]"
+        <div id="fieldname" class="flex-1 min-w-0">
+          <Combobox
+            class="w-full"
+            trigger="button"
+            :options="filterableFields.data || []"
+            :model-value="props.condition[0]"
             :placeholder="__('Field')"
-            @update:modelValue="updateField"
+            @update:selected-option="updateField"
           />
         </div>
-        <div id="operator">
+        <div id="operator" class="flex-1 min-w-0">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormControl
             v-if="!props.condition[0]"
             disabled
             type="text"
-            :placeholder="'operator'"
-            class="w-[100px]"
+            :placeholder="__('operator')"
+            class="w-full"
           />
           <FormControl
             v-else
@@ -56,15 +59,16 @@
             v-model="props.condition[1]"
             @change="updateOperator"
             :options="getOperators()"
-            class="w-max min-w-[100px]"
+            class="w-full"
           />
         </div>
-        <div id="value" class="w-full">
+        <div id="value" class="flex-1 min-w-0">
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormControl
             v-if="!props.condition[0]"
             disabled
             type="text"
-            :placeholder="'condition'"
+            :placeholder="__('condition')"
             class="w-full"
           />
           <component
@@ -72,7 +76,7 @@
             :is="getValueControl()"
             v-model="props.condition[2]"
             @change="updateValue"
-            :placeholder="'condition'"
+            :placeholder="__('condition')"
           />
         </div>
       </div>
@@ -83,7 +87,7 @@
         :level="props.level"
         :disableAddCondition="props.disableAddCondition"
       />
-      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <Button
         variant="outline"
         v-if="props.isGroup && (props.level == 2 || props.level == 4)"
@@ -92,14 +96,14 @@
       />
     </div>
     <div :class="'w-max'">
-      <Dropdown placement="right" :options="dropdownOptions">
-        <Button variant="ghost" icon="more-horizontal" />
+      <Dropdown align="end" :options="dropdownOptions">
+        <Button variant="ghost" icon="lucide-more-horizontal" />
       </Dropdown>
     </div>
   </div>
-  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-  <Dialog v-model="show" :options="{ size: '3xl', title: __('Nested conditions') }">
-    <template #body-content>
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+  <Dialog v-model:open="show" size="3xl" :title="__('Nested conditions')">
+    <template #default>
       <CFConditions
         :conditions="props.condition"
         :isChild="true"
@@ -111,11 +115,11 @@
 </template>
 
 <script setup lang="ts">
-import { Link, StarRating } from "@/components";
-import { TemplateOption } from "@/utils";
+import { StarRating } from "@/components";
+import { Link } from "@framework/ui";
 import {
-  Autocomplete,
   Button,
+  Combobox,
   DatePicker,
   DateRangePicker,
   DateTimePicker,
@@ -123,12 +127,12 @@ import {
   Dropdown,
   FormControl,
 } from "frappe-ui";
-import { computed, defineEmits, h, ref } from "vue";
+import { computed, h, ref } from "vue";
 import GroupIcon from "~icons/lucide/group";
 import UnGroupIcon from "~icons/lucide/ungroup";
 import CFConditions from "./CFConditions.vue";
 import { filterableFields } from "./filterableFields";
-//// Neoffice — added import: __() used by the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
+//// Neoffice — added: __() import for the wraps below
 import { __ } from "@/translation";
 
 const show = ref(false);
@@ -168,13 +172,13 @@ const props = defineProps({
   },
 });
 
+//// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
 const dropdownOptions = computed(() => {
   const options = [];
 
   if (!props.isGroup && props.level < 4) {
     options.push({
-      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-      label: __('Turn into a group'),
+      label: __("Turn into a group"),
       icon: () => h(GroupIcon),
       onClick: () => {
         emit("turnIntoGroup");
@@ -184,8 +188,7 @@ const dropdownOptions = computed(() => {
 
   if (props.isGroup) {
     options.push({
-      //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-      label: __('Ungroup conditions'),
+      label: __("Ungroup conditions"),
       icon: () => h(UnGroupIcon),
       onClick: () => {
         emit("unGroupConditions");
@@ -194,37 +197,22 @@ const dropdownOptions = computed(() => {
   }
 
   options.push({
-    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-    label: __('Remove'),
-    component: (props) =>
-      TemplateOption({
-        //// Neoffice — TemplateOption renders `option` as the menu text (the label above is not
-        //// shown): wrapped so the French catalogue reaches it (same pass as 71a5669d9)
-        option: __("Remove"),
-        icon: "trash-2",
-        active: props.active,
-        variant: "danger",
-        onClick: () => {
-          emit("remove");
-        },
-      }),
+    label: __("Remove"),
+    icon: "lucide-trash-2",
+    theme: "red",
+    onClick: () => {
+      emit("remove");
+    },
     condition: () => !props.isGroup,
   });
 
   options.push({
-    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-    label: __('Remove group'),
-    component: (props) =>
-      TemplateOption({
-        //// Neoffice — rendered text, wrapped (see Remove above)
-        option: __("Remove group"),
-        icon: "trash-2",
-        active: props.active,
-        variant: "danger",
-        onClick: () => {
-          emit("remove");
-        },
-      }),
+    label: __("Remove group"),
+    icon: "lucide-trash-2",
+    theme: "red",
+    onClick: () => {
+      emit("remove");
+    },
     condition: () => props.isGroup,
   });
 
@@ -259,17 +247,16 @@ function getValueControl() {
   if (!fieldData) return null;
   const { fieldtype, options } = fieldData;
   if (operator == "is") {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (label only, the value is what the API receives)
     return h(FormControl, {
       type: "select",
       options: [
         {
-          //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-          label: __('Set'),
+          label: __("Set"),
           value: "set",
         },
         {
-          //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-          label: __('Not Set'),
+          label: __("Not Set"),
           value: "not set",
         },
       ],
@@ -277,35 +264,36 @@ function getValueControl() {
   } else if (["like", "not like", "in", "not in"].includes(operator)) {
     return h(FormControl, { type: "text" });
   } else if (typeSelect.includes(fieldtype) || typeCheck.includes(fieldtype)) {
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (label only, the value stays "Yes"/"No": it is sent to the API)
     const _options =
-      fieldtype == "Check" ? ["Yes", "No"] : getSelectOptions(options);
+      fieldtype == "Check"
+        ? [
+            { label: __("Yes"), value: "Yes" },
+            { label: __("No"), value: "No" },
+          ]
+        : getSelectOptions(options).map((o) => ({
+            label: o,
+            value: o,
+          }));
     return h(FormControl, {
       type: "select",
-      options: _options.map((o) => ({
-        //// Neoffice — value / label split: the value ("Yes", "No", a Select option) is what the
-        //// condition stores; only the label is translated
-        label: __(o),
-        value: o,
-      })),
+      options: _options,
     });
   } else if (typeLink.includes(fieldtype)) {
     if (fieldtype == "Dynamic Link") {
       return h(FormControl, { type: "text" });
     }
     return h(Link, {
-      class: "form-control",
+      class: "w-full",
       doctype: options,
-      value: props.condition[2],
+      title: props.condition[2],
     });
   } else if (typeNumber.includes(fieldtype)) {
     return h(FormControl, { type: "number" });
   } else if (typeDate.includes(fieldtype) && operator == "between") {
-    return h(DateRangePicker, { value: props.condition[2], iconLeft: "" });
+    return h(DateRangePicker);
   } else if (typeDate.includes(fieldtype)) {
-    return h(fieldtype == "Date" ? DatePicker : DateTimePicker, {
-      value: props.condition[2],
-      iconLeft: "",
-    });
+    return h(fieldtype == "Date" ? DatePicker : DateTimePicker);
   } else if (typeRating.includes(fieldtype)) {
     return h(StarRating, {
       rating: props.condition[2] || 0,
@@ -321,7 +309,9 @@ function getValueControl() {
 function updateValue(value) {
   value = value.target ? value.target.value : value;
   if (props.condition[1] === "between") {
-    props.condition[2] = [value.split(",")[0], value.split(",")[1]];
+    // DateRangePicker emits [from, to]; the text controls still emit "from,to"
+    const range = Array.isArray(value) ? value : String(value).split(",");
+    props.condition[2] = [range[0], range[1]];
   } else {
     props.condition[2] = value + "";
   }
@@ -341,6 +331,7 @@ function updateOperator(event) {
   resetConditionValue();
 }
 
+//// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (labels only, the value is the operator sent to the API)
 function getOperators() {
   let options = [];
   const field = props.condition[0];
@@ -351,38 +342,33 @@ function getOperators() {
   if (typeString.includes(fieldtype)) {
     options.push(
       ...[
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Equals'), value: "==" },
-        { label: __('Not Equals'), value: "!=" },
-        { label: __('Like'), value: "like" },
-        { label: __('Not Like'), value: "not like" },
-        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Not In'), value: "not in" },
-        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __("Equals"), value: "==" },
+        { label: __("Not Equals"), value: "!=" },
+        { label: __("Like"), value: "like" },
+        { label: __("Not Like"), value: "not like" },
+        { label: __("In"), value: "in" },
+        { label: __("Not In"), value: "not in" },
+        { label: __("Is"), value: "is" },
       ]
     );
   }
   if (fieldname === "_assign") {
     options = [
-      //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-      { label: __('Like'), value: "like" },
-      { label: __('Not Like'), value: "not like" },
-      { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+      { label: __("Like"), value: "like" },
+      { label: __("Not Like"), value: "not like" },
+      { label: __("Is"), value: "is" },
     ];
   }
   if (typeNumber.includes(fieldtype)) {
     options.push(
       ...[
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Equals'), value: "==" },
-        { label: __('Not Equals'), value: "!=" },
-        { label: __('Like'), value: "like" },
-        { label: __('Not Like'), value: "not like" },
-        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Not In'), value: "not in" },
-        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __("Equals"), value: "==" },
+        { label: __("Not Equals"), value: "!=" },
+        { label: __("Like"), value: "like" },
+        { label: __("Not Like"), value: "not like" },
+        { label: __("In"), value: "in" },
+        { label: __("Not In"), value: "not in" },
+        { label: __("Is"), value: "is" },
         { label: "<", value: "<" },
         { label: ">", value: ">" },
         { label: "<=", value: "<=" },
@@ -393,71 +379,61 @@ function getOperators() {
   if (typeSelect.includes(fieldtype)) {
     options.push(
       ...[
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Equals'), value: "==" },
-        { label: __('Not Equals'), value: "!=" },
-        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Not In'), value: "not in" },
-        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __("Equals"), value: "==" },
+        { label: __("Not Equals"), value: "!=" },
+        { label: __("In"), value: "in" },
+        { label: __("Not In"), value: "not in" },
+        { label: __("Is"), value: "is" },
       ]
     );
   }
   if (typeLink.includes(fieldtype)) {
     options.push(
       ...[
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Equals'), value: "==" },
-        { label: __('Not Equals'), value: "!=" },
-        { label: __('Like'), value: "like" },
-        { label: __('Not Like'), value: "not like" },
-        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Not In'), value: "not in" },
-        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __("Equals"), value: "==" },
+        { label: __("Not Equals"), value: "!=" },
+        { label: __("Like"), value: "like" },
+        { label: __("Not Like"), value: "not like" },
+        { label: __("In"), value: "in" },
+        { label: __("Not In"), value: "not in" },
+        { label: __("Is"), value: "is" },
       ]
     );
   }
   if (typeCheck.includes(fieldtype)) {
-    //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-    options.push(...[{ label: __('Equals'), value: "==" }]);
+    options.push(...[{ label: __("Equals"), value: "==" }]);
   }
   if (["Duration"].includes(fieldtype)) {
     options.push(
       ...[
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Like'), value: "like" },
-        { label: __('Not Like'), value: "not like" },
-        { label: __("In"), value: "in" }, //// Neoffice — __(): label only, the value is the operator
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Not In'), value: "not in" },
-        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __("Like"), value: "like" },
+        { label: __("Not Like"), value: "not like" },
+        { label: __("In"), value: "in" },
+        { label: __("Not In"), value: "not in" },
+        { label: __("Is"), value: "is" },
       ]
     );
   }
   if (typeDate.includes(fieldtype)) {
     options.push(
       ...[
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Equals'), value: "==" },
-        { label: __('Not Equals'), value: "!=" },
-        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __("Equals"), value: "==" },
+        { label: __("Not Equals"), value: "!=" },
+        { label: __("Is"), value: "is" },
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },
         { label: "<=", value: "<=" },
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Between'), value: "between" },
+        { label: __("Between"), value: "between" },
       ]
     );
   }
   if (typeRating.includes(fieldtype)) {
     options.push(
       ...[
-        //// Neoffice — wrapped in __(): the filter/condition vocabulary reached the SPA as bare English literals (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-        { label: __('Equals'), value: "==" },
-        { label: __('Not Equals'), value: "!=" },
-        { label: __("Is"), value: "is" }, //// Neoffice — __(): label only, the value is the operator
+        { label: __("Equals"), value: "==" },
+        { label: __("Not Equals"), value: "!=" },
+        { label: __("Is"), value: "is" },
         { label: ">", value: ">" },
         { label: "<", value: "<" },
         { label: ">=", value: ">=" },

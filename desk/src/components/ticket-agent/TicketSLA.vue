@@ -1,311 +1,149 @@
 <template>
-  <!-- Teleport to App Header -->
-  <teleport to="#app-header">
+  <div v-if="cards.length" class="space-y-0.5">
     <div
-      class="flex items-center ms-5 me-5 md:me-0 text-p-sm gap-3 text-[14px] mb-2"
+      v-for="card in cards"
+      :key="card.title"
+      class="flex min-h-7 items-center gap-2 leading-5"
     >
-      <!-- Source -->
-      <div class="flex items-center gap-1">
-        <!-- //// Neoffice — upstream wrote the copy message in plain English (a template literal); one msgid now, so the French catalogue reaches it (same pass as 71a5669d9) -->
-        <p
-          @click="
-            copyToClipboard(
-              ticket.doc.name,
-              __('Ticket #{0} copied to clipboard', ticket.doc.name)
-            )
-          "
-          class="cursor-copy"
+      <FieldLabel :label="card.title" />
+      <!-- 9px = field controls' 8px padding + 1px transparent border, so the
+           value lines up with the other sidebar field values -->
+      <div class="flex min-w-0 flex-1 items-center gap-1.5 ps-[9px]">
+        <span
+          class="min-w-0 truncate text-base"
+          :class="slaTextColor(card.metric)"
         >
-          #{{ ticket.doc.name }}
-        </p>
-        <!-- Via Email -->
-        <div
-          v-if="!ticket.doc.via_customer_portal"
-          class="text-ink-gray-5 flex items-center"
-        >
-          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-          <span class="me-[4px]">{{ __("via") }}</span>
-          <EmailIcon class="size-4 inline-block me-1" />
-          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-          <span>{{ __("Email") }}</span>
-        </div>
-        <!-- Via Portal -->
-        <div v-else class="text-ink-gray-5 flex items-center">
-          <!-- //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-          <span class="me-[4px]">{{ __("via") }}</span>
-          <GlobeIcon class="size-4 inline-block me-1" />
-          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-          <span>{{ __("Portal") }}</span>
-        </div>
-      </div>
-      <!-- divider -->
-      <div class="border-s border-outline-gray-2 h-[13px]" />
-      <!-- First Response -->
-      <div class="flex items-center gap-1">
-        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-        <span>{{ __("First Response") }}</span>
-        <Tooltip
-          :text="dateFormat(firstResponse.date, dateTooltipFormat)"
-          :hover-delay="0.25"
-          :placement="'top'"
-        >
-          <Badge
-            :label="firstResponse.label"
-            variant="ghost"
-            class="mt-[2px]"
-            :theme="firstResponse.color"
-          />
-        </Tooltip>
-      </div>
-      <!-- divider -->
-      <div class="border-s border-outline-gray-2 h-[13px]" />
-      <!-- Resolution by -->
-      <div class="flex items-center gap-1">
-        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-        <span>{{ __("Resolution") }} </span>
-        <Tooltip
-          :text="dateFormat(resolutionBy.date, dateTooltipFormat)"
-          :hover-delay="0.25"
-          :placement="'top'"
-        >
-          <Badge
-            v-if="resolutionBy"
-            :label="resolutionBy.label"
-            variant="ghost"
-            class="mt-[2px]"
-            :theme="
-              resolutionBy.color !== 'purple' ? resolutionBy.color : undefined
-            "
-            :class="resolutionBy.color === 'purple' && '!text-[#6B46C1] '"
-          />
-        </Tooltip>
+          {{ cardValue(card) }}
+        </span>
+        <!-- HoverCard, not Popover: this opens on hover, and reka's popover
+             trigger would also toggle it on click -->
+        <HoverCard side="bottom" align="center">
+          <template #trigger>
+            <LucideInfo
+              class="size-3.5 shrink-0 cursor-pointer text-ink-gray-5"
+            />
+          </template>
+          <template #default>
+            <div class="flex min-w-[170px] flex-col gap-2.5 p-4 text-sm">
+              <div
+                v-for="row in cardDetails(card)"
+                :key="row.label"
+                class="flex items-baseline justify-between gap-8"
+              >
+                <span class="text-ink-gray-5">{{ __(row.label) }}</span>
+                <span
+                  class="tabular-nums"
+                  :class="row.danger ? 'text-ink-red-6' : 'text-ink-gray-8'"
+                >
+                  {{ row.value }}
+                </span>
+              </div>
+            </div>
+          </template>
+        </HoverCard>
       </div>
     </div>
-  </teleport>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useShortcut } from "@/composables/shortcuts";
-import { TicketSymbol } from "@/types";
-import {
-  copyToClipboard,
-  dateFormat,
-  dateTooltipFormat,
-  formatTime,
-} from "@/utils";
-import { Badge, dayjs, Tooltip } from "frappe-ui";
-import { computed, inject } from "vue";
-//// Neoffice — import added for the SLA labels below (same pass as 71a5669d9).
+import FieldLabel from "@/components/FieldLabel.vue";
+import { slaTextColor, useSLA, type SLAMetric } from "@/composables/useSLA";
 import { __ } from "@/translation";
+import { TicketSymbol } from "@/types";
+import { dateFormat } from "@/utils";
+import { HoverCard } from "frappe-ui";
+import { computed, inject } from "vue";
+import LucideInfo from "~icons/lucide/info";
 
-const ticket = inject(TicketSymbol)!;
-
-const timeFormat = {
-  day: true,
-  hour: true,
-  minute: true,
-};
-
-// Cases:
-// - if not first responded and response by is in future -> show due in
-// - if first responded before response by -> show fulfilled in
-// - if not first responded and response by is in past -> show overdue by
-// - if first responded after response by -> show failed by
-const firstResponse = computed(() => {
-  if (ticket.value?.get?.loading) return { label: "", color: "", date: "" };
-  if (
-    !ticket.value.doc.first_responded_on &&
-    dayjs().isBefore(dayjs(ticket.value.doc.response_by))
-  ) {
-    let responseBy = formatTimeShort(ticket.value.doc.response_by as string);
-    return {
-      //// Neoffice — upstream wrote every SLA label of this file in plain English (template
-      //// literals); one msgid each, {0} for the duration, so the French catalogue reaches them
-      //// (same pass as 71a5669d9). Seen on screen: "Overdue by 14d 23h", "Failed by 12h 34m".
-      label: __("Due in {0}", responseBy),
-      color: "orange",
-      date: ticket.value.doc.response_by,
-    };
-  } else if (
-    dayjs(ticket.value.doc.first_responded_on).isBefore(
-      dayjs(ticket.value.doc.response_by)
-    )
-  ) {
-    let responseTime = ticket.value?.doc?.first_response_time;
-    let format =
-      responseTime <= 60
-        ? {
-            ...timeFormat,
-            second: true,
-          }
-        : timeFormat;
-    let fulfilled =
-      responseTime != null
-        ? formatTime(responseTime, format)
-        : formatTimeShort(
-            ticket.value.doc.first_responded_on as string,
-            ticket.value.doc.creation
-          );
-    return {
-      //// Neoffice — SLA label wrapped (see the note in firstResponse)
-      label: __("Fulfilled in {0}", fulfilled),
-      color: "green",
-      date: ticket.value.doc.first_responded_on,
-    };
-  } else {
-    if (!ticket.value.doc.first_responded_on) {
-      let responseBy = formatTimeShort(
-        String(new Date()),
-        ticket.value.doc.response_by as string
-      );
-      return {
-        //// Neoffice — SLA label wrapped (see the note in firstResponse)
-        label: __("Overdue by {0}", responseBy),
-        color: "red",
-        date: ticket.value.doc.response_by,
-      };
-    }
-
-    let failed = ticket.value?.doc?.first_response_failed_by
-      ? formatTime(ticket.value.doc.first_response_failed_by, timeFormat)
-      : formatTimeShort(
-          ticket.value.doc.first_responded_on,
-          ticket.value.doc.response_by
-        );
-    return {
-      //// Neoffice — SLA label wrapped (see the note in firstResponse)
-      label: __("Failed by {0}", failed),
-      color: "red",
-      date: ticket.value.doc.response_by,
-    };
-  }
-});
-
-const resolutionBy = computed(() => {
-  if (ticket.value?.get?.loading) return { label: "", color: "", date: "" };
-
-  if (
-    ticket.value.doc?.status_category === "Paused" &&
-    ticket.value.doc?.on_hold_since &&
-    dayjs(ticket.value.doc?.resolution_by).isAfter(
-      dayjs(ticket.value.doc?.on_hold_since)
-    )
-  ) {
-    return {
-      //// Neoffice — SLA label wrapped (see the note in firstResponse)
-      label: __("On Hold"),
-      color: "blue",
-      date: ticket.value.doc?.on_hold_since,
-    };
-  } else if (
-    !ticket.value.doc?.resolution_date &&
-    dayjs().isAfter(dayjs(ticket.value.doc?.resolution_by))
-  ) {
-    let overdue = formatTimeShort(
-      String(new Date()),
-      ticket.value.doc?.resolution_by as string
-    );
-
-    return {
-      //// Neoffice — SLA label wrapped (see the note in firstResponse)
-      label: __("Overdue by {0}", overdue),
-      color: "red",
-      date: ticket.value.doc?.resolution_by,
-    };
-  } else if (
-    !ticket.value.doc?.resolution_date &&
-    dayjs().isBefore(dayjs(ticket.value.doc?.resolution_by))
-  ) {
-    let resolutionBy = formatTimeShort(
-      ticket.value.doc?.resolution_by as string
-    );
-    return {
-      //// Neoffice — SLA label wrapped (see the note in firstResponse)
-      label: __("Due in {0}", resolutionBy),
-      color: "purple",
-      date: ticket.value.doc?.resolution_by,
-    };
-  } else if (
-    dayjs(ticket.value.doc?.resolution_date).isBefore(
-      dayjs(ticket.value.doc?.resolution_by)
-    )
-  ) {
-    let resolutionTime = ticket.value?.doc?.resolution_time;
-    let format =
-      resolutionTime <= 60
-        ? {
-            ...timeFormat,
-            second: true,
-          }
-        : timeFormat;
-    let fulfilled =
-      resolutionTime != null
-        ? formatTime(resolutionTime, format)
-        : formatTimeShort(
-            ticket.value.doc?.resolution_date as string,
-            ticket.value.doc?.creation
-          );
-    return {
-      //// Neoffice — SLA label wrapped (see the note in firstResponse)
-      label: __("Fulfilled in {0}", fulfilled),
-      color: "green",
-      date: ticket.value.doc?.resolution_date,
-    };
-  } else {
-    let failed = ticket.value.doc?.resolution_failed_by
-      ? formatTime(ticket.value.doc?.resolution_failed_by, timeFormat)
-      : formatTimeShort(
-          ticket.value.doc?.resolution_by,
-          ticket.value.doc?.resolution_date
-        );
-    return {
-      //// Neoffice — SLA label wrapped (see the note in firstResponse)
-      label: __("Failed by {0}", failed),
-      color: "red",
-      date: ticket.value.doc?.resolution_by,
-    };
-  }
-});
-
-function formatTimeShort(date: string, end?: string): string {
-  if (!end) {
-    end = dayjs().toString();
-  }
-  let _date = dayjs(date);
-  let duration = dayjs.duration(_date.diff(dayjs(end)));
-
-  let years = duration.years();
-  let months = duration.months();
-  let days = duration.days();
-  let hours = duration.hours();
-  let minutes = duration.minutes();
-
-  //// Neoffice — upstream wrote the unit letters in plain English (y, mo, d, h, m); one msgid per
-  //// shape so a translation can change them (French writes "j" for days), same pass as 71a5669d9
-  if (years > 0) {
-    return __("{0}y {1}mo", years, months);
-  } else if (months > 0) {
-    return __("{0}mo {1}d", months, days); //// Neoffice — see above
-  } else if (days > 0) {
-    return __("{0}d {1}h", days, hours); //// Neoffice — see above
-  } else if (hours > 0) {
-    return __("{0}h {1}m", hours, minutes); //// Neoffice — see above
-  } else {
-    return __("{0}m", minutes); //// Neoffice — see above
-  }
+interface SLACard {
+  title: string;
+  metric: SLAMetric;
+  fulfilledLabel: string;
+  actualLabel: string;
 }
 
-//// Neoffice — upstream wrote both copy messages in plain English (template literals); one msgid
-//// each now, so the French catalogue reaches them (same pass as 71a5669d9)
-useShortcut({ meta: true, shift: true, key: "." }, () => {
-  copyToClipboard(window.location.href, __("Ticket URL copied to clipboard"));
-});
+const ticket = inject(TicketSymbol)!;
+const { firstResponse, resolution } = useSLA(ticket);
 
-useShortcut({ meta: true, key: "." }, () => {
-  copyToClipboard(
-    ticket.value.doc.name,
-    //// Neoffice — see the note above the first shortcut
-    __("Ticket #{0} copied to clipboard", ticket.value.doc.name)
-  );
-});
+const cards = computed<SLACard[]>(() =>
+  [
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
+    //// (the template and FieldLabel call __() on these again, which is harmless: it only adds the literal msgids to the extraction).
+    {
+      title: __("First Response"),
+      metric: firstResponse.value,
+      fulfilledLabel: __("Fulfilled"),
+      actualLabel: __("Responded on"),
+    },
+    {
+      title: __("Resolution"),
+      metric: resolution.value,
+      fulfilledLabel: __("Fulfilled"),
+      actualLabel: __("Resolved on"),
+    },
+  ].filter((card): card is SLACard => Boolean(card.metric))
+);
+
+function cardValue(card: SLACard): string {
+  if (card.metric.state !== "fulfilled") return __(card.metric.value);
+  if (!card.metric.fulfilledIn) return __(card.fulfilledLabel);
+  return `${__(card.fulfilledLabel)} ${__("in")} ${card.metric.fulfilledIn}`;
+}
+
+function cardDetails(card: SLACard) {
+  const metric = card.metric;
+  const rows = [];
+  //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
+  //// (the template calls __(row.label) again, which is harmless: it only adds the literal msgids to the extraction).
+  if (metric.dueBy) {
+    rows.push({ label: __("Due by"), value: fmt(metric.dueBy), danger: false });
+  }
+  if (metric.state === "hold") {
+    rows.push({
+      label: __("On hold since"),
+      value: fmt(ticket.value.doc.on_hold_since as string),
+      danger: false,
+    });
+  }
+  if (metric.actual) {
+    // The timestamp is neutral fact; only the Delay rows carry the failure
+    // signal, so the responded/resolved date stays in the default ink.
+    rows.push({
+      label: card.actualLabel,
+      value: fmt(metric.actual),
+      danger: false,
+    });
+  }
+  if (metric.delay) {
+    rows.push({
+      label: metric.delayInWorkingHours
+        ? __("Delay (working hours)")
+        : __("Delay"),
+      value: metric.delay,
+      danger: true,
+    });
+    if (metric.calendarDelay) {
+      rows.push({
+        label: __("Delay (total)"),
+        value: `+${metric.calendarDelay}`,
+        danger: true,
+      });
+    }
+  }
+  if (metric.fulfilledIn) {
+    rows.push({
+      label: __("Fulfilled in"),
+      value: metric.fulfilledIn,
+      danger: false,
+    });
+  }
+  return rows;
+}
+
+function fmt(date: string): string {
+  // Year included: SLA breaches span months/years, so a bare "MMM D" makes the
+  // due/actual dates read as contradictory (e.g. resolved "before" the due date).
+  return dateFormat(date, "MMM D, YYYY, h:mm A");
+}
 </script>

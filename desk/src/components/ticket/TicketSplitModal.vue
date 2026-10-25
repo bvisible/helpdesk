@@ -1,14 +1,14 @@
 <template>
-  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-  <Dialog :options="{ title: __('Split ticket') }" v-model="showDialog">
-    <template #body-content>
+<!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+  <Dialog :title="__('Split ticket')" v-model:open="showDialog">
+    <template #default>
       <div class="flex flex-col gap-4">
         <p class="text-p-base text-ink-gray-8">
           {{ __("All") }}
           <span class="underline">{{ __("emails/ comments") }}</span>
           {{ __("from this email onwards will be moved to new ticket.") }}
         </p>
-        <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <FormControl
           :label="__('New Ticket Subject')"
           type="text"
@@ -16,10 +16,10 @@
           :placeholder="__('Add a subject for the new ticket')"
         />
         <div
-          class="flex items-center gap-2 rounded-md p-2 ring-1 ring-outline-gray-modals"
+          class="flex items-center gap-2 rounded-5 p-2 ring-1 ring-outline-elevation-2"
         >
           <TriangleAlert
-            class="h-6 w-5 w-min-5 w-max-5 min-h-5 max-w-5 text-yellow-500"
+            class="h-6 w-5 w-min-5 w-max-5 min-h-5 max-w-5 text-ink-yellow-5"
           />
 
           <div class="text-wrap text-sm text-ink-gray-7">

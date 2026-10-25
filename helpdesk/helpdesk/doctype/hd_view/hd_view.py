@@ -19,7 +19,7 @@ class HDView(Document):
             {
                 "is_default": 1,
                 "name": ("!=", self.name),
-                "user": frappe.session.user,
+                "user": self.user,
                 "dt": self.dt,
             },
         )
@@ -31,7 +31,6 @@ class HDView(Document):
 
     def before_save(self):
         self.toggle_pinned_public_view()
-
         if (
             self.is_standard
             and not (

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="text-base font-semibold text-ink-gray-9">
+    <div class="text-base-semibold text-ink-gray-9">
       {{ __("Ticket Settings") }}
     </div>
     <div class="mt-6 flex flex-col gap-6">
       <div class="flex items-center justify-between">
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">{{
+          <span class="text-base-medium text-ink-gray-8">{{
             __("Make feedback mandatory")
           }}</span>
           <span class="text-p-sm text-ink-gray-6">{{
@@ -19,7 +19,7 @@
       </div>
       <div class="flex items-center justify-between">
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">{{
+          <span class="text-base-medium text-ink-gray-8">{{
             __("Enable comment reactions")
           }}</span>
           <span class="text-p-sm text-ink-gray-6">{{
@@ -31,7 +31,7 @@
       <div>
         <div class="flex items-center justify-between">
           <div class="flex flex-col gap-1">
-            <span class="text-base font-medium text-ink-gray-8">{{
+            <span class="text-base-medium text-ink-gray-8">{{
               __("Restrict tickets by team")
             }}</span>
             <span class="text-p-sm text-ink-gray-6">{{
@@ -63,7 +63,7 @@
         v-if="settingsData.restrictTicketsByAgentGroup"
       >
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">{{
+          <span class="text-base-medium text-ink-gray-8">{{
             __("Disable global saved replies")
           }}</span>
           <span class="text-p-sm text-ink-gray-6">{{
@@ -76,7 +76,7 @@
       </div>
       <div class="flex items-center justify-between">
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">{{
+          <span class="text-base-medium text-ink-gray-8">{{
             __("Auto update status")
           }}</span>
           <span class="text-p-sm text-ink-gray-6">{{
@@ -105,7 +105,7 @@
       </div>
       <div class="flex items-center justify-between">
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">{{
+          <span class="text-base-medium text-ink-gray-8">{{
             __("Allow anyone to create tickets")
           }}</span>
           <span class="text-p-sm text-ink-gray-6"
@@ -125,7 +125,7 @@
       </div>
       <div class="flex items-center justify-between">
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">{{
+          <span class="text-base-medium text-ink-gray-8">{{
             __("Default ticket type")
           }}</span>
           <span class="text-p-sm text-ink-gray-6">{{
@@ -133,7 +133,7 @@
           }}</span>
         </div>
         <SelectDropdown
-          :options="ticketTypeList.data"
+          :options="ticketTypeList.data || []"
           v-model="settingsData.defaultTicketType"
           target-class="max-w-40"
           placement="bottom-start"
@@ -141,7 +141,7 @@
       </div>
       <div>
         <div class="flex flex-col gap-1">
-          <span class="text-base font-medium text-ink-gray-8">{{
+          <span class="text-base-medium text-ink-gray-8">{{
             __("Automatically close stale tickets")
           }}</span>
           <span class="text-p-sm text-ink-gray-6">{{
@@ -172,9 +172,10 @@
             />
           </div>
           <div class="flex flex-col gap-1.5">
+            <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
             <FormControl
               :label="__('Auto-close after (Days)')"
-              placeholder="e.g. 30"
+              :placeholder="__('e.g. 30')"
               v-model="settingsData.autoCloseAfterDays"
               type="number"
               :debounce="300"
@@ -195,7 +196,7 @@
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
             <div class="flex flex-col gap-1">
-              <span class="text-base font-medium text-ink-gray-8">{{
+              <span class="text-base-medium text-ink-gray-8">{{
                 __("Outside working hours notice")
               }}</span>
               <span class="text-p-sm text-ink-gray-6"
@@ -211,7 +212,7 @@
               @update:model-value="handleShowBannerToggle"
             />
           </div>
-          <!-- //// Neoffice — placeholder wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Textarea
             v-if="settingsData.enableOutsideHoursBanner"
             variant="subtle"
@@ -274,14 +275,10 @@ import {
   Textarea,
 } from "frappe-ui";
 import { computed, inject } from "vue";
-//// Neoffice — __ imported with the ticket-status translation below; the template's __() calls
-//// bind to it, the same function as the global __.
-import { __ } from "@/translation";
 
 const settingsData = inject(HDSettingsSymbol);
-//// Neoffice — statusLabel() (stores/ticketStatus.ts): the translated display label of a ticket
-//// status.
-const { statuses, statusLabel } = useTicketStatusStore();
+
+const { statuses } = useTicketStatusStore();
 
 const bannerMsg = createResource({
   url: "helpdesk.helpdesk.doctype.hd_settings.helpers.get_banner_msg",
@@ -300,7 +297,8 @@ function resetBannerContent() {
 }
 
 function handleShowBannerToggle(value: boolean) {
-  if (!bannerMsg.data.current) {
+  // the switch is live before the message resource lands
+  if (!bannerMsg.data?.current) {
     if (value) {
       settingsData.value.outsideWorkingHoursBannerMessage =
         bannerMsg.data?.default;
@@ -329,13 +327,7 @@ const autoUpdateTicketStatusList = computed(() => {
   return (
     statuses.data?.map((s: HDTicketStatus) => {
       return {
-        //// Neoffice — the STATUS LABEL is displayed, so it goes through __(); the
-        //// VALUE stays raw because it is what HD Ticket.status stores and what the
-        //// filters send back. A default label ('Open', 'Replied') is in the merged
-        //// catalogue and turns French; a label an instance renamed is absent from it
-        //// and __() returns it unchanged, which is right — it is already in their
-        //// words. Upstream already does this in ShareFeedback.vue and nowhere else.
-        label: statusLabel(s.label_agent),
+        label: s.label_agent,
         value: s.label_agent,
       };
     }) || []
@@ -351,9 +343,7 @@ const autoCloseTicketStatusList = computed(() => {
       )
       ?.map((s: HDTicketStatus) => {
         return {
-          //// Neoffice — statusLabel() for the displayed label, value kept raw: same rule as
-          //// autoUpdateTicketStatusList above.
-          label: statusLabel(s.label_agent),
+          label: s.label_agent,
           value: s.label_agent,
         };
       }) || []

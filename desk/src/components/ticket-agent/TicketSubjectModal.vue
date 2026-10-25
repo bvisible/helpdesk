@@ -1,12 +1,11 @@
 <template>
-  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-  <Dialog v-model="showSubjectDialog" :options="{ title: __('Rename Subject') }">
-    <template #body-content>
+<!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+  <Dialog v-model:open="showSubjectDialog" :title="__('Rename Subject')">
+    <template #default>
       <div class="flex flex-col flex-1 gap-3">
-        <FormControl
+        <Textarea
           ref="subjectInput"
           v-model="renameSubject"
-          type="textarea"
           size="sm"
           variant="subtle"
           :disabled="false"
@@ -33,9 +32,12 @@
 </template>
 
 <script setup lang="ts">
+import { Textarea } from "frappe-ui";
 import { useDevice } from "@/composables";
 import { useScreenSize } from "@/composables/screen";
 import { TicketSymbol } from "@/types";
+//// Neoffice — added: __() import for the wraps below
+import { __ } from "@/translation";
 import { computed, inject, nextTick, ref, watch } from "vue";
 
 const ticket = inject(TicketSymbol)!;
@@ -55,7 +57,7 @@ watch(
     if (val) {
       renameSubject.value = ticket?.value?.doc?.subject || "";
       await nextTick();
-      subjectInput.value?.$el?.querySelector("textarea").focus();
+      subjectInput.value?.focus();
     }
   }
 );

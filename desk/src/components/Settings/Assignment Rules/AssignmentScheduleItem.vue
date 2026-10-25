@@ -6,7 +6,15 @@
     <!-- //// Neoffice — the stored day ("Monday"...) was shown as is; translated at display, the value is untouched -->
     <div class="text-ink-gray-7 font-medium">{{ __(data.day) }}</div>
     <div class="flex justify-start">
-      <Switch v-model="data.active" @update:model-value="toggleDay" />
+      <Switch
+        :model-value="Boolean(data.active)"
+        @update:model-value="
+          (value) => {
+            data.active = value;
+            toggleDay(value);
+          }
+        "
+      />
     </div>
   </div>
   <hr v-if="!isLast" />

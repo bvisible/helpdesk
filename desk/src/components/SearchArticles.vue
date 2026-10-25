@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="Boolean(articles.data?.length) && query.length > 2"
-    class="rounded border p-4 text-base"
+    class="rounded-4 border p-4 text-base"
   >
     <div class="mb-2 font-medium ps-2" v-if="!hideViewAll">
       <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
@@ -24,7 +24,7 @@
       <div
         v-for="a in articles.data"
         :key="a.id"
-        class="rounded-md border-2 p-2 border-hidden hover:bg-surface-gray-2"
+        class="rounded-5 border-2 p-2 border-hidden hover:bg-surface-gray-2"
       >
         <RouterLink
           class="group cursor-pointer hover:text-ink-gray-9 flex flex-col gap-1"
@@ -52,7 +52,7 @@
     v-else-if="
       !articles.loading && articles.data?.length === 0 && query.length > 2
     "
-    class="flex flex-col items-center justify-center h-[240px] gap-2 rounded border"
+    class="flex flex-col items-center justify-center h-[240px] gap-2 rounded-4 border"
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
@@ -66,7 +66,7 @@
   </div>
   <div
     v-else-if="articles.loading"
-    class="flex flex-col items-center justify-center h-[240px] gap-2 rounded border"
+    class="flex flex-col items-center justify-center h-[240px] gap-2 rounded-4 border"
   >
     <LucideSearch class="size-8 text-ink-gray-3" />
     <div class="flex items-center flex-col justify-center">
@@ -105,7 +105,9 @@ watch(
       },
     });
     articles.reload();
-  }
+  },
+  // Mounted after the third character is typed.
+  { immediate: true }
 );
 
 function handleSearchArticleClick(article) {

@@ -1,7 +1,7 @@
 <template>
   <SettingsLayoutBase>
     <template #title>
-      <h1 class="text-lg font-semibold text-ink-gray-8">
+      <h1 class="text-md-semibold text-ink-gray-8">
         {{ __("Assignment Rules") }}
       </h1>
     </template>
@@ -20,7 +20,7 @@
         theme="gray"
         variant="solid"
         @click="goToNew()"
-        icon-left="plus"
+        icon-left="lucide-plus"
         class="rtl:flex-row-reverse"
       />
     </template>
@@ -32,19 +32,21 @@
       #header-bottom
     >
       <div class="relative">
-        <Input
+        <TextInput
           :model-value="assignmentRuleSearchQuery"
-          @input="assignmentRuleSearchQuery = $event"
+          @update:model-value="assignmentRuleSearchQuery = $event"
           :placeholder="__('Search')"
           type="text"
           class="focus:ring-0 border-outline-gray-2"
-          icon-left="search"
-          debounce="300"
-          inputClass="p-4 pe-12 rtl:pr-8"
-        />
+          :debounce="300"
+        >
+          <template #prefix>
+            <LucideSearch class="size-4" />
+          </template>
+        </TextInput>
         <Button
           v-if="assignmentRuleSearchQuery"
-          icon="x"
+          icon="lucide-x"
           variant="ghost"
           @click="assignmentRuleSearchQuery = ''"
           class="absolute end-1 top-1/2 -translate-y-1/2"

@@ -2,7 +2,7 @@
   <SettingsLayoutBase>
     <template #title>
       <div class="flex items-center gap-2">
-        <h1 class="text-lg font-semibold text-ink-gray-8">
+        <h1 class="text-md-semibold text-ink-gray-8">
           {{ __("Field Dependencies") }}
         </h1>
       </div>
@@ -28,7 +28,7 @@
         theme="gray"
         variant="solid"
         @click="$emit('update:step', 'fd')"
-        icon-left="plus"
+        icon-left="lucide-plus"
         class="rtl:flex-row-reverse"
       />
     </template>
@@ -39,7 +39,7 @@
           v-if="fieldDependenciesList.loading"
           class="flex items-center justify-center py-4"
         >
-          <LoadingIndicator :scale="5" />
+          <LoadingIndicator class="size-5" />
         </div>
 
         <!-- Empty State -->
@@ -76,7 +76,7 @@
               :key="row.name"
             >
               <div
-                class="grid grid-cols-11 items-center gap-4 cursor-pointer hover:bg-surface-menu-bar rounded h-12.5"
+                class="grid grid-cols-11 items-center gap-4 cursor-pointer hover:bg-surface-sidebar rounded-4 h-12.5"
               >
                 <div
                   @click.stop="$emit('update:step', 'fd', row.name)"
@@ -95,15 +95,19 @@
                 >
                   <div>
                     <Switch
-                      :model-value="row.enabled"
-                      @update:modelValue="
-                        (e) => handleSwitchToggle(row.name, e)
-                      "
+                      :model-value="Boolean(row.enabled)"
+                      @update:modelValue="(e) => handleSwitchToggle(row, e)"
                       @click.stop
                     />
                   </div>
                   <div>
-                    <Dropdown placement="right" :options="getOptions(row.name)">
+                    <Dropdown
+                      align="end"
+                      :options="getOptions(row.name)"
+                      @update:open="
+                        (open) => open && (isConfirmingDelete = false)
+                      "
+                    >
                       <Button
                         variant="ghost"
                         @click.stop="
@@ -141,6 +145,7 @@ import {
   Switch,
   toast,
 } from "frappe-ui";
+import EmptyState from "@/components/EmptyState.vue";
 import { getFieldDependencyLabel, ConfirmDelete } from "@/utils";
 import { onMounted, ref } from "vue";
 import { fieldDependenciesList } from "./fieldDependency";
@@ -170,15 +175,23 @@ function getOptions(rowName: string) {
   });
 }
 
-function handleSwitchToggle(rowName: string, value: boolean) {
+function handleSwitchToggle(row: any, value: boolean) {
+  // Optimistically reflect the new state so the controlled Switch stays in
+  // sync; without this the bound value never changes and toggling keeps
+  // re-sending the same value (the disable never takes effect).
+  row.enabled = value;
   fieldDependenciesList.setValue.submit(
     {
-      name: rowName,
+      name: row.name,
       enabled: value,
     },
     {
       onSuccess: () => {
         toast.success(__("Field dependency updated successfully."));
+      },
+      onError: () => {
+        row.enabled = !value;
+        toast.error(__("Failed to update field dependency."));
       },
     }
   );

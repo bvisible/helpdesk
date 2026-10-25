@@ -29,8 +29,10 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.playwright-mcp
 .claude-flow
 .claude
+.claude-worktrees
 CLAUDE.md
 
 
@@ -52,12 +54,9 @@ helpdesk/public/node_modules
 # //// committed alongside public/desk/ for an instance that never runs yarn build.
 # helpdesk/www/helpdesk/index.html
 desk/components.d.ts
-# //// Neoffice — repaired entry. Upstream had "desk/stats.html" as the LAST line
-# //// with no trailing newline; our commit b713b86fd ("chore: add CLAUDE.md to
-# //// gitignore") appended "CLAUDE.md" straight onto it, so from that day NEITHER
-# //// path was ignored. Upstream's entry is restored below, on its own line.
-# //// "CLAUDE.md" is deliberately NOT re-added: that file carries the branch and
-# //// commit-the-build conventions of this fork, it is listed as ours in
-# //// NEOFFICE_FORK_MARKERS.md, and it stays tracked — ignoring it would only hide
-# //// it from the next clone. At the merge, keep upstream's "desk/stats.html".
+# //// Neoffice — the "desk/stats.html" entry we repaired in b7eace9e6 is now upstream's own line.
 desk/stats.html
+# Playwright
+e2e/.auth
+playwright-report
+test-results

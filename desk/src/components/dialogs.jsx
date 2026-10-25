@@ -8,12 +8,16 @@ export let Dialogs = {
   render() {
     return dialogs.value.map((dialog) => (
       <Dialog
-        options={dialog}
-        modelValue={dialog.show}
-        onUpdate:modelValue={(val) => (dialog.show = val)}
+        title={dialog.title}
+        size={dialog.size}
+        icon={dialog.icon}
+        position={dialog.position}
+        actions={dialog.actions}
+        open={dialog.show}
+        onUpdate:open={(val) => (dialog.show = val)}
       >
         {{
-          "body-content": () => {
+          default: () => {
             return [
               dialog.message && (
                 <p class="text-p-base text-ink-gray-7">{dialog.message}</p>
@@ -28,8 +32,26 @@ export let Dialogs = {
   },
 };
 
+// Callable context so form scripts written for `onClick(close)` keep working
+// alongside frappe-ui v1's `onClick({ close })`.
+function withLegacyCloseContext(actions) {
+  return actions?.map((action) =>
+    action.onClick
+      ? {
+          ...action,
+          onClick: ({ close }) => {
+            const context = () => close();
+            context.close = close;
+            return action.onClick(context);
+          },
+        }
+      : action
+  );
+}
+
 export function createDialog(dialogOptions) {
   let dialog = reactive(dialogOptions);
+  dialog.actions = withLegacyCloseContext(dialog.actions);
   dialog.key = "dialog-" + dialogs.value.length;
   dialog.show = false;
   setTimeout(() => {

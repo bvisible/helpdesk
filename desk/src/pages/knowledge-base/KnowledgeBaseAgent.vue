@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <LayoutHeader>
       <template #left-header>
-        <div class="text-lg font-medium text-ink-gray-9">
+        <div class="text-lg-medium text-ink-gray-9">
           {{ __("Knowledge Base") }}
         </div>
       </template>
@@ -43,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import Icon from "@/components/Icon.vue";
 import LayoutHeader from "@/components/LayoutHeader.vue";
 import ListViewBuilder from "@/components/ListViewBuilder.vue";
 import CategoryModal from "@/components/knowledge-base/CategoryModal.vue";
@@ -64,7 +65,6 @@ import {
   Badge,
   Button,
   Dropdown,
-  FeatherIcon,
   createResource,
   toast,
   usePageMeta,
@@ -103,7 +103,7 @@ const generalCategory = createResource({
 const headerOptions = [
   {
     label: __("Category"),
-    icon: "folder",
+    icon: "lucide-folder",
     onClick: () => {
       resetState();
       editTitle.value = false;
@@ -112,7 +112,7 @@ const headerOptions = [
   },
   {
     label: __("Article"),
-    icon: "file-text",
+    icon: "lucide-file-text",
     onClick: () => {
       router.push({
         name: "NewArticle",
@@ -133,7 +133,7 @@ const groupByActions = [
     //// translated label is not an identity.
     name: "add-new-article",
     label: __("Add New Article"),
-    icon: "plus",
+    icon: "lucide-plus",
     onClick: (groupedRow) => {
       router.push({
         name: "NewArticle",
@@ -148,7 +148,7 @@ const groupByActions = [
   },
   {
     label: __("Edit Title"),
-    icon: "edit",
+    icon: "lucide-edit",
     onClick: (groupedRow) => {
       editTitle.value = true;
       showCategoryModal.value = true;
@@ -168,7 +168,7 @@ const groupByActions = [
   },
   {
     label: __("Share"),
-    icon: "link",
+    icon: "lucide-link",
     onClick: async ({ group }) => {
       const { label, value } = group;
       const url = new URL(window.location.href);
@@ -181,7 +181,7 @@ const groupByActions = [
   },
   {
     label: __("Delete"),
-    icon: "trash-2",
+    icon: "lucide-trash-2",
     onClick: (groupedRow) => {
       handleCategoryDelete(groupedRow);
     },
@@ -192,7 +192,7 @@ const listSelections = ref(new Set());
 const selectBannerActions = [
   {
     label: __("Move To"),
-    icon: "corner-up-right",
+    icon: "lucide-corner-up-right",
     onClick: (selections: Set<string>) => {
       listSelections.value = new Set(selections);
       moveToModal.value = true;
@@ -200,7 +200,7 @@ const selectBannerActions = [
   },
   {
     label: __("Delete"),
-    icon: "trash-2",
+    icon: "lucide-trash-2",
     onClick: (selections: Set<string>) => {
       listSelections.value = selections;
       $dialog({
@@ -210,7 +210,7 @@ const selectBannerActions = [
           {
             label: __("Delete"),
             theme: "red",
-            iconLeft: "trash-2",
+            iconLeft: "lucide-trash-2",
             variant: "solid",
             onClick({ close }) {
               handleDeleteArticles();
@@ -329,7 +329,7 @@ function handleCategoryDelete(groupedRow) {
       {
         label: __("Confirm"),
         variant: "solid",
-        onClick(close: Function) {
+        onClick({ close }: { close: () => void }) {
           deleteCategory.submit(
             {
               doctype: "HD Article Category",
@@ -405,8 +405,8 @@ const options = computed(() => {
     columnConfig: {
       title: {
         prefix: () => {
-          return h(FeatherIcon, {
-            name: "file-text",
+          return h(Icon, {
+            icon: "lucide-file-text",
             class: "h-4 w-4 flex-shrink-0 text-ink-gray-6",
           });
         },
@@ -450,7 +450,7 @@ const statusMap = {
   },
   Draft: {
     label: __("Draft"),
-    theme: "orange",
+    theme: "amber",
   },
   Archived: {
     label: __("Archived"),

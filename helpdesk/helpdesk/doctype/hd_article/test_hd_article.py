@@ -1,7 +1,7 @@
 # Copyright (c) 2021, Frappe Technologies and Contributors
 # See license.txt
 import frappe
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase
 
 
 # //// Neoffice — `HD Article.wiki_document` is a Link to `Wiki Document`, added by
@@ -21,7 +21,7 @@ from frappe.tests import IntegrationTestCase
 test_ignore = ["Wiki Document"]
 
 
-class TestHDArticleFeedback(IntegrationTestCase):
+class TestHDArticleFeedback(FrappeTestCase):
     def setUp(self):
         self.article = frappe.get_doc(
             {

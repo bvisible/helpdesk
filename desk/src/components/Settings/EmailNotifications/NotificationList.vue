@@ -13,10 +13,10 @@
           v-for="(notification, index) in notifications"
           :key="notification.name"
         >
-          <li class="flex items-center justify-between p-3 rounded relative">
+          <li class="flex items-center justify-between p-3 rounded-4 relative">
             <div class="flex flex-col gap-1">
               <h2
-                class="text-base font-medium text-ink-gray-7 relative z-10 pointer-events-none"
+                class="text-base-medium text-ink-gray-7 relative z-10 pointer-events-none"
               >
                 {{ __(notification.label) }}
               </h2>
@@ -26,12 +26,11 @@
                 {{ __(notification.description) }}
               </p>
             </div>
-            <FeatherIcon
-              name="chevron-right"
+            <LucideChevronRight
               class="text-ink-gray-7 size-4 relative z-10 pointer-events-none rtl:rotate-180"
             />
             <div
-              class="w-full h-full absolute top-0 start-0 hover:bg-surface-menu-bar rounded-[inherit]"
+              class="w-full h-full absolute top-0 start-0 hover:bg-surface-sidebar rounded-[inherit]"
               @click="
                 () => {
                   props.onSelect(notification);
@@ -51,11 +50,10 @@
 </template>
 
 <script setup lang="ts">
+import LucideChevronRight from "~icons/lucide/chevron-right";
+import { __ } from "@/translation";
 import type { AtLeastOneNotifcation, Notification } from "./types";
 import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
-//// Neoffice — removed (34afea6c1 "Merge upstream develop up to 2026-06-02 (c778f533b)"): upstream added its own __ import during the same i18n work; the merge kept ours below rather than importing __ twice
-//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-import { __ } from "@/translation";
 
 const props = defineProps<{
   onSelect: (notification: Notification) => void;

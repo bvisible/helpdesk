@@ -1,10 +1,10 @@
 <template>
-  <div class="comm-area" resizable="true">
+  <div class="comm-area">
     <div
       class="flex justify-between gap-3 border-t px-6 md:px-5 py-4 md:py-2.5"
     >
       <div class="flex gap-1.5 items-center">
-        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Button
           ref="sendEmailRef"
           variant="ghost"
@@ -43,7 +43,7 @@
         @keydown.esc.capture.stop="showEmailBox = false"
       >
         <div class="overflow-hidden">
-          <!-- //// Neoffice — labels and placeholders wrapped in __(): upstream showed them in English on every non-English site -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <EmailEditor
             ref="emailEditorRef"
             :label="
@@ -58,10 +58,15 @@
             :to-emails="toEmails"
             :cc-emails="ccEmails"
             :bcc-emails="bccEmails"
-            @submit="
+            @sending="
               () => {
                 showEmailBox = false;
-                emit('update');
+              }
+            "
+            @submit="() => emit('update')"
+            @restore="
+              () => {
+                showEmailBox = true;
               }
             "
             @discard="
@@ -82,7 +87,7 @@
         @keydown.esc.capture.stop="showCommentBox = false"
       >
         <div class="overflow-hidden">
-          <!-- //// Neoffice — labels and placeholders wrapped in __(): upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <CommentTextEditor
             ref="commentTextEditorRef"
             :label="
@@ -96,10 +101,15 @@
             :editable="showCommentBox"
             :doctype="doctype"
             :placeholder="__('@John could you please look into this?')"
-            @submit="
+            @sending="
               () => {
                 showCommentBox = false;
-                emit('update');
+              }
+            "
+            @submit="() => emit('update')"
+            @restore="
+              () => {
+                showCommentBox = true;
               }
             "
             @discard="
@@ -123,6 +133,8 @@ import { useShortcut } from "@/composables/shortcuts";
 import { showCommentBox, showEmailBox } from "@/pages/ticket/modalStates";
 import { onClickOutside } from "@vueuse/core";
 import { ref, watch } from "vue";
+//// Neoffice — added: __() import for the wraps below
+import { __ } from "@/translation";
 
 const emit = defineEmits(["update"]);
 const content = defineModel("content");
@@ -149,16 +161,14 @@ function toggleCommentBox() {
   showCommentBox.value = !showCommentBox.value;
 }
 
+// the editors emit `submit` once the write lands; reloading here too would
+// fetch twice, and the guards' `false` never reaches this side anyway
 function submitEmail() {
-  if (emailEditorRef.value.submitMail()) {
-    emit("update");
-  }
+  emailEditorRef.value.submitMail();
 }
 
 function submitComment() {
-  if (commentTextEditorRef.value.submitComment()) {
-    emit("update");
-  }
+  commentTextEditorRef.value.submitComment();
 }
 
 function splitIfString(str: string | string[]) {
@@ -234,36 +244,48 @@ defineExpose({
   editor: emailEditorRef,
 });
 
+const IGNORED_SELECTORS = [
+  ".tippy-box",
+  ".tippy-content",
+  ".PopoverContent",
+  '[role="dialog"]',
+  '[role="presentation"]',
+  '[role="menu"]',
+  ".dialog-overlay",
+  // Grammarly suggestions appear outside the box, allow them to stop collapsing.
+  "grammarly-extension",
+  "grammarly-popups",
+  "[data-grammarly-part]",
+];
+
+// `ignore` is only consulted on pointerdown, which dialogs stop, so the click
+// through has to be checked too. Without this a dialog button closes the box.
+function isIgnored(event: Event): boolean {
+  const target = event.target as HTMLElement | null;
+  return Boolean(target?.closest?.(IGNORED_SELECTORS.join(", ")));
+}
+
 onClickOutside(
   emailBoxRef,
-  () => {
-    if (showEmailBox.value) {
+  (event) => {
+    if (showEmailBox.value && !isIgnored(event)) {
       showEmailBox.value = false;
     }
   },
   {
-    //// Neoffice — ".neo-suggest-dialog" kept next to upstream's '[role="dialog"]':
-    //// the NORA reply-suggestion dialog is teleported to <body>, outside
-    //// emailBoxRef, and a click inside it must not close the editor behind it.
-    ignore: [
-      ".neo-suggest-dialog",
-      ".tippy-box",
-      ".tippy-content",
-      ".PopoverContent",
-      '[role="dialog"]',
-    ],
+    ignore: IGNORED_SELECTORS,
   }
 );
 
 onClickOutside(
   commentBoxRef,
-  () => {
-    if (showCommentBox.value) {
+  (event) => {
+    if (showCommentBox.value && !isIgnored(event)) {
       showCommentBox.value = false;
     }
   },
   {
-    ignore: [".tippy-box", ".tippy-content", ".PopoverContent"],
+    ignore: IGNORED_SELECTORS,
   }
 );
 </script>

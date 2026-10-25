@@ -5,34 +5,9 @@ import LogoSendgrid from "@/assets/images/sendgrid.png";
 import LogoSparkpost from "@/assets/images/sparkpost.webp";
 import LogoYahoo from "@/assets/images/yahoo.png";
 import LogoYandex from "@/assets/images/yandex.png";
-import LogoFrappeMail from "@/assets/images/frappe-mail.svg";
-import { EmailAccount, EmailService, RenderField } from "@/types";
+import { EmailAccountFormState, EmailService, EmailServiceName, RenderField } from "@/types";
 import { validateEmailWithZod } from "@/utils";
 import { __ } from "@/translation";
-
-type EmailAccountFormState = {
-  email_account_name?: string;
-  email_id?: string;
-  service?: string;
-  password?: string;
-  api_key?: string;
-  api_secret?: string;
-  frappe_mail_site?: string;
-  domain?: string;
-  email_server?: string;
-  incoming_port?: string | number;
-  smtp_server?: string;
-  smtp_port?: string | number;
-  use_ssl?: boolean | number;
-  use_starttls?: boolean | number;
-  use_tls?: boolean | number;
-  use_ssl_for_outgoing?: boolean | number;
-  validate_ssl_certificate?: boolean | number;
-  validate_ssl_certificate_for_outgoing?: boolean | number;
-  attachment_limit?: string | number;
-  append_emails_to_sent_folder?: boolean | number;
-  sent_folder_name?: string;
-};
 
 const fixedFields: RenderField[] = [
   {
@@ -255,13 +230,17 @@ export const services: EmailService[] = [
   },
 ];
 
-export const emailIcon = {
+export const emailIcon: Record<EmailServiceName, string> = {
   GMail: LogoGmail,
   Outlook: LogoOutlook,
   Sendgrid: LogoSendgrid,
   SparkPost: LogoSparkpost,
   Yahoo: LogoYahoo,
   Yandex: LogoYandex,
+  // service names Frappe stores for these providers
+  "Outlook.com": LogoOutlook,
+  "Yahoo Mail": LogoYahoo,
+  "Yandex.Mail": LogoYandex,
   "Frappe Mail": LogoFrappeMail,
   Custom: "",
 };

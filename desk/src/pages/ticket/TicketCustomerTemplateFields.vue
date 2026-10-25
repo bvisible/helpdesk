@@ -1,46 +1,58 @@
 <template>
-  <div class="grid grid-cols-3 md:grid-cols-1 gap-4 border-b px-5 py-2.5">
-    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
-    <div class="space-y-1.5">
-      <span class="block text-sm text-ink-gray-7"> {{ __("Status") }} </span>
-      <span class="block break-words text-base font-medium text-ink-gray-9">
-        {{ ticket.data.status }}
+  <div class="space-y-2 px-6 py-3.5 border-b">
+    <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+    <div class="flex items-center gap-4">
+      <span class="w-[150px] shrink-0 text-p-sm text-ink-gray-5">{{
+        __("Status")
+      }}</span>
+      <span
+        class="flex-1 truncate rounded-4 border border-outline-gray-2 bg-surface-base px-2 py-1 text-p-sm text-ink-gray-9"
+      >
+        <!-- //// Neoffice — statusLabel() instead of the raw status: the default statuses get their own qualified msgid (see stores/ticketStatus.ts) -->
+        {{ statusLabel(ticket.data.status) }}
       </span>
     </div>
-    <!-- //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()") -->
-    <div class="space-y-1.5">
-      <span class="block text-sm text-ink-gray-7"> {{ __("Priority") }} </span>
-      <span class="block break-words text-base font-medium text-ink-gray-9">
+
+    <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+    <div class="flex items-center gap-4">
+      <span class="w-[150px] shrink-0 text-p-sm text-ink-gray-5">{{
+        __("Priority")
+      }}</span>
+      <span
+        class="flex-1 truncate rounded-4 border border-outline-gray-2 bg-surface-base px-2 py-1 text-p-sm text-ink-gray-9"
+      >
         {{ ticket.data.priority }}
       </span>
     </div>
-    <div v-for="data in slaData" :key="data.label" class="space-y-1.5">
-      <Tooltip :text="dayjs(data.value).long()">
-        <span class="block text-sm text-ink-gray-7">{{ data.title }}</span>
+
+    <div
+      v-for="data in slaData"
+      :key="data.title"
+      class="flex items-center gap-4"
+    >
+      <Tooltip :text="dayjs(data.value).format('LLLL')">
+        <span class="w-[150px] shrink-0 text-p-sm text-ink-gray-5">{{
+          data.title
+        }}</span>
       </Tooltip>
-      <span class="block break-words text-base font-medium text-ink-gray-9">
-        <Badge
-          v-if="data.showSla"
-          :label="data.label"
-          :theme="data.theme"
-          variant="outline"
-        />
-        <span v-else>
-          {{ dayjs.tz(data.value).fromNow() }}
-        </span>
+      <span class="flex-1 truncate text-p-sm" :class="data.textColor">
+        {{ __(data.label) }}
       </span>
     </div>
+
     <div
       v-for="field in customFields"
       :key="field.fieldname"
-      class="space-y-1.5"
+      class="flex items-center gap-4"
     >
-      <span class="block text-sm text-ink-gray-7">
-        {{ field.label }}
-      </span>
+      <span class="w-[150px] shrink-0 text-p-sm text-ink-gray-5">{{
+        __(field.label)
+      }}</span>
       <span
-        class="block break-words text-base font-medium text-ink-gray-9"
-        :class="!ticket.data[field.fieldname] && 'text-ink-gray-4'"
+        class="flex-1 truncate rounded-4 border border-outline-gray-2 bg-surface-base px-2 py-1 text-p-sm"
+        :class="
+          ticket.data[field.fieldname] ? 'text-ink-gray-9' : 'text-ink-gray-4'
+        "
       >
         {{ ticket.data[field.fieldname] || "—" }}
       </span>
@@ -49,66 +61,44 @@
 </template>
 
 <script setup lang="ts">
-import { dayjs } from "@/dayjs";
+import { dayjs } from "frappe-ui";
+import {
+  slaLabel,
+  slaTextColor,
+  useSLA,
+  type SLAMetric,
+} from "@/composables/useSLA";
 import { Field } from "@/types";
 import { computed, inject } from "vue";
 import { ITicket } from "./symbols";
-//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
+//// Neoffice — added: __() import for the wraps below
 import { __ } from "@/translation";
+//// Neoffice — added: statusLabel() for the status shown below
+import { useTicketStatusStore } from "@/stores/ticketStatus";
 
 const ticket = inject(ITicket);
+const { statusLabel } = useTicketStatusStore();
 
-const slaData = computed(() => {
-  const responseSla =
-    ticket.data.first_responded_on &&
-    dayjs(ticket.data.first_responded_on).isBefore(ticket.data.response_by)
-      ? "Fulfilled"
-      : "Failed";
+const { firstResponse, resolution } = useSLA(
+  computed(() => ({ doc: ticket.data }))
+);
 
-  //TODO: no resolution date for unclassified tickets, configurable?
-  //// Neoffice ▼▼▼ — wrapped in __() so the French catalogue can translate these SLA titles; upstream showed them in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
-  if (ticket.data.priority === "Unclassified") {
-    return [
-      {
-        //// Neoffice — see the block marker above: __() i18n wrap
-        title: __('Expected First Response'),
-        showSla: ticket.data.first_responded_on,
-        //// Neoffice — the badge printed the raw state ("Fulfilled" / "Failed"); translated at display, the value still drives the colour
-        label: responseSla === "Fulfilled" ? __("Fulfilled") : __("Failed"),
-        theme: responseSla === "Fulfilled" ? "green" : "red",
-        value: ticket.data.response_by,
-      },
-    ];
-  }
-
-  const resolutionSla =
-    ticket.data.resolution_date &&
-    dayjs(ticket.data.resolution_date).isBefore(ticket.data.resolution_by)
-      ? "Fulfilled"
-      : "Failed";
-
-  return [
-    {
-      //// Neoffice — see the block marker above: __() i18n wrap
-      title: __('Expected First Response'),
-      showSla: ticket.data.first_responded_on,
-      //// Neoffice — see above: state translated at display, the value still drives the colour
-      label: responseSla === "Fulfilled" ? __("Fulfilled") : __("Failed"),
-      theme: responseSla === "Fulfilled" ? "green" : "red",
-      value: ticket.data.response_by,
-    },
-    {
-      //// Neoffice — see the block marker above: __() i18n wrap
-      title: __('Expected Resolution'),
-      showSla: ticket.data.resolution_date,
-      //// Neoffice — see above: state translated at display, the value still drives the colour
-      label: resolutionSla === "Fulfilled" ? __("Fulfilled") : __("Failed"),
-      theme: resolutionSla === "Fulfilled" ? "green" : "red",
-      value: ticket.data.resolution_by,
-    },
-  ];
-  //// Neoffice ▲▲▲
-});
+const slaData = computed(() =>
+  [
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
+    { title: __("Expected First Response"), metric: firstResponse.value },
+    { title: __("Expected Resolution"), metric: resolution.value },
+  ]
+    .filter((row): row is { title: string; metric: SLAMetric } =>
+      Boolean(row.metric)
+    )
+    .map((row) => ({
+      title: row.title,
+      value: row.metric.dueBy,
+      label: slaLabel(row.metric),
+      textColor: slaTextColor(row.metric),
+    }))
+);
 
 const customFields = computed(() => {
   const _custom_fields = ticket.data.template.fields

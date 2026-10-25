@@ -1,14 +1,9 @@
 <template>
-  <!-- //// Neoffice — upstream wrote the dialog title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-  <Dialog
-    v-model="dialog"
-    :options="{
-      title: __('Edit response and resolution'),
-    }"
-  >
-    <template #body-content>
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+  <Dialog v-model:open="dialog" :title="__('Edit response and resolution')">
+    <template #default>
       <div class="flex flex-col gap-4">
-        <!-- //// Neoffice — labels wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <FormControl
           :type="'select'"
           size="sm"
@@ -20,23 +15,22 @@
           required
         />
         <div>
-          <!-- //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormLabel :label="__('Response time')" required />
-          <Popover class="mt-2">
-            <template #target="{ togglePopover }" class="w-max">
+          <Popover bare>
+            <template #trigger>
               <div
-                @click="togglePopover()"
-                class="w-full bg-surface-gray-2 rounded p-1.5 px-2 text-base text-ink-gray-8"
+                class="mt-2 w-full bg-surface-gray-2 rounded-4 p-1.5 px-2 text-base text-ink-gray-8"
               >
                 <div v-if="priorityData.response_time">
                   {{ formatTimeHMS(priorityData.response_time) }}
                 </div>
-                <!-- //// Neoffice — label wrapped in __() (41fb04e59 "fix(i18n): finish the SPA pass") -->
+                <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
                 <div v-else class="text-ink-gray-4">{{ __("Select time") }}</div>
               </div>
             </template>
-            <template #body>
-              <div class="absolute bg-surface-white top-2">
+            <template #default>
+              <div class="absolute bg-surface-base top-2">
                 <DurationPicker
                   v-model="priorityData.response_time"
                   :options="{ seconds: false }"
@@ -48,11 +42,10 @@
         <div>
           <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <FormLabel :label="__('Resolution time')" required />
-          <Popover class="mt-2">
-            <template #target="{ togglePopover }" class="w-max">
+          <Popover bare>
+            <template #trigger>
               <div
-                @click="togglePopover()"
-                class="w-full bg-surface-gray-2 rounded p-1.5 px-2 text-base text-ink-gray-8"
+                class="mt-2 w-full bg-surface-gray-2 rounded-4 p-1.5 px-2 text-base text-ink-gray-8"
               >
                 <div v-if="priorityData.resolution_time">
                   {{ formatTimeHMS(priorityData.resolution_time) }}
@@ -61,8 +54,8 @@
                 <div v-else class="text-ink-gray-4">{{ __("Select time") }}</div>
               </div>
             </template>
-            <template #body>
-              <div class="absolute bg-surface-white top-2">
+            <template #default>
+              <div class="absolute bg-surface-base top-2">
                 <DurationPicker
                   v-model="priorityData.resolution_time"
                   :options="{ seconds: false }"
@@ -81,13 +74,13 @@
     <template #actions>
       <div class="flex justify-between">
         <div>
-          <!-- //// Neoffice — upstream wrote both labels in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9) -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button
             variant="subtle"
             :theme="isConfirmingDelete ? 'red' : 'gray'"
             :label="isConfirmingDelete ? __('Confirm Delete') : __('Delete')"
             @click="deleteItem"
-            icon-left="trash-2"
+            icon-left="lucide-trash-2"
           />
         </div>
         <div class="flex gap-2">
@@ -98,7 +91,6 @@
             @click="dialog = false"
             :label="__('Cancel')"
           />
-          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
           <Button variant="solid" @click="onSave" :label="__('Save')" />
         </div>
       </div>
@@ -120,7 +112,7 @@ import { inject, ref } from "vue";
 import { formatTimeHMS } from "../utils";
 import DurationPicker from "@/components/frappe-ui/DurationPicker.vue";
 import { slaData } from "@/stores/sla";
-//// Neoffice — import added for the toast wraps below (same pass as 71a5669d9).
+//// Neoffice — added: __() import for the wraps below
 import { __ } from "@/translation";
 
 const dialog = defineModel<boolean>();
@@ -144,23 +136,20 @@ const priorityData = ref({
 });
 
 const validateForm = () => {
+  //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
   if (!priorityData.value.priority) {
-    //// Neoffice — upstream wrote these three toasts in plain English; wrapped so the French
-    //// catalogue reaches them (same pass as 71a5669d9)
     toast.error(__("Please select a priority"));
     return false;
   }
 
   const resolutionTime = parseInt(priorityData.value.resolution_time);
   if (isNaN(resolutionTime) || resolutionTime <= 0) {
-    //// Neoffice — see above
     toast.error(__("Resolution time must be a positive number"));
     return false;
   }
 
   const responseTime = parseInt(priorityData.value.response_time);
   if (isNaN(responseTime) || responseTime <= 0) {
-    //// Neoffice — see above
     toast.error(__("Response time must be a positive number"));
     return false;
   }

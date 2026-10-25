@@ -2,7 +2,7 @@
   <div v-show="showCallPopup" v-bind="$attrs">
     <div
       ref="callPopup"
-      class="fixed z-20 flex w-60 cursor-move select-none flex-col rounded-lg bg-surface-gray-7 p-4 !text-ink-gray-2 shadow-2xl"
+      class="fixed z-20 flex w-60 cursor-move select-none flex-col rounded-6 bg-surface-gray-10 p-4 !text-ink-gray-2 shadow-2xl"
       :style="style"
     >
       <div class="flex flex-row-reverse items-center gap-1">
@@ -19,8 +19,8 @@
           :class="onCall || calling ? '' : 'pulse'"
         />
         <div class="flex flex-col items-center justify-center gap-1">
-          <div class="text-xl font-medium">
-            <!-- //// Neoffice — upstream wrote the fallback in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
+          <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+          <div class="text-xl-medium">
             {{ contact?.full_name ?? __("Unknown") }}
           </div>
           <div class="text-sm text-ink-gray-5">
@@ -32,27 +32,30 @@
             {{ counterUp?.updatedTime }}
           </div>
         </CountUpTimer>
-        <!-- //// Neoffice — upstream wrote the status texts in plain English; wrapped so the French catalogue reaches them (same pass as 71a5669d9). The compared values ("initiating", "ringing") stay. -->
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <div v-if="!onCall" class="my-1 text-base">
           {{
-            callStatus == "initiating" ? __("Initiating call...")
-            : callStatus == "ringing" ? __("Ringing...")
-            : calling ? __("Calling...")
-            : __("Incoming call...")
+            callStatus == "initiating"
+              ? __("Initiating call...")
+              : callStatus == "ringing"
+              ? __("Ringing...")
+              : calling
+              ? __("Calling...")
+              : __("Incoming call...")
           }}
         </div>
         <div v-if="onCall" class="flex gap-2">
           <Button
-            :icon="muted ? 'mic-off' : 'mic'"
+            :icon="muted ? 'lucide-mic-off' : 'lucide-mic'"
             class="rounded-full"
             @click="toggleMute"
           />
           <Button
-            class="rounded-full bg-surface-red-5 hover:bg-surface-red-6"
+            class="rounded-full bg-surface-red-7 hover:bg-surface-red-8"
             @click="hangUpCall"
           >
             <template #icon>
-              <LucidePhone class="h-4 w-4 rotate-[135deg] text-ink-white" />
+              <LucidePhone class="h-4 w-4 rotate-[135deg] text-ink-base" />
             </template>
           </Button>
         </div>
@@ -64,7 +67,7 @@
             theme="red"
             :label="__('Cancel')"
             @click="cancelCall"
-            class="rounded-lg"
+            class="rounded-6"
           >
             <template #prefix>
               <LucidePhone class="h-4 w-4 rotate-[135deg]" />
@@ -78,7 +81,7 @@
             variant="solid"
             theme="green"
             :label="__('Accept')"
-            class="rounded-lg"
+            class="rounded-6"
             @click="acceptIncomingCall"
           >
             <template #prefix>
@@ -91,7 +94,7 @@
             variant="solid"
             theme="red"
             :label="__('Reject')"
-            class="rounded-lg"
+            class="rounded-6"
             @click="rejectIncomingCall"
           >
             <template #prefix>
@@ -104,7 +107,7 @@
   </div>
   <div
     v-show="showSmallCallWindow"
-    class="ms-2 mt-1 flex cursor-pointer select-none items-center justify-between gap-3 rounded-lg bg-surface-gray-7 px-2 py-1 text-base !text-ink-gray-2"
+    class="ms-2 mt-1 flex cursor-pointer select-none items-center justify-between gap-3 rounded-6 bg-surface-gray-10 px-2 py-1 text-base !text-ink-gray-2"
     @click="toggleCallWindow"
     v-bind="$attrs"
   >
@@ -114,8 +117,8 @@
         :label="contact?.full_name"
         class="relative flex !h-5 !w-5 items-center justify-center"
       />
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <div class="max-w-[120px] truncate">
-        <!-- //// Neoffice — fallback wrapped (see the call popup above) -->
         {{ contact?.full_name ?? __("Unknown") }}
       </div>
     </div>
@@ -135,8 +138,8 @@
       </Button>
     </div>
     <div v-else-if="calling" class="flex items-center gap-3">
+      <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
       <div class="my-1">
-        <!-- //// Neoffice — status texts wrapped (see the call popup above) -->
         {{ callStatus == "ringing" ? __("Ringing...") : __("Calling...") }}
       </div>
       <Button
@@ -177,12 +180,12 @@
 
 <script setup lang="ts">
 import { useTelephonyStore } from "@/stores/telephony";
+//// Neoffice — added: __() import for the wraps below
+import { __ } from "@/translation";
 import { Call, Device } from "@twilio/voice-sdk";
 import { useDraggable, useWindowSize } from "@vueuse/core";
 import { Avatar, call, toast } from "frappe-ui";
 import { inject, ref, watch } from "vue";
-//// Neoffice — import added for the toast wrap below (same pass as 71a5669d9).
-import { __ } from "@/translation";
 import LucidePhone from "~icons/lucide/phone";
 import CountUpTimer from "./CountUpTimer.vue";
 import MinimizeIcon from "./Icons/MinimizeIcon.vue";
@@ -426,7 +429,7 @@ async function makeOutgoingCall(number) {
   } else {
     onCallFailed && onCallFailed();
     log.value = "Unable to make call.";
-    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
+    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
     toast.error(__("Unable to make call."));
   }
 }

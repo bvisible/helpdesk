@@ -1,9 +1,9 @@
 <template>
-  <!-- //// Neoffice — upstream wrote the title in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9) -->
-  <Dialog v-model="showDialog" :options="{ title: __('Move To'), actions }">
-    <template #body-content>
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
+  <Dialog v-model:open="showDialog" :title="__('Move To')" :actions="actions">
+    <template #default>
       <div class="flex flex-col flex-1 gap-3">
-        <!-- //// Neoffice — placeholder and label wrapped in __(): upstream showed them in English on every non-English site -->
+        <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
         <Link
           ref="linkRef"
           class="w-full"
@@ -23,7 +23,7 @@
 import { ref, computed, watch, nextTick } from "vue";
 import { Dialog } from "frappe-ui";
 import Link from "@/components/frappe-ui/Link.vue";
-//// Neoffice — __ for the dialog action label below, which upstream left in English.
+//// Neoffice — added: __() import for the wraps below
 import { __ } from "@/translation";
 
 const emit = defineEmits(["move"]);
@@ -50,10 +50,10 @@ watch(showDialog, async (val) => {
   }, 300);
 });
 
+//// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
 const actions = [
   {
-    //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
-    label: __('Move'),
+    label: __("Move"),
     variant: "solid",
     onClick: () => {
       emit("move", category.value);

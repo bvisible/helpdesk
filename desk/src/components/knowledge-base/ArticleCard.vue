@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="flex flex-col gap-3 border border-outline-gray-modals rounded p-4 pb-2 cursor-pointer h-30 hover:bg-surface-gray-2 transition-all"
+    class="flex flex-col gap-3 border border-outline-elevation-2 rounded-4 p-4 pb-2 cursor-pointer h-30 hover:bg-surface-gray-2 transition-all"
     :to="{
       name: 'ArticlePublic',
       params: {
@@ -11,7 +11,7 @@
     <!-- Title and sub content -->
     <div class="flex gap-3 flex-1">
       <div class="flex flex-col gap-1.5 w-full">
-        <h5 class="text-base font-medium text-ink-gray-8 truncate">
+        <h5 class="text-base-medium text-ink-gray-8 truncate">
           {{ article.title }}
         </h5>
         <div class="text-p-sm text-ink-gray-5 line-clamp-2">
@@ -35,9 +35,8 @@
 </template>
 
 <script setup lang="ts">
-import { Avatar } from "frappe-ui";
+import { Avatar, dayjs } from "frappe-ui";
 import { Article } from "@/types";
-import { dayjs } from "@/dayjs";
 
 const props = defineProps<{
   article: Article;

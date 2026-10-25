@@ -1,17 +1,20 @@
 <template>
+  <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
   <img
     v-if="config.brandLogo"
     :src="config.brandLogo"
-    alt="Brand Logo"
+    :alt="__('Brand Logo')"
     class="h-8 w-8 shrink-0 object-cover"
   />
-  <HDLogo v-else class="h-8 w-8 shrink-0 rounded" />
+  <HDLogo v-else class="h-8 w-8 shrink-0 rounded-4" />
 </template>
 
 <script setup lang="ts">
 import HDLogo from "@/assets/logos/HDLogo.vue";
 
 import { useConfigStore } from "@/stores/config";
+//// Neoffice — added: __() import for the wraps below
+import { __ } from "@/translation";
 const config = useConfigStore();
 </script>
 

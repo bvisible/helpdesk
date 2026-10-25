@@ -2,7 +2,7 @@
 # See license.txt
 
 import frappe
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase
 
 from helpdesk.test_utils import make_team
 
@@ -86,7 +86,7 @@ def set_hd_settings(
         )
 
 
-class TestHDSavedReply(IntegrationTestCase):
+class TestHDSavedReply(FrappeTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

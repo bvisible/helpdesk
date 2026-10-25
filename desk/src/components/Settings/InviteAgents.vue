@@ -9,15 +9,15 @@
           type="textarea"
           :required="true"
           :label="__('Invite by email')"
-          placeholder="user1@example.com, user2@example.com, ..."
+          :placeholder="__('user1@example.com, user2@example.com, ...')"
           v-model="emails"
           :debounce="100"
           :description="__('Comma separated emails to invite.')"
         />
         <div class="space-y-1.5">
-          <label class="block text-xs text-ink-gray-5">
+          <label class="block text-base text-ink-gray-5">
             {{ __("Role") }}
-            <span class="text-ink-red-3 select-none" aria-hidden="true">*</span>
+            <span class="text-ink-red-6 select-none" aria-hidden="true">*</span>
           </label>
           <Select :options="roleOptions" v-model="role" required class="w-full">
             <template #suffix>
@@ -38,14 +38,14 @@
         >
       </form>
       <template v-if="pendingInvitesResource.data?.length">
-        <h2 class="mt-8 text-base font-semibold">
+        <h2 class="mt-8 text-base-semibold">
           {{ __("Pending Invites") }}
         </h2>
         <ul class="flex flex-col gap-[0.375rem] mt-3">
           <li
             v-for="invite in pendingInvitesResource.data"
             :key="invite.name"
-            class="flex items-center justify-between px-3 py-1 rounded-lg bg-surface-gray-2"
+            class="flex items-center justify-between px-3 py-1 rounded-6 bg-surface-gray-2"
           >
             <div class="text-base">
               <span class="text-ink-gray-8">
@@ -64,7 +64,7 @@
               >
                 <div>
                   <Button
-                    icon="x"
+                    icon="lucide-x"
                     variant="ghost"
                     :loading="
                       cancelInviteResource.loading &&
@@ -103,26 +103,28 @@
 </template>
 
 <script setup lang="ts">
+import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
 import { useAuthStore } from "@/stores/auth";
+import { capture } from "@/telemetry";
+import { __ } from "@/translation";
+import { handleInviteUserSuccess } from "@/utils";
 import {
+  Button,
   FormControl,
   Select,
-  Button,
   Tooltip,
   createResource,
   toast,
 } from "frappe-ui";
+import { useOnboarding } from "@framework/ui";
 import { computed, ref } from "vue";
-import { useOnboarding } from "frappe-ui/frappe";
 import LucideChevronDown from "~icons/lucide/chevron-down";
-import SettingsLayoutBase from "@/components/layouts/SettingsLayoutBase.vue";
-import { capture } from "@/telemetry";
-import { __ } from "@/translation";
 
 const authStore = useAuthStore();
 const { isAdmin, isManager } = authStore;
 
-const { updateOnboardingStep } = useOnboarding("helpdesk");
+// @ts-expect-error
+const { updateOnboardingStep } = useOnboarding("helpdesk") ?? {};
 
 const emails = ref("");
 
@@ -136,15 +138,11 @@ type RoleOption = {
 const roleToLabel = (role: Role) => {
   switch (role) {
     case "Agent":
-      //// Neoffice — upstream wrote the role labels in plain English; wrapped so the French catalogue
-      //// reaches them (same pass as 71a5669d9). The Role values stay the identity sent to the server.
-      return __("Agent");
+      return "Agent";
     case "Agent Manager":
-      //// Neoffice — label translated, value kept (see above)
-      return __("Manager");
+      return "Manager";
     case "System Manager":
-      //// Neoffice — label translated, value kept (see above)
-      return __("Admin");
+      return "Admin";
     default:
       const x: never = role;
       throw new Error(`Invalid role: ${x}`);
@@ -203,8 +201,6 @@ const resetInputValues = () => {
   role.value = roleOptions[0].value;
 };
 
-const emailsToStr = (emails: readonly string[]) => emails.join(", ");
-
 const inviteByEmailResource = createResource({
   url: "frappe.core.api.user_invitation.invite_by_email",
   onSuccess(
@@ -217,29 +213,9 @@ const inviteByEmailResource = createResource({
     >
   ) {
     resetInputValues();
-    let emailsStr = emailsToStr(data.invited_emails);
-    if (emailsStr.trim() !== "") {
-      //// Neoffice — upstream wrote these toasts in plain English (template literals); one msgid each
-      //// now, so the French catalogue reaches them (same pass as 71a5669d9)
-      toast.success(__("{0} invited successfully", emailsStr));
-    }
-    emailsStr = emailsToStr(data.disabled_user_emails);
-    if (emailsStr.trim() !== "") {
-      //// Neoffice — same as above: one msgid, {0} for the addresses
-      toast.info(__("{0} already present and disabled", emailsStr));
-    }
-    emailsStr = emailsToStr(data.pending_invite_emails);
-    if (emailsStr.trim() !== "") {
-      //// Neoffice — same as above: one msgid, {0} for the addresses
-      toast.info(__("{0} already invited", emailsStr));
-    }
-    emailsStr = emailsToStr(data.accepted_invite_emails);
-    if (emailsStr.trim() !== "") {
-      //// Neoffice — same as above: one msgid, {0} for the addresses
-      toast.info(__("{0} already present", emailsStr));
-    }
+    handleInviteUserSuccess(data);
     pendingInvitesResource.reload();
-    updateOnboardingStep("invite_your_team");
+    updateOnboardingStep?.("invite_agents");
     capture("agents_invited", {
       data: {
         role: role.value,
@@ -250,16 +226,23 @@ const inviteByEmailResource = createResource({
 
 const pendingInvitesResource = createResource({
   url: "frappe.core.api.user_invitation.get_pending_invitations",
-  params: { app_name: "helpdesk" },
+  params: {
+    app_name: "helpdesk",
+  },
   auto: true,
   method: "GET",
+  transform: (data) =>
+    data.filter((invite) =>
+      invite.roles.some((role) =>
+        ["Agent", "Agent Manager", "System Manager"].includes(role)
+      )
+    ),
 });
 
 const cancelInviteResource = createResource({
   url: "frappe.core.api.user_invitation.cancel_invitation",
   method: "PATCH",
   onSuccess() {
-    //// Neoffice — upstream wrote it in plain English; wrapped so the French catalogue reaches it (same pass as 71a5669d9)
     toast.success(__("Invitation cancelled successfully"));
     pendingInvitesResource.fetch();
   },

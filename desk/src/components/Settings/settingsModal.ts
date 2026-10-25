@@ -15,7 +15,13 @@ import ShieldCheck from "~icons/lucide/shield-check";
 import Briefcase from "~icons/lucide/briefcase";
 import AssignmentRules from "./Assignment Rules/AssignmentRules.vue";
 import Settings from "~icons/lucide/settings-2";
-import { FieldDependencyIcon, PhoneIcon } from "@/components/icons";
+import {
+  ERPNextSettingsIcon,
+  FieldDependencyIcon,
+  PhoneIcon,
+} from "@/components/icons";
+import ERPNextIntegrationSettings from "@/components/erpnext-integration/ERPNextIntegrationSettings.vue";
+import { FieldDependencyIcon, PhoneIcon, SlidersIcon } from "@/components/icons";
 import TelephonyPage from "./Telephony/TelephonyPage.vue";
 import { EmailNotifications } from "./EmailNotifications";
 import { __ } from "@/translation";
@@ -24,8 +30,9 @@ import { Avatar } from "frappe-ui";
 import { useAuthStore } from "@/stores/auth";
 import General from "./General/General.vue";
 import SettingsGear from "~icons/lucide/settings";
-import SavedReplyIcon from "../icons/SavedReplyIcon.vue";
+import ZapIcon from "~icons/lucide/zap";
 import ProfilePage from "./Profile/ProfilePage.vue";
+import Preferences from "./Preferences/Preferences.vue";
 
 export const showSettingsModal = ref(false);
 
@@ -46,7 +53,12 @@ export const tabs = computed(() => {
             size: "xs",
           }),
           component: markRaw(ProfilePage),
-        }
+        },
+        {
+          label: __("Preferences"),
+          icon: markRaw(SlidersIcon),
+          component: markRaw(Preferences),
+        },
       ],
     },
     {
@@ -118,7 +130,7 @@ export const tabs = computed(() => {
         },
         {
           label: __("Saved Replies"),
-          icon: markRaw(SavedReplyIcon),
+          icon: markRaw(ZapIcon),
           component: markRaw(SavedReplies),
         },
       ],
@@ -130,6 +142,12 @@ export const tabs = computed(() => {
           label: __("Telephony"),
           icon: markRaw(PhoneIcon),
           component: markRaw(TelephonyPage),
+        },
+        {
+          label: __("ERPNext"),
+          icon: markRaw(ERPNextSettingsIcon),
+          component: markRaw(ERPNextIntegrationSettings),
+          condition: () => auth.isAdmin || auth.isManager,
         },
       ],
     },
@@ -155,6 +173,7 @@ export const disableSettingModalOutsideClick = ref(false);
 
 type TabName =
   | "Profile"
+  | "Preferences"
   | "Email Accounts"
   | "Email Notifications"
   | "General"
@@ -166,6 +185,7 @@ type TabName =
   | "Assignment Rules"
   | "Field Dependencies"
   | "Telephony"
+  | "ERPNext"
   | "Saved Replies";
 
 export const setActiveSettingsTab = (tabName: TabName) => {

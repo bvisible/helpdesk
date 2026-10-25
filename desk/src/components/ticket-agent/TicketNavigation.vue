@@ -1,5 +1,5 @@
 <template>
-  <div
+  <!-- <div
     v-if="ticketsToNavigate.data?.length > 1"
     class="flex gap-1 rtl:flex-row-reverse"
   >
@@ -13,11 +13,14 @@
       :disabled="disableLeftCondition"
     >
       <Button
-        :icon="LucideChevronLeft"
         variant="ghost"
         :disabled="disableLeftCondition"
         @click="goToPreviousTicket()"
-      />
+      >
+        <template #icon>
+          <LucideChevronLeft class="size-4" />
+        </template>
+      </Button>
     </Tooltip>
     <!-- //// Neoffice — plain quotes instead of backticks (see above); same msgid -->
     <Tooltip
@@ -29,13 +32,16 @@
       :disabled="disableRightCondition"
     >
       <Button
-        :icon="LucideChevronRight"
         variant="ghost"
         :disabled="disableRightCondition"
         @click="goToNextTicket()"
-      />
+      >
+        <template #icon>
+          <LucideChevronRight class="size-4" />
+        </template>
+      </Button>
     </Tooltip>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -44,9 +50,7 @@ import {
   ticketsToNavigate,
   useTicketNavigation,
 } from "@/composables/useTicketNavigation";
-import { computed, onMounted, ref } from "vue";
-import LucideChevronLeft from "~icons/lucide/chevron-left";
-import LucideChevronRight from "~icons/lucide/chevron-right";
+import { computed, onMounted } from "vue";
 
 const {
   currentTicketIndex,
@@ -55,9 +59,6 @@ const {
   getNextTicket,
   getPreviousTicket,
 } = useTicketNavigation();
-
-const leftArrowRef = ref(null);
-const rightArrowRef = ref(null);
 
 const disableLeftCondition = computed(() => {
   if (ticketsToNavigate.loading || !ticketsToNavigate.data?.length) return true;

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="rounded-lg border border-outline-gray-2 p-3 flex flex-col gap-4 w-full"
+    class="rounded-6 border border-outline-gray-2 p-3 flex flex-col gap-4 w-full"
   >
     <template v-for="(condition, i) in props.conditions" :key="condition.field">
       <CFCondition
@@ -24,8 +24,8 @@
         <Button
           :disabled="props.disableAddCondition"
           :label="__('Add condition')"
-          icon-left="plus"
-          :icon-right="open ? 'chevron-up' : 'chevron-down'"
+          icon-left="lucide-plus"
+          :icon-right="open ? 'lucide-chevron-up' : 'lucide-chevron-down'"
         />
       </Dropdown>
     </div>
@@ -37,7 +37,7 @@ import { Button, Dropdown } from "frappe-ui";
 import { computed, onMounted } from "vue";
 import CFCondition from "./CFCondition.vue";
 import { filterableFields } from "./filterableFields";
-//// Neoffice — added: __() import for the i18n pass below (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
+//// Neoffice — added: __() import for the wraps below
 import { __ } from "@/translation";
 
 const props = defineProps({
@@ -77,11 +77,11 @@ const isGroupCondition = (condition) => {
   return Array.isArray(condition);
 };
 
+//// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site
 const dropdownOptions = computed(() => {
-  //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
   const options = [
     {
-      label: __('Add condition'),
+      label: __("Add condition"),
       onClick: () => {
         const conjunction = getConjunction();
         props.conditions.push(conjunction, ["", "", ""]);
@@ -89,9 +89,8 @@ const dropdownOptions = computed(() => {
     },
   ];
   if (props.level < 3) {
-    //// Neoffice — wrapped in __() so the French catalogue can translate it; upstream showed it in English on every non-English site (71a5669d9 "fix(i18n): 341 visible strings of the SPA never went through __()")
     options.push({
-      label: __('Add condition group'),
+      label: __("Add condition group"),
       onClick: () => {
         const conjunction = getConjunction();
         props.conditions.push(conjunction, [[]]);

@@ -11,7 +11,7 @@
 
 import frappe
 
-from helpdesk.overrides.customer import link_contact_to_hd_customer, sync_to_hd_customer
+from helpdesk.overrides.customer import sync_to_hd_customer
 
 
 def execute():
@@ -50,11 +50,16 @@ def _mirror_customers():
 
 
 def _link_contacts():
-    """Attach every contact that already knows its Customer.
+    """Make every contact that already knows its Customer a member of its HD Customer.
 
-    Reads the Dynamic Link table directly: loading 281 Contact documents to look at
-    one child table each is a minute of migrate for nothing.
+    Reads the Dynamic Link table directly (loading 281 Contact documents to look at one
+    child table each is a minute of migrate for nothing), then saves each HD Customer
+    ONCE with all its new members, since saving it grants the member role to the users.
+    Runs after upstream's `move_contact_dynamic_link_to_hd_customer`, which moved the
+    old Contact -> HD Customer links into the same child table.
     """
+    if not frappe.db.exists("DocType", "HD Customer Member"):
+        return
     rows = frappe.db.sql(
         """
         SELECT dl.parent AS contact, hd.name AS hd_customer
@@ -64,26 +69,29 @@ def _link_contacts():
           AND dl.parentfield = 'links'
           AND dl.link_doctype = 'Customer'
           AND NOT EXISTS (
-                SELECT 1 FROM `tabDynamic Link` existing
-                WHERE existing.parent = dl.parent
-                  AND existing.parenttype = 'Contact'
-                  AND existing.parentfield = 'links'
-                  AND existing.link_doctype = 'HD Customer'
-                  AND existing.link_name = hd.name
+                SELECT 1 FROM `tabHD Customer Member` m
+                WHERE m.parent = hd.name
+                  AND m.parenttype = 'HD Customer'
+                  AND m.contact_name = dl.parent
           )
         """,
         as_dict=True,
     )
-    linked = 0
+    by_customer = {}
     for row in rows:
+        by_customer.setdefault(row.hd_customer, []).append(row.contact)
+    linked = 0
+    for hd_customer_name, contacts in by_customer.items():
         try:
-            contact = frappe.get_doc("Contact", row.contact)
-            link_contact_to_hd_customer(contact, "patch")
-            linked += 1
+            hd_customer = frappe.get_doc("HD Customer", hd_customer_name)
+            added = [c for c in contacts if hd_customer.add_contact(c, "HD Customer")]
+            if added:
+                hd_customer.save(ignore_permissions=True)
+                linked += len(added)
         except Exception:
             frappe.log_error(
-                "HD Customer link skipped a contact",
-                f"Contact: {row.contact}\n\n{frappe.get_traceback()}",
+                "HD Customer link skipped a customer",
+                f"HD Customer: {hd_customer_name}\n\n{frappe.get_traceback()}",
             )
     frappe.db.commit()
-    print(f"helpdesk: linked {linked} contacts to their support customer")
+    print(f"helpdesk: made {linked} contacts members of their support customer")
