@@ -38,7 +38,7 @@ msgstr "(Voir tout)"
 
 #: desk/src/pages/SearchAgent.vue:120
 msgid "({0}s)"
-msgstr ""
+msgstr "({0} s)"
 
 #: helpdesk/helpdesk/doctype/hd_ticket_status/hd_ticket_status.py:114
 msgid "- Default Ticket Status<br>"
@@ -8513,7 +8513,7 @@ msgstr "Appel {0}"
 
 #: desk/src/utils.ts:119
 msgid "{0} M"
-msgstr ""
+msgstr "{0} mois"
 
 #: desk/src/components/Settings/InviteAgents.vue:234
 msgid "{0} already invited"
@@ -8709,3 +8709,1667 @@ msgstr "{0}an {1}mois"
 msgid "{} people reacted to your comment"
 msgstr "{} personnes ont réagi à votre commentaire"
 
+#: desk/src/components/command-palette/commands.ts:215
+msgid "(advanced search)"
+msgstr "(recherche avancée)"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:143
+msgid "1 action will be applied after sending the email"
+msgstr "1 action sera appliquée après l'envoi du courriel"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:84
+msgid "1 time"
+msgstr "1 fois"
+
+#: desk/src/pages/PersonaForm.vue:225
+msgid "A Frappe partner or consultant"
+msgstr "Un partenaire ou consultant Frappe"
+
+#: desk/src/pages/PersonaForm.vue:224
+msgid "A friend or colleague"
+msgstr "Un ami ou un collègue"
+
+#: helpdesk/extends/comment.py:42
+#, python-brace-format
+msgid "A ticket can have at most {0} pinned comments"
+msgstr "Un ticket peut avoir au plus {0} commentaires épinglés"
+
+#: helpdesk/helpdesk/doctype/hd_saved_reply/hd_saved_reply.py:110
+msgid "actions must be a list of objects"
+msgstr "Le champ actions doit être une liste d'objets"
+
+#: desk/src/components/ticket-agent/AssignTo.vue:456
+msgid "Active now"
+msgstr "Actif maintenant"
+
+#: desk/src/components/customer/ContactCard.vue:108
+msgid "active ticket"
+msgstr "ticket actif"
+
+#: desk/src/components/customer/ContactCard.vue:108
+msgid "active tickets"
+msgstr "tickets actifs"
+
+#. Description of the 'Category' (Select) field in DocType 'HD Agent Status'
+#: helpdesk/helpdesk/doctype/hd_agent_status/hd_agent_status.json:35
+msgid ""
+"Active: The agent is available and working.<br>\n"
+"Away: The agent is temporarily unreachable.<br>\n"
+"Unavailable: The agent is off and unavailable."
+msgstr ""
+"Actif : l'agent est disponible et au travail.<br>\n"
+"Absent : l'agent est temporairement injoignable.<br>\n"
+"Indisponible : l'agent est hors service et indisponible."
+
+#: desk/src/components/Questionnaire.vue:266
+msgid "Add a few words so we can continue"
+msgstr "Ajoutez quelques mots pour que nous puissions continuer"
+
+#: desk/src/components/Settings/SavedReplies/components/ActionsEditor.vue:87
+msgid "Add action"
+msgstr "Ajouter une action"
+
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:100
+#: desk/src/components/command-palette/ticketCommands.ts:113
+msgid "Add comment"
+msgstr "Ajouter un commentaire"
+
+#: desk/src/components/view-controls/filter/Filter.vue:90
+msgid "Add filter"
+msgstr "Ajouter un filtre"
+
+#: desk/src/components/view-controls/filter/Filter.vue:92
+msgid "Add Filter (A)"
+msgstr "Ajouter un filtre (A)"
+
+#: desk/src/components/view-controls/filter/Filter.vue:121
+msgid "Add Filter..."
+msgstr "Ajouter un filtre..."
+
+#: desk/src/components/EmailEditor.vue:40
+#: desk/src/components/EmailEditor.vue:80
+#: desk/src/components/EmailEditor.vue:98
+msgid "Add to recipients"
+msgstr "Ajouter aux destinataires"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:58
+msgid "Agent replies"
+msgstr "Réponses de l'agent"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:262
+msgid "Agent reply"
+msgstr "Réponse de l'agent"
+
+#. Label of a Data field in DocType 'HD Agent Status'
+#. Label of a Section Break field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_agent_status/hd_agent_status.json:22
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:241
+msgid "Agent Status"
+msgstr "Statut de l'agent"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:70
+msgid "Agents involved"
+msgstr "Agents impliqués"
+
+#: desk/src/components/command-palette/ticketCommands.ts:362
+#, python-brace-format
+msgid "Already assigned to {0}"
+msgstr "Déjà assigné à {0}"
+
+#: desk/src/pages/PersonaForm.vue:226
+msgid "An event or conference"
+msgstr "Un événement ou une conférence"
+
+#: desk/src/pages/PersonaForm.vue:218
+msgid "Another Frappe product (ERPNext, Frappe Cloud, etc.)"
+msgstr "Un autre produit Frappe (ERPNext, Frappe Cloud, etc.)"
+
+#: desk/src/components/Settings/SavedReplies/components/ActionsEditor.vue:6
+msgid "Applied to the ticket when this reply is sent"
+msgstr "Appliquée au ticket lors de l'envoi de cette réponse"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:210
+#, python-brace-format
+msgid "Applied {0} saved reply action(s)"
+msgstr "{0} action(s) de la réponse enregistrée appliquée(s)"
+
+#: desk/src/components/SavedRepliesSelectorModal.vue:297
+msgid "Applies 1 action when sent"
+msgstr "Applique 1 action à l'envoi"
+
+#: desk/src/components/SavedRepliesSelectorModal.vue:298
+#, python-brace-format
+msgid "Applies {0} actions when sent"
+msgstr "Applique {0} actions à l'envoi"
+
+#: desk/src/components/EmailEditor.vue:513
+#, python-brace-format
+msgid "Applying \"{0}\" discards the reply you have now, along with its {1} action(s)."
+msgstr "Appliquer « {0} » supprime la réponse en cours, ainsi que ses {1} action(s)."
+
+#: desk/src/pages/contact/Contact.vue:101
+msgid "Are you sure you want to delete this contact? The contact will be permanently deleted and unlinked from any associated customers and tickets."
+msgstr "Voulez-vous vraiment supprimer ce contact ? Le contact sera supprimé définitivement et détaché de tous les clients et tickets associés."
+
+#: desk/src/pages/customer/Customer.vue:93
+msgid "Are you sure you want to delete this customer? The reference to this customer will be removed from all the related tickets."
+msgstr "Voulez-vous vraiment supprimer ce client ? La référence à ce client sera retirée de tous les tickets concernés."
+
+#: desk/src/components/customer/ContactCard.vue:287
+msgid "Are you sure you want to remove this contact from the customer?"
+msgstr "Voulez-vous vraiment retirer ce contact du client ?"
+
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:74
+msgid "Assign agent"
+msgstr "Assigner un agent"
+
+#: desk/src/components/ticket-agent/BulkAssignModal.vue:13
+#, python-brace-format
+msgid "Assign {0} tickets"
+msgstr "Assigner {0} tickets"
+
+#: desk/src/components/ticket-agent/BulkAssignModal.vue:53
+#, python-brace-format
+msgid "Assigned {0} ticket(s)"
+msgstr "{0} ticket(s) assigné(s)"
+
+#: desk/src/pages/PersonaForm.vue:201
+msgid "Assigning tickets"
+msgstr "Assignation des tickets"
+
+#: desk/src/composables/contact.ts:227
+msgid "At least one email address is required"
+msgstr "Au moins une adresse courriel est requise"
+
+#: desk/src/composables/contact.ts:236
+msgid "At least one email address must be marked as primary"
+msgstr "Au moins une adresse courriel doit être marquée comme principale"
+
+#: helpdesk/overrides/email_account.py:150
+#, python-brace-format
+msgid "Auto-reply received from {0}."
+msgstr "Réponse automatique reçue de {0}."
+
+#. Label of a Check field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:578
+msgid "Auto-set customer from contact"
+msgstr "Définir automatiquement le client à partir du contact"
+
+#. Description of the 'Auto-set customer from contact' (Check) field in DocType
+#. 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:575
+msgid "Automatically set the customer on a ticket based on the contact's linked customer(s)"
+msgstr "Définit automatiquement le client d'un ticket en fonction du ou des clients liés au contact"
+
+#. Label of a Link field in DocType 'HD Agent'
+#: helpdesk/helpdesk/doctype/hd_agent/hd_agent.json:60
+msgid "Availability Changed By"
+msgstr "Disponibilité modifiée par"
+
+#. Label of a Datetime field in DocType 'HD Agent'
+#: helpdesk/helpdesk/doctype/hd_agent/hd_agent.json:54
+msgid "Availability Changed On"
+msgstr "Disponibilité modifiée le"
+
+#: desk/src/components/ticket-agent/analytics/AnalyticsMetricCards.vue:40
+msgid "Average time the customer took to reply to an agent"
+msgstr "Temps moyen mis par le client pour répondre à un agent"
+
+#: desk/src/components/ticket-agent/analytics/AnalyticsMetricCards.vue:35
+msgid "Average time to reply after a customer message"
+msgstr "Temps moyen de réponse après un message du client"
+
+#: desk/src/components/ticket-agent/analytics/AnalyticsMetricCards.vue:33
+msgid "Avg. agent response gap"
+msgstr "Écart moyen de réponse de l'agent"
+
+#: desk/src/components/ticket-agent/analytics/AnalyticsMetricCards.vue:38
+msgid "Avg. customer response gap"
+msgstr "Écart moyen de réponse du client"
+
+#: helpdesk/api/dashboard.py:274
+msgid "Avg. feedback rating for tickets resolved in this period"
+msgstr "Note moyenne des tickets résolus sur cette période"
+
+#: desk/src/components/customer/TicketStats.vue:13
+#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+msgid "Avg. Feedback Received"
+msgstr "Évaluation moyenne reçue"
+
+#: desk/src/components/customer/TicketStats.vue:49
+#: desk/src/pages/home/Home.vue:316
+#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+msgid "Avg. First Response Time"
+msgstr "Délai moyen de première réponse"
+
+#: desk/src/components/customer/TicketStats.vue:62
+#: desk/src/pages/home/Home.vue:328
+#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+msgid "Avg. Resolution Time"
+msgstr "Délai moyen de résolution"
+
+#: desk/src/pages/home/Home.vue:304
+#: desk/src/pages/home/components/AvgTimeMetrics.vue:5
+msgid "Avg. Time Metrics"
+msgstr "Indicateurs de délais moyens"
+
+#: desk/src/components/ticket-agent/TicketContact.vue:38
+#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+msgid "Call contact"
+msgstr "Appeler le contact"
+
+#: desk/src/components/customer/InviteContactDialog.vue:135
+msgid "Can raise tickets on behalf of the org and manage the tickets they raised."
+msgstr "Peut créer des tickets au nom de l'organisation et gérer les tickets qu'il a créés."
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:21
+msgid "can see every ticket of their company and manage its contacts."
+msgstr "peut voir tous les tickets de son entreprise et gérer ses contacts."
+
+#: desk/src/components/customer/InviteContactDialog.vue:138
+msgid "Can view all tickets raised by the org and assign other members as managers."
+msgstr "Peut voir tous les tickets créés par l'organisation et désigner d'autres membres comme gestionnaires."
+
+#: desk/src/components/customer/ContactCard.vue:22
+msgid "Can view tickets raised by all contacts of the customer."
+msgstr "Peut voir les tickets créés par tous les contacts du client."
+
+#: desk/src/components/view-controls/filter/FilterValueEditor.vue:206
+#, python-brace-format
+msgid "Change operator ({0})"
+msgstr "Changer l'opérateur ({0})"
+
+#: desk/src/components/command-palette/ticketCommands.ts:94
+msgid "Change type"
+msgstr "Changer le type"
+
+#: desk/src/components/view-controls/filter/Filter.vue:205
+msgid "Choose a field"
+msgstr "Choisir un champ"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:33
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:35
+msgid "Clear all actions"
+msgstr "Effacer toutes les actions"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:639
+msgid "clock resumes when the ticket reopens"
+msgstr "le chronomètre reprend à la réouverture du ticket"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:621
+msgid "clock stopped"
+msgstr "chronomètre arrêté"
+
+#: desk/src/components/view-controls/filter/FilterValueEditor.vue:134
+msgid "Comma separated values"
+msgstr "Valeurs séparées par des virgules"
+
+#: desk/src/components/ticket-agent/timeline/TimelineCommentRow.vue:159
+msgid "Comment deleted"
+msgstr "Commentaire supprimé"
+
+#: desk/src/pages/PersonaForm.vue:236
+msgid "Connect my support email"
+msgstr "Connecter mon courriel de support"
+
+#: desk/src/composables/contact.ts:295
+msgid "Contact created and invited"
+msgstr "Contact créé et invité"
+
+#: desk/src/composables/contact.ts:516
+msgid "Contact has no email address to invite"
+msgstr "Le contact n'a pas d'adresse courriel à inviter"
+
+#: desk/src/components/customer/ContactCard.vue:305
+msgid "Contact removed successfully"
+msgstr "Contact retiré avec succès"
+
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:280
+#, python-brace-format
+msgid "Contact {0} has no email address"
+msgstr "Le contact {0} n'a pas d'adresse courriel"
+
+#: desk/src/components/customer/InviteContactDialog.vue:172
+msgid "Contacts added successfully"
+msgstr "Contacts ajoutés avec succès"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:5
+msgid "Conversation Summary"
+msgstr "Résumé de la conversation"
+
+#: desk/src/components/command-palette/ticketCommands.ts:137
+msgid "Copy ticket ID"
+msgstr "Copier l'ID du ticket"
+
+#: desk/src/components/command-palette/ticketCommands.ts:147
+msgid "Copy ticket link"
+msgstr "Copier le lien du ticket"
+
+#: desk/src/components/CommentTextEditor.vue:241
+msgid "Could not add the comment"
+msgstr "Impossible d'ajouter le commentaire"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:230
+msgid "Could not apply actions from the saved reply."
+msgstr "Impossible d'appliquer les actions de la réponse enregistrée."
+
+#: desk/src/components/ticket/TicketMergeModal.vue:218
+msgid "Could not confirm the merge. Reloading the ticket."
+msgstr "Impossible de confirmer la fusion. Rechargement du ticket."
+
+#: desk/src/components/ticket-agent/timeline/TimelineCommentRow.vue:160
+msgid "Could not delete the comment"
+msgstr "Impossible de supprimer le commentaire"
+
+#: desk/src/pages/ticket/TicketCustomer.vue:186
+msgid "Could not load the ticket."
+msgstr "Impossible de charger le ticket."
+
+#: helpdesk/patches/move_contact_dynamic_link_to_hd_customer.py:75
+#, python-brace-format
+msgid "Could not migrate contacts for {0} customer(s): {1}. Fix the underlying data and re-run the patch."
+msgstr "Impossible de migrer les contacts de {0} client(s) : {1}. Corrigez les données sous-jacentes puis relancez le correctif."
+
+#: helpdesk/overrides/email_account.py:198
+msgid "Could not note parked mail on ticket"
+msgstr "Impossible de noter le courriel mis en attente sur le ticket"
+
+#: desk/src/components/command-palette/savedReplyCommands.ts:127
+msgid "Could not open the reply box"
+msgstr "Impossible d'ouvrir la zone de réponse"
+
+#: desk/src/components/ticket-agent/timeline/TimelineCommentRow.vue:224
+msgid "Could not pin the comment"
+msgstr "Impossible d'épingler le commentaire"
+
+#: desk/src/components/EmailEditor.vue:574
+msgid "Could not send the reply"
+msgstr "Impossible d'envoyer la réponse"
+
+#: desk/src/stores/agentStatus.ts:127
+msgid "Could not update status."
+msgstr "Impossible de mettre à jour le statut."
+
+#: desk/src/components/contact/NewContactDialog.vue:5
+msgid "Create Contact"
+msgstr "Créer un contact"
+
+#: desk/src/pages/PersonaForm.vue:238
+msgid "Create my first ticket"
+msgstr "Créer mon premier ticket"
+
+#: desk/src/components/command-palette/commands.ts:225
+#, python-brace-format
+msgid "Create ticket \"{0}\""
+msgstr "Créer le ticket « {0} »"
+
+#: desk/src/components/customer/NewCustomerDialog.vue:147
+msgid "Customer created"
+msgstr "Client créé"
+
+#: desk/src/components/customer/NewCustomerDialog.vue:146
+#, python-brace-format
+msgid "Customer created · invitation sent to {0}"
+msgstr "Client créé · invitation envoyée à {0}"
+
+#: desk/src/components/customer/ContactCard.vue:169
+#: desk/src/components/customer/InviteContactDialog.vue:131
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:18
+msgid "Customer Manager"
+msgstr "Gestionnaire client"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:261
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:559
+msgid "Customer message"
+msgstr "Message du client"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:55
+msgid "Customer messages"
+msgstr "Messages du client"
+
+#: desk/src/components/customer/EditCustomerDialog.vue:119
+msgid "Customer name cannot be empty"
+msgstr "Le nom du client ne peut pas être vide"
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:4
+msgid "Customer portal permissions have changed"
+msgstr "Les droits du portail client ont changé"
+
+#: desk/src/components/layouts/CustomerPortalPermissionBanner.vue:10
+msgid "Customer portal update"
+msgstr "Mise à jour du portail client"
+
+#: desk/src/components/customer/EditCustomerDialog.vue:136
+#: desk/src/components/customer/EditCustomerDialog.vue:150
+msgid "Customer updated"
+msgstr "Client mis à jour"
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:82
+msgid "Customers are in sync"
+msgstr "Les clients sont synchronisés"
+
+#: desk/src/pages/dashboard/Dashboard.vue:329
+msgid "Daily tag volume will appear here once tickets are tagged."
+msgstr "Le volume quotidien des étiquettes apparaîtra ici dès que des tickets seront étiquetés."
+
+#: helpdesk/api/dashboard_tags.py:75
+#, python-brace-format
+msgid "Daily volume of the top {0} tags"
+msgstr "Volume quotidien des {0} étiquettes les plus utilisées"
+
+#. Label of a Link field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:247
+msgid "Default agent status"
+msgstr "Statut d'agent par défaut"
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:32
+msgid "Default SLA turned off"
+msgstr "SLA par défaut désactivé"
+
+#: desk/src/components/ticket-agent/TicketSLA.vue:134
+msgid "Delay (total)"
+msgstr "Délai (total)"
+
+#: desk/src/components/ticket-agent/TicketSLA.vue:126
+msgid "Delay (working hours)"
+msgstr "Délai (heures ouvrées)"
+
+#: desk/src/pages/customer/Customer.vue:91
+msgid "Delete Customer"
+msgstr "Supprimer le client"
+
+#: desk/src/components/DeleteWithTicketsDialog.vue:10
+#, python-brace-format
+msgid "Delete {0} ticket(s)"
+msgstr "Supprimer {0} ticket(s)"
+
+#: desk/src/components/ticket-agent/timeline/TimelineCommentRow.vue:158
+msgid "Deleting comment"
+msgstr "Suppression du commentaire"
+
+#: helpdesk/overrides/email_account.py:157
+#, python-brace-format
+msgid "Delivery failed: the reply to this ticket could not be delivered to {0}."
+msgstr "Échec de l'envoi : la réponse à ce ticket n'a pas pu être remise à {0}."
+
+#: helpdesk/overrides/email_account.py:161
+msgid "Delivery failed: the reply to this ticket could not be delivered."
+msgstr "Échec de l'envoi : la réponse à ce ticket n'a pas pu être remise."
+
+#: desk/src/components/view-controls/filter/filter.ts:316
+msgid "doesn't contain"
+msgstr "ne contient pas"
+
+#: desk/src/components/ticket-agent/TicketSLA.vue:103
+msgid "Due by"
+msgstr "À traiter avant le"
+
+#: helpdesk/helpdesk/doctype/hd_saved_reply/hd_saved_reply.py:71
+#, python-brace-format
+msgid "Duplicate action: {0}"
+msgstr "Action en double : {0}"
+
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:80
+msgid "Duplicate contacts are not allowed"
+msgstr "Les contacts en double ne sont pas autorisés"
+
+#: desk/src/components/Settings/General/components/TicketSettings.vue:178
+msgid "e.g. 30"
+msgstr "p. ex. 30"
+
+#: desk/src/pages/PersonaForm.vue:105
+msgid "e.g. Acme Inc."
+msgstr "p. ex. Acme Inc."
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:10
+msgid "Earlier, every contact could see all the tickets of their company. Now, contacts only see the tickets they raised themselves."
+msgstr "Auparavant, chaque contact voyait tous les tickets de son entreprise. Désormais, les contacts ne voient que les tickets qu'ils ont eux-mêmes créés."
+
+#: desk/src/components/contact/EditContactDialog.vue:8
+msgid "Edit Contact"
+msgstr "Modifier le contact"
+
+#: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:6
+msgid "Edit Holiday"
+msgstr "Modifier le jour férié"
+
+#. Description of the 'Email ID' (Data) field in DocType 'HD Customer'
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.json:92
+msgid "Email address of the primary contact"
+msgstr "Adresse courriel du contact principal"
+
+#: desk/src/components/customer/NewCustomerDialog.vue:188
+msgid "Enter the primary contact's email"
+msgstr "Saisissez le courriel du contact principal"
+
+#: desk/src/components/customer/NewCustomerDialog.vue:184
+msgid "Enter the primary contact's first name"
+msgstr "Saisissez le prénom du contact principal"
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:66
+msgid "ERPNext app"
+msgstr "Application ERPNext"
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:205
+#: helpdesk/helpdesk/doctype/erpnext_hd_settings/erpnext_hd_settings.py:20
+msgid "ERPNext is not installed on your site. Please install ERPNext to enable this setting"
+msgstr "ERPNext n'est pas installé sur votre site. Installez ERPNext pour activer ce réglage"
+
+#: desk/src/components/Settings/Holiday/utils.ts:25
+#, python-brace-format
+msgid "Every {0} week"
+msgstr "Toutes les {0} semaine(s)"
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:73
+msgid "Existing contacts are being made customer managers in the background"
+msgstr "Les contacts existants deviennent gestionnaires du client en arrière-plan"
+
+#: desk/src/components/customer/InviteContactDialog.vue:24
+msgid "Existing users join instantly. Others get an invite."
+msgstr "Les utilisateurs existants rejoignent immédiatement. Les autres reçoivent une invitation."
+
+#: desk/src/pages/PersonaForm.vue:240
+msgid "Explore the product first"
+msgstr "Commencer par explorer le produit"
+
+#: desk/src/components/customer/TicketStats.vue:39
+#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+msgid "Failed SLAs"
+msgstr "SLA non respectés"
+
+#: desk/src/components/ticket-agent/analytics/TicketAnalyticsTab.vue:21
+#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+msgid "Failed to load analytics"
+msgstr "Impossible de charger les analyses"
+
+#: ⁨desk/src/components/Settings/Assignment Rules/AssignmentRuleListItem.vue⁩:242
+#, python-brace-format
+msgid "Failed to update assignment rule {0}."
+msgstr "Impossible de mettre à jour la règle d'assignation {0}."
+
+#: desk/src/components/Settings/FieldDependency/FieldDependencyList.vue:194
+msgid "Failed to update field dependency."
+msgstr "Impossible de mettre à jour la dépendance du champ."
+
+#: desk/src/components/command-palette/tagCommands.ts:52
+#: desk/src/components/tag/Tags.vue:296
+msgid "Failed to update tags"
+msgstr "Impossible de mettre à jour les étiquettes"
+
+#: desk/src/components/contact/ContactFeedback.vue:20
+msgid "Feedback from this contact will appear here once available."
+msgstr "Les évaluations de ce contact apparaîtront ici dès qu'elles seront disponibles."
+
+#: desk/src/components/Settings/Holiday/utils.ts:17
+msgid "fifth"
+msgstr "cinquième"
+
+#: desk/src/components/command-palette/ticketListCommands.ts:41
+msgid "Filter by priority"
+msgstr "Filtrer par priorité"
+
+#: desk/src/components/command-palette/ticketListCommands.ts:31
+msgid "Filter by status"
+msgstr "Filtrer par statut"
+
+#: desk/src/pages/PersonaForm.vue:187
+msgid "Finding past conversations"
+msgstr "Recherche des conversations précédentes"
+
+#: desk/src/components/Settings/Holiday/utils.ts:13
+msgid "first"
+msgstr "premier"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:329
+msgid "First response due"
+msgstr "Première réponse à fournir avant"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:357
+msgid "First response overdue"
+msgstr "Première réponse en retard"
+
+#: desk/src/components/Settings/Holiday/utils.ts:16
+msgid "fourth"
+msgstr "quatrième"
+
+#: desk/src/components/ticket-agent/TicketSLA.vue:143
+msgid "Fulfilled in"
+msgstr "Respecté en"
+
+#: desk/src/components/ticket/TicketAgentDetails.vue:133
+#, python-brace-format
+msgctxt "s"
+msgid "Fulfilled in {0}"
+msgstr "Respecté en {0}"
+
+#: desk/src/components/ticket-agent/timeline/PinnedCommentsBar.vue:14
+#, python-brace-format
+msgid "Go to pinned comment {0}"
+msgstr "Aller au commentaire épinglé {0}"
+
+#: desk/src/components/command-palette/commands.ts:57
+#, python-brace-format
+msgid "Go to ticket #{0}"
+msgstr "Aller au ticket #{0}"
+
+#: desk/src/components/customer/ContactCard.vue:212
+msgid "Grant Manager Access"
+msgstr "Accorder l'accès gestionnaire"
+
+#: desk/src/components/view-controls/filter/filter.ts:240
+msgid "Greater Than or Equal To"
+msgstr "Supérieur ou égal à"
+
+#: desk/src/components/view-controls/filter/filter.ts:324
+msgid "greater than or equal to"
+msgstr "supérieur ou égal à"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:26
+msgid "Hide actions"
+msgstr "Masquer les actions"
+
+#: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:153
+#: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:171
+msgid "Holiday already exists"
+msgstr "Ce jour férié existe déjà"
+
+#: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:130
+#, python-brace-format
+msgid "Holiday date must be between {0} and {1}"
+msgstr "La date du jour férié doit être comprise entre {0} et {1}"
+
+#: desk/src/pages/PersonaForm.vue:109
+msgid "How big is your support team?"
+msgstr "Quelle est la taille de votre équipe de support ?"
+
+#: desk/src/pages/PersonaForm.vue:210
+msgid "How did you hear about Frappe Helpdesk?"
+msgstr "Comment avez-vous entendu parler de Frappe Helpdesk ?"
+
+#: desk/src/pages/PersonaForm.vue:145
+msgid "How do your customers currently contact your support team?"
+msgstr "Comment vos clients contactent-ils actuellement votre équipe de support ?"
+
+#: desk/src/pages/PersonaForm.vue:163
+msgid "How would you like your customers to create support tickets in Frappe Helpdesk?"
+msgstr "Comment souhaitez-vous que vos clients créent des tickets de support dans Frappe Helpdesk ?"
+
+#: desk/src/pages/PersonaForm.vue:173
+msgid "I'm not sure yet"
+msgstr "Je ne sais pas encore"
+
+#: desk/src/pages/PersonaForm.vue:156
+msgid "In person"
+msgstr "En personne"
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:59
+msgid "Install the"
+msgstr "Installez l'"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:60
+msgid "Internal comments"
+msgstr "Commentaires internes"
+
+#: desk/src/components/Settings/SavedReplies/components/ActionValue.vue:78
+msgid "Internal note. Type / for commands"
+msgstr "Note interne. Tapez / pour afficher les commandes"
+
+#: helpdesk/helpdesk/doctype/hd_saved_reply/hd_saved_reply.py:161
+#, python-brace-format
+msgid "Invalid action {0}: {1} does not exist or is disabled"
+msgstr "Action invalide {0} : {1} n'existe pas ou est désactivé"
+
+#: helpdesk/helpdesk/doctype/hd_saved_reply/hd_saved_reply.py:68
+#, python-brace-format
+msgid "Invalid action: {0}"
+msgstr "Action invalide : {0}"
+
+#: helpdesk/helpdesk/doctype/hd_agent/hd_agent.py:66
+msgid "Invalid availability"
+msgstr "Disponibilité invalide"
+
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:267
+#, python-brace-format
+msgid "Invalid role {0}"
+msgstr "Rôle invalide {0}"
+
+#: desk/src/composables/contact.ts:495
+msgid "Invitation email resent successfully"
+msgstr "Courriel d'invitation renvoyé avec succès"
+
+#: desk/src/pages/contact/Contact.vue:253
+msgid "Invitation expired. Resend to invite again."
+msgstr "Invitation expirée. Renvoyez-la pour inviter à nouveau."
+
+#: desk/src/composables/contact.ts:528
+msgid "Invitation sent"
+msgstr "Invitation envoyée"
+
+#: desk/src/components/customer/InviteContactDialog.vue:2
+msgid "Invite Contact"
+msgstr "Inviter le contact"
+
+#: desk/src/pages/PersonaForm.vue:239
+msgid "Invite my support team"
+msgstr "Inviter mon équipe de support"
+
+#: desk/src/pages/contact/Contact.vue:259
+msgid "Invite sent. Waiting for the user to accept."
+msgstr "Invitation envoyée. En attente d'acceptation par l'utilisateur."
+
+#: desk/src/components/EmailMultiSelect.vue:142
+#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+msgid "Invite via email"
+msgstr "Inviter par courriel"
+
+#: desk/src/components/customer/InviteContactDialog.vue:57
+msgid "Invited by"
+msgstr "Invité par"
+
+#. Label of a Check field in DocType 'HD Customer Member'
+#: helpdesk/helpdesk/doctype/hd_customer_member/hd_customer_member.json:18
+msgid "Is Manager"
+msgstr "Est gestionnaire"
+
+#: desk/src/pages/PersonaForm.vue:197
+msgid "Keeping track of customer requests"
+msgstr "Suivre les demandes des clients"
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:23
+msgid "Learn more in the"
+msgstr "En savoir plus dans la"
+
+#: desk/src/components/view-controls/filter/filter.ts:239
+msgid "Less Than or Equal To"
+msgstr "Inférieur ou égal à"
+
+#: desk/src/components/view-controls/filter/filter.ts:325
+msgid "less than or equal to"
+msgstr "inférieur ou égal à"
+
+#: desk/src/pages/PersonaForm.vue:153 desk/src/pages/PersonaForm.vue:172
+msgid "Live chat"
+msgstr "Chat en direct"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:275
+msgid "Longest wait"
+msgstr "Attente la plus longue"
+
+#. Description of the 'Rank' (Int) field in DocType 'HD Service Level
+#. Agreement'
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.json:110
+msgid "Lower rank is applied first. 0 means unranked, and is applied last."
+msgstr "Le rang le plus bas est appliqué en premier. 0 signifie sans rang, et il est appliqué en dernier."
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:34
+msgid "Make all existing contacts customer managers"
+msgstr "Faire de tous les contacts existants des gestionnaires du client"
+
+#: desk/src/components/telephony/CallUI.vue:7
+msgid "Make call"
+msgstr "Passer un appel"
+
+#: desk/src/components/ViewModal.vue:51
+msgid "Make it public"
+msgstr "Rendre public"
+
+#: desk/src/components/Settings/FieldDependency/FieldDependencyCriteria.vue:47
+#, python-brace-format
+msgid "Make {0} mandatory if {1} is set to"
+msgstr "Rendre {0} obligatoire si {1} est défini sur"
+
+#: desk/src/components/Settings/Preferences/Preferences.vue:2
+msgid "Manage your personal preferences."
+msgstr "Gérez vos préférences personnelles."
+
+#: desk/src/pages/PersonaForm.vue:183
+msgid "Managing customer conversations across channels"
+msgstr "Gérer les conversations clients sur tous les canaux"
+
+#: desk/src/pages/PersonaForm.vue:191
+msgid "Measuring team performance"
+msgstr "Mesurer la performance de l'équipe"
+
+#: desk/src/components/command-palette/ticketCommands.ts:188
+msgid "Merge ticket"
+msgstr "Fusionner le ticket"
+
+#: desk/src/pages/PersonaForm.vue:195
+msgid "Missing or delayed responses"
+msgstr "Réponses manquantes ou tardives"
+
+#. Description of the 'Mobile No' (Data) field in DocType 'HD Customer'
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.json:83
+msgid "Mobile no. of the primary contact"
+msgstr "Numéro de mobile du contact principal"
+
+#: helpdesk/api/dashboard_tags.py:46
+msgid "Most used tags in this period"
+msgstr "Étiquettes les plus utilisées sur cette période"
+
+#: desk/src/pages/home/Home.vue:364
+#: desk/src/pages/home/components/RecentActivity.vue:6
+msgid "My Recent Activity"
+msgstr "Mon activité récente"
+
+#: desk/src/components/SavedRepliesSelectorModal.vue:187
+#: desk/src/components/Settings/SavedReplies/SavedRepliesList.vue:308
+msgid "My Team(s)"
+msgstr "Mes équipes"
+
+#: desk/src/components/contact/FeedbackList.vue:121
+msgid "Negative"
+msgstr "Négatif"
+
+#. Description of the 'Default agent status' (Link) field in DocType 'HD
+#. Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:244
+msgid "New agents start on this status, and agents are moved here when the status they are on is disabled."
+msgstr "Les nouveaux agents commencent avec ce statut, et les agents y sont déplacés lorsque leur statut actuel est désactivé."
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:86
+msgid "New and updated customers sync automatically between Helpdesk and ERPNext."
+msgstr "Les clients nouveaux et modifiés se synchronisent automatiquement entre Helpdesk et ERPNext."
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:526
+msgid "next day"
+msgstr "lendemain"
+
+#: desk/src/components/Settings/SavedReplies/components/ActionsEditor.vue:76
+msgid "No actions yet. Add one to update the ticket when this reply is sent"
+msgstr "Aucune action pour l'instant. Ajoutez-en une pour mettre à jour le ticket à l'envoi de cette réponse"
+
+#: desk/src/components/customer/ContactCard.vue:107
+#: desk/src/components/customer/ContactCard.vue:136
+#: desk/src/components/customer/ContactCard.vue:140
+msgid "No active tickets"
+msgstr "Aucun ticket actif"
+
+#: desk/src/pages/dashboard/Dashboard.vue:86
+msgid "No agents in this team"
+msgstr "Aucun agent dans cette équipe"
+
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:250
+msgid "No contacts to add"
+msgstr "Aucun contact à ajouter"
+
+#: desk/src/components/frappe-ui/PhoneControl/PhoneControl.vue:81
+msgid "No country found"
+msgstr "Aucun pays trouvé"
+
+#: desk/src/components/contact/ContactFeedback.vue:16
+msgid "No feedback yet"
+msgstr "Aucune évaluation pour l'instant"
+
+#: desk/src/components/view-controls/filter/FilterFieldList.vue:51
+msgid "No fields found"
+msgstr "Aucun champ trouvé"
+
+#: desk/src/pages/home/components/RecentActivity.vue:57
+msgid "No recent activity"
+msgstr "Aucune activité récente"
+
+#: desk/src/components/contact/FeedbackList.vue:28
+msgid "No reviews found"
+msgstr "Aucun avis trouvé"
+
+#: desk/src/composables/contact.ts:550
+msgid "No system user is linked with this contact"
+msgstr "Aucun utilisateur système n'est lié à ce contact"
+
+#: desk/src/pages/dashboard/Dashboard.vue:328
+msgid "No tag activity"
+msgstr "Aucune activité d'étiquette"
+
+#: desk/src/pages/dashboard/Dashboard.vue:322
+msgid "No tags used yet"
+msgstr "Aucune étiquette utilisée pour l'instant"
+
+#: desk/src/components/tag/Tags.vue:83
+msgid "No tags yet, type to create one"
+msgstr "Aucune étiquette pour l'instant, saisissez un nom pour en créer une"
+
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:169
+#, python-brace-format
+msgid "No user linked to contact {0}"
+msgstr "Aucun utilisateur n'est lié au contact {0}"
+
+#: desk/src/components/ticket-agent/timeline/TicketTimeline.vue:24
+#, python-brace-format
+msgid "No {0} yet"
+msgstr "Aucun {0} pour l'instant"
+
+#: desk/src/components/view-controls/filter/filter.ts:318
+msgid "not in"
+msgstr "n'est pas dans"
+
+#: desk/src/components/command-palette/CommandPalette.vue:245
+#, python-brace-format
+msgid "Nothing left in {0}"
+msgstr "Il ne reste rien dans {0}"
+
+#: desk/src/components/ticket-agent/TicketSLA.vue:108
+msgid "On hold since"
+msgstr "En attente depuis"
+
+#: helpdesk/api/ticket.py:82
+msgid "Only administrators can delete tickets."
+msgstr "Seuls les administrateurs peuvent supprimer des tickets."
+
+#: helpdesk/helpdesk/doctype/hd_saved_reply/hd_saved_reply.py:80
+msgid "Only one of Assign Agent or Assign to Me is allowed"
+msgstr "Un seul parmi « Attribuer un agent » et « M'attribuer » est autorisé"
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:16
+msgid "Only users with the role of "
+msgstr "Seuls les utilisateurs ayant le rôle de "
+
+#: desk/src/components/contact/EditContactDialog.vue:146
+msgid "Open customer"
+msgstr "Ouvrir le client"
+
+#: desk/src/components/conditions-filter/CFCondition.vue:52
+msgid "operator"
+msgstr "opérateur"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:627
+#, python-brace-format
+msgid "Paused {0} so far"
+msgstr "En pause pendant {0} jusqu'à présent"
+
+#: desk/src/components/ViewModal.vue:44
+msgid "Pin to sidebar"
+msgstr "Épingler à la barre latérale"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:234
+msgid "Please apply the actions manually"
+msgstr "Veuillez appliquer les actions manuellement"
+
+#: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:112
+msgid "Please enter a description"
+msgstr "Veuillez saisir une description"
+
+#: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:116
+msgid "Please enter a valid date"
+msgstr "Veuillez saisir une date valide"
+
+#: desk/src/components/CommentTextEditor.vue:79
+#: desk/src/components/EmailEditor.vue:225
+#: desk/src/pages/ticket/TicketCustomer.vue:85
+#: desk/src/pages/ticket/TicketNew.vue:103
+#: desk/src/pages/ticket/TicketNew.vue:135
+msgid "Please wait, media is uploading"
+msgstr "Veuillez patienter, le média est en cours de chargement"
+
+#: desk/src/components/contact/FeedbackList.vue:120
+msgid "Positive"
+msgstr "Positif"
+
+#: desk/src/components/Settings/Preferences/Preferences.vue:75
+msgid "Preferences updated successfully."
+msgstr "Préférences mises à jour avec succès."
+
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:83
+msgid "Primary contact must be one of the listed contacts"
+msgstr "Le contact principal doit faire partie des contacts listés"
+
+#: desk/src/components/customer/ContactCard.vue:272
+msgid "Primary contact updated"
+msgstr "Contact principal mis à jour"
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:95
+msgid "Priority in use"
+msgstr "Priorité déjà utilisée"
+
+#: helpdesk/api/comment.py:14
+msgid "Reactions are only supported on ticket comments"
+msgstr "Les réactions ne sont possibles que sur les commentaires de ticket"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActionComment.vue:13
+msgid "Remove comment"
+msgstr "Supprimer le commentaire"
+
+#: desk/src/components/customer/ContactCard.vue:182
+#: desk/src/components/customer/ContactCard.vue:286
+msgid "Remove Contact"
+msgstr "Retirer le contact"
+
+#: desk/src/components/command-palette/CommandPalette.vue:263
+msgid "Remove context"
+msgstr "Retirer le contexte"
+
+#: desk/src/components/contact/ContactInputRow.vue:20
+#: desk/src/components/contact/ContactInputRow.vue:24
+msgid "Remove primary"
+msgstr "Retirer comme principal"
+
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:94
+msgid "Remove tags"
+msgstr "Supprimer les étiquettes"
+
+#: desk/src/components/view-controls/filter/Filter.vue:66
+#: desk/src/components/view-controls/filter/Filter.vue:67
+msgid "Replace filter"
+msgstr "Remplacer le filtre"
+
+#: desk/src/components/EmailEditor.vue:512
+msgid "Replace saved reply"
+msgstr "Remplacer la réponse enregistrée"
+
+#: desk/src/components/command-palette/ticketCommands.ts:123
+msgid "Reply to ticket"
+msgstr "Répondre au ticket"
+
+#: desk/src/pages/contact/Contact.vue:279
+msgid "Resend Invite"
+msgstr "Renvoyer l'invitation"
+
+#: desk/src/composables/contact.ts:558
+msgid "Reset password email sent successfully"
+msgstr "E-mail de réinitialisation du mot de passe envoyé avec succès"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:440
+msgid "Resolution due"
+msgstr "Échéance de résolution"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:724
+msgid "Resolved late"
+msgstr "Résolu en retard"
+
+#: desk/src/components/ticket-agent/TicketSLA.vue:86
+msgid "Resolved on"
+msgstr "Résolu le"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:303
+msgid "Responded late"
+msgstr "Répondu en retard"
+
+#: desk/src/components/ticket-agent/TicketSLA.vue:78
+msgid "Responded on"
+msgstr "Répondu le"
+
+#: desk/src/components/customer/RevokeInviteButton.vue:12
+msgid "Revoke Invite"
+msgstr "Révoquer l'invitation"
+
+#: desk/src/components/customer/ContactCard.vue:213
+msgid "Revoke Manager Access"
+msgstr "Révoquer l'accès gestionnaire"
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:108
+msgid "Run an initial sync to reconcile existing records. New ones update automatically."
+msgstr "Lancez une première synchronisation pour réconcilier les enregistrements existants. Les nouveaux se mettent à jour automatiquement."
+
+#: desk/src/components/EmailEditor.vue:180
+msgid "Saved replies"
+msgstr "Réponses enregistrées"
+
+#: desk/src/pages/PersonaForm.vue:194
+msgid "Scaling support as we grow"
+msgstr "Adapter notre support à notre croissance"
+
+#: desk/src/components/customer/TicketsTab.vue:9
+msgid "Search by ID or Subject"
+msgstr "Rechercher par numéro ou objet"
+
+#: desk/src/components/command-palette/CommandPalette.vue:60
+msgid "Search commands"
+msgstr "Rechercher des commandes"
+
+#: desk/src/components/command-palette/CommandPalette.vue:59
+#, python-brace-format
+msgid "Search commands for {0}"
+msgstr "Rechercher des commandes pour {0}"
+
+#: desk/src/components/frappe-ui/PhoneControl/PhoneControl.vue:44
+msgid "Search country"
+msgstr "Rechercher un pays"
+
+#: desk/src/components/view-controls/filter/Filter.vue:121
+#: desk/src/components/view-controls/filter/FilterFieldList.vue:9
+msgid "Search fields..."
+msgstr "Rechercher des champs..."
+
+#: helpdesk/api/search.py:46
+msgid "Search index not available. Build it by running helpdesk.search_sqlite.build_index."
+msgstr "Index de recherche indisponible. Générez-le en exécutant helpdesk.search_sqlite.build_index."
+
+#: helpdesk/api/search.py:49
+msgid "Search is temporarily unavailable. Please try again later."
+msgstr "La recherche est temporairement indisponible. Veuillez réessayer plus tard."
+
+#: desk/src/components/tag/Tags.vue:15
+msgid "Search or create tags"
+msgstr "Rechercher ou créer des étiquettes"
+
+#: desk/src/components/command-palette/CommandPalette.vue:266
+msgid "Search tickets or type a command…"
+msgstr "Rechercher des tickets ou saisir une commande…"
+
+#: desk/src/components/ticket-agent/BulkEditModal.vue:9
+#: desk/src/components/ticket-agent/BulkEditModal.vue:121
+msgid "Select a field"
+msgstr "Sélectionnez un champ"
+
+#: desk/src/components/Settings/SavedReplies/components/ActionsEditor.vue:38
+msgid "Select action"
+msgstr "Sélectionnez une action"
+
+#: desk/src/components/ticket-agent/AssignTo.vue:218
+msgid "Select agents"
+msgstr "Sélectionnez des agents"
+
+#: desk/src/components/frappe-ui/PhoneControl/PhoneControl.vue:22
+msgid "Select country"
+msgstr "Sélectionnez un pays"
+
+#: desk/src/components/Settings/SavedReplies/components/ActionValue.vue:42
+#: desk/src/components/Settings/SavedReplies/components/ActionValue.vue:66
+msgid "Select tags"
+msgstr "Sélectionnez des étiquettes"
+
+#: desk/src/pages/PersonaForm.vue:110
+msgid "Select team size"
+msgstr "Sélectionnez la taille de l'équipe"
+
+#: desk/src/pages/contact/Contact.vue:294
+msgid "Send reset password email"
+msgstr "Envoyer l'e-mail de réinitialisation du mot de passe"
+
+#: helpdesk/helpdesk/doctype/hd_agent_status/hd_agent_status.py:73
+msgid "Set a default agent status in HD Settings."
+msgstr "Définissez un statut d'agent par défaut dans HD Settings."
+
+#: desk/src/components/contact/ContactInputRow.vue:32
+#: desk/src/components/contact/ContactInputRow.vue:36
+msgid "Set as primary"
+msgstr "Définir comme principal"
+
+#: desk/src/components/ticket-agent/AssignTo.vue:44
+msgid "Set Assignee"
+msgstr "Définir l'agent assigné"
+
+#. Description of the 'Persona Captured' (Check) field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:165
+msgid "Set once an admin completes the onboarding persona questionnaire"
+msgstr "Renseigné une fois que l'administrateur a complété le questionnaire de profil d'accueil"
+
+#: desk/src/components/customer/ContactCard.vue:257
+msgid "Set Primary Contact"
+msgstr "Définir le contact principal"
+
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:51
+msgid "Set priority"
+msgstr "Définir la priorité"
+
+#: desk/src/components/AvailabilityMenu.vue:5
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:44
+#: desk/src/components/layouts/MobileSidebar.vue:81
+msgid "Set status"
+msgstr "Définir le statut"
+
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:58
+msgid "Set team"
+msgstr "Définir l'équipe"
+
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:66
+msgid "Set ticket type"
+msgstr "Définir le type de ticket"
+
+#: desk/src/pages/PersonaForm.vue:237
+msgid "Set up a customer portal"
+msgstr "Mettre en place un portail client"
+
+#: desk/src/components/Settings/Profile/Profile.vue:90
+msgid "Set your availability so your team knows when you're reachable."
+msgstr "Indiquez vos disponibilités pour que votre équipe sache quand vous êtes joignable."
+
+#: desk/src/pages/PersonaForm.vue:136
+msgid "Shared email inbox (Gmail, Outlook, etc.)"
+msgstr "Boîte e-mail partagée (Gmail, Outlook, etc.)"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:26
+msgid "Show actions"
+msgstr "Afficher les actions"
+
+#. Label of a Check field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:161
+msgid "Show Customer Portal Permission Notice"
+msgstr "Afficher l'avis sur les autorisations du portail client"
+
+#: desk/src/components/command-palette/ticketListCommands.ts:50
+msgid "Show tickets assigned to me"
+msgstr "Afficher les tickets qui me sont assignés"
+
+#: desk/src/components/Settings/FieldDependency/FieldDependencyCriteria.vue:18
+#, python-brace-format
+msgid "Show {0} if {1} is set to"
+msgstr "Afficher {0} si {1} est défini sur"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:215
+#, python-brace-format
+msgid "Skipped {0} saved reply action(s) that are no longer valid"
+msgstr "{0} action(s) de la réponse enregistrée ignorée(s), car elles ne sont plus valides"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:67
+msgid "SLA changed"
+msgstr "SLA modifié"
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:33
+msgid "SLA disabled"
+msgstr "SLA désactivé"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:259
+msgid "SLA met"
+msgstr "SLA respecté"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:275
+msgid "SLA missed"
+msgstr "SLA non respecté"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:274
+msgid "SLA missed / longest wait"
+msgstr "SLA non respecté / plus longue attente"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:630
+msgid "SLA paused"
+msgstr "SLA suspendu"
+
+#. Label of a Int field in DocType 'HD Agent Status'
+#: helpdesk/helpdesk/doctype/hd_agent_status/hd_agent_status.json:28
+msgid "Status Order"
+msgstr "Ordre des statuts"
+
+#: desk/src/stores/agentStatus.ts:126
+msgid "Status updated successfully."
+msgstr "Statut mis à jour avec succès."
+
+#: desk/src/pages/PersonaForm.vue:150
+msgid "Support portal"
+msgstr "Portail d'assistance"
+
+#: helpdesk/helpdesk/doctype/erpnext_hd_settings/erpnext_hd_settings.js:22
+msgid "Sync all customers between ERPNext and Helpdesk? The sync runs in the background and can take a few minutes depending on the number of customers."
+msgstr "Synchroniser tous les clients entre ERPNext et Helpdesk ? La synchronisation s'exécute en arrière-plan et peut prendre quelques minutes selon le nombre de clients."
+
+#: helpdesk/helpdesk/doctype/erpnext_hd_settings/erpnext_hd_settings.js:16
+#: helpdesk/helpdesk/doctype/erpnext_hd_settings/erpnext_hd_settings.js:18
+msgid "Sync Customers"
+msgstr "Synchroniser les clients"
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:3
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:39
+msgid "Sync customers between Helpdesk and ERPNext."
+msgstr "Synchroniser les clients entre Helpdesk et ERPNext."
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:104
+msgid "Sync your existing customers"
+msgstr "Synchronisez vos clients existants"
+
+#: desk/src/components/tag/Tags.vue:239 helpdesk/api/tags.py:55
+msgid "Tag cannot contain commas"
+msgstr "Une étiquette ne peut pas contenir de virgules"
+
+#: helpdesk/api/tags.py:52
+msgid "Tag label is required"
+msgstr "Le libellé de l'étiquette est obligatoire"
+
+#: desk/src/pages/dashboard/Dashboard.vue:327 helpdesk/api/dashboard_tags.py:74
+msgid "Tag Trend"
+msgstr "Tendance des étiquettes"
+
+#: helpdesk/helpdesk/doctype/hd_saved_reply/hd_saved_reply.py:121
+#, python-brace-format
+msgid "Tag {0} cannot be both added and removed"
+msgstr "L'étiquette {0} ne peut pas être à la fois ajoutée et supprimée"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:69
+msgid "Team changed"
+msgstr "Équipe modifiée"
+
+#: desk/src/pages/PersonaForm.vue:102
+msgid "Tell us about your organization"
+msgstr "Parlez-nous de votre organisation"
+
+#: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:85
+msgid "The agent who sends the reply"
+msgstr "L'agent qui envoie la réponse"
+
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:388
+#, python-brace-format
+msgid "The contact {0} is linked to multiple customers. Please select the customer manually."
+msgstr "Le contact {0} est lié à plusieurs clients. Veuillez sélectionner le client manuellement."
+
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.py:36
+msgid "The default agent status must be enabled."
+msgstr "Le statut d'agent par défaut doit être activé."
+
+#: desk/src/pages/dashboard/Dashboard.vue:323
+msgid "The most used tags will be ranked here once tickets are tagged."
+msgstr "Les étiquettes les plus utilisées apparaîtront ici dès que des tickets seront étiquetés."
+
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:370
+#, python-brace-format
+msgid "The selected customer {0} is not linked to the contact {1}.Please select a valid customer or update the contact's linked customers."
+msgstr "Le client sélectionné {0} n'est pas lié au contact {1}. Sélectionnez un client valide ou mettez à jour les clients liés au contact."
+
+#: desk/src/components/customer/ContactCard.vue:215
+msgid "They'll get access to tickets raised by everyone in the organisation."
+msgstr "Ils auront accès aux tickets ouverts par toutes les personnes de l'organisation."
+
+#: desk/src/components/customer/ContactCard.vue:218
+msgid "They'll only see their own tickets going forward."
+msgstr "Ils ne verront désormais que leurs propres tickets."
+
+#: desk/src/components/Settings/Holiday/utils.ts:15
+msgid "third"
+msgstr "troisième"
+
+#: desk/src/components/customer/ContactCard.vue:258
+msgid "This contact will become the primary point of contact and will be able to view tickets raised by all other contacts in the organisation."
+msgstr "Ce contact deviendra le contact principal et pourra consulter les tickets ouverts par tous les autres contacts de l'organisation."
+
+#: desk/src/components/Questionnaire.vue:25
+msgid "This helps us personalize your Helpdesk experience."
+msgstr "Cela nous aide à personnaliser votre expérience Helpdesk."
+
+#: desk/src/pages/PersonaForm.vue:170
+msgid "Through a support portal"
+msgstr "Via un portail d'assistance"
+
+#: desk/src/components/command-palette/ticketCommands.ts:143
+#, python-brace-format
+msgid "Ticket #{0} copied"
+msgstr "Ticket n° {0} copié"
+
+#: helpdesk/helpdesk/doctype/hd_ticket/api.py:299
+#, python-brace-format
+msgid "Ticket #{0} is already merged"
+msgstr "Le ticket n° {0} est déjà fusionné"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:7
+msgid "Ticket Timeline"
+msgstr "Chronologie du ticket"
+
+#: desk/src/pages/ticket/TicketCustomer.vue:328
+msgid "Ticket updated succesfully."
+msgstr "Ticket mis à jour avec succès."
+
+#: desk/src/components/command-palette/ticketCommands.ts:153
+msgid "Ticket URL copied"
+msgstr "URL du ticket copiée"
+
+#: helpdesk/api/ticket_analytics.py:47
+#, python-brace-format
+msgid "Ticket {0} not found."
+msgstr "Ticket {0} introuvable."
+
+#: desk/src/pages/home/components/RecentActivity.vue:58
+msgid "Tickets you act on will show up here"
+msgstr "Les tickets sur lesquels vous agissez apparaîtront ici"
+
+#: desk/src/components/ticket-agent/analytics/AnalyticsMetricCards.vue:45
+msgid "Time on hold with the SLA clock paused"
+msgstr "Temps en attente, horloge SLA suspendue"
+
+#: desk/src/components/erpnext-integration/ERPNextIntegrationSettings.vue:68
+msgid "to enable this integration."
+msgstr "pour activer cette intégration."
+
+#: desk/src/pages/dashboard/Dashboard.vue:321 helpdesk/api/dashboard_tags.py:45
+msgid "Top Tags"
+msgstr "Étiquettes les plus utilisées"
+
+#: desk/src/components/ticket-agent/analytics/AnalyticsMetricCards.vue:43
+msgid "Total hold time"
+msgstr "Durée totale d'attente"
+
+#: desk/src/components/customer/InviteContactDialog.vue:19
+msgid "Type an email address"
+msgstr "Saisissez une adresse e-mail"
+
+#: helpdesk/api/ticket_stats.py:26
+#, python-brace-format
+msgid "Unsupported doctype '{0}' for ticket stats."
+msgstr "Doctype '{0}' non pris en charge pour les statistiques de tickets."
+
+#: desk/src/components/ticket-agent/BulkEditModal.vue:27
+#, python-brace-format
+msgid "Update {0} tickets"
+msgstr "Mettre à jour {0} tickets"
+
+#: desk/src/composables/useView.ts:367
+msgid "updated"
+msgstr "mis à jour"
+
+#: desk/src/components/ticket-agent/BulkEditModal.vue:155
+#, python-brace-format
+msgid "Updated {0} of {1} tickets"
+msgstr "{0} tickets sur {1} mis à jour"
+
+#: desk/src/components/ticket-agent/BulkEditModal.vue:158
+#: desk/src/components/ticket-agent/BulkEditModal.vue:170
+#, python-brace-format
+msgid "Updated {0} tickets"
+msgstr "{0} tickets mis à jour"
+
+#: desk/src/components/ticket-agent/BulkEditModal.vue:148
+#, python-brace-format
+msgid "Updating {0} tickets…"
+msgstr "Mise à jour de {0} tickets…"
+
+#: desk/src/components/ImageAvatar.vue:78
+msgid "Upload an image in PNG or JPG format"
+msgstr "Chargez une image au format PNG ou JPG"
+
+#: desk/src/components/contact/FeedbackList.vue:6
+msgid "User Reviews"
+msgstr "Avis des utilisateurs"
+
+#: desk/src/components/Settings/SavedReplies/SavedReplyView.vue:448
+msgid "Values can't be empty"
+msgstr "Les valeurs ne peuvent pas être vides"
+
+#: desk/src/pages/PersonaForm.vue:169
+msgid "Via email"
+msgstr "Par e-mail"
+
+#: desk/src/components/ticket-agent/TicketContact.vue:33
+#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+msgid "via Email"
+msgstr "via e-mail"
+
+#: desk/src/components/ticket-agent/TicketContact.vue:33
+#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+msgid "via Portal"
+msgstr "via le portail"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActionComment.vue:34
+msgid "Visible to your team only, never sent to the customer."
+msgstr "Visible uniquement par votre équipe, jamais envoyé au client."
+
+#: helpdesk/api/dashboard.py:174
+msgid "vs prev. day"
+msgstr "vs la veille"
+
+#: helpdesk/api/dashboard.py:171
+#, python-brace-format
+msgid "vs prev. {0} days"
+msgstr "vs les {0} jours précédents"
+
+#: helpdesk/api/dashboard.py:173
+msgid "vs yesterday"
+msgstr "vs hier"
+
+#: desk/src/pages/PersonaForm.vue:134
+msgid "We don't use any helpdesk yet"
+msgstr "Nous n'utilisons pas encore d'outil de support"
+
+#: desk/src/components/layouts/CustomerPortalPermissionBanner.vue:13
+msgid "We have changed how customer portal permissions work"
+msgstr "Nous avons modifié le fonctionnement des autorisations du portail client"
+
+#: desk/src/pages/PersonaForm.vue:154
+msgid "Web form"
+msgstr "Formulaire web"
+
+#: desk/src/pages/PersonaForm.vue:245
+msgid "Welcome to Frappe Helpdesk"
+msgstr "Bienvenue dans Frappe Helpdesk"
+
+#: desk/src/pages/PersonaForm.vue:123
+msgid "What do you currently use to manage customer support?"
+msgstr "Quel outil utilisez-vous actuellement pour gérer le support client ?"
+
+#: desk/src/pages/PersonaForm.vue:104
+msgid "What is your organization's name?"
+msgstr "Quel est le nom de votre organisation ?"
+
+#: desk/src/pages/PersonaForm.vue:206
+msgid "What makes support hard right now?"
+msgstr "Qu'est-ce qui complique le plus votre support actuellement ?"
+
+#: desk/src/pages/PersonaForm.vue:233
+msgid "What would you like to do first in Frappe Helpdesk?"
+msgstr "Que souhaitez-vous faire en premier dans Frappe Helpdesk ?"
+
+#: desk/src/pages/PersonaForm.vue:178
+msgid "What's your biggest support challenge today?"
+msgstr "Quel est aujourd'hui votre plus grand défi en matière de support ?"
+
+#: desk/src/components/Settings/Sla/SlaPolicyView.vue:71
+msgid "When more than one policy matches, the lower rank is applied first. 0 means unranked, and is applied last."
+msgstr "Lorsque plusieurs politiques correspondent, le rang le plus bas est appliqué en premier. 0 signifie sans rang, et la politique est appliquée en dernier."
+
+#: desk/src/pages/PersonaForm.vue:159
+msgid "Which channel do they use?"
+msgstr "Quel canal utilisent-ils ?"
+
+#: desk/src/pages/PersonaForm.vue:141
+msgid "Which tool does your team use?"
+msgstr "Quel outil votre équipe utilise-t-elle ?"
+
+#: helpdesk/api/ticket_stats.py:35
+msgid "You are not allowed to view another agent's stats."
+msgstr "Vous n'êtes pas autorisé à consulter les statistiques d'un autre agent."
+
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:322
+msgid "You can only raise tickets for your own contact."
+msgstr "Vous ne pouvez ouvrir des tickets que pour votre propre contact."
+
+#: helpdesk/helpdesk/doctype/hd_customer/hd_customer.py:271
+msgid "You do not have permission to update contacts"
+msgstr "Vous n'avez pas la permission de mettre à jour les contacts"
+
+#: desk/src/components/layouts/CustomerPortalPermissionDialog.vue:37
+msgid "You won't see this notice again."
+msgstr "Vous ne reverrez pas cet avis."
+
+#: desk/src/stores/agentStatus.ts:60
+#, python-brace-format
+msgid "Your status was changed to {0}."
+msgstr "Votre statut a été changé en {0}."
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:140
+#, python-brace-format
+msgid "{0} actions after sending"
+msgstr "{0} actions après l'envoi"
+
+#: desk/src/components/SavedReplyActions/SavedReplyActions.vue:144
+#, python-brace-format
+msgid "{0} actions will be applied after sending the email"
+msgstr "{0} actions seront appliquées après l'envoi de l'e-mail"
+
+#: desk/src/components/view-controls/filter/filter.ts:355
+#, python-brace-format
+msgid "{0} and 1 other"
+msgstr "{0} et 1 autre"
+
+#: desk/src/components/contact/ContactCustomers.vue:69
+#, python-brace-format
+msgid "{0} Customers"
+msgstr "{0} clients"
+
+#: desk/src/components/EmailMultiSelect.vue:268
+#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#, python-brace-format
+msgid "{0} is already added"
+msgstr "{0} est déjà ajouté"
+
+#: desk/src/components/EmailMultiSelect.vue:145
+#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#, python-brace-format
+msgid "{0} is an Invalid Email Address"
+msgstr "{0} n'est pas une adresse e-mail valide"
+
+#: desk/src/components/ticket-agent/AssignTo.vue:590
+#, python-brace-format
+msgid "{0} is currently away."
+msgstr "{0} est actuellement absent."
+
+#: desk/src/components/ticket-agent/AssignTo.vue:589
+#, python-brace-format
+msgid "{0} is currently unavailable."
+msgstr "{0} est actuellement indisponible."
+
+#: desk/src/components/EmailMultiSelect.vue:263
+#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#, python-brace-format
+msgid "{0} is not an existing contact"
+msgstr "{0} n'est pas un contact existant"
+
+#: desk/src/components/EmailMultiSelect.vue:262
+#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#, python-brace-format
+msgid "{0} is not an existing user"
+msgstr "{0} n'est pas un utilisateur existant"
+
+#: helpdesk/helpdesk/doctype/hd_agent_status/hd_agent_status.py:37
+#, python-brace-format
+msgid "{0} is the default agent status. Set a different default in HD Settings first."
+msgstr "{0} est le statut d'agent par défaut. Définissez d'abord un autre statut par défaut dans HD Settings."
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:93
+#, python-brace-format
+msgid "{0} open tickets use priority {1}. They lose this SLA the next time they are updated."
+msgstr "{0} tickets ouverts utilisent la priorité {1}. Ils perdent ce SLA à leur prochaine mise à jour."
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:108
+#, python-brace-format
+msgid "{0} open tickets will lose this SLA the next time they are updated, unless another policy matches them."
+msgstr "{0} tickets ouverts perdront ce SLA à leur prochaine mise à jour, sauf si une autre politique leur correspond."
+
+#: helpdesk/notifications.py:51
+#, python-brace-format
+msgid "{0} people reacted to your comment"
+msgstr "{0} personnes ont réagi à votre commentaire"
+
+#: helpdesk/notifications.py:130
+#, python-brace-format
+msgid "{0} reopened ticket #{1}"
+msgstr "{0} a rouvert le ticket n° {1}"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:560
+#, python-brace-format
+msgid "{0} replied"
+msgstr "{0} a répondu"
+
+#: desk/src/components/ticket-agent/analytics/ConversationSummary.vue:84
+#, python-brace-format
+msgid "{0} times"
+msgstr "{0} fois"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:564
+#, python-brace-format
+msgid "{0} wait"
+msgstr "{0} d'attente"
+
+#: desk/src/components/ticket-agent/AssignTo.vue:469
+#, python-brace-format
+msgid "{0} · Last active {1}"
+msgstr "{0} · Dernière activité {1}"
+
+#: desk/src/components/ticket-agent/analytics/TicketTimeline.vue:564
+#, python-brace-format
+msgid "{0} · longest wait"
+msgstr "{0} · attente la plus longue"
