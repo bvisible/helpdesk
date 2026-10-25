@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Helpdesk VERSION\n"
 "Report-Msgid-Bugs-To: hello@frappe.io\n"
-"POT-Creation-Date: 2026-10-25 09:48+0000\n"
-"PO-Revision-Date: 2026-10-25 09:48+0000\n"
+"POT-Creation-Date: 2026-10-25 10:17+0000\n"
+"PO-Revision-Date: 2026-10-25 10:17+0000\n"
 "Last-Translator: hello@frappe.io\n"
 "Language-Team: hello@frappe.io\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgid "%John%"
 msgstr ""
 
 #: desk/src/components/SearchArticles.vue:17
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-CcV3B2P_.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-pcXMoncp.js:1
 msgid "(View All)"
 msgstr ""
 
@@ -237,7 +237,7 @@ msgid "Access only this team's tickets"
 msgstr ""
 
 #: desk/src/components/Settings/SettingsModal.vue:19
-#: helpdesk/public/desk/assets/DesktopLayout-2DgEmhjl.js:1
+#: helpdesk/public/desk/assets/DesktopLayout-Js-egwBk.js:1
 msgid "Account"
 msgstr ""
 
@@ -309,10 +309,10 @@ msgid ""
 msgstr ""
 
 #: desk/src/components/ticket-agent/TicketActivityPanel.vue:86
-#: desk/src/pages/ticket/MobileTicketAgent.vue:525
+#: desk/src/pages/ticket/MobileTicketAgent.vue:528
 #: desk/src/pages/ticket/TicketConversation.vue:8
 #: desk/src/pages/ticket/TicketCustomer.vue:213
-#: helpdesk/public/desk/assets/TicketConversation.vue_vue_type_script_setup_true_lang-C1V7Kt4W.js:1
+#: helpdesk/public/desk/assets/TicketConversation.vue_vue_type_script_setup_true_lang-C2CRm8jW.js:1
 msgid "Activity"
 msgstr ""
 
@@ -329,7 +329,7 @@ msgid "Add Category"
 msgstr ""
 
 #: desk/src/components/view-controls/ColumnSettings.vue:67
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Add Column"
 msgstr ""
 
@@ -376,7 +376,7 @@ msgid "Add Recurring Holiday"
 msgstr ""
 
 #: desk/src/components/view-controls/SortBy.vue:143
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Add Sort"
 msgstr ""
 
@@ -453,7 +453,7 @@ msgstr ""
 #: desk/src/components/Settings/SavedReplies/SavedRepliesList.vue:75
 #: desk/src/components/Settings/Sla/SlaPolicyList.vue:23
 #: desk/src/components/Settings/Teams/TeamsList.vue:115
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Add one to get started."
 msgstr ""
 
@@ -579,7 +579,7 @@ msgid "Agent name"
 msgstr ""
 
 #: desk/src/components/Settings/Teams/components/AgentSelector.vue:60
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Agent not found"
 msgstr ""
 
@@ -716,7 +716,7 @@ msgstr ""
 msgid "Appears next to the title in your browser tab. Recommended size is minimum 32x32 px in PNG or ICO."
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:82
+#: desk/src/components/NeoSuggestReplyDialog.vue:85
 msgid "Append"
 msgstr ""
 
@@ -779,7 +779,7 @@ msgid "Archived"
 msgstr ""
 
 #: desk/src/components/Settings/SettingsModal.vue:74
-#: helpdesk/public/desk/assets/DesktopLayout-2DgEmhjl.js:1
+#: helpdesk/public/desk/assets/DesktopLayout-Js-egwBk.js:1
 msgid "Are you sure you want to change tabs? Unsaved changes will be lost."
 msgstr ""
 
@@ -829,7 +829,7 @@ msgstr ""
 #: desk/src/components/Settings/Teams/NewTeam.vue:109
 #: desk/src/components/Settings/Telephony/ExotelSettings.vue:214
 #: desk/src/components/Settings/Telephony/TwilioSettings.vue:192
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:29
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:29
 msgid "Are you sure you want to go back? Unsaved changes will be lost."
 msgstr ""
 
@@ -913,7 +913,7 @@ msgstr ""
 
 #: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:75
 #: desk/src/components/ticket-agent/BulkAssignModal.vue:2
-#: desk/src/pages/ticket/Tickets.vue:143
+#: desk/src/pages/ticket/Tickets.vue:145
 msgid "Assign"
 msgstr ""
 
@@ -1226,7 +1226,7 @@ msgid "Avg. Feedback Rating"
 msgstr ""
 
 #: desk/src/components/customer/TicketStats.vue:13
-#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+#: helpdesk/public/desk/assets/docTickets-CWPE6Oxm.js:1
 msgid "Avg. Feedback Received"
 msgstr ""
 
@@ -1237,7 +1237,7 @@ msgstr ""
 
 #: desk/src/components/customer/TicketStats.vue:49
 #: desk/src/pages/home/Home.vue:316
-#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+#: helpdesk/public/desk/assets/docTickets-CWPE6Oxm.js:1
 msgid "Avg. First Response Time"
 msgstr ""
 
@@ -1248,7 +1248,7 @@ msgstr ""
 
 #: desk/src/components/customer/TicketStats.vue:62
 #: desk/src/pages/home/Home.vue:328
-#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+#: helpdesk/public/desk/assets/docTickets-CWPE6Oxm.js:1
 msgid "Avg. Resolution Time"
 msgstr ""
 
@@ -1369,11 +1369,11 @@ msgstr ""
 msgid "Branding"
 msgstr ""
 
-#: desk/src/components/ListViewBuilder.vue:295
+#: desk/src/components/ListViewBuilder.vue:326
 msgid "Bulk Operation Failed"
 msgstr ""
 
-#: desk/src/components/ListViewBuilder.vue:298
+#: desk/src/components/ListViewBuilder.vue:329
 msgid "Bulk Operation Successful"
 msgstr ""
 
@@ -1404,7 +1404,6 @@ msgid "Calendar"
 msgstr ""
 
 #: desk/src/pages/call-logs/CallLogDetailModal.vue:8
-#: helpdesk/public/desk/assets/CallLogDetailModal-CyZ83PA9.js:1
 msgid "Call Details"
 msgstr ""
 
@@ -1421,7 +1420,7 @@ msgid "Call Received By"
 msgstr ""
 
 #: desk/src/components/ticket-agent/TicketContact.vue:38
-#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+#: helpdesk/public/desk/assets/TicketAgent-DI5GX1nJ.js:1
 msgid "Call contact"
 msgstr ""
 
@@ -1435,7 +1434,7 @@ msgid "Call using {0}"
 msgstr ""
 
 #: desk/src/components/ticket/TicketAgentContact.vue:12
-#: helpdesk/public/desk/assets/MobileTicketAgent-BmHAwvWR.js:1
+#: helpdesk/public/desk/assets/MobileTicketAgent-C065Tlt0.js:1
 #, python-brace-format
 msgid "Call {0}"
 msgstr ""
@@ -1454,7 +1453,7 @@ msgid "Calling..."
 msgstr ""
 
 #: desk/src/components/ticket-agent/TicketActivityPanel.vue:107
-#: desk/src/pages/ticket/MobileTicketAgent.vue:543
+#: desk/src/pages/ticket/MobileTicketAgent.vue:546
 msgid "Calls"
 msgstr ""
 
@@ -1483,7 +1482,7 @@ msgid "Can work on tickets, create custom views and manage private views."
 msgstr ""
 
 #: desk/src/components/EmailEditor.vue:518
-#: desk/src/components/ListViewBuilder.vue:750
+#: desk/src/components/ListViewBuilder.vue:784
 #: desk/src/components/Settings/Holiday/Modals/AddHolidayModal.vue:54
 #: desk/src/components/Settings/Sla/Modals/EditResponseResolutionModal.vue:92
 #: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:110
@@ -1492,7 +1491,7 @@ msgstr ""
 #: desk/src/components/ticket-agent/BulkEditModal.vue:23
 #: desk/src/components/view-controls/ColumnSettings.vue:129
 #: desk/src/pages/home/Home.vue:44
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Cancel"
 msgstr ""
 
@@ -1709,7 +1708,7 @@ msgid "Clear All"
 msgstr ""
 
 #: desk/src/components/view-controls/SortBy.vue:155
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Clear Sort"
 msgstr ""
 
@@ -1751,11 +1750,11 @@ msgid "Click on Add to Holidays. This will populate the holidays table with all 
 msgstr ""
 
 #: desk/src/components/EmailMultiSelect.vue:10
-#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:2
+#: helpdesk/public/desk/assets/globe-DGM3r3-9.js:2
 msgid "Click to copy"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:74
+#: desk/src/components/NeoSuggestReplyDialog.vue:77
 #: ⁨desk/src/components/Settings/Assignment Rules/AssignmentRuleListItem.vue⁩:69
 #: desk/src/components/Settings/Holiday/HolidayListItem.vue:47
 #: desk/src/components/Settings/SavedReplies/SavedRepliesList.vue:176
@@ -1797,7 +1796,7 @@ msgstr ""
 #. Label of a Code field in DocType 'HD View'
 #: desk/src/components/view-controls/ColumnSettings.vue:4
 #: helpdesk/helpdesk/doctype/hd_view/hd_view.json:133
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Columns"
 msgstr ""
 
@@ -1824,7 +1823,7 @@ msgstr ""
 #: desk/src/components/Settings/SavedReplies/components/actionTypes.ts:119
 #: desk/src/components/ticket/TicketFeedback.vue:22
 #: helpdesk/helpdesk/doctype/hd_notification/hd_notification.json:55
-#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-14FSfMsp.js:1
+#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-sySb46Hr.js:1
 msgid "Comment"
 msgstr ""
 
@@ -1860,7 +1859,7 @@ msgstr ""
 #. Label of a Section Break field in DocType 'HD Settings'
 #: desk/src/components/ticket-agent/TicketActivityPanel.vue:98
 #: desk/src/pages/SearchAgent.vue:350
-#: desk/src/pages/ticket/MobileTicketAgent.vue:535
+#: desk/src/pages/ticket/MobileTicketAgent.vue:538
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:360
 msgid "Comments"
 msgstr ""
@@ -1936,11 +1935,11 @@ msgstr ""
 #: desk/src/pages/ticket/MobileTicketAgent.vue:231
 #: desk/src/pages/ticket/TicketCustomer.vue:347
 #: helpdesk/helpdesk/doctype/erpnext_hd_settings/erpnext_hd_settings.js:27
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Confirm"
 msgstr ""
 
-#: desk/src/components/ListViewBuilder.vue:734
+#: desk/src/components/ListViewBuilder.vue:768
 msgid "Confirm Changes"
 msgstr ""
 
@@ -2097,9 +2096,9 @@ msgstr ""
 msgid "Could not delete the comment"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:144
-#: desk/src/components/NeoSuggestReplyDialog.vue:150
-#: helpdesk/public/desk/assets/useActiveTabManager-Dde55wvJ.js:91
+#: desk/src/components/NeoSuggestReplyDialog.vue:147
+#: desk/src/components/NeoSuggestReplyDialog.vue:153
+#: helpdesk/public/desk/assets/useActiveTabManager-DR2ZFKm7.js:91
 msgid "Could not draft a reply"
 msgstr ""
 
@@ -2192,7 +2191,7 @@ msgstr ""
 msgid "Create New"
 msgstr ""
 
-#: desk/src/pages/ticket/Tickets.vue:420 desk/src/pages/ticket/Tickets.vue:424
+#: desk/src/pages/ticket/Tickets.vue:428 desk/src/pages/ticket/Tickets.vue:432
 msgid "Create View"
 msgstr ""
 
@@ -2240,7 +2239,7 @@ msgstr ""
 msgid "Created By"
 msgstr ""
 
-#: helpdesk/api/doc.py:169 helpdesk/api/doc.py:474 helpdesk/utils.py:256
+#: helpdesk/api/doc.py:169 helpdesk/api/doc.py:470 helpdesk/utils.py:256
 #: helpdesk/utils.py:350 helpdesk/utils.py:424
 msgid "Created On"
 msgstr ""
@@ -2493,7 +2492,7 @@ msgstr ""
 msgid "Default Ticket Status"
 msgstr ""
 
-#: desk/src/composables/useView.ts:204 desk/src/pages/ticket/Tickets.vue:377
+#: desk/src/composables/useView.ts:204 desk/src/pages/ticket/Tickets.vue:385
 msgid "Default Views"
 msgstr ""
 
@@ -2565,9 +2564,9 @@ msgstr ""
 #: desk/src/components/DeleteWithTicketsDialog.vue:20
 #: desk/src/components/DeleteWithTicketsDialog.vue:65
 #: desk/src/components/DiscardButton.vue:47
-#: desk/src/components/ListViewBuilder.vue:258
-#: desk/src/components/ListViewBuilder.vue:262
-#: desk/src/components/ListViewBuilder.vue:268
+#: desk/src/components/ListViewBuilder.vue:289
+#: desk/src/components/ListViewBuilder.vue:293
+#: desk/src/components/ListViewBuilder.vue:299
 #: desk/src/components/Settings/Holiday/HLCalender.vue:134
 #: desk/src/components/Settings/SavedReplies/components/ActionsEditor.vue:57
 #: desk/src/components/Settings/Sla/Modals/EditResponseResolutionModal.vue:81
@@ -2677,7 +2676,7 @@ msgstr ""
 #. Label of a Section Break field in DocType 'HD Notification'
 #. Label of a Section Break field in DocType 'HD Ticket'
 #: desk/src/pages/ticket/MobileTicketAgent.vue:162
-#: desk/src/pages/ticket/MobileTicketAgent.vue:519
+#: desk/src/pages/ticket/MobileTicketAgent.vue:522
 #: desk/src/pages/ticket/TicketCustomer.vue:214
 #: helpdesk/helpdesk/doctype/hd_notification/hd_notification.json:70
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json:149
@@ -2796,7 +2795,7 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:24
+#: desk/src/components/NeoSuggestReplyDialog.vue:27
 msgid "Draft — reread before sending"
 msgstr ""
 
@@ -2806,6 +2805,7 @@ msgstr ""
 
 #: desk/src/components/ticket/TicketAgentDetails.vue:68
 #: desk/src/components/ticket/TicketAgentDetails.vue:127
+#: desk/src/composables/useSLA.ts:109 desk/src/composables/useSLA.ts:181
 #, python-brace-format
 msgid "Due in {0}"
 msgstr ""
@@ -2915,7 +2915,7 @@ msgstr ""
 #: desk/src/composables/useView.ts:271 desk/src/pages/contact/Contact.vue:33
 #: desk/src/pages/customer/Customer.vue:28 desk/src/pages/home/Home.vue:36
 #: desk/src/pages/knowledge-base/Article.vue:639
-#: desk/src/pages/ticket/Tickets.vue:161
+#: desk/src/pages/ticket/Tickets.vue:163
 msgid "Edit"
 msgstr ""
 
@@ -2984,7 +2984,7 @@ msgstr ""
 
 #: desk/src/components/Settings/EmailAccountList.vue:3
 #: desk/src/components/Settings/settingsModal.ts:69
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Email Accounts"
 msgstr ""
 
@@ -3029,7 +3029,7 @@ msgid "Email account created"
 msgstr ""
 
 #: desk/src/components/Settings/EmailAccountList.vue:27
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Email account name"
 msgstr ""
 
@@ -3057,7 +3057,7 @@ msgstr ""
 #: desk/src/components/Settings/Profile/UserEmailSettings.vue:42
 #: desk/src/components/ticket-agent/TicketActivityPanel.vue:92
 #: desk/src/composables/contact.ts:447 desk/src/pages/SearchAgent.vue:349
-#: desk/src/pages/ticket/MobileTicketAgent.vue:530
+#: desk/src/pages/ticket/MobileTicketAgent.vue:533
 msgid "Emails"
 msgstr ""
 
@@ -3079,7 +3079,7 @@ msgid "Empty - Choose a field to filter by"
 msgstr ""
 
 #: desk/src/components/view-controls/SortBy.vue:131
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Empty - Choose a field to sort by"
 msgstr ""
 
@@ -3147,7 +3147,7 @@ msgstr ""
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:383
 #: helpdesk/helpdesk/doctype/hd_stopword/hd_stopword.json:24
 #: helpdesk/helpdesk/doctype/hd_ticket_status/hd_ticket_status.json:74
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Enabled"
 msgstr ""
 
@@ -3242,7 +3242,7 @@ msgid "Error processing email at index {0}, message: {1}"
 msgstr ""
 
 #: desk/src/pages/ticket/TicketTextEditor.vue:47
-#: helpdesk/public/desk/assets/TicketTextEditor-D9BT2aG4.js:1
+#: helpdesk/public/desk/assets/TicketTextEditor-XMHS5dRa.js:1
 msgid "Error uploading file"
 msgstr ""
 
@@ -3330,7 +3330,7 @@ msgid "Explore the product first"
 msgstr ""
 
 #: desk/src/components/ticket/ExportModal.vue:2
-#: desk/src/pages/ticket/Tickets.vue:153
+#: desk/src/pages/ticket/Tickets.vue:155
 msgid "Export"
 msgstr ""
 
@@ -3347,14 +3347,19 @@ msgstr ""
 #: desk/src/components/ticket/TicketAgentDetails.vue:93
 #: desk/src/components/ticket/TicketAgentDetails.vue:142
 #: desk/src/pages/call-logs/CallLogModal.vue:212
-#: desk/src/pages/ticket/Tickets.vue:275
+#: desk/src/pages/ticket/Tickets.vue:283
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json:197
 msgid "Failed"
 msgstr ""
 
 #: desk/src/components/customer/TicketStats.vue:39
-#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+#: helpdesk/public/desk/assets/docTickets-CWPE6Oxm.js:1
 msgid "Failed SLAs"
+msgstr ""
+
+#: desk/src/composables/useSLA.ts:91 desk/src/composables/useSLA.ts:163
+#, python-brace-format
+msgid "Failed by {0}"
 msgstr ""
 
 #: desk/src/pages/knowledge-base/KnowledgeBaseAgent.vue:281
@@ -3370,14 +3375,14 @@ msgid "Failed to delete ticket."
 msgstr ""
 
 #: desk/src/components/ticket-agent/analytics/TicketAnalyticsTab.vue:21
-#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+#: helpdesk/public/desk/assets/TicketAgent-DI5GX1nJ.js:1
 msgid "Failed to load analytics"
 msgstr ""
 
 #: desk/src/components/Settings/Telephony/ExotelSettings.vue:200
 #: desk/src/components/Settings/Telephony/Telephony.vue:187
 #: desk/src/components/Settings/Telephony/TwilioSettings.vue:180
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:29
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:29
 msgid "Failed to load telephony agent"
 msgstr ""
 
@@ -3393,7 +3398,7 @@ msgstr ""
 #: desk/src/components/Settings/Telephony/ExotelSettings.vue:252
 #: desk/src/components/Settings/Telephony/Telephony.vue:217
 #: desk/src/components/Settings/Telephony/TwilioSettings.vue:223
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:29
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:29
 msgid "Failed to save Twilio settings"
 msgstr ""
 
@@ -3446,7 +3451,7 @@ msgstr ""
 #: helpdesk/helpdesk/doctype/hd_article_feedback/hd_article_feedback.json:25
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:351
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json:411
-#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-14FSfMsp.js:1
+#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-sySb46Hr.js:1
 msgid "Feedback"
 msgstr ""
 
@@ -3596,7 +3601,7 @@ msgstr ""
 #: desk/src/components/view-controls/Filter.vue:62
 #: desk/src/components/view-controls/Filter.vue:97
 #: desk/src/composables/contact.ts:423
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "First Name"
 msgstr ""
 
@@ -3733,13 +3738,18 @@ msgstr ""
 #. Option for the 'SLA Status' (Select) field in DocType 'HD Ticket'
 #: desk/src/components/ticket-agent/TicketSLA.vue:77
 #: desk/src/components/ticket-agent/TicketSLA.vue:85
-#: desk/src/pages/ticket/Tickets.vue:275
+#: desk/src/composables/useSLA.ts:52 desk/src/pages/ticket/Tickets.vue:283
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json:197
 msgid "Fulfilled"
 msgstr ""
 
 #: desk/src/components/ticket-agent/TicketSLA.vue:143
 msgid "Fulfilled in"
+msgstr ""
+
+#: desk/src/composables/useSLA.ts:51
+#, python-brace-format
+msgid "Fulfilled in {0}"
 msgstr ""
 
 #: desk/src/components/ticket/TicketAgentDetails.vue:133
@@ -4226,7 +4236,7 @@ msgstr ""
 msgid "I'm not sure yet"
 msgstr ""
 
-#: desk/src/pages/home/components/PendingTickets.vue:24 helpdesk/api/doc.py:498
+#: desk/src/pages/home/components/PendingTickets.vue:24 helpdesk/api/doc.py:494
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:1249
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:1348 helpdesk/utils.py:254
 msgid "ID"
@@ -4438,7 +4448,7 @@ msgstr ""
 msgid "Instantly send e-mail"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:33
+#: desk/src/components/NeoSuggestReplyDialog.vue:36
 msgid "Instruction (optional)"
 msgstr ""
 
@@ -4581,7 +4591,7 @@ msgid "Invite sent. Waiting for the user to accept."
 msgstr ""
 
 #: desk/src/components/EmailMultiSelect.vue:142
-#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#: helpdesk/public/desk/assets/globe-DGM3r3-9.js:1
 msgid "Invite via email"
 msgstr ""
 
@@ -4747,7 +4757,7 @@ msgstr ""
 #: helpdesk/helpdesk/doctype/hd_ticket_feedback_option/hd_ticket_feedback_option.json:26
 #: helpdesk/helpdesk/doctype/hd_ticket_status/hd_ticket_status.json:35
 #: helpdesk/helpdesk/doctype/hd_view/hd_view.json:40
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Label"
 msgstr ""
 
@@ -4826,7 +4836,7 @@ msgstr ""
 msgid "Last Customer Response"
 msgstr ""
 
-#: helpdesk/api/doc.py:71 helpdesk/api/doc.py:170 helpdesk/api/doc.py:475
+#: helpdesk/api/doc.py:71 helpdesk/api/doc.py:170 helpdesk/api/doc.py:471
 #: helpdesk/helpdesk/doctype/hd_article/hd_article.py:97
 msgid "Last Modified"
 msgstr ""
@@ -4952,18 +4962,18 @@ msgstr ""
 
 #. Option for the 'Apply To' (Select) field in DocType 'HD Form Script'
 #. Label of a Tab Break field in DocType 'HD View'
-#: desk/src/components/ListViewBuilder.vue:816
-#: desk/src/components/ListViewBuilder.vue:907
+#: desk/src/components/ListViewBuilder.vue:850
+#: desk/src/components/ListViewBuilder.vue:941
 #: desk/src/components/Settings/Holiday/HolidayView.vue:152
 #: desk/src/components/command-palette/ticketListCommands.ts:102
 #: desk/src/composables/useView.ts:390 desk/src/composables/useView.ts:405
-#: desk/src/pages/ticket/Tickets.vue:464
+#: desk/src/pages/ticket/Tickets.vue:472
 #: helpdesk/helpdesk/doctype/hd_form_script/hd_form_script.json:35
 #: helpdesk/helpdesk/doctype/hd_view/hd_view.json:118
 msgid "List"
 msgstr ""
 
-#: desk/src/pages/ticket/Tickets.vue:380
+#: desk/src/pages/ticket/Tickets.vue:388
 msgid "List View"
 msgstr ""
 
@@ -4980,6 +4990,7 @@ msgstr ""
 msgid "Load Default Columns"
 msgstr ""
 
+#: desk/src/components/ListViewBuilder.vue:149
 #: desk/src/components/SavedRepliesSelectorModal.vue:113
 #: desk/src/components/Settings/Agents.vue:170
 #: desk/src/components/Settings/Teams/TeamsList.vue:88
@@ -5106,7 +5117,7 @@ msgid "Manage your account emails and email signature for communication."
 msgstr ""
 
 #: desk/src/components/Settings/EmailAccountList.vue:5
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Manage your email accounts and configure incoming and outgoing settings."
 msgstr ""
 
@@ -5255,7 +5266,7 @@ msgstr ""
 msgid "Mobile no. of the primary contact"
 msgstr ""
 
-#: helpdesk/api/doc.py:173 helpdesk/api/doc.py:476
+#: helpdesk/api/doc.py:173 helpdesk/api/doc.py:472
 msgid "Modified By"
 msgstr ""
 
@@ -5337,7 +5348,7 @@ msgstr ""
 msgid "My settings"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:44
+#: desk/src/components/NeoSuggestReplyDialog.vue:47
 msgid "NORA is writing…"
 msgstr ""
 
@@ -5345,7 +5356,7 @@ msgstr ""
 #. Label of a Link field in DocType 'HD Customer Member'
 #. Label of a Data field in DocType 'HD Settings'
 #. Label of a Data field in DocType 'HD Team'
-#: desk/src/components/ListViewBuilder.vue:547
+#: desk/src/components/ListViewBuilder.vue:578
 #: ⁨desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue⁩:46
 #: ⁨desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue⁩:47
 #: desk/src/components/Settings/FieldDependency/FieldDependencyList.vue:69
@@ -5357,7 +5368,7 @@ msgstr ""
 #: desk/src/components/ViewModal.vue:7
 #: desk/src/components/customer/NewCustomerDialog.vue:22
 #: desk/src/composables/customer.ts:174 helpdesk/api/doc.py:68
-#: helpdesk/api/doc.py:168 helpdesk/api/doc.py:473
+#: helpdesk/api/doc.py:168 helpdesk/api/doc.py:469
 #: helpdesk/helpdesk/doctype/hd_article_category/hd_article_category.json:22
 #: helpdesk/helpdesk/doctype/hd_customer_member/hd_customer_member.json:24
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:508
@@ -5422,7 +5433,7 @@ msgstr ""
 #: desk/src/components/Settings/Teams/TeamsList.vue:10
 #: desk/src/components/ticket/TicketCallActions.vue:4
 #: desk/src/pages/home/Home.vue:55
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "New"
 msgstr ""
 
@@ -5592,7 +5603,7 @@ msgstr ""
 msgid "No Call Logs Found"
 msgstr ""
 
-#: desk/src/components/ListViewBuilder.vue:370
+#: desk/src/components/ListViewBuilder.vue:401
 msgid "No Data Found"
 msgstr ""
 
@@ -5606,7 +5617,7 @@ msgid "No Holiday list found"
 msgstr ""
 
 #: desk/src/components/Settings/Sla/SlaPolicyList.vue:20
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "No SLA found"
 msgstr ""
 
@@ -5641,7 +5652,7 @@ msgid "No agents in this team"
 msgstr ""
 
 #: desk/src/components/SearchArticles.vue:60
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-CcV3B2P_.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-pcXMoncp.js:1
 msgid "No answers found"
 msgstr ""
 
@@ -5702,7 +5713,7 @@ msgid "No customers found for the applied filters. Try adjusting or clearing you
 msgstr ""
 
 #: desk/src/components/Settings/EmailAccountList.vue:52
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "No email account found"
 msgstr ""
 
@@ -5795,7 +5806,7 @@ msgstr ""
 
 #: desk/src/components/EmailMultiSelect.vue:134
 #: ⁨desk/src/components/Settings/Assignment Rules/AssigneeSearch.vue⁩:78
-#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#: helpdesk/public/desk/assets/globe-DGM3r3-9.js:1
 msgid "No results found"
 msgstr ""
 
@@ -5842,15 +5853,15 @@ msgstr ""
 
 #: desk/src/components/SkeletonLoader.vue:188
 #: desk/src/components/customer/TicketsTab.vue:51
-#: desk/src/pages/ticket/Tickets.vue:228
+#: desk/src/pages/ticket/Tickets.vue:236
 msgid "No tickets found"
 msgstr ""
 
-#: desk/src/pages/ticket/Tickets.vue:238
+#: desk/src/pages/ticket/Tickets.vue:246
 msgid "No tickets found for the applied filters. Try adjusting or clearing your filters."
 msgstr ""
 
-#: desk/src/pages/ticket/Tickets.vue:234
+#: desk/src/pages/ticket/Tickets.vue:242
 msgid "No tickets found for this view. Try adjusting your filters or creating a new view."
 msgstr ""
 
@@ -5994,6 +6005,10 @@ msgstr ""
 
 #: desk/src/components/Settings/Sla/SlaPolicyView.vue:115
 msgid "Old Conditions"
+msgstr ""
+
+#: desk/src/composables/useSLA.ts:140
+msgid "On Hold"
 msgstr ""
 
 #. Label of a Datetime field in DocType 'HD Ticket'
@@ -6141,12 +6156,17 @@ msgstr ""
 msgid "Outside working hours notice"
 msgstr ""
 
+#: desk/src/composables/useSLA.ts:118 desk/src/composables/useSLA.ts:188
+#, python-brace-format
+msgid "Overdue by {0}"
+msgstr ""
+
 #: desk/src/components/ticket-agent/TicketDetailsTab.vue:30
 msgid "Overview"
 msgstr ""
 
 #: desk/src/components/Settings/SavedReplies/SavedRepliesList.vue:88
-#: helpdesk/api/doc.py:180 helpdesk/api/doc.py:477
+#: helpdesk/api/doc.py:180 helpdesk/api/doc.py:473
 msgid "Owner"
 msgstr ""
 
@@ -6202,7 +6222,7 @@ msgstr ""
 
 #. Option for the 'SLA Status' (Select) field in DocType 'HD Ticket'
 #. Option for the 'Category' (Select) field in DocType 'HD Ticket Status'
-#: desk/src/pages/ticket/Tickets.vue:286
+#: desk/src/pages/ticket/Tickets.vue:294
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json:197
 #: helpdesk/helpdesk/doctype/hd_ticket_status/hd_ticket_status.json:61
 msgid "Paused"
@@ -6392,7 +6412,7 @@ msgstr ""
 
 #: desk/src/components/Settings/Telephony/ExotelSettings.vue:235
 #: desk/src/components/Settings/Telephony/TwilioSettings.vue:212
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:29
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:29
 msgid "Please fill all required fields for Twilio"
 msgstr ""
 
@@ -6441,7 +6461,7 @@ msgid "Please select weekly off day"
 msgstr ""
 
 #: desk/src/components/SearchArticles.vue:77
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-CcV3B2P_.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-pcXMoncp.js:1
 msgid "Please wait while we search for the answers"
 msgstr ""
 
@@ -6454,7 +6474,7 @@ msgid "Please wait, media is uploading"
 msgstr ""
 
 #: desk/src/components/Settings/Sla/SlaPolicyList.vue:32
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Policy name"
 msgstr ""
 
@@ -6599,7 +6619,7 @@ msgid "Private"
 msgstr ""
 
 #: desk/src/components/layouts/AppSidebar.vue:267
-#: desk/src/pages/ticket/Tickets.vue:400
+#: desk/src/pages/ticket/Tickets.vue:408
 msgid "Private Views"
 msgstr ""
 
@@ -6632,7 +6652,7 @@ msgid "Public"
 msgstr ""
 
 #: desk/src/components/layouts/AppSidebar.vue:260
-#: desk/src/pages/ticket/Tickets.vue:415
+#: desk/src/pages/ticket/Tickets.vue:423
 msgid "Public Views"
 msgstr ""
 
@@ -6712,7 +6732,7 @@ msgstr ""
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json:385
 #: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:1331
 #: helpdesk/helpdesk/doctype/hd_ticket_feedback_option/hd_ticket_feedback_option.json:20
-#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-14FSfMsp.js:1
+#: helpdesk/public/desk/assets/TicketFeedback.vue_vue_type_script_setup_true_lang-sySb46Hr.js:1
 msgid "Rating"
 msgstr ""
 
@@ -6815,7 +6835,7 @@ msgstr ""
 
 #: desk/src/components/view-controls/Reload.vue:3
 #: desk/src/pages/home/Home.vue:11
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Refresh"
 msgstr ""
 
@@ -6823,7 +6843,7 @@ msgstr ""
 msgid "Refresh Apps"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:76
+#: desk/src/components/NeoSuggestReplyDialog.vue:79
 msgid "Regenerate"
 msgstr ""
 
@@ -6925,12 +6945,12 @@ msgid "Repetition"
 msgstr ""
 
 #: desk/src/components/SearchArticles.vue:63
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-CcV3B2P_.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-pcXMoncp.js:1
 msgid "Rephrase the question and try again with some keywords"
 msgstr ""
 
 #: desk/src/components/EmailEditor.vue:520
-#: desk/src/components/NeoSuggestReplyDialog.vue:88
+#: desk/src/components/NeoSuggestReplyDialog.vue:91
 msgid "Replace"
 msgstr ""
 
@@ -6960,7 +6980,7 @@ msgstr ""
 #: desk/src/components/CommunicationArea.vue:11
 #: desk/src/components/ticket-agent/BulkReplyModal.vue:2
 #: desk/src/components/ticket-agent/timeline/TicketTimeline.vue:49
-#: desk/src/pages/ticket/Tickets.vue:133
+#: desk/src/pages/ticket/Tickets.vue:135
 msgid "Reply"
 msgstr ""
 
@@ -7021,7 +7041,7 @@ msgid "Reset password email sent successfully"
 msgstr ""
 
 #: desk/src/components/view-controls/ColumnSettings.vue:91
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Reset to Default"
 msgstr ""
 
@@ -7192,7 +7212,7 @@ msgstr ""
 
 #: desk/src/components/SavedReplyActions/SavedReplyActions.vue:233
 #: desk/src/components/ticket-agent/analytics/TicketAnalyticsTab.vue:23
-#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+#: helpdesk/public/desk/assets/TicketAgent-DI5GX1nJ.js:1
 msgid "Retry"
 msgstr ""
 
@@ -7336,7 +7356,7 @@ msgid "SLA policy updated successfully."
 msgstr ""
 
 #: desk/src/components/Settings/Sla/SlaPolicies.vue:11
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "SLAs align your team and customers with defined timelines for a reliable experience. Learn more about SLA "
 msgstr ""
 
@@ -7356,7 +7376,7 @@ msgid "Saturday"
 msgstr ""
 
 #. Button label of the email-feedback Web Form
-#: desk/src/components/ListViewBuilder.vue:740
+#: desk/src/components/ListViewBuilder.vue:774
 #: ⁨desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue⁩:20
 #: desk/src/components/Settings/EmailNotifications/Notification.vue:39
 #: desk/src/components/Settings/FieldDependency/FieldDependency.vue:23
@@ -7392,7 +7412,7 @@ msgstr ""
 msgid "Saved Replies"
 msgstr ""
 
-#: desk/src/pages/ticket/Tickets.vue:394
+#: desk/src/pages/ticket/Tickets.vue:402
 msgid "Saved Views"
 msgstr ""
 
@@ -7447,7 +7467,7 @@ msgstr ""
 #: desk/src/components/layouts/AppSidebar.vue:218
 #: desk/src/pages/SearchAgent.vue:7
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:270
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Search"
 msgstr ""
 
@@ -7544,7 +7564,7 @@ msgstr ""
 #: desk/src/components/SearchArticles.vue:74
 #: desk/src/components/view-controls/filter/FilterValueEditor.vue:91
 #: desk/src/pages/SearchAgent.vue:111
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-CcV3B2P_.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-pcXMoncp.js:1
 msgid "Searching..."
 msgstr ""
 
@@ -7774,7 +7794,7 @@ msgid "Service Level Agreement"
 msgstr ""
 
 #: desk/src/components/Settings/Sla/SlaPolicies.vue:5
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Service Level Agreements (SLAs)"
 msgstr ""
 
@@ -8025,11 +8045,11 @@ msgstr ""
 msgid "Show keyboard shortcuts"
 msgstr ""
 
-#: desk/src/components/ticket-agent/TicketFeedback.vue:20
+#: desk/src/components/ticket-agent/TicketFeedback.vue:21
 msgid "Show less"
 msgstr ""
 
-#: desk/src/components/ticket-agent/TicketFeedback.vue:20
+#: desk/src/components/ticket-agent/TicketFeedback.vue:21
 msgid "Show more"
 msgstr ""
 
@@ -8107,7 +8127,7 @@ msgstr ""
 #: desk/src/components/view-controls/SortBy.vue:9
 #: desk/src/components/view-controls/SortBy.vue:21
 #: desk/src/components/view-controls/SortBy.vue:232
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Sort"
 msgstr ""
 
@@ -8320,7 +8340,7 @@ msgstr ""
 msgid "Suggest a reply"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:21
+#: desk/src/components/NeoSuggestReplyDialog.vue:24
 msgid "Suggested reply"
 msgstr ""
 
@@ -8609,7 +8629,7 @@ msgstr ""
 #: desk/src/components/Settings/Telephony/ExotelSettings.vue:283
 #: desk/src/components/Settings/Telephony/Telephony.vue:248
 #: desk/src/components/Settings/Telephony/TwilioSettings.vue:241
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:29
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:29
 msgid "Telephony settings updated successfully."
 msgstr ""
 
@@ -8722,7 +8742,7 @@ msgid "There should be at least 1 assignment rule for ticket"
 msgstr ""
 
 #: desk/src/components/SearchArticles.vue:8
-#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-CcV3B2P_.js:1
+#: helpdesk/public/desk/assets/SearchArticles.vue_vue_type_script_setup_true_lang-pcXMoncp.js:1
 msgid "These articles may already cover what you are looking for"
 msgstr ""
 
@@ -8815,7 +8835,7 @@ msgstr ""
 msgid "This view is public, and will be removed for all users."
 msgstr ""
 
-#: desk/src/components/ListViewBuilder.vue:735
+#: desk/src/components/ListViewBuilder.vue:769
 msgid "This view is public. Changes made will be visible to everyone."
 msgstr ""
 
@@ -9097,10 +9117,10 @@ msgstr ""
 #: desk/src/pages/contact/Contact.vue:172
 #: desk/src/pages/customer/Customer.vue:65
 #: desk/src/pages/customer/Customer.vue:144
-#: desk/src/pages/ticket/MobileTicketAgent.vue:493
+#: desk/src/pages/ticket/MobileTicketAgent.vue:495
 #: desk/src/pages/ticket/TicketCustomer.vue:384
 #: desk/src/pages/ticket/TicketNew.vue:329 desk/src/pages/ticket/Tickets.vue:6
-#: desk/src/pages/ticket/Tickets.vue:483 helpdesk/api/dashboard.py:182
+#: desk/src/pages/ticket/Tickets.vue:491 helpdesk/api/dashboard.py:182
 #: helpdesk/api/dashboard.py:359 helpdesk/api/dashboard.py:528
 #: helpdesk/api/dashboard.py:565 helpdesk/api/dashboard.py:602
 #: helpdesk/api/dashboard_tags.py:50 helpdesk/api/dashboard_tags.py:78
@@ -9348,7 +9368,7 @@ msgstr ""
 
 #: desk/src/components/Settings/Telephony/ExotelSettings.vue:251
 #: desk/src/components/Settings/Telephony/Telephony.vue:216
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:29
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:29
 #, python-brace-format
 msgid "Twilio error: {0}"
 msgstr ""
@@ -9375,7 +9395,7 @@ msgid "Type a message"
 msgstr ""
 
 #: desk/src/components/Settings/Teams/components/AgentSelector.vue:39
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "Type agent name or email"
 msgstr ""
 
@@ -9469,8 +9489,8 @@ msgstr ""
 #: desk/src/components/Settings/Teams/NewTeam.vue:108
 #: desk/src/components/Settings/Telephony/ExotelSettings.vue:213
 #: desk/src/components/Settings/Telephony/TwilioSettings.vue:191
-#: helpdesk/public/desk/assets/DesktopLayout-2DgEmhjl.js:1
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:29
+#: helpdesk/public/desk/assets/DesktopLayout-Js-egwBk.js:1
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:29
 msgid "Unsaved changes"
 msgstr ""
 
@@ -9487,7 +9507,7 @@ msgstr ""
 #: desk/src/components/Settings/Profile/UserEmailSettings.vue:12
 #: desk/src/components/Settings/Profile/components/ChangePasswordModal.vue:47
 #: desk/src/components/view-controls/ColumnSettings.vue:136
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Update"
 msgstr ""
 
@@ -9571,7 +9591,7 @@ msgstr ""
 msgid "Use TLS for Outgoing"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:88
+#: desk/src/components/NeoSuggestReplyDialog.vue:91
 msgid "Use this reply"
 msgstr ""
 
@@ -9804,12 +9824,12 @@ msgid "Which tool does your team use?"
 msgstr ""
 
 #: desk/src/components/view-controls/ColumnSettings.vue:117
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Width"
 msgstr ""
 
 #: desk/src/components/view-controls/ColumnSettings.vue:121
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 msgid "Width can be in number, pixel or rem (eg. 3, 30px, 10rem)"
 msgstr ""
 
@@ -9994,7 +10014,7 @@ msgstr ""
 msgid "Your performance is"
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:70
+#: desk/src/components/NeoSuggestReplyDialog.vue:73
 msgid "Your reply already contains text — it will be replaced."
 msgstr ""
 
@@ -10103,7 +10123,7 @@ msgstr ""
 msgid "e.g. Acme Inc."
 msgstr ""
 
-#: desk/src/components/NeoSuggestReplyDialog.vue:34
+#: desk/src/components/NeoSuggestReplyDialog.vue:37
 msgid "e.g. explain the delay and offer a call"
 msgstr ""
 
@@ -10172,7 +10192,7 @@ msgstr ""
 
 #: desk/src/components/Settings/FieldDependency/FieldDependencyList.vue:21
 #: desk/src/components/Settings/Sla/SlaPolicies.vue:19
-#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BAeQgP0q.js:24
+#: helpdesk/public/desk/assets/TypingIndicator.vue_vue_type_style_index_0_scoped_7f2c0ea9_lang-BdTebS6Y.js:24
 msgid "here."
 msgstr ""
 
@@ -10307,7 +10327,7 @@ msgid "purple"
 msgstr ""
 
 #: desk/src/components/customer/TicketStats.vue:32
-#: helpdesk/public/desk/assets/docTickets-DOZKGdch.js:1
+#: helpdesk/public/desk/assets/docTickets-CWPE6Oxm.js:1
 msgid "reviews"
 msgstr ""
 
@@ -10358,12 +10378,12 @@ msgid "user1@example.com, user2@example.com, ..."
 msgstr ""
 
 #: desk/src/components/ticket-agent/TicketContact.vue:33
-#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+#: helpdesk/public/desk/assets/TicketAgent-DI5GX1nJ.js:1
 msgid "via Email"
 msgstr ""
 
 #: desk/src/components/ticket-agent/TicketContact.vue:33
-#: helpdesk/public/desk/assets/TicketAgent-D-Yvq7IU.js:1
+#: helpdesk/public/desk/assets/TicketAgent-DI5GX1nJ.js:1
 msgid "via Portal"
 msgstr ""
 
@@ -10402,13 +10422,13 @@ msgid "{0} - Knowledge Base"
 msgstr ""
 
 #: desk/src/components/ListRows.vue:20
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 #, python-brace-format
 msgid "{0} Article"
 msgstr ""
 
 #: desk/src/components/ListRows.vue:19
-#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-_cT4MeZR.js:1
+#: helpdesk/public/desk/assets/ListViewBuilder.vue_vue_type_script_setup_true_lang-aHGj1w9T.js:1
 #, python-brace-format
 msgid "{0} Articles"
 msgstr ""
@@ -10500,13 +10520,13 @@ msgid "{0} invited successfully"
 msgstr ""
 
 #: desk/src/components/EmailMultiSelect.vue:268
-#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#: helpdesk/public/desk/assets/globe-DGM3r3-9.js:1
 #, python-brace-format
 msgid "{0} is already added"
 msgstr ""
 
 #: desk/src/components/EmailMultiSelect.vue:145
-#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#: helpdesk/public/desk/assets/globe-DGM3r3-9.js:1
 #, python-brace-format
 msgid "{0} is an Invalid Email Address"
 msgstr ""
@@ -10522,13 +10542,13 @@ msgid "{0} is currently unavailable."
 msgstr ""
 
 #: desk/src/components/EmailMultiSelect.vue:263
-#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#: helpdesk/public/desk/assets/globe-DGM3r3-9.js:1
 #, python-brace-format
 msgid "{0} is not an existing contact"
 msgstr ""
 
 #: desk/src/components/EmailMultiSelect.vue:262
-#: helpdesk/public/desk/assets/globe-BWNQK5D8.js:1
+#: helpdesk/public/desk/assets/globe-DGM3r3-9.js:1
 #, python-brace-format
 msgid "{0} is not an existing user"
 msgstr ""
@@ -10549,12 +10569,12 @@ msgstr ""
 msgid "{0} is typing"
 msgstr ""
 
-#: desk/src/components/ListViewBuilder.vue:332
+#: desk/src/components/ListViewBuilder.vue:363
 #, python-brace-format
 msgid "{0} item(s) deleted successfully"
 msgstr ""
 
-#: desk/src/components/ListViewBuilder.vue:346
+#: desk/src/components/ListViewBuilder.vue:377
 #, python-brace-format
 msgid "{0} item(s) queued for deletion"
 msgstr ""
@@ -10589,6 +10609,11 @@ msgstr ""
 msgid "{0} months ago"
 msgstr ""
 
+#: desk/src/components/ListViewBuilder.vue:156
+#, python-brace-format
+msgid "{0} of {1}"
+msgstr ""
+
 #: helpdesk/overrides/user_invitation.py:18
 #, python-brace-format
 msgid "{0} on {1}"
@@ -10607,6 +10632,11 @@ msgstr ""
 #: desk/src/components/TypingIndicator.vue:81
 #, python-brace-format
 msgid "{0} others"
+msgstr ""
+
+#: desk/src/components/ticket-agent/TicketFeedback.vue:6
+#, python-brace-format
+msgid "{0} out of 5"
 msgstr ""
 
 #: helpdesk/notifications.py:51

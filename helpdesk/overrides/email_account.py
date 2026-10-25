@@ -250,14 +250,22 @@ class CustomEmailAccount(EmailAccount):
                 # //// attribute 'imap'" as "Error while connecting", every 2 minutes
                 # //// of a provider outage — 11 times on 2026-09-23, reopening a
                 # //// fleet issue (#429) about an error that does not say what
-                # //// failed. Stop here: the framework has already counted it.
-                connection = "imap" if self.use_imap else "pop"
-                if not email_server or not getattr(email_server, connection, None):
-                    return []
+                # //// failed. Stop at the first use of the missing connection: the
+                # //// framework has already counted it. (It used to stop BEFORE the
+                # //// loop, on a missing `imap` attribute; upstream's own test of a
+                # //// parked mail replaces select_imap_folder and get_messages and has
+                # //// no connection either, so v1.31.0's suite caught the early stop.)
                 if self.use_imap:
                     # process all given imap folder
                     for folder in self.imap_folder:
-                        if email_server.select_imap_folder(folder.folder_name):
+                        # //// Neoffice — same rule as above: the missing connection is met here
+                        try:
+                            selected = email_server.select_imap_folder(folder.folder_name)
+                        except AttributeError:
+                            if not getattr(email_server, "imap", None):
+                                return []
+                            raise
+                        if selected:
                             email_server.settings["uid_validity"] = folder.uidvalidity
                             messages = (
                                 email_server.get_messages(
@@ -268,7 +276,13 @@ class CustomEmailAccount(EmailAccount):
                             process_mail(messages, folder.append_to)
                 else:
                     # process the pop3 account
-                    messages = email_server.get_messages() or {}
+                    # //// Neoffice — same rule as above: the missing connection is met here
+                    try:
+                        messages = email_server.get_messages() or {}
+                    except AttributeError:
+                        if not getattr(email_server, "pop", None):
+                            return []
+                        raise
                     process_mail(messages)
 
                 # close connection to mailserver
