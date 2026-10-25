@@ -37,10 +37,13 @@
         <div v-if="!onCall" class="my-1 text-base">
           {{
             callStatus == "initiating"
+              /* //// Neoffice — __() wrap, see the marker above the element */
               ? __("Initiating call...")
               : callStatus == "ringing"
+              /* //// Neoffice — __() wrap, see the marker above the element */
               ? __("Ringing...")
               : calling
+              /* //// Neoffice — __() wrap, see the marker above the element */
               ? __("Calling...")
               : __("Incoming call...")
           }}

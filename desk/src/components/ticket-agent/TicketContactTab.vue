@@ -115,6 +115,7 @@
                   class="px-1.5 py-[3px] text-sm rounded-sm max-w-[80px] text-center truncate h-5"
                   :class="getStatusColor(ticket.status)"
                 >
+                  <!-- //// Neoffice — statusLabel(): see the marker above the element -->
                   {{ statusLabel(ticket.status) }}
                 </p>
               </div>
