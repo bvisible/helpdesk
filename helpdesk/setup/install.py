@@ -221,7 +221,10 @@ def setup_customer_role(fresh_install=True):
         else:
             role_doc = frappe.new_doc("Role")
             role_doc.role_name = role_name
-        role_doc.home_page = "/helpdesk"
+        # //// Neoffice — removed upstream's `role_doc.home_page = "/helpdesk"`. A role's home page comes first in frappe's
+        # //// get_home_page, and every customer of the ERP holds this role (overrides/customer.py mirrors them), so `/` and
+        # //// the « Home » link of a shop opened this application for a signed-in buyer (neoffice-maintenance#2122).
+        # //// A customer's support is a page of the site; this application is the agents'.
         role_doc.desk_access = 0
         role_doc.save()
 
@@ -237,7 +240,9 @@ def set_portal_defaults(overwrite=False):
     also validates the portal menu rows, and a row left behind by a deleted
     doctype fails that validation and takes the whole migration down.
     """
-    defaults = {"default_role": "HD Customer", "default_portal_home": "/helpdesk"}
+    # //// Neoffice — removed upstream's `"default_portal_home": "/helpdesk"`: frappe's get_home_page puts it before the site's
+    # //// own home for everybody signed in (neoffice-maintenance#2122, see setup_customer_role).
+    defaults = {"default_role": "HD Customer"}
     if overwrite:
         to_set = defaults
     else:
