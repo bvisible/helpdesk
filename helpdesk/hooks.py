@@ -191,3 +191,9 @@ setup_wizard_complete = "helpdesk.setup.setup_wizard.setup_complete"
 
 before_tests = "helpdesk.test_utils.before_tests"
 auth_hooks = ["helpdesk.auth.authenticate"]
+
+# //// Neoffice — the feedback form a customer is sent by e-mail when a ticket closes (HD Ticket, /ticket-feedback/new)
+# //// stays open while the website is in maintenance (Website Profile maintenance_mode, an instance without a showcase
+# //// site); the helpdesk itself is an app mounted by a route rule, open by itself. Read by
+# //// frappe/website/path_resolver.py (website_route_stays_open, neoffice-maintenance#2171).
+website_maintenance_open_routes = ["ticket-feedback"]
