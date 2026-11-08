@@ -166,3 +166,20 @@ class TestDeletingAMemberContact(FrappeTestCase):
         self.assertFalse(frappe.db.exists("Contact", contact))
         self.assertFalse(frappe.db.get_value("HD Customer", mirror, "primary_contact"))
         self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))
+
+
+    def test_a_row_left_by_a_contact_deleted_before_does_not_stop_the_next_deletion(self):
+        # a contact deleted forced, links unchecked, before members left with their contact: its row stayed behind
+        erp, mirror, contact = self._customer_with_a_member("Member Delete Leftover")
+        frappe.db.delete("HD Customer Member", {"parent": mirror, "contact_name": contact})
+        hd_customer = frappe.get_doc("HD Customer", mirror)
+        hd_customer.append("contacts", {"contact_name": "Member Delete Leftover-Gone"})
+        hd_customer.append("contacts", {"contact_name": contact})
+        hd_customer.flags.ignore_links = True
+        hd_customer.save(ignore_permissions=True)
+        from frappe.tests.roles import as_role
+
+        with as_role("sales_manager"):
+            frappe.delete_doc("Customer", erp.name)
+        self.assertFalse(frappe.db.exists("Contact", contact))
+        self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))

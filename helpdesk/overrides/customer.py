@@ -223,23 +223,21 @@ def drop_contact_from_hd_customers(doc, method=None):
     a copy of the work instance, 08.11). Before the merge the membership was a Dynamic
     Link on the Contact itself, which went with it.
 
-    Runs on_trash, before frappe checks the links. The HD Customer stays (tickets point at
-    it); only the contact leaves it. Saved without the deleting person's rights on HD
-    Customer: whoever may delete the contact may drop a reference to it.
+    Runs on_trash, before frappe checks the links, and on a forced deletion too. The HD
+    Customer stays (tickets point at it); only the contact leaves it: its row goes, and
+    the primary contact with the fields fetched from it (what HD Customer.remove_contact
+    does), written straight, without the deleting person's rights on HD Customer (whoever
+    may delete the contact may drop a reference to it). Never by saving the HD Customer:
+    a save checks every row again, and one left by a contact deleted before this existed
+    (forced, links unchecked) refused it, and the deletion with it (08.11).
     """
     if not doc.name or not frappe.db.exists("DocType", "HD Customer Member"):
         return
-    parents = set(
-        frappe.get_all(
-            "HD Customer Member",
-            filters={"parenttype": "HD Customer", "contact_name": doc.name},
-            pluck="parent",
+    frappe.db.delete("HD Customer Member", {"parenttype": "HD Customer", "contact_name": doc.name})
+    for name in frappe.get_all("HD Customer", filters={"primary_contact": doc.name}, pluck="name"):
+        frappe.db.set_value(
+            "HD Customer",
+            name,
+            {"primary_contact": None, "email_id": None, "mobile_no": None},
+            update_modified=False,
         )
-    )
-    parents.update(frappe.get_all("HD Customer", filters={"primary_contact": doc.name}, pluck="name"))
-    for name in sorted(parents):
-        hd_customer = frappe.get_doc("HD Customer", name)
-        hd_customer.remove_contact(doc.name)
-        # the ERP side is the one being deleted: no sync back to it from this save
-        hd_customer.flags.ignore_erpnext_sync = True
-        hd_customer.save(ignore_permissions=True)
