@@ -209,3 +209,37 @@ def link_contact_to_hd_customer(doc, method=None):
                 hd_customer.save(ignore_permissions=True)
         finally:
             doc.flags.in_hd_customer_link = False
+
+
+def drop_contact_from_hd_customers(doc, method=None):
+    """A Contact deleted is no member, nor the primary contact, of any HD Customer any more.
+
+    Upstream (v1.31.0) holds a membership as a row of `HD Customer Member` whose
+    `contact_name` is a Link to Contact, and `HD Customer.primary_contact` is one too:
+    frappe refuses to delete a Contact either points at (LinkExistsError). The mirror
+    above makes every contact of an ERP Customer a member, so since the v1.31.0 merge no
+    Customer with a contact could be deleted: ERPNext's Customer.on_trash deletes the
+    contacts that belong to it alone, and the first one stopped the deletion (measured on
+    a copy of the work instance, 08.11). Before the merge the membership was a Dynamic
+    Link on the Contact itself, which went with it.
+
+    Runs on_trash, before frappe checks the links. The HD Customer stays (tickets point at
+    it); only the contact leaves it. Saved without the deleting person's rights on HD
+    Customer: whoever may delete the contact may drop a reference to it.
+    """
+    if not doc.name or not frappe.db.exists("DocType", "HD Customer Member"):
+        return
+    parents = set(
+        frappe.get_all(
+            "HD Customer Member",
+            filters={"parenttype": "HD Customer", "contact_name": doc.name},
+            pluck="parent",
+        )
+    )
+    parents.update(frappe.get_all("HD Customer", filters={"primary_contact": doc.name}, pluck="name"))
+    for name in sorted(parents):
+        hd_customer = frappe.get_doc("HD Customer", name)
+        hd_customer.remove_contact(doc.name)
+        # the ERP side is the one being deleted: no sync back to it from this save
+        hd_customer.flags.ignore_erpnext_sync = True
+        hd_customer.save(ignore_permissions=True)

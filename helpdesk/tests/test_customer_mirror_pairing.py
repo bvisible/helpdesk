@@ -102,3 +102,67 @@ class TestContactBecomesMember(FrappeTestCase):
             frappe.db.count("HD Customer Member", {"parent": mirror, "contact_name": contact.name}),
             1,
         )
+
+
+class TestDeletingAMemberContact(FrappeTestCase):
+    """Since the v1.31.0 merge a Contact is a member of its customer's mirror through a Link
+    (HD Customer Member): deleting it, or the ERP Customer it belongs to, must still work and
+    take it out of the mirror (drop_contact_from_hd_customers)."""
+
+    def setUp(self):
+        if "erpnext" not in frappe.get_installed_apps():
+            self.skipTest("ERPNext is not installed")
+        if not frappe.db.exists("DocType", "HD Customer Member"):
+            self.skipTest("HD Customer Member is absent")
+        frappe.db.set_single_value("ERPNext HD Settings", "enabled", 0)
+
+    def _customer_with_a_member(self, name):
+        erp = frappe.get_doc(
+            {
+                "doctype": "Customer",
+                "customer_name": name,
+                "customer_type": "Company",
+                # ERPNext makes its primary contact from these, as the desk's quick entry does
+                "email_id": f"{frappe.scrub(name)}@example.com",
+            }
+        ).insert(ignore_permissions=True)
+        self.addCleanup(safe_delete, "Customer", erp.name)
+        mirror = frappe.db.get_value("HD Customer", {"erpnext_customer": erp.name}, "name")
+        self.assertTrue(mirror, "the mirror did not run")
+        self.addCleanup(safe_delete, "HD Customer", mirror)
+        contact = erp.customer_primary_contact or frappe.db.get_value(
+            "Dynamic Link",
+            {"parenttype": "Contact", "link_doctype": "Customer", "link_name": erp.name},
+            "parent",
+        )
+        self.assertTrue(contact, "ERPNext made no contact for the customer")
+        self.addCleanup(safe_delete, "Contact", contact)
+        self.assertTrue(
+            frappe.db.exists("HD Customer Member", {"parent": mirror, "contact_name": contact}),
+            "the contact did not join the mirror",
+        )
+        return erp, mirror, contact
+
+    def test_a_customer_whose_contact_is_a_member_can_be_deleted(self):
+        from frappe.tests.roles import as_role
+
+        erp, mirror, contact = self._customer_with_a_member("Member Delete Customer")
+        with as_role("sales_manager"):
+            frappe.delete_doc("Customer", erp.name)
+        self.assertFalse(frappe.db.exists("Customer", erp.name))
+        self.assertFalse(frappe.db.exists("Contact", contact))
+        self.assertTrue(frappe.db.exists("HD Customer", mirror), "the mirror stays for its tickets")
+        self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))
+
+    def test_a_primary_member_contact_can_be_deleted(self):
+        from frappe.tests.roles import as_role
+
+        _erp, mirror, contact = self._customer_with_a_member("Member Delete Contact")
+        hd_customer = frappe.get_doc("HD Customer", mirror)
+        hd_customer.set_primary(contact)
+        hd_customer.save(ignore_permissions=True)
+        with as_role("sales_manager"):
+            frappe.delete_doc("Contact", contact)
+        self.assertFalse(frappe.db.exists("Contact", contact))
+        self.assertFalse(frappe.db.get_value("HD Customer", mirror, "primary_contact"))
+        self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))

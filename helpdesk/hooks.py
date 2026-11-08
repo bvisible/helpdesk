@@ -90,8 +90,12 @@ doc_events = {
     # //// created, so this runs on update (insert included). Upstream v1.31.0 dropped its
     # //// own Contact hook; membership is now a child table of HD Customer, which
     # //// overrides/customer.py fills from the ERP link. See link_contact_to_hd_customer.
+    # //// Neoffice — and a Contact deleted leaves the HD Customers it belonged to: the membership row
+    # //// (HD Customer Member, a Link to Contact) refused the deletion, and with it the deletion of
+    # //// any ERP Customer with a contact. See drop_contact_from_hd_customers.
     "Contact": {
         "on_update": "helpdesk.overrides.customer.link_contact_to_hd_customer",
+        "on_trash": "helpdesk.overrides.customer.drop_contact_from_hd_customers",
     },
     "Assignment Rule": {
         "on_trash": "helpdesk.extends.assignment_rule.on_assignment_rule_trash",
