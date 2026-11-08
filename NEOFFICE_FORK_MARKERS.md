@@ -198,7 +198,9 @@ divergence, nothing of upstream's is attributed to us.
 | `helpdesk/helpdesk/doctype/hd_article/hd_article.json` | added `wiki_document` (Link → Wiki Document, read-only) | identity of the knowledge-base mirror; without it the mirror would have to guess which wiki document an article belongs to, by title | keep ours, pure addition |
 | `helpdesk/helpdesk/doctype/hd_settings/hd_settings.json` | added a "Knowledge Base Mirror" section: `mirror_kb_to_wiki` (Check, default 0) and `kb_wiki_space` (Link → Wiki Space, read-only) | the mirror is off until someone turns it on, and the space it writes into is recorded rather than resolved by route — a route can be renamed, and the mirror must not start writing into whatever answers to it afterwards | keep ours, pure addition |
 
-**Two JSON DocTypes are modified** (`hd_article.json`, `hd_settings.json`; `hd_customer.json` went back to upstream on 2026-09-24). Nothing else in the fork changes
+| `helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json` | added a permission row for `Desk User` (read, write, create, email, print; no delete, export, report or share), `modified` bumped (2026-11-08) | upstream v1.31.0 moved `create` from `All` to `HD Customer` / `HD Customer Manager`: an employee who is no agent could no longer open a ticket to the support, NORA's `helpdesk_ticket_create` included (Jérémy, 08.11: the employees get it back, the portal accounts do not). `Desk User` is the role of every desk account; what they read stays scoped by HD Ticket's `permission_query` / `has_permission`. `patches/staff_open_their_own_tickets.py` copies the row into the Custom DocPerm set that shadows it on our instances | keep ours, re-add the row if upstream rewrites the permissions |
+
+**Two JSON DocTypes are modified** (`hd_article.json`, `hd_settings.json`; `hd_customer.json` went back to upstream on 2026-09-24), and one carries a permission row of ours (`hd_ticket.json`). Nothing else in the fork changes
 a DocType schema.
 
 ### Submodule pointer (unreachable — no comment syntax at all)

@@ -75,3 +75,6 @@ helpdesk.patches.mirror_erpnext_customers
 # //// Neoffice — clears `select` from the Custom DocPerm rows of HD Agent that the JSON alone cannot reach
 # //// (cfa160f5a "fix(agents): the agent list was enumerable by any portal account")
 helpdesk.patches.agents_are_not_a_public_directory
+# //// Neoffice — an employee of the instance who is no agent opens a ticket again (the row `Desk User` of
+# //// hd_ticket.json, copied into the Custom DocPerm set that shadows it on our instances)
+helpdesk.patches.staff_open_their_own_tickets
