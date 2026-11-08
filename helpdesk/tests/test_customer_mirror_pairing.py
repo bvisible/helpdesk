@@ -183,3 +183,26 @@ class TestDeletingAMemberContact(FrappeTestCase):
             frappe.delete_doc("Customer", erp.name)
         self.assertFalse(frappe.db.exists("Contact", contact))
         self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))
+
+    def test_a_contact_joins_a_mirror_that_holds_a_row_of_a_contact_gone(self):
+        # rows of contacts deleted forced before members left with their contact stay on osiris's mirrors: the save that
+        # adds the next contact checked them and refused the contact itself (the bench's florist, 08.11)
+        erp, mirror, contact = self._customer_with_a_member("Member Join Leftover")
+        hd_customer = frappe.get_doc("HD Customer", mirror)
+        hd_customer.append("contacts", {"contact_name": "Member Join Leftover-Gone"})
+        hd_customer.flags.ignore_links = True
+        hd_customer.save(ignore_permissions=True)
+        newcomer = frappe.get_doc(
+            {
+                "doctype": "Contact",
+                "first_name": "Member",
+                "last_name": "Join Newcomer",
+                "email_ids": [{"email_id": "member.join.newcomer@example.com", "is_primary": 1}],
+                "links": [{"link_doctype": "Customer", "link_name": erp.name}],
+            }
+        ).insert(ignore_permissions=True)
+        self.addCleanup(safe_delete, "Contact", newcomer.name)
+        members = set(
+            frappe.get_all("HD Customer Member", filters={"parent": mirror}, pluck="contact_name")
+        )
+        self.assertEqual(members, {contact, newcomer.name})

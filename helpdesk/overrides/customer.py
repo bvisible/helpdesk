@@ -201,6 +201,7 @@ def link_contact_to_hd_customer(doc, method=None):
         ):
             continue
         hd_customer = frappe.get_doc("HD Customer", mirror)
+        _drop_rows_of_gone_contacts(hd_customer)
         # a flag, not a guard on the document: saving the HD Customer saves the user,
         # which may touch this contact again
         doc.flags.in_hd_customer_link = True
@@ -209,6 +210,21 @@ def link_contact_to_hd_customer(doc, method=None):
                 hd_customer.save(ignore_permissions=True)
         finally:
             doc.flags.in_hd_customer_link = False
+
+
+def _drop_rows_of_gone_contacts(hd_customer):
+    """Take out of `hd_customer` the rows (and the primary contact) of contacts that no longer exist.
+
+    A contact deleted forced, links unchecked, before drop_contact_from_hd_customers existed
+    left its row behind, and a save checks every row: the save that adds the next contact
+    refused the whole HD Customer, and the contact's own insert with it (08.11, on the work
+    instance: a mirror kept the row of a contact deleted the night before).
+    """
+    for row in list(hd_customer.contacts or []):
+        if row.contact_name and not frappe.db.exists("Contact", row.contact_name):
+            hd_customer.remove_contact(row.contact_name)
+    if hd_customer.primary_contact and not frappe.db.exists("Contact", hd_customer.primary_contact):
+        hd_customer.clear_primary()
 
 
 def drop_contact_from_hd_customers(doc, method=None):
