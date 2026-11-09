@@ -642,3 +642,26 @@ def get_country_from_timezone(time_zone: str):
         "Country", {"time_zones": ["like", f"%{time_zone}%"]}, "name"
     )
     return country or None
+
+
+# //// Neoffice — added (no upstream equivalent). Upstream answers whoever a ticket was
+# //// raised by. A bounce that carries none of the machine-mail markers (no DSN part, no
+# //// Return-Path <>, no Auto-Submitted: a plain-text notice from a provider daemon)
+# //// became a ticket, and the new-ticket acknowledgement went back to the daemon: sent to
+# //// a mailer-daemon address on the hub, with a loop one refusal away (#1240). These local
+# //// parts are matched exactly, so "mailer-daemon.team@" is a person.
+# //// Remove when upstream refuses to acknowledge automatic senders itself.
+AUTOMATIC_SENDERS = frozenset({"mailer-daemon", "postmaster"})
+
+
+def automatic_sender(address: str | None) -> str | None:
+    """The local part when `address` is a mail system's own mailbox, else None.
+
+    `address` may be a bare address or a full "Name <address>" header value.
+    """
+    if not address:
+        return None
+    from frappe.utils import parse_addr
+
+    local = (parse_addr(address)[1] or "").split("@")[0].strip().lower()
+    return local if local in AUTOMATIC_SENDERS else None

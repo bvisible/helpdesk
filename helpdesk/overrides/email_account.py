@@ -9,6 +9,9 @@ from frappe.email.doctype.email_queue.email_queue import EmailQueue
 from frappe.email.receive import InboundMail
 from frappe.utils import parse_addr
 
+# //// Neoffice — added import: the automatic-sender rule below, shared with HD Ticket
+from helpdesk.utils import automatic_sender
+
 
 def auto_generated_reason(msg) -> str | None:
     """Why this mail must not become a ticket or a reply, else None.
@@ -38,6 +41,14 @@ def auto_generated_reason(msg) -> str | None:
     auto_submitted = (msg.get("Auto-Submitted") or "no").split(";")[0].strip().lower()
     if auto_submitted not in ("no", "auto-replied"):
         return f"Auto-Submitted: {auto_submitted}"
+
+    # //// Neoffice — a mail system's own mailbox writing without any of the markers above
+    # //// (a plain-text bounce from a provider daemon) is machine mail all the same: it
+    # //// became a ticket and the acknowledgement was sent back to the daemon (#1240).
+    # //// Checked last so the reasons above, which the ticket comment wording keys off,
+    # //// stay what they were. Remove when upstream parks automatic senders itself.
+    if sender := automatic_sender(msg.get("From")):
+        return f"automatic sender: {sender}"
 
     return None
 

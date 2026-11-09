@@ -30,7 +30,10 @@ from helpdesk.helpdesk.utils.email import (
 )
 from helpdesk.notifications import clear as clear_notifications
 from helpdesk.notifications import notify_ticket_reopened
+
+# //// Neoffice — automatic_sender added to this import, see after_insert (#1240)
 from helpdesk.utils import (
+    automatic_sender,
     capture_event,
     get_agents_team,
     get_customers,
@@ -222,10 +225,16 @@ class HDTicket(Document):
         send_ack_email = frappe.db.get_single_value(
             "HD Settings", "send_acknowledgement_email"
         )
+        # //// Neoffice — never acknowledge a mail system's own mailbox (mailer-daemon,
+        # //// postmaster): a bounce that carries no machine-mail marker still reaches
+        # //// the desk by the mail route and, by the API or the portal, with any
+        # //// raised_by; the acknowledgement it got went back to the daemon, one
+        # //// refusal away from a loop (#1240). Remove when upstream guards it.
         if (
             not self.via_customer_portal
             and not frappe.flags.initial_sync
             and send_ack_email
+            and not automatic_sender(self.raised_by)  # //// Neoffice — see above
         ):
             self.send_acknowledgement_email()
 

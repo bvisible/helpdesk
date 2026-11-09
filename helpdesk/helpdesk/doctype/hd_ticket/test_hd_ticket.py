@@ -16,7 +16,10 @@ from helpdesk.helpdesk.doctype.hd_ticket.api import (
     show_outside_hours_banner,
     split_ticket,
 )
+
+# //// Neoffice — HDTicket added to this import, patched by the acknowledgement tests (#1240)
 from helpdesk.helpdesk.doctype.hd_ticket.hd_ticket import (
+    HDTicket,
     close_tickets_after_n_days,
     has_permission,
     permission_query,
@@ -2502,6 +2505,21 @@ class TestHDTicket(FrappeTestCase):
         )
         self.assertTrue(frappe.db.exists("Comment", assigned.name))
         frappe.set_user("Administrator")
+
+    # //// Neoffice — the acknowledgement never goes to a mail system's own mailbox (#1240)
+    def test_acknowledgement_is_not_sent_to_a_mail_daemon(self):
+        frappe.db.set_single_value("HD Settings", "send_acknowledgement_email", 1)
+        with patch.object(HDTicket, "send_acknowledgement_email") as send_ack:
+            make_ticket(raised_by="mailer-daemon@example.com")
+            make_ticket(raised_by="Mail Delivery Subsystem <postmaster@example.com>")
+        send_ack.assert_not_called()
+
+    def test_acknowledgement_is_still_sent_to_a_customer(self):
+        frappe.db.set_single_value("HD Settings", "send_acknowledgement_email", 1)
+        with patch.object(HDTicket, "send_acknowledgement_email") as send_ack:
+            make_ticket(raised_by="mailer-daemon.team@example.com")
+            make_ticket(raised_by="customer@example.com")
+        self.assertEqual(send_ack.call_count, 2)
 
     def tearDown(self):
         frappe.set_user("Administrator")
