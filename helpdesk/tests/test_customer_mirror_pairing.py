@@ -50,7 +50,9 @@ class TestCustomerMirrorPairing(FrappeTestCase):
         enable_erpnext_sync()
         sync_all_customers()
 
-        self.assertEqual(frappe.db.get_value("Customer", erp.name, "hd_customer"), mirror)
+        self.assertEqual(
+            frappe.db.get_value("Customer", erp.name, "hd_customer"), mirror
+        )
         self.assertEqual(
             frappe.db.count("HD Customer", {"erpnext_customer": erp.name}), 1
         )
@@ -73,7 +75,9 @@ class TestContactBecomesMember(FrappeTestCase):
             {"doctype": "Customer", "customer_name": "Member Mirror Customer"}
         ).insert(ignore_permissions=True)
         self.addCleanup(safe_delete, "Customer", erp.name)
-        mirror = frappe.db.get_value("HD Customer", {"erpnext_customer": erp.name}, "name")
+        mirror = frappe.db.get_value(
+            "HD Customer", {"erpnext_customer": erp.name}, "name"
+        )
         self.assertTrue(mirror)
         self.addCleanup(safe_delete, "HD Customer", mirror)
 
@@ -82,7 +86,9 @@ class TestContactBecomesMember(FrappeTestCase):
                 "doctype": "Contact",
                 "first_name": "Member",
                 "last_name": "Mirror",
-                "email_ids": [{"email_id": "member.mirror@example.com", "is_primary": 1}],
+                "email_ids": [
+                    {"email_id": "member.mirror@example.com", "is_primary": 1}
+                ],
                 "links": [{"link_doctype": "Customer", "link_name": erp.name}],
             }
         ).insert(ignore_permissions=True)
@@ -99,7 +105,9 @@ class TestContactBecomesMember(FrappeTestCase):
         contact.reload()
         contact.save(ignore_permissions=True)
         self.assertEqual(
-            frappe.db.count("HD Customer Member", {"parent": mirror, "contact_name": contact.name}),
+            frappe.db.count(
+                "HD Customer Member", {"parent": mirror, "contact_name": contact.name}
+            ),
             1,
         )
 
@@ -127,18 +135,26 @@ class TestDeletingAMemberContact(FrappeTestCase):
             }
         ).insert(ignore_permissions=True)
         self.addCleanup(safe_delete, "Customer", erp.name)
-        mirror = frappe.db.get_value("HD Customer", {"erpnext_customer": erp.name}, "name")
+        mirror = frappe.db.get_value(
+            "HD Customer", {"erpnext_customer": erp.name}, "name"
+        )
         self.assertTrue(mirror, "the mirror did not run")
         self.addCleanup(safe_delete, "HD Customer", mirror)
         contact = erp.customer_primary_contact or frappe.db.get_value(
             "Dynamic Link",
-            {"parenttype": "Contact", "link_doctype": "Customer", "link_name": erp.name},
+            {
+                "parenttype": "Contact",
+                "link_doctype": "Customer",
+                "link_name": erp.name,
+            },
             "parent",
         )
         self.assertTrue(contact, "ERPNext made no contact for the customer")
         self.addCleanup(safe_delete, "Contact", contact)
         self.assertTrue(
-            frappe.db.exists("HD Customer Member", {"parent": mirror, "contact_name": contact}),
+            frappe.db.exists(
+                "HD Customer Member", {"parent": mirror, "contact_name": contact}
+            ),
             "the contact did not join the mirror",
         )
         return erp, mirror, contact
@@ -151,13 +167,50 @@ class TestDeletingAMemberContact(FrappeTestCase):
             frappe.delete_doc("Customer", erp.name)
         self.assertFalse(frappe.db.exists("Customer", erp.name))
         self.assertFalse(frappe.db.exists("Contact", contact))
-        self.assertTrue(frappe.db.exists("HD Customer", mirror), "the mirror stays for its tickets")
-        self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))
+        self.assertTrue(
+            frappe.db.exists("HD Customer", mirror), "the mirror stays for its tickets"
+        )
+        self.assertFalse(
+            frappe.db.exists("HD Customer Member", {"contact_name": contact})
+        )
 
     def test_a_primary_member_contact_can_be_deleted(self):
         from frappe.tests.roles import as_role
 
-        _erp, mirror, contact = self._customer_with_a_member("Member Delete Contact")
+        erp, mirror, _first = self._customer_with_a_member("Member Delete Contact")
+        # A second contact of the customer, primary of the mirror but not of the ERP
+        # Customer: ERPNext refuses to delete the Customer's own primary contact (a Link,
+        # LinkExistsError "linked with Customer"), and what clears that link on trash is
+        # neoffice_theme (contacts.unlink_contact_before_delete), an app this CI does not
+        # install (the nightly Tests of 09.11.2026, neoffice-maintenance#2353).
+        contact = (
+            frappe.get_doc(
+                {
+                    "doctype": "Contact",
+                    "first_name": "Member Delete Second",
+                    "email_ids": [
+                        {
+                            "email_id": "member_delete_second@example.com",
+                            "is_primary": 1,
+                        }
+                    ],
+                    "links": [{"link_doctype": "Customer", "link_name": erp.name}],
+                }
+            )
+            .insert(ignore_permissions=True)
+            .name
+        )
+        self.addCleanup(safe_delete, "Contact", contact)
+        self.assertNotEqual(
+            frappe.db.get_value("Customer", erp.name, "customer_primary_contact"),
+            contact,
+        )
+        self.assertTrue(
+            frappe.db.exists(
+                "HD Customer Member", {"parent": mirror, "contact_name": contact}
+            ),
+            "the second contact did not join the mirror",
+        )
         hd_customer = frappe.get_doc("HD Customer", mirror)
         hd_customer.set_primary(contact)
         hd_customer.save(ignore_permissions=True)
@@ -165,13 +218,18 @@ class TestDeletingAMemberContact(FrappeTestCase):
             frappe.delete_doc("Contact", contact)
         self.assertFalse(frappe.db.exists("Contact", contact))
         self.assertFalse(frappe.db.get_value("HD Customer", mirror, "primary_contact"))
-        self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))
+        self.assertFalse(
+            frappe.db.exists("HD Customer Member", {"contact_name": contact})
+        )
 
-
-    def test_a_row_left_by_a_contact_deleted_before_does_not_stop_the_next_deletion(self):
+    def test_a_row_left_by_a_contact_deleted_before_does_not_stop_the_next_deletion(
+        self,
+    ):
         # a contact deleted forced, links unchecked, before members left with their contact: its row stayed behind
         erp, mirror, contact = self._customer_with_a_member("Member Delete Leftover")
-        frappe.db.delete("HD Customer Member", {"parent": mirror, "contact_name": contact})
+        frappe.db.delete(
+            "HD Customer Member", {"parent": mirror, "contact_name": contact}
+        )
         hd_customer = frappe.get_doc("HD Customer", mirror)
         hd_customer.append("contacts", {"contact_name": "Member Delete Leftover-Gone"})
         hd_customer.append("contacts", {"contact_name": contact})
@@ -182,7 +240,9 @@ class TestDeletingAMemberContact(FrappeTestCase):
         with as_role("sales_manager"):
             frappe.delete_doc("Customer", erp.name)
         self.assertFalse(frappe.db.exists("Contact", contact))
-        self.assertFalse(frappe.db.exists("HD Customer Member", {"contact_name": contact}))
+        self.assertFalse(
+            frappe.db.exists("HD Customer Member", {"contact_name": contact})
+        )
 
     def test_a_contact_joins_a_mirror_that_holds_a_row_of_a_contact_gone(self):
         # rows of contacts deleted forced before members left with their contact stay on osiris's mirrors: the save that
@@ -197,12 +257,16 @@ class TestDeletingAMemberContact(FrappeTestCase):
                 "doctype": "Contact",
                 "first_name": "Member",
                 "last_name": "Join Newcomer",
-                "email_ids": [{"email_id": "member.join.newcomer@example.com", "is_primary": 1}],
+                "email_ids": [
+                    {"email_id": "member.join.newcomer@example.com", "is_primary": 1}
+                ],
                 "links": [{"link_doctype": "Customer", "link_name": erp.name}],
             }
         ).insert(ignore_permissions=True)
         self.addCleanup(safe_delete, "Contact", newcomer.name)
         members = set(
-            frappe.get_all("HD Customer Member", filters={"parent": mirror}, pluck="contact_name")
+            frappe.get_all(
+                "HD Customer Member", filters={"parent": mirror}, pluck="contact_name"
+            )
         )
         self.assertEqual(members, {contact, newcomer.name})
