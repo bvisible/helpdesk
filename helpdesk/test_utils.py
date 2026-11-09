@@ -138,6 +138,16 @@ def make_sla(
 ):
     """Copy the seeded SLA. `priorities` replaces its priority rows, the
     first becoming the default priority, each row slower than the one before."""
+    # //// Neoffice — only the install hook creates the shipped SLA, and upstream renamed
+    # //// it from "Default" to "Standard" (b89aaf4ff, 2026-08-03). A site installed before
+    # //// that holds "Default" only, so get_doc below raised DoesNotExistError in
+    # //// before_tests, before the first test of ANY app's run-tests (#1988). The install
+    # //// function is idempotent: it adds the missing record, and leaves the old one be.
+    # //// Remove when every site was installed after the rename.
+    if not frappe.db.exists("HD Service Level Agreement", DEFAULT_SLA):
+        from helpdesk.setup.install import add_default_sla
+
+        add_default_sla()
     def_sla = frappe.get_doc("HD Service Level Agreement", DEFAULT_SLA)
     sla_doc = frappe.copy_doc(def_sla)
     sla_doc.service_level = sla_name
