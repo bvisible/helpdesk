@@ -790,6 +790,12 @@ class HDTicket(Document):
         from_email_id = from_email.get("email_id") if from_email else None
         email_account_name = from_email.get("email_account") if from_email else None
         sender = from_email_id or frappe.session.user
+        # //// Neoffice — backport of upstream ac9822c88: our frappe now refuses a mail tied to a
+        # //// communication with no recipient (frappe 6442db1c03), so a reply that names nobody
+        # //// (ticket merge, ticket split) failed. Drop this marker at the next upstream merge.
+        # the UI always sends `to`; a caller that names nobody means the customer
+        if to is None and not cc and not bcc:
+            to = self.raised_by
         recipients = to
 
         sender_email = None
