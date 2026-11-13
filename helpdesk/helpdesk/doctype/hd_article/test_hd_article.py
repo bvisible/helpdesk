@@ -1,8 +1,10 @@
 # Copyright (c) 2021, Frappe Technologies and Contributors
 # See license.txt
 import frappe
+from frappe.tests.roles import (  # //// Neoffice — the acts of the #531 tests are played by real roles
+    as_role,
+)
 from frappe.tests.utils import FrappeTestCase
-
 
 # //// Neoffice — `HD Article.wiki_document` is a Link to `Wiki Document`, added by
 # //// this fork for the knowledge-base mirror (see kb_wiki_mirror.py). The test
@@ -106,3 +108,53 @@ class TestHDArticleFeedback(FrappeTestCase):
             },
         )
         self.assertEqual(total, 1)
+
+
+# //// Neoffice — added tests (neoffice-maintenance#531): set_feedback is the only door to HD Article Feedback.
+# Administrator only builds the scene (the article); the vote is cast by a portal account, as on a client's site.
+class TestHDArticleFeedbackDoor(FrappeTestCase):
+    def setUp(self):
+        self.article = frappe.get_doc(
+            {
+                "doctype": "HD Article",
+                "title": "Door Test Article",
+                "status": "Published",
+                "content": "<p>Door test</p>",
+            }
+        ).insert()
+
+    def tearDown(self):
+        frappe.db.delete("HD Article Feedback", {"article": self.article.name})
+        frappe.delete_doc("HD Article", self.article.name, force=True)
+
+    def test_a_portal_account_votes_through_the_method(self):
+        with as_role("portal_customer") as portal:
+            self.article.set_feedback(1)
+        # feedback is a Select field: the database gives back "1"
+        self.assertEqual(
+            frappe.db.get_value(
+                "HD Article Feedback",
+                {"article": self.article.name, "user": portal},
+                "feedback",
+            ),
+            "1",
+        )
+
+    def test_a_portal_account_cannot_insert_a_vote_directly(self):
+        with as_role("portal_customer"), self.assertRaises(frappe.PermissionError):
+            frappe.get_doc(
+                {
+                    "doctype": "HD Article Feedback",
+                    "user": "someone-else@example.com",
+                    "article": self.article.name,
+                    "feedback": 2,
+                }
+            ).insert()
+
+    def test_a_visitor_cannot_vote(self):
+        with as_role("Guest"), self.assertRaises(frappe.PermissionError):
+            self.article.set_feedback(1)
+
+    def test_a_value_outside_the_three_is_refused(self):
+        with as_role("portal_customer"), self.assertRaises(frappe.ValidationError):
+            self.article.set_feedback(7)

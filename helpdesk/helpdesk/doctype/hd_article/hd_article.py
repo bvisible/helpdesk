@@ -107,6 +107,20 @@ class HDArticle(Document):
     def set_feedback(self, value: int):
         # 0 empty, 1 like, 2 dislike
         user = frappe.session.user
+        # //// Neoffice — this method is the only door to HD Article Feedback (neoffice-maintenance#531). Upstream
+        # inserts the vote under the caller's own rights, so the sites carried a Custom DocPerm opening the doctype to
+        # `All`: every portal account could then rewrite or delete anyone's vote straight through the REST collection.
+        # neoffice_custom_fields' reclose_frozen_open_grants now realigns the doctype on what helpdesk ships (HD Customer,
+        # owner only); the vote is inserted here instead, after run_doc_method checked the caller may read the article.
+        # Guest is refused: one shared "Guest" vote per article is no vote. Keep this block through an upstream merge.
+        if user == "Guest":
+            frappe.throw(
+                _("Please log in to rate this article."), frappe.PermissionError
+            )
+        value = cint(value)
+        if value not in (0, 1, 2):
+            frappe.throw(_("Invalid feedback value."))
+        # //// Neoffice ▲▲▲
 
         feedback = frappe.db.exists(
             "HD Article Feedback", {"user": user, "article": self.name}
@@ -122,7 +136,9 @@ class HDArticle(Document):
         else:
             frappe.new_doc(
                 "HD Article Feedback", user=user, article=self.name, feedback=value
-            ).insert()
+            ).insert(
+                ignore_permissions=True
+            )  # //// Neoffice — the method is the gate (#531), see above
 
     @property
     def title_slug(self) -> str:
