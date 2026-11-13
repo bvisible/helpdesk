@@ -20,6 +20,13 @@ class CustomerEditController:
         # a System Manager pulling emails is not the sender of the pulled tickets
         if is_agent() or "System Manager" in frappe.get_roles():
             return
+        # //// Neoffice — a server-side insert that skips permissions is the server acting, not a customer's form:
+        # //// frappe skips its own permlevel reset for it too. Without this, an employee who is no agent and turns a
+        # //// website message into a ticket (neoffice_theme website_messages.to_ticket) became its requester in place
+        # //// of the visitor, and the answers went to the employee. The customer's paths (the REST API, the portal's
+        # //// `new`) never set the flag, so the protection of v1.31.1 holds for them.
+        if self.flags.ignore_permissions:
+            return
         if frappe.session.user != "Guest":
             self.raised_by = frappe.session.user
         self.via_customer_portal = 1

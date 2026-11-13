@@ -83,3 +83,5 @@ helpdesk.patches.staff_open_their_own_tickets
 helpdesk.patches.harden_hd_ticket_field_permissions
 helpdesk.patches.backfill_template_field_visible_to
 helpdesk.patches.show_ticket_field_permission_notice
+# //// Neoffice — after upstream's harden: our own roles read the protected ticket fields (see the patch)
+helpdesk.patches.staff_read_the_protected_ticket_levels

@@ -8,8 +8,62 @@ picture for every file that can carry a comment; this file carries what cannot
 ## helpdesk
 
 **Fork**: `bvisible/helpdesk`, branch `version-15`
-**Upstream**: `frappe/helpdesk` (default branch `develop`; `main` / `main-hotfix` are the
-release branches, `legacy` the archived v0 line — there is no `upstream/version-15`).
+**Upstream**: `frappe/helpdesk`, branch **`version-15`** since 2026-11-13: the line upstream maintains for
+frappe 15 (tags `v15.x`). `develop` needs frappe 17; `main` / `main-hotfix` (v1.x) still accept frappe 15
+but nothing promises they will. `legacy` is the archived v0 line.
+
+| Contract | Rule | Pattern | Why |
+| --- | --- | --- | --- |
+| `helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json` | present | `"role": "Desk User"` | 2026-11-08 and 11-13: an employee who is no agent opens a ticket (level 0) and reads it like a requester (level 7) |
+| `helpdesk/helpdesk/doctype/hd_ticket/customer_edit_controller.py` | present | `if self\.flags\.ignore_permissions:` | 2026-11-13: a server-side insert keeps its requester (a website message made into a ticket by an employee) |
+| `helpdesk/patches.txt` | present | `^helpdesk\.patches\.staff_read_the_protected_ticket_levels$` | 2026-11-13: Agent, Agent Manager, Admin and Desk User read the ticket's levels 7 and 8 where a custom set shadows the JSON |
+
+### Upstream merge of 2026-11-13 — `v15.1.0` (upstream `version-15`)
+
+**Merged**: `upstream/version-15` at `a1858964f` (tag `v15.1.0`), 109 commits on top of `v1.31.0`
+(`7d7e394e7`, the merge-base: upstream's `version-15` was cut from `main` after v1.31.0). It carries
+v1.31.1, v1.32.0, v15.0.0 and v15.1.0. 11 conflicted files. From now on the fork merges `version-15`.
+
+What upstream changed that matters to us:
+
+- **v1.31.1, the security fix and a break** (`a0db575f2`, backport of #3544): the fields of `HD Ticket` move
+  to permission levels 7 (what a customer may read: priority, SLA, due dates, team, contact…) and 8 (agents
+  only: internal summary, mailbox, resolution details, feedback key…). A customer could set priority, SLA and
+  due dates through the REST API; now a non-agent becomes the requester of what they insert, cannot fill a
+  level they cannot write, and cannot change the ticket after raising it (except closing it, rating it, or the
+  template fields ticked "Editable after creation"). `hide_from_customer` of a template field becomes
+  `visible_to` (patch `backfill_template_field_visible_to`); ticket templates can no longer be renamed. Patch
+  `harden_hd_ticket_field_permissions` writes the level rows into a shadowing Custom DocPerm set, but only for
+  the roles that read the ticket when it runs, and level 8 only for System Manager, Agent, Agent Manager.
+- v1.32.0: `refactor(banners)!` — the sidebar notices come from one API (`api/banners.py`; Frappe Cloud
+  trial card, inactive on our sites: our frappe has no Cloud Settings).
+- v15.1.0: a lunch break per workday in the SLA hours (the SLA clock stops during it).
+
+Decisions taken in this merge:
+
+- **Permission levels on our instances.** Our four permission patches now run BEFORE upstream's
+  `harden_hd_ticket_field_permissions` in `patches.txt` (on an instance that has not run them yet, Agent and
+  Desk User would not read the ticket when harden runs, and would get no level row). Then our patch
+  `staff_read_the_protected_ticket_levels` gives, wherever the role reads the ticket at level 0 in the custom set:
+  Agent and Agent Manager read+write at 7 and 8 (whoever holds the role works the tickets, maintenance#1954);
+  `Admin` read at 7 and 8 (the customer's administrator reads everything that is not the platform,
+  neoffice_theme `admin_role.py`); `Desk User` read at 7 only (the Helpdesk shows a non-agent only their own
+  tickets, and level 8 holds the agents' internal fields). `hd_ticket.json` carries a level-7 read row for
+  `Desk User` next to its level-0 row, for a site without a custom set.
+- **A server-side insert keeps its requester** (`customer_edit_controller.py`, marked): upstream's
+  `apply_ticket_insert_rules` returns early when the insert skips permissions. Without it, an employee who
+  is no agent and turns a website message into a ticket (neoffice_theme `website_messages.to_ticket`) became
+  its requester. The REST API and the portal's `new` never skip permissions: upstream's protection holds there.
+- `api/doc.py`: upstream dropped the redis cache of `get_filterable_fields` (the list follows the caller's
+  levels now); our split in two, which kept the cache language-free, is gone; the single function returns
+  `translate_labels(res)`.
+- `hd_ticket.py`: upstream's `instantly_send_email()` (automatic mails queued unless HD Settings says
+  otherwise), our `sender` / `reply_to` kept on the feedback and acknowledgement mails.
+- SLA workday files, `TicketCustomerSidebar.vue`, `TicketCustomerTemplateFields.vue`: upstream's code; our
+  `__()` wraps kept where upstream still writes English (the day names of the workday picker among them).
+- `main.pot`: upstream's, regenerated after the merge.
+- Unchanged: our divergence on the customer group rule is in our ERPNext fork (#1748), not here; the
+  on-demand `upstream-preview` run of this fork stays red on it by design.
 
 ### Upstream merge of 2026-10-24 — `v1.31.0` (upstream `main`, the v15-compatible line)
 
@@ -198,7 +252,7 @@ divergence, nothing of upstream's is attributed to us.
 | `helpdesk/helpdesk/doctype/hd_article/hd_article.json` | added `wiki_document` (Link → Wiki Document, read-only) | identity of the knowledge-base mirror; without it the mirror would have to guess which wiki document an article belongs to, by title | keep ours, pure addition |
 | `helpdesk/helpdesk/doctype/hd_settings/hd_settings.json` | added a "Knowledge Base Mirror" section: `mirror_kb_to_wiki` (Check, default 0) and `kb_wiki_space` (Link → Wiki Space, read-only) | the mirror is off until someone turns it on, and the space it writes into is recorded rather than resolved by route — a route can be renamed, and the mirror must not start writing into whatever answers to it afterwards | keep ours, pure addition |
 
-| `helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json` | added a permission row for `Desk User` (read, write, create, email, print; no delete, export, report or share), `modified` bumped (2026-11-08) | upstream v1.31.0 moved `create` from `All` to `HD Customer` / `HD Customer Manager`: an employee who is no agent could no longer open a ticket to the support, NORA's `helpdesk_ticket_create` included (Jérémy, 08.11: the employees get it back, the portal accounts do not). `Desk User` is the role of every desk account; what they read stays scoped by HD Ticket's `permission_query` / `has_permission`. `patches/staff_open_their_own_tickets.py` copies the row into the Custom DocPerm set that shadows it on our instances | keep ours, re-add the row if upstream rewrites the permissions |
+| `helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.json` | added a permission row for `Desk User` (read, write, create, email, print; no delete, export, report or share), `modified` bumped (2026-11-08); since 2026-11-13 a second row, level 7 read (an employee reads the ticket they raised like any requester), and `modified` bumped again | upstream v1.31.0 moved `create` from `All` to `HD Customer` / `HD Customer Manager`: an employee who is no agent could no longer open a ticket to the support, NORA's `helpdesk_ticket_create` included (Jérémy, 08.11: the employees get it back, the portal accounts do not). `Desk User` is the role of every desk account; what they read stays scoped by HD Ticket's `permission_query` / `has_permission`. `patches/staff_open_their_own_tickets.py` copies the row into the Custom DocPerm set that shadows it on our instances | keep ours, re-add the row if upstream rewrites the permissions |
 
 **Two JSON DocTypes are modified** (`hd_article.json`, `hd_settings.json`; `hd_customer.json` went back to upstream on 2026-09-24), and one carries a permission row of ours (`hd_ticket.json`). Nothing else in the fork changes
 a DocType schema.
