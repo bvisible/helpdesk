@@ -24,6 +24,11 @@
     @failed="failed = true"
   />
   <CommandPalette v-if="!failed" />
+  <!-- //// Neoffice — upstream mounts the settings window (SLA policies, teams, e-mail accounts, assignment
+       //// rules…) in its own Sidebar.vue, which the cockpit replaces: with the cockpit loaded, the palette's
+       //// « Paramètres » entries and every « manage » link set showSettingsModal and nothing opened (seen on
+       //// osiris on 2026-11-13). The fallback Sidebar mounts its own, hence the same v-if as the palette. -->
+  <SettingsModal v-if="!failed" v-model="showSettingsModal" />
 </template>
 
 <script setup lang="ts">
@@ -41,6 +46,9 @@ import NeoCockpitBridge from "@/components/NeoCockpitBridge.vue";
 //// useCommandPalette().openPalette(). The cockpit's search box calls openPalette().
 import CommandPalette from "@/components/command-palette/CommandPalette.vue";
 import { openPalette } from "@/components/command-palette/useCommandPalette";
+//// Neoffice — the settings window, mounted here while the cockpit replaces Sidebar.vue (see the template)
+import SettingsModal from "@/components/Settings/SettingsModal.vue";
+import { showSettingsModal } from "@/components/Settings/settingsModal";
 
 import {
   agentPortalSidebarOptions,
