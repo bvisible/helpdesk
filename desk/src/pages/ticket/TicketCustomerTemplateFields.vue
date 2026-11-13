@@ -14,7 +14,7 @@
     </div>
 
     <!-- //// Neoffice — wrapped in __(): upstream showed this string in English on every non-English site -->
-    <div class="flex items-center gap-4">
+    <div v-if="ticket.data.priority" class="flex items-center gap-4">
       <span class="w-[150px] shrink-0 text-p-sm text-ink-gray-5">{{
         __("Priority")
       }}</span>
@@ -49,12 +49,9 @@
         __(field.label)
       }}</span>
       <span
-        class="flex-1 truncate rounded-4 border border-outline-gray-2 bg-surface-base px-2 py-1 text-p-sm"
-        :class="
-          ticket.data[field.fieldname] ? 'text-ink-gray-9' : 'text-ink-gray-4'
-        "
+        class="flex-1 truncate rounded-4 border border-outline-gray-2 bg-surface-base px-2 py-1 text-p-sm text-ink-gray-9"
       >
-        {{ ticket.data[field.fieldname] || "—" }}
+        {{ ticket.data[field.fieldname] }}
       </span>
     </div>
   </div>
@@ -101,12 +98,12 @@ const slaData = computed(() =>
     }))
 );
 
-const customFields = computed(() => {
-  const _custom_fields = ticket.data.template.fields
-    .filter((field: Field) => !field.hide_from_customer)
-    .filter(
-      (f: Field) => ["subject", "team", "priority"].indexOf(f.fieldname) === -1
-    );
-  return _custom_fields;
-});
+const customFields = computed(() =>
+  ticket.data.template.fields.filter(
+    (f: Field) =>
+      f.fieldname !== "priority" &&
+      ticket.data[f.fieldname] != null &&
+      ticket.data[f.fieldname] !== ""
+  )
+);
 </script>

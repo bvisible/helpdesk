@@ -4,6 +4,10 @@ import { ref } from "vue";
 //// Neoffice — added: __() import so this composable's strings can enter the French catalogue; .ts literals were invisible to the extractor before this commit (79c105405 "feat(i18n): the TypeScript strings enter the catalogue — 1311 / 1311")
 import { __ } from "@/translation";
 
+/** Frappe enables it only for System Managers on a Frappe Cloud v2 site. */
+export const isCloudSettingsAvailable = () =>
+  window.cloud_settings?.enabled === true;
+
 const baseEndpoint = ref("https://frappecloud.com");
 const siteName = ref("");
 

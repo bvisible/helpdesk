@@ -4,7 +4,6 @@ from frappe.desk.form.assign_to import set_status
 from frappe.model import no_value_fields
 from frappe.model.document import get_controller
 from frappe.query_builder.functions import Date
-from frappe.utils.caching import redis_cache
 from pypika import Criterion
 
 from helpdesk.api.dashboard import COUNT_NAME
@@ -277,36 +276,13 @@ def get_list_data(
     }
 
 
-# //// Neoffice — split in two: the cached body stays English, the whitelisted
-# //// wrapper translates. @redis_cache() keys on `module.qualname::hash(args)`
-# //// only — no language, no user — so translating INSIDE it would serve the
-# //// first caller's language to every user of the site for a full hour.
 @frappe.whitelist()
 def get_filterable_fields(
     doctype: str,
     show_customer_portal_fields: bool = False,
     ignore_team_restrictions: bool = False,
 ):
-    # //// Neoffice — removed the merge's second, self-calling `_get_filterable_fields`; this wrapper
-    # //// is upstream v1.31.0's with our translation added: the permission check stays OUTSIDE the cache (a cached answer must
-    # never skip it), the cached body is _get_filterable_fields below
     check_permissions(doctype, None)
-    # //// Neoffice — see the block marker above: the whitelisted wrapper translates
-    return translate_labels(
-        _get_filterable_fields(
-            doctype, show_customer_portal_fields, ignore_team_restrictions
-        )
-    )
-
-
-# //// Neoffice — the cached body below is upstream's; the self-calling copy the merge left
-# //// next to it is removed.
-@redis_cache()
-def _get_filterable_fields(
-    doctype: str,
-    show_customer_portal_fields: bool = False,
-    ignore_team_restrictions: bool = False,
-):
     QBDocField = frappe.qb.DocType("DocField")
     QBCustomField = frappe.qb.DocType("Custom Field")
     allowed_fieldtypes = [
@@ -344,7 +320,6 @@ def _get_filterable_fields(
             QBDocField.fieldname,
             QBDocField.fieldtype,
             QBDocField.label,
-            QBDocField.name,
             QBDocField.options,
         )
         .where(QBDocField.parent == doctype)
@@ -358,7 +333,6 @@ def _get_filterable_fields(
             QBCustomField.fieldname,
             QBCustomField.fieldtype,
             QBCustomField.label,
-            QBCustomField.name,
             QBCustomField.options,
         )
         .where(QBCustomField.dt == doctype)
@@ -398,7 +372,6 @@ def _get_filterable_fields(
                 "fieldname": "_assign",
                 "fieldtype": "Link",
                 "label": "Assigned to",
-                "name": "_assign",
                 "options": "HD Agent",
             }
         )
@@ -407,7 +380,6 @@ def _get_filterable_fields(
                 "fieldname": "_user_tags",
                 "fieldtype": "Link",
                 "label": "Tags",
-                "name": "_user_tags",
                 "options": "Tag",
             }
         )
@@ -439,13 +411,15 @@ def _get_filterable_fields(
             "fieldname": "__assigned_on",
             "fieldtype": "Date",
             "label": "Assigned on",
-            "name": "__assigned_on",
         },
     ]
     for field in standard_fields:
         if field.get("fieldname") not in [r.get("fieldname") for r in res]:
             res.append(field)
-    return res
+    # //// Neoffice — the labels translated for the reader, as get_list_data() and sort_options() do
+    # //// (utils.translate_labels). Upstream dropped the redis cache of this list in v1.31.1 (the fields now
+    # //// follow the caller's permission levels), so the split in two that kept the cache language-free is gone.
+    return translate_labels(res)
 
 
 @frappe.whitelist()
@@ -552,10 +526,10 @@ def get_customer_portal_fields(doctype, fields):
     return fields
 
 
-def get_visible_custom_fields():
+def get_visible_custom_fields() -> list[str]:
     return frappe.db.get_all(
         "HD Ticket Template Field",
-        {"parent": "Default", "hide_from_customer": 0},
+        {"parent": "Default", "visible_to": "Everyone"},
         pluck="fieldname",
     )
 

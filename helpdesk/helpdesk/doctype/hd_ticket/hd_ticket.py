@@ -1,6 +1,7 @@
 import json
 import uuid
 from email.utils import parseaddr
+from urllib.parse import unquote, urlparse
 
 import frappe
 from bs4 import BeautifulSoup, Comment
@@ -15,11 +16,20 @@ from frappe.model.document import Document
 # //// Neoffice — added: tickets take their number from a counter of their own (see autoname).
 from frappe.model.naming import getseries
 from frappe.permissions import add_permission, update_permission_property
-from frappe.utils import add_to_date, cint, get_string_between, getdate, now_datetime
+from frappe.utils import (
+    add_to_date,
+    cint,
+    get_string_between,
+    get_url,
+    getdate,
+    now_datetime,
+)
+from frappe.utils.html_utils import sanitize_html
 from pypika.functions import Count
 from pypika.queries import Query
 from pypika.terms import Criterion
 
+from helpdesk.consts import SERVER_COMPUTED_FIELDS
 from helpdesk.helpdesk.doctype.hd_settings.helpers import (
     get_default_email_content,
     is_email_content_empty,
@@ -44,13 +54,14 @@ from helpdesk.utils import (
 )
 
 from ..hd_service_level_agreement.utils import get_sla
+from .customer_edit_controller import CustomerEditController
 
 # //// Neoffice — added: the tabSeries key ticket numbers are drawn from (see HDTicket.autoname).
 TICKET_COUNTER = "HD Ticket"
 customer_not_allowed_fields = ["customer"]
 
 
-class HDTicket(Document):
+class HDTicket(Document, CustomerEditController):
     @property
     def default_open_status(self):
         return frappe.db.get_value(
@@ -101,6 +112,13 @@ class HDTicket(Document):
 
     def before_insert(self):
         self.generate_key()
+        self.apply_ticket_insert_rules()
+
+    def validate_higher_perm_levels(self):
+        # ahead of the framework's silent reset of fields the user cannot write,
+        # so a customer's change is refused out loud instead of vanishing
+        self.prevent_customer_edits()
+        super().validate_higher_perm_levels()
 
     def before_validate(self):
         self.check_update_perms()
@@ -139,7 +157,7 @@ class HDTicket(Document):
         }
         for key, value in args.items():
             template_args[key] = value
-        return frappe.render_template(
+        return frappe.render_template(  # nosemgrep
             default_content if is_email_content_empty(content) else content,
             template_args,
         )
@@ -197,7 +215,7 @@ class HDTicket(Document):
                 ),
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
-                now=True,
+                now=self.instantly_send_email(),
                 # //// Neoffice — added kwargs (upstream passes neither). Without a
                 # //// sender, frappe.sendmail falls back to the default outgoing
                 # //// account; reply_to must follow it or the customer's answer
@@ -209,10 +227,9 @@ class HDTicket(Document):
             )
             frappe.msgprint(_("Feedback email has been sent to the customer"))
         except Exception as e:
-            frappe.throw(_("Could not send feedback email,due to: {0}").format(e))
+            frappe.throw(_("Could not send feedback email,due to: {0}").format(str(e)))
 
     def after_insert(self):
-
         # Telemetry Event
         self.capture_ticket_created_telemetry_events()
         publish_event("helpdesk:new-ticket")
@@ -361,11 +378,6 @@ class HDTicket(Document):
                     self.contact = contact
 
     def set_customer(self):
-        if not frappe.db.get_single_value(
-            "HD Settings", "auto_set_customer_from_contact"
-        ):
-            return
-
         # For existing tickets, only validate if customer value has changed
         if not self.is_new() and not self.has_value_changed("customer"):
             return
@@ -381,6 +393,11 @@ class HDTicket(Document):
                     ).format(self.customer, self.contact),
                     frappe.ValidationError,
                 )
+            return
+
+        if not frappe.db.get_single_value(
+            "HD Settings", "auto_set_customer_from_contact"
+        ):
             return
 
         # Auto-set customer only for new tickets
@@ -457,16 +474,6 @@ class HDTicket(Document):
         frappe.throw(
             _("Ticket must be resolved with a feedback"), frappe.ValidationError
         )
-
-    def check_update_perms(self):
-        old_doc = self.get_doc_before_save()
-        if not old_doc or is_agent() or not self.via_customer_portal:
-            return
-        is_closed = old_doc.status == "Closed"
-        is_rated = bool(old_doc.feedback)
-        if is_closed or is_rated:
-            text = _("Closed or rated tickets cannot be updated by non-agents")
-            frappe.throw(text, frappe.PermissionError)
 
     def generate_key(self):
         self.key = uuid.uuid4()
@@ -876,7 +883,7 @@ class HDTicket(Document):
                     {"message": message, "ticket_url": self.portal_uri},
                 )
             except Exception as e:
-                frappe.throw(_("Could not an email due to: {0}").format(e))
+                frappe.throw(_("Could not an email due to: {0}").format(str(e)))
 
         send_delayed = True
         send_now = False
@@ -930,6 +937,8 @@ class HDTicket(Document):
         # if self.status_category == "Paused" and not new_ticket:
         if not new_ticket:
             self.status = self.ticket_reopen_status
+            # flag for allowing status change when reply came in outside support portal
+            self.flags.customer_reply_reopen = True
             self.save(ignore_permissions=True)
 
         c = frappe.new_doc("Communication")
@@ -967,8 +976,8 @@ class HDTicket(Document):
         soup = BeautifulSoup(self.description, "html.parser")
         files = []  # List of file URLs
         for tag in soup.find_all(["img", "video"]):
-            if tag.has_attr("src"):
-                src = tag["src"]
+            src = get_site_file_url(tag.get("src"))
+            if src:
                 files.append(src)
         for f in files:
             file = frappe.db.exists(
@@ -1015,7 +1024,7 @@ class HDTicket(Document):
                 ),
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
-                now=True,
+                now=self.instantly_send_email(),
             )
         except Exception as e:
             frappe.throw(_(e))
@@ -1056,7 +1065,7 @@ class HDTicket(Document):
                 ),
                 reference_doctype="HD Ticket",
                 reference_name=self.name,
-                now=True,
+                now=self.instantly_send_email(),
                 # //// Neoffice — added kwargs, same reason as send_feedback_email.
                 sender=sender_id,
                 reply_to=sender_id,
@@ -1065,7 +1074,7 @@ class HDTicket(Document):
             )
         except Exception as e:
             frappe.throw(
-                _("Could not send an acknowledgement email due to: {0}").format(e)
+                _("Could not send an acknowledgement email due to: {0}").format(str(e))
             )
 
     @frappe.whitelist()
@@ -1229,9 +1238,17 @@ class HDTicket(Document):
                     "HD Settings", "update_status_to"
                 )
 
-        # Fetch description from communication if not set already. This might not be needed
-        # anymore as a communication is created when a ticket is created.
-        self.description = self.description or c.content
+        # email tickets are inserted blank; set_only_once refuses the save that
+        # would fill it, so write it already sanitized the way that save would
+        if not self.description:
+            self.db_set(
+                "description",
+                sanitize_html(c.content, linkify=True),
+                update_modified=False,
+            )
+        # portal replies save as the customer; the reset must keep server-set fields
+        self.flags.ignore_permlevel_for_fields = list(SERVER_COMPUTED_FIELDS)
+        self.flags.ignore_customer_edit_guard = True
         # Save the ticket, allowing for hooks to run.
         self.save()
 
@@ -1461,11 +1478,11 @@ class HDTicket(Document):
             comment.extract()
 
         for tag in soup.find_all(["img", "video"]):
-            src = tag.get("src")
             # only site files can be embedded; external URLs must keep their src
-            if not src or not src.startswith(("/private/files/", "/files/")):
+            file_url = get_site_file_url(tag.get("src"))
+            if not file_url:
                 continue
-            tag["embed"] = src
+            tag["embed"] = file_url
             del tag["src"]
 
         return str(soup)
@@ -1476,6 +1493,25 @@ class HDTicket(Document):
             if f["name"] in customer_not_allowed_fields:
                 fields.remove(f)
         return fields
+
+
+def get_site_file_url(src: str | None) -> str | None:
+    """Turn an absolute file URL of this site into its relative path.
+    https://<this site>/private/files/x.png -> /private/files/x.png
+    /private/files/x.png -> /private/files/x.png (already relative)
+    Returns None for other sites or non-file links."""
+    if not src:
+        return None
+    url = urlparse(src)
+    if url.scheme or url.netloc:
+        if url.scheme not in ("http", "https"):
+            return None
+        if url.netloc != urlparse(get_url()).netloc:
+            return None
+    path = unquote(url.path)
+    if not path.startswith(("/private/files/", "/files/")):
+        return None
+    return path
 
 
 # Check if `user` has access to this specific ticket (`doc`). This implements extra

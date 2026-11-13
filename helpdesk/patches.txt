@@ -50,7 +50,6 @@ helpdesk.patches.set_default_customer_type
 helpdesk.patches.add_user_invitation_perms
 helpdesk.patches.enable_auto_set_customer_from_contact
 helpdesk.patches.show_customer_portal_permission_notice
-helpdesk.patches.set_persona_captured_for_existing_sites
 helpdesk.patches.set_default_portal_settings
 helpdesk.patches.backfill_priority_level
 helpdesk.patches.add_tag_custom_fields
@@ -78,3 +77,9 @@ helpdesk.patches.agents_are_not_a_public_directory
 # //// Neoffice — an employee of the instance who is no agent opens a ticket again (the row `Desk User` of
 # //// hd_ticket.json, copied into the Custom DocPerm set that shadows it on our instances)
 helpdesk.patches.staff_open_their_own_tickets
+# //// Neoffice — our four patches above run BEFORE upstream's harden_hd_ticket_field_permissions on purpose: it
+# //// gives the ticket's permission levels 7 and 8 only to the roles that already read level 0 in the custom set,
+# //// and on an instance that has not run them yet the Agent and Desk User rows are not there yet
+helpdesk.patches.harden_hd_ticket_field_permissions
+helpdesk.patches.backfill_template_field_visible_to
+helpdesk.patches.show_ticket_field_permission_notice
