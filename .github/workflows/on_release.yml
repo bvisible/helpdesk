@@ -11,6 +11,10 @@ permissions:
 jobs:
   release:
     name: Release
+    # //// Neoffice — upstream's semantic release of its version-15 branch, which is also our fork's branch since
+    # //// the 2026-11-13 merge: on bvisible/helpdesk it ran on every push and failed for want of Frappe's release-bot
+    # //// token (a red run and paid minutes each time). Our fork never publishes releases: upstream's repository only.
+    if: github.repository == 'frappe/helpdesk'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Entire Repository
