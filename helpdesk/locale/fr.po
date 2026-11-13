@@ -6,7 +6,7 @@ msgstr ""
 "POT-Creation-Date: 2026-09-24 17:43+0000\n"
 "PO-Revision-Date: 2026-05-28 10:55+0000\n"
 "Last-Translator: hello@frappe.io\n"
-"Language: fr_FR\n"
+"Language: fr\n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
@@ -10378,3 +10378,209 @@ msgstr "{0} · attente la plus longue"
 #, python-brace-format
 msgid "{0} out of 5"
 msgstr "{0} sur 5"
+
+#: desk/src/components/notifications/NotificationFilters.vue:34
+msgid "All categories"
+msgstr "Toutes les catégories"
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:117
+msgid "Apply break to all workdays"
+msgstr "Appliquer la pause à tous les jours ouvrés"
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:339
+msgid "Break applied to 1 workday."
+msgstr "Pause appliquée à 1 jour ouvré."
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:340
+#, python-brace-format
+msgid "Break applied to {0} workdays."
+msgstr "Pause appliquée à {0} jours ouvrés."
+
+#. Label of a Time field in DocType 'HD Service Day'
+#: helpdesk/helpdesk/doctype/hd_service_day/hd_service_day.json:69
+msgid "Break End"
+msgstr "Fin de la pause"
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:95
+msgid "Break end"
+msgstr "Fin de la pause"
+
+#: desk/src/stores/sla.ts:334
+msgid "Break end must be after break start."
+msgstr "La fin de la pause doit être postérieure au début de la pause."
+
+#: desk/src/stores/sla.ts:336
+msgid "Break must be within working hours."
+msgstr "La pause doit se situer dans les heures de travail."
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:159
+#, python-brace-format
+msgid "Break must start after Start Time, end after it starts and end before End Time in row <u>{0}</u>."
+msgstr "La pause doit commencer après l'heure de début, se terminer après son début et avant l'heure de fin, à la ligne <u>{0}</u>."
+
+#. Label of a Time field in DocType 'HD Service Day'
+#: helpdesk/helpdesk/doctype/hd_service_day/hd_service_day.json:59
+msgid "Break Start"
+msgstr "Début de la pause"
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:87
+msgid "Break start"
+msgstr "Début de la pause"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:25
+msgid "Check this:"
+msgstr "À vérifier :"
+
+#: desk/src/components/Settings/CloudSettings/CloudPanel.vue:15
+msgid "Contact support"
+msgstr "Contacter le support"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:12
+msgid "Customers now see only the ticket fields meant for them. All other fields are visible to agents only."
+msgstr "Les clients ne voient désormais que les champs du ticket qui leur sont destinés. Tous les autres champs ne sont visibles que par les agents."
+
+#. Label of a Check field in DocType 'HD Ticket Template Field'
+#: helpdesk/helpdesk/doctype/hd_ticket_template_field/hd_ticket_template_field.json:47
+msgid "Editable after creation"
+msgstr "Modifiable après la création"
+
+#. Description of the 'Visible to' (Select) field in DocType 'HD Ticket
+#. Template Field'
+#: helpdesk/helpdesk/doctype/hd_ticket_template_field/hd_ticket_template_field.json:33
+msgid "Everyone lets both agents and customers see this field. Agents shows it only in the agent view. This controls the ticket form only. Raise the field's permission level in Customize Form to hide it from the API layer as well."
+msgstr "« Tout le monde » permet aux agents comme aux clients de voir ce champ. « Agents » ne l'affiche que dans la vue agent. Cela ne contrôle que le formulaire du ticket. Augmentez le niveau d'autorisation du champ dans Personnaliser le formulaire pour le masquer aussi au niveau de l'API."
+
+#. Description of the 'Fields' (Table) field in DocType 'HD Ticket Template'
+#: helpdesk/helpdesk/doctype/hd_ticket_template/hd_ticket_template.json:31
+msgid "Everyone or Agents: who sees this field. It also needs the field's permission level to permit them, or it stays hidden regardless. Editable after creation lets customers change the field after they create the ticket. Agents can always change it. Read more about permission levels <a href=\"https://docs.frappe.io/helpdesk/customization/perm-levels-in-helpdesk\" target=\"_blank\" rel=\"noopener noreferrer\">here</a>."
+msgstr "« Tout le monde » ou « Agents » : qui voit ce champ. Il faut aussi que le niveau d'autorisation du champ le leur permette, sinon il reste masqué dans tous les cas. « Modifiable après la création » permet aux clients de modifier le champ après la création du ticket. Les agents peuvent toujours le modifier. En savoir plus sur les niveaux d'autorisation <a href=\"https://docs.frappe.io/helpdesk/customization/perm-levels-in-helpdesk\" target=\"_blank\" rel=\"noopener noreferrer\">ici</a>."
+
+#: helpdesk/helpdesk/doctype/hd_ticket_template/hd_ticket_template.py:55
+#, python-brace-format
+msgid "Field `{0}` is a secret and can never be shown to customers."
+msgstr "Le champ `{0}` est secret et ne peut jamais être affiché aux clients."
+
+#: helpdesk/helpdesk/doctype/hd_ticket_template/hd_ticket_template.py:65
+#, python-brace-format
+msgid "Field `{0}` is internal and cannot be shown to customers. Lower its permission level in Customize Form to show it in the ticket form."
+msgstr "Le champ `{0}` est interne et ne peut pas être affiché aux clients. Abaissez son niveau d'autorisation dans Personnaliser le formulaire pour l'afficher dans le formulaire du ticket."
+
+#: helpdesk/helpdesk/doctype/hd_ticket_template/hd_ticket_template.py:60
+#, python-brace-format
+msgid "Field `{0}` is set by the system and cannot be shown to customers."
+msgstr "Le champ `{0}` est défini par le système et ne peut pas être affiché aux clients."
+
+#: desk/src/components/banners/SidebarBanner.vue:35
+msgid "Got it"
+msgstr "Compris"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:27
+msgid "If you created custom agent roles, raise their permission level to 8 in Role Permission Manager so they can see agent-only fields."
+msgstr "Si vous avez créé des rôles d'agent personnalisés, portez leur niveau d'autorisation à 8 dans le Gestionnaire des autorisations de rôle pour qu'ils voient les champs réservés aux agents."
+
+#: helpdesk/helpdesk/doctype/hd_article/hd_article.py:122
+msgid "Invalid feedback value."
+msgstr "Valeur de l'avis non valide."
+
+#: desk/src/components/ticket-agent/TicketDetailsTab.vue:82
+msgid "More Details"
+msgstr "Plus de détails"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:19
+msgid "Once a ticket is raised, customers can only close it, rate it, or edit fields marked 'Editable after creation' in HD Ticket Template."
+msgstr "Une fois un ticket créé, les clients ne peuvent que le fermer, l'évaluer ou modifier les champs marqués « Modifiable après la création » dans HD Ticket Template."
+
+#. Description of the 'Break Start' (Time) field in DocType 'HD Service Day'
+#: helpdesk/helpdesk/doctype/hd_service_day/hd_service_day.json:55
+msgid "Optional. The SLA clock stops between break start and break end."
+msgstr "Facultatif. Le compteur SLA s'arrête entre le début et la fin de la pause."
+
+#: helpdesk/helpdesk/doctype/hd_article/hd_article.py:118
+msgid "Please log in to rate this article."
+msgstr "Veuillez vous connecter pour évaluer cet article."
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:105
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:106
+msgid "Remove break"
+msgstr "Supprimer la pause"
+
+#: desk/src/components/notifications/NotificationFilters.vue:38
+msgid "Reopened tickets"
+msgstr "Tickets rouverts"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:35
+msgid "See how"
+msgstr "Voir comment"
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:16
+msgid "Select workday"
+msgstr "Sélectionner le jour ouvré"
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:149
+#, python-brace-format
+msgid "Set both Break Start and Break End in row <u>{0}</u>, or neither."
+msgstr "Renseignez à la fois le début et la fin de la pause à la ligne <u>{0}</u>, ou aucun des deux."
+
+#: desk/src/stores/sla.ts:326
+msgid "Set both break start and break end, or neither."
+msgstr "Renseignez à la fois le début et la fin de la pause, ou aucun des deux."
+
+#. Label of a Check field in DocType 'HD Settings'
+#: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json:168
+msgid "Show Ticket Field Permission Notice"
+msgstr "Afficher l'avis sur l'autorisation des champs du ticket"
+
+#: desk/src/components/Settings/Sla/Modals/WorkDayModal.vue:342
+#, python-brace-format
+msgid "Skipped {0}: outside working hours."
+msgstr "{0} ignoré : hors heures de travail."
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:5
+msgid "Some fields are now hidden from customers"
+msgstr "Certains champs sont désormais masqués aux clients"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:6
+msgid "Ticket fields have changed"
+msgstr "Les champs du ticket ont changé"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:4
+msgid "Ticket fields update"
+msgstr "Mise à jour des champs du ticket"
+
+#: helpdesk/helpdesk/doctype/hd_ticket_template/hd_ticket_template.py:103
+msgid "Ticket form successfully updated"
+msgstr "Formulaire du ticket mis à jour avec succès"
+
+#: helpdesk/api/banners.py:42
+#, python-brace-format
+msgid "Unknown banner {0}"
+msgstr "Bannière inconnue {0}"
+
+#. Label of a Select field in DocType 'HD Ticket Template Field'
+#: helpdesk/helpdesk/doctype/hd_ticket_template_field/hd_ticket_template_field.json:37
+msgid "Visible to"
+msgstr "Visible par"
+
+#: desk/src/components/banners/TicketFieldPermissionBanner.vue:10
+msgid "What changed:"
+msgstr "Ce qui a changé :"
+
+#: helpdesk/helpdesk/doctype/hd_ticket/customer_edit_controller.py:81
+#, python-brace-format
+msgid "You cannot change {0} after the ticket is raised"
+msgstr "Vous ne pouvez pas modifier {0} après la création du ticket"
+
+#: helpdesk/helpdesk/doctype/hd_ticket/customer_edit_controller.py:79
+#, python-brace-format
+msgid "You do not have permission to change {0}"
+msgstr "Vous n'êtes pas autorisé à modifier {0}"
+
+#: helpdesk/helpdesk/doctype/hd_ticket_template/hd_ticket_template.py:98
+#, python-brace-format
+msgid "{0} are successfully hidden from customers in the ticket form. Raise their permission levels in {1} to hide them from the API layer. Read more about permission levels {2}."
+msgstr "{0} sont masqués avec succès aux clients dans le formulaire du ticket. Augmentez leurs niveaux d'autorisation dans {1} pour les masquer aussi au niveau de l'API. En savoir plus sur les niveaux d'autorisation {2}."
+
+#: helpdesk/helpdesk/doctype/hd_ticket_template/hd_ticket_template.py:92
+#, python-brace-format
+msgid "{0} is successfully hidden from customers in the ticket form. Raise its permission level in {1} to hide it from the API layer. Read more about permission levels {2}."
+msgstr "{0} est masqué avec succès aux clients dans le formulaire du ticket. Augmentez son niveau d'autorisation dans {1} pour le masquer aussi au niveau de l'API. En savoir plus sur les niveaux d'autorisation {2}."
