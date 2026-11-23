@@ -177,3 +177,7 @@ body {
     --fade-bottom: 0px;
   }
 }
+
+/* //// Neoffice — the accent block that stood here (frappe-ui's blue tokens re-pointed at clay) is gone: it set
+   //// RGB triplets where frappe-ui reads colours and never applied. The accent now comes from
+   //// /assets/neoffice_theme/css/spa_accent.css, loaded by desk/index.html (23.11.2026). */
