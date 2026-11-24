@@ -1,8 +1,9 @@
 import frappe
 
 
+# //// Neoffice — the reason our CI asks of a public method.
 @frappe.whitelist(allow_guest=True)  # nosemgrep
-def get_config():
+def get_config():  # permission-check: ok the brand and display settings a visitor's page needs, upstream's
     fields = [
         "brand_name",
         "brand_logo",
@@ -18,9 +19,9 @@ def get_config():
     ]
     res = frappe.get_value(doctype="HD Settings", fieldname=fields, as_dict=True)
 
-    res.favicon = (
-        res.favicon
-        or frappe.db.get_single_value("Website Settings", "favicon")
-        or "/assets/helpdesk/desk/favicon.svg"
+    # //// Neoffice — upstream's mark is no longer the last resort: without a favicon of the site, the page keeps the
+    # //// icons it came with, ours (desk/src/App.vue, neoffice_theme/home_screen.py).
+    res.favicon = res.favicon or frappe.db.get_single_value(
+        "Website Settings", "favicon"
     )
     return res
